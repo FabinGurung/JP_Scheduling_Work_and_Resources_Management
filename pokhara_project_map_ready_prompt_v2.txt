@@ -1,0 +1,30 @@
+Create an exact interactive project-location map from the attached workbook.
+
+SOURCE OF TRUTH
+- Read `Projects_Master` for project records.
+- Read `Field_Dictionary` for meanings and validation.
+- Read `Status_Config` for marker styling.
+- Read `Map_Config` for the exact mapping stack and interface settings.
+- Read `Popup_Fields` for popup order.
+- Read `Output_Spec` for deliverables.
+- Read `QA_Checks` and run all required checks.
+- Follow `AI_Build_Steps` in sequence.
+
+NON-NEGOTIABLE GEOSPATIAL RULES
+1. Never geocode, estimate, relocate, or visually approximate a point.
+2. Preserve the complete source precision of latitude and longitude.
+3. Leaflet markers use [latitude, longitude].
+4. GeoJSON coordinates use [longitude, latitude].
+5. Add all valid markers, collect bounds, and call fitBounds using the configured padding.
+6. Ignore blank template rows and report invalid populated rows.
+7. Marker style comes only from `Status_Config`.
+
+EXPECTED HTML
+- Leaflet 1.9.4 with OpenStreetMap Standard tiles and attribution.
+- Exact circle markers.
+- Permanent PK_ID labels above markers.
+- Popup with Project ID, Project Name, Status, Contractor, Latitude, and Longitude.
+- Status legend, total project count, metric scale, responsive title, and full-screen mobile-compatible layout.
+- No AI-generated illustrated map background.
+
+Deliver the interactive HTML and GeoJSON, and state accepted and rejected record counts.

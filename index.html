@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Project Locations in Pokhara, Nepal</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    #map { height: 100%; width: 100%; }
+    .title {
+      position:absolute; z-index:1000; top:12px; left:50%; transform:translateX(-50%);
+      background:white; padding:10px 16px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.25);
+      font:700 20px Arial,sans-serif;
+    }
+    .legend {
+      position:absolute; z-index:1000; right:12px; bottom:22px;
+      background:white; padding:12px 14px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.25);
+      font:14px Arial,sans-serif; line-height:1.7;
+    }
+  </style>
+</head>
+<body>
+<div class="title">Project Locations in Pokhara, Nepal</div>
+<div id="map"></div>
+<div class="legend"><b>Status</b><div><span style='display:inline-block;width:12px;height:12px;border-radius:50%;background:#d73027;margin-right:8px'></span>Construction</div><div><span style='display:inline-block;width:12px;height:12px;border-radius:50%;background:#1a9850;margin-right:8px'></span>Completed</div><div><span style='display:inline-block;width:12px;height:12px;border-radius:50%;background:#4575b4;margin-right:8px'></span>Approval</div><hr style="border:none;border-top:1px solid #ddd">Total projects: 7</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map').setView([28.200036885714287, 84.0305180142857], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  const bounds = [];
+  
+        L.circleMarker([28.200667, 84.018222], {
+            radius: 9,
+            color: "#d73027",
+            fillColor: "#d73027",
+            fillOpacity: 0.9,
+            weight: 2
+        }).addTo(map)
+          .bindTooltip("P001", {permanent: true, direction: "top", offset: [0,-8]})
+          .bindPopup("     <div style='font-family:Arial,sans-serif; min-width:240px'>       <h3 style='margin:0 0 8px 0'>P001 \u2014 14_bishal_paija</h3>       <div><b>Status:</b> Construction</div>       <div><b>Contractor:</b> Rohini Engineering and Builders Pvt Ltd</div>       <div><b>Latitude:</b> 28.200667</div>       <div><b>Longitude:</b> 84.018222</div>     </div>     ");
+        
+        L.circleMarker([28.196778, 83.970778], {
+            radius: 9,
+            color: "#d73027",
+            fillColor: "#d73027",
+            fillOpacity: 0.9,
+            weight: 2
+        }).addTo(map)
+          .bindTooltip("P002", {permanent: true, direction: "top", offset: [0,-8]})
+          .bindPopup("     <div style='font-family:Arial,sans-serif; min-width:240px'>       <h3 style='margin:0 0 8px 0'>P002 \u2014 17_samir_man_ghubaju</h3>       <div><b>Status:</b> Construction</div>       <div><b>Contractor:</b> Fishtail Builders Pvt Ltd</div>       <div><b>Latitude:</b> 28.196778</div>       <div><b>Longitude:</b> 83.970778</div>     </div>     ");
+        
+        L.circleMarker([28.226111, 84.051389], {
+            radius: 9,
+            color: "#d73027",
+            fillColor: "#d73027",
+            fillOpacity: 0.9,
+            weight: 2
+        }).addTo(map)
+          .bindTooltip("P003", {permanent: true, direction: "top", offset: [0,-8]})
+          .bindPopup("     <div style='font-family:Arial,sans-serif; min-width:240px'>       <h3 style='margin:0 0 8px 0'>P003 \u2014 13_hari_baral</h3>       <div><b>Status:</b> Construction</div>       <div><b>Contractor:</b> Fishtail Builders Pvt Ltd</div>       <div><b>Latitude:</b> 28.226111</div>       <div><b>Longitude:</b> 84.051389</div>     </div>     ");
+        
+        L.circleMarker([28.2555, 83.97975], {
+            radius: 9,
+            color: "#1a9850",
+            fillColor: "#1a9850",
+            fillOpacity: 0.9,
+            weight: 2
+        }).addTo(map)
+          .bindTooltip("P004", {permanent: true, direction: "top", offset: [0,-8]})
+          .bindPopup("     <div style='font-family:Arial,sans-serif; min-width:240px'>       <h3 style='margin:0 0 8px 0'>P004 \u2014 16_yamuna_pun_adai</h3>       <div><b>Status:</b> Completed</div>       <div><b>Contractor:</b> Fishtail Builders Pvt Ltd</div>       <div><b>Latitude:</b> 28.2555</div>       <div><b>Longitude:</b> 83.97975</div>     </div>     ");
+        
+        L.circleMarker([28.160278, 84.0825], {
+            radius: 9,
+            color: "#d73027",
+            fillColor: "#d73027",
+            fillOpacity: 0.9,
+            weight: 2
+        }).addTo(map)
+          .bindTooltip("P005", {permanent: true, direction: "top", offset: [0,-8]})
+          .bindPopup("     <div style='font-family:Arial,sans-serif; min-width:240px'>       <h3 style='margin:0 0 8px 0'>P005 \u2014 30_sabitri_giri_dipti_giri</h3>       <div><b>Status:</b> Construction</div>       <div><b>Contractor:</b> Fishtail Builders Pvt Ltd</div>       <div><b>Latitude:</b> 28.160278</div>       <div><b>Longitude:</b> 84.0825</div>     </div>     ");
+        
+        L.circleMarker([28.1657989, 84.115339], {
+            radius: 9,
+            color: "#d73027",
+            fillColor: "#d73027",
+            fillOpacity: 0.9,
+            weight: 2
+        }).addTo(map)
+          .bindTooltip("P006", {permanent: true, direction: "top", offset: [0,-8]})
+          .bindPopup("     <div style='font-family:Arial,sans-serif; min-width:240px'>       <h3 style='margin:0 0 8px 0'>P006 \u2014 31_sharada_adhikari</h3>       <div><b>Status:</b> Construction</div>       <div><b>Contractor:</b> Fishtail Builders Pvt Ltd</div>       <div><b>Latitude:</b> 28.1657989</div>       <div><b>Longitude:</b> 84.115339</div>     </div>     ");
+        
+        L.circleMarker([28.1951253, 83.9956481], {
+            radius: 9,
+            color: "#4575b4",
+            fillColor: "#4575b4",
+            fillOpacity: 0.9,
+            weight: 2
+        }).addTo(map)
+          .bindTooltip("P007", {permanent: true, direction: "top", offset: [0,-8]})
+          .bindPopup("     <div style='font-family:Arial,sans-serif; min-width:240px'>       <h3 style='margin:0 0 8px 0'>P007 \u2014 15_narayani_parajuli</h3>       <div><b>Status:</b> Approval</div>       <div><b>Contractor:</b> Fishtail Builders Pvt Ltd</div>       <div><b>Latitude:</b> 28.1951253</div>       <div><b>Longitude:</b> 83.9956481</div>     </div>     ");
+        
+  bounds.push([28.200667, 84.018222]);bounds.push([28.196778, 83.970778]);bounds.push([28.226111, 84.051389]);bounds.push([28.2555, 83.97975]);bounds.push([28.160278, 84.0825]);bounds.push([28.1657989, 84.115339]);bounds.push([28.1951253, 83.9956481]);
+  map.fitBounds(bounds, {padding:[45,45]});
+  L.control.scale({imperial:false}).addTo(map);
+</script>
+</body>
+</html>

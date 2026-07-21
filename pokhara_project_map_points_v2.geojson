@@ -1,0 +1,139 @@
+{
+  "type": "FeatureCollection",
+  "name": "pokhara_project_locations",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "P001",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          84.018222,
+          28.200667
+        ]
+      },
+      "properties": {
+        "PK_ID": "P001",
+        "project_name": "14_bishal_paija",
+        "contractor": "Rohini Engineering and Builders Pvt Ltd",
+        "status": "Construction",
+        "latitude": 28.200667,
+        "longitude": 84.018222
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "P002",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.970778,
+          28.196778
+        ]
+      },
+      "properties": {
+        "PK_ID": "P002",
+        "project_name": "17_samir_man_ghubaju",
+        "contractor": "Fishtail Builders Pvt Ltd",
+        "status": "Construction",
+        "latitude": 28.196778,
+        "longitude": 83.970778
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "P003",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          84.051389,
+          28.226111
+        ]
+      },
+      "properties": {
+        "PK_ID": "P003",
+        "project_name": "13_hari_baral",
+        "contractor": "Fishtail Builders Pvt Ltd",
+        "status": "Construction",
+        "latitude": 28.226111,
+        "longitude": 84.051389
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "P004",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.97975,
+          28.2555
+        ]
+      },
+      "properties": {
+        "PK_ID": "P004",
+        "project_name": "16_yamuna_pun_adai",
+        "contractor": "Fishtail Builders Pvt Ltd",
+        "status": "Completed",
+        "latitude": 28.2555,
+        "longitude": 83.97975
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "P005",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          84.0825,
+          28.160278
+        ]
+      },
+      "properties": {
+        "PK_ID": "P005",
+        "project_name": "30_sabitri_giri_dipti_giri",
+        "contractor": "Fishtail Builders Pvt Ltd",
+        "status": "Construction",
+        "latitude": 28.160278,
+        "longitude": 84.0825
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "P006",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          84.115339,
+          28.1657989
+        ]
+      },
+      "properties": {
+        "PK_ID": "P006",
+        "project_name": "31_sharada_adhikari",
+        "contractor": "Fishtail Builders Pvt Ltd",
+        "status": "Construction",
+        "latitude": 28.1657989,
+        "longitude": 84.115339
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "P007",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.9956481,
+          28.1951253
+        ]
+      },
+      "properties": {
+        "PK_ID": "P007",
+        "project_name": "15_narayani_parajuli",
+        "contractor": "Fishtail Builders Pvt Ltd",
+        "status": "Approval",
+        "latitude": 28.1951253,
+        "longitude": 83.9956481
+      }
+    }
+  ]
+}

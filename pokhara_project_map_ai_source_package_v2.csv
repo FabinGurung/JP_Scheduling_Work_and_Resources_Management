@@ -1,0 +1,181 @@
+﻿section,record_id,field_or_parameter,value,data_type,required_or_priority,allowed_values_or_rule,description_or_instruction
+PROJECT,P001,PK_ID,P001,str,Required,,Authoritative source value
+PROJECT,P001,project_name,14_bishal_paija,str,Required,,Authoritative source value
+PROJECT,P001,contractor,Rohini Engineering and Builders Pvt Ltd,str,Required,,Authoritative source value
+PROJECT,P001,latitude,28.200667,float,Required,,Authoritative source value
+PROJECT,P001,longitude,84.018222,float,Required,,Authoritative source value
+PROJECT,P001,status,Construction,str,Required,,Authoritative source value
+PROJECT,P002,PK_ID,P002,str,Required,,Authoritative source value
+PROJECT,P002,project_name,17_samir_man_ghubaju,str,Required,,Authoritative source value
+PROJECT,P002,contractor,Fishtail Builders Pvt Ltd,str,Required,,Authoritative source value
+PROJECT,P002,latitude,28.196778,float,Required,,Authoritative source value
+PROJECT,P002,longitude,83.970778,float,Required,,Authoritative source value
+PROJECT,P002,status,Construction,str,Required,,Authoritative source value
+PROJECT,P003,PK_ID,P003,str,Required,,Authoritative source value
+PROJECT,P003,project_name,13_hari_baral,str,Required,,Authoritative source value
+PROJECT,P003,contractor,Fishtail Builders Pvt Ltd,str,Required,,Authoritative source value
+PROJECT,P003,latitude,28.226111,float,Required,,Authoritative source value
+PROJECT,P003,longitude,84.051389,float,Required,,Authoritative source value
+PROJECT,P003,status,Construction,str,Required,,Authoritative source value
+PROJECT,P004,PK_ID,P004,str,Required,,Authoritative source value
+PROJECT,P004,project_name,16_yamuna_pun_adai,str,Required,,Authoritative source value
+PROJECT,P004,contractor,Fishtail Builders Pvt Ltd,str,Required,,Authoritative source value
+PROJECT,P004,latitude,28.2555,float,Required,,Authoritative source value
+PROJECT,P004,longitude,83.97975,float,Required,,Authoritative source value
+PROJECT,P004,status,Completed,str,Required,,Authoritative source value
+PROJECT,P005,PK_ID,P005,str,Required,,Authoritative source value
+PROJECT,P005,project_name,30_sabitri_giri_dipti_giri,str,Required,,Authoritative source value
+PROJECT,P005,contractor,Fishtail Builders Pvt Ltd,str,Required,,Authoritative source value
+PROJECT,P005,latitude,28.160278,float,Required,,Authoritative source value
+PROJECT,P005,longitude,84.0825,float,Required,,Authoritative source value
+PROJECT,P005,status,Construction,str,Required,,Authoritative source value
+PROJECT,P006,PK_ID,P006,str,Required,,Authoritative source value
+PROJECT,P006,project_name,31_sharada_adhikari,str,Required,,Authoritative source value
+PROJECT,P006,contractor,Fishtail Builders Pvt Ltd,str,Required,,Authoritative source value
+PROJECT,P006,latitude,28.1657989,float,Required,,Authoritative source value
+PROJECT,P006,longitude,84.115339,float,Required,,Authoritative source value
+PROJECT,P006,status,Construction,str,Required,,Authoritative source value
+PROJECT,P007,PK_ID,P007,str,Required,,Authoritative source value
+PROJECT,P007,project_name,15_narayani_parajuli,str,Required,,Authoritative source value
+PROJECT,P007,contractor,Fishtail Builders Pvt Ltd,str,Required,,Authoritative source value
+PROJECT,P007,latitude,28.1951253,float,Required,,Authoritative source value
+PROJECT,P007,longitude,83.9956481,float,Required,,Authoritative source value
+PROJECT,P007,status,Approval,str,Required,,Authoritative source value
+STATUS_CONFIG,CON,Status_Code,CON,str,Required,,Status styling lookup
+STATUS_CONFIG,CON,Status_Name,Construction,str,Required,,Status styling lookup
+STATUS_CONFIG,CON,Marker_Color_Hex,#D73027,str,Required,,Status styling lookup
+STATUS_CONFIG,CON,Line_Color_Hex,#D73027,str,Required,,Status styling lookup
+STATUS_CONFIG,CON,Marker_Radius_px,9,int,Required,,Status styling lookup
+STATUS_CONFIG,CON,Fill_Opacity,0.9,float,Required,,Status styling lookup
+STATUS_CONFIG,CON,Legend_Order,1,int,Required,,Status styling lookup
+STATUS_CONFIG,CON,Description,Active construction project,str,Required,,Status styling lookup
+STATUS_CONFIG,COM,Status_Code,COM,str,Required,,Status styling lookup
+STATUS_CONFIG,COM,Status_Name,Completed,str,Required,,Status styling lookup
+STATUS_CONFIG,COM,Marker_Color_Hex,#1A9850,str,Required,,Status styling lookup
+STATUS_CONFIG,COM,Line_Color_Hex,#1A9850,str,Required,,Status styling lookup
+STATUS_CONFIG,COM,Marker_Radius_px,9,int,Required,,Status styling lookup
+STATUS_CONFIG,COM,Fill_Opacity,0.9,float,Required,,Status styling lookup
+STATUS_CONFIG,COM,Legend_Order,2,int,Required,,Status styling lookup
+STATUS_CONFIG,COM,Description,Completed project,str,Required,,Status styling lookup
+STATUS_CONFIG,APR,Status_Code,APR,str,Required,,Status styling lookup
+STATUS_CONFIG,APR,Status_Name,Approval,str,Required,,Status styling lookup
+STATUS_CONFIG,APR,Marker_Color_Hex,#4575B4,str,Required,,Status styling lookup
+STATUS_CONFIG,APR,Line_Color_Hex,#4575B4,str,Required,,Status styling lookup
+STATUS_CONFIG,APR,Marker_Radius_px,9,int,Required,,Status styling lookup
+STATUS_CONFIG,APR,Fill_Opacity,0.9,float,Required,,Status styling lookup
+STATUS_CONFIG,APR,Legend_Order,3,int,Required,,Status styling lookup
+STATUS_CONFIG,APR,Description,Project under approval,str,Required,,Status styling lookup
+FIELD_DICTIONARY,PK_ID,definition,Project identifier,Text,Yes,Unique; recommended format P001,Example: P001. Permanent primary key used for labels and joins
+FIELD_DICTIONARY,project_name,definition,Project name / workbook code,Text,Yes,Lowercase/underscore naming recommended,Example: 14_bishal_paija. Display and internal project reference
+FIELD_DICTIONARY,contractor,definition,Contractor or builder,Text,Yes,Full legal or commonly used name,Example: Fishtail Builders Pvt Ltd. Shown in marker popup
+FIELD_DICTIONARY,latitude,definition,Latitude in decimal degrees,Decimal,Yes,-90 to 90; WGS84 / EPSG:4326,Example: 28.200667. North/south coordinate; Leaflet uses latitude first
+FIELD_DICTIONARY,longitude,definition,Longitude in decimal degrees,Decimal,Yes,-180 to 180; WGS84 / EPSG:4326,Example: 84.018222. East/west coordinate; Leaflet uses longitude second
+FIELD_DICTIONARY,status,definition,Current project status,Controlled text,Yes,Must match Status_Config.Status_Name,Example: Construction. Controls marker colour and legend
+FIELD_DICTIONARY,valid_latitude,definition,Latitude validation result,Formula,Derived,TRUE when numeric and between -90 and 90,Example: TRUE. Quality check
+FIELD_DICTIONARY,valid_longitude,definition,Longitude validation result,Formula,Derived,TRUE when numeric and between -180 and 180,Example: TRUE. Quality check
+FIELD_DICTIONARY,valid_status,definition,Status validation result,Formula,Derived,TRUE when status exists in Status_Config,Example: TRUE. Quality check
+FIELD_DICTIONARY,coordinate_key,definition,Reusable coordinate string,Formula,Derived,"latitude,longitude","Example: 28.2006670,84.0182220. Useful for auditing"
+FIELD_DICTIONARY,marker_color,definition,Marker colour from status,Formula,Derived,Hex value from Status_Config,Example: #D73027. Used by Leaflet circleMarker
+FIELD_DICTIONARY,tooltip_text,definition,Permanent label,Formula,Derived,Normally PK_ID,Example: P001. Shown above marker
+FIELD_DICTIONARY,popup_html,definition,Popup HTML,Formula,Derived,HTML string assembled from source fields,Example: <div>...</div>. Shown on marker click
+MAP_CONFIG,map_title,map_title,"Project Locations in Pokhara, Nepal",Text,Required,,Visible title
+MAP_CONFIG,map_library,map_library,Leaflet,Text,Required,,JavaScript map library
+MAP_CONFIG,map_library_version,map_library_version,1.9.4,Text,Required,,Pinned version
+MAP_CONFIG,stylesheet_url,stylesheet_url,https://unpkg.com/leaflet@1.9.4/dist/leaflet.css,URL,Required,,Leaflet CSS
+MAP_CONFIG,script_url,script_url,https://unpkg.com/leaflet@1.9.4/dist/leaflet.js,URL,Required,,Leaflet JavaScript
+MAP_CONFIG,tile_provider,tile_provider,OpenStreetMap Standard,Text,Required,,Basemap
+MAP_CONFIG,tile_url,tile_url,https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png,URL template,Required,,Tile endpoint
+MAP_CONFIG,tile_attribution,tile_attribution,© OpenStreetMap contributors,Text,Required,,Required attribution
+MAP_CONFIG,coordinate_reference_system,coordinate_reference_system,WGS84 / EPSG:4326,Text,Required,,Input coordinate system
+MAP_CONFIG,html_marker_coordinate_order,html_marker_coordinate_order,"latitude, longitude",Text,Required,,Leaflet marker order
+MAP_CONFIG,geojson_coordinate_order,geojson_coordinate_order,"longitude, latitude",Text,Required,,GeoJSON standard order
+MAP_CONFIG,initial_view_method,initial_view_method,fitBounds(all valid coordinates),Text,Required,,Automatically frame every project
+MAP_CONFIG,fallback_center_method,fallback_center_method,mean latitude and mean longitude,Text,Required,,Fallback only
+MAP_CONFIG,fallback_zoom,fallback_zoom,12,Integer,Required,,Fallback zoom
+MAP_CONFIG,maximum_zoom,maximum_zoom,19,Integer,Required,,Maximum zoom
+MAP_CONFIG,fit_bounds_padding_px,fit_bounds_padding_px,45,Integer,Required,,Outer map padding
+MAP_CONFIG,marker_type,marker_type,circleMarker,Text,Required,,Stable marker size
+MAP_CONFIG,marker_radius_px,marker_radius_px,9,Integer,Required,,Default radius
+MAP_CONFIG,marker_border_weight_px,marker_border_weight_px,2,Integer,Required,,Border thickness
+MAP_CONFIG,marker_fill_opacity,marker_fill_opacity,0.9,Decimal,Required,,Fill opacity
+MAP_CONFIG,permanent_tooltip,permanent_tooltip,True,Boolean,Required,,Always show PK_ID
+MAP_CONFIG,tooltip_direction,tooltip_direction,top,Text,Required,,Tooltip placement
+MAP_CONFIG,tooltip_vertical_offset_px,tooltip_vertical_offset_px,-8,Integer,Required,,Tooltip offset
+MAP_CONFIG,popup_min_width_px,popup_min_width_px,240,Integer,Required,,Popup width
+MAP_CONFIG,show_metric_scale,show_metric_scale,True,Boolean,Required,,Show metric scale
+MAP_CONFIG,show_imperial_scale,show_imperial_scale,False,Boolean,Required,,Hide imperial scale
+MAP_CONFIG,legend_position,legend_position,bottomright,Text,Required,,Legend location
+MAP_CONFIG,title_position,title_position,top-center overlay,Text,Required,,Title location
+MAP_CONFIG,map_height_css,map_height_css,100vh,CSS,Required,,Full viewport height
+MAP_CONFIG,map_width_css,map_width_css,100%,CSS,Required,,Full viewport width
+MAP_CONFIG,responsive_mobile,responsive_mobile,True,Boolean,Required,,Responsive layout
+MAP_CONFIG,requires_internet_for_tiles,requires_internet_for_tiles,True,Boolean,Required,,CDN and OSM tiles need internet
+POPUP_FIELD,1,PK_ID,Project ID,Display field,Required,Heading,Use with project_name
+POPUP_FIELD,2,project_name,Project Name,Display field,Required,Heading,Display beside PK_ID
+POPUP_FIELD,3,status,Status,Display field,Required,Label/value,Current status
+POPUP_FIELD,4,contractor,Contractor,Display field,Required,Label/value,Contractor name
+POPUP_FIELD,5,latitude,Latitude,Display field,Required,7 decimal places,Show exact source value
+POPUP_FIELD,6,longitude,Longitude,Display field,Required,7 decimal places,Show exact source value
+OUTPUT_SPEC,.html,Interactive HTML,Browser map with exact coordinate plot; internet needed for live tiles,File output,Required,.html,Deliverable specification
+OUTPUT_SPEC,.xlsx,Excel source package,"Primary editable source with definitions, validation, configuration, and instructions",File output,Required,.xlsx,Deliverable specification
+OUTPUT_SPEC,.csv,Flat AI package,Single long-form file for AI tools that cannot read workbook sheets,File output,Required,.csv,Deliverable specification
+OUTPUT_SPEC,.geojson,GeoJSON,"GIS point layer; geometry order longitude, latitude",File output,Recommended,.geojson,Deliverable specification
+OUTPUT_SPEC,.png,Static image,Screenshot after HTML map renders,File output,Optional,.png,Deliverable specification
+OUTPUT_SPEC,.pdf,Print document,"Landscape export containing map, title, and legend",File output,Optional,.pdf,Deliverable specification
+QA_CHECK,QA001,PK_ID not blank,Projects_Master.PK_ID,Validation,Required,Fail if blank,Run before delivery
+QA_CHECK,QA002,PK_ID unique,Projects_Master.PK_ID,Validation,Required,Fail if duplicate,Run before delivery
+QA_CHECK,QA003,Latitude numeric,Projects_Master.latitude,Validation,Required,Fail if non-numeric,Run before delivery
+QA_CHECK,QA004,Latitude between -90 and 90,Projects_Master.latitude,Validation,Required,Fail outside range,Run before delivery
+QA_CHECK,QA005,Longitude numeric,Projects_Master.longitude,Validation,Required,Fail if non-numeric,Run before delivery
+QA_CHECK,QA006,Longitude between -180 and 180,Projects_Master.longitude,Validation,Required,Fail outside range,Run before delivery
+QA_CHECK,QA007,Status exists in Status_Config,Projects_Master.status,Validation,Required,Fail if no match,Run before delivery
+QA_CHECK,QA008,"Leaflet uses latitude,longitude",HTML JavaScript,Validation,Required,Do not swap,Run before delivery
+QA_CHECK,QA009,"GeoJSON uses longitude,latitude",GeoJSON coordinates,Validation,Required,Do not swap,Run before delivery
+QA_CHECK,QA010,fitBounds after markers,HTML JavaScript,Validation,Required,All valid sites visible,Run before delivery
+QA_CHECK,QA011,Preserve coordinate precision,All outputs,Validation,Required,Do not round before plotting,Run before delivery
+QA_CHECK,QA012,Exact coordinates in popup,HTML popup,Validation,Recommended,Allows manual audit,Run before delivery
+QA_CHECK,QA013,OpenStreetMap attribution present,HTML map,Validation,Required,Licensing,Run before delivery
+QA_CHECK,QA014,Ignore blank template rows,Marker generation,Validation,Required,No empty markers,Run before delivery
+AI_BUILD_STEP,1,instruction,Read README first.,Procedure,Required,Understand source-of-truth and coordinate-order rules.,Execute in sequence
+AI_BUILD_STEP,2,instruction,Use Projects_Master only for project data.,Procedure,Required,Do not invent or geocode locations.,Execute in sequence
+AI_BUILD_STEP,3,instruction,Validate every populated row.,Procedure,Required,Reject and report invalid rows.,Execute in sequence
+AI_BUILD_STEP,4,instruction,Join status to Status_Config.,Procedure,Required,Apply configured marker style.,Execute in sequence
+AI_BUILD_STEP,5,instruction,Create Leaflet 1.9.4 map from Map_Config.,Procedure,Required,Use specified OSM tiles and attribution.,Execute in sequence
+AI_BUILD_STEP,6,instruction,"Add one L.circleMarker per valid row using [latitude, longitude].",Procedure,Required,Do not reverse Leaflet order.,Execute in sequence
+AI_BUILD_STEP,7,instruction,Bind permanent PK_ID tooltip.,Procedure,Required,Place above marker.,Execute in sequence
+AI_BUILD_STEP,8,instruction,Build popup in Popup_Fields order.,Procedure,Required,Include exact coordinates.,Execute in sequence
+AI_BUILD_STEP,9,instruction,Collect coordinates and call fitBounds.,Procedure,Required,Use configured padding.,Execute in sequence
+AI_BUILD_STEP,10,instruction,"Add title, legend, project count, and metric scale.",Procedure,Required,Use workbook configuration.,Execute in sequence
+AI_BUILD_STEP,11,instruction,Export HTML and GeoJSON.,Procedure,Required,"GeoJSON uses [longitude, latitude].",Execute in sequence
+AI_BUILD_STEP,12,instruction,Run QA_Checks.,Procedure,Required,Report accepted/rejected counts.,Execute in sequence
+READY_AI_PROMPT,PROMPT001,copy_paste_prompt,"Create an exact interactive project-location map from the attached workbook.
+
+SOURCE OF TRUTH
+- Read `Projects_Master` for project records.
+- Read `Field_Dictionary` for meanings and validation.
+- Read `Status_Config` for marker styling.
+- Read `Map_Config` for the exact mapping stack and interface settings.
+- Read `Popup_Fields` for popup order.
+- Read `Output_Spec` for deliverables.
+- Read `QA_Checks` and run all required checks.
+- Follow `AI_Build_Steps` in sequence.
+
+NON-NEGOTIABLE GEOSPATIAL RULES
+1. Never geocode, estimate, relocate, or visually approximate a point.
+2. Preserve the complete source precision of latitude and longitude.
+3. Leaflet markers use [latitude, longitude].
+4. GeoJSON coordinates use [longitude, latitude].
+5. Add all valid markers, collect bounds, and call fitBounds using the configured padding.
+6. Ignore blank template rows and report invalid populated rows.
+7. Marker style comes only from `Status_Config`.
+
+EXPECTED HTML
+- Leaflet 1.9.4 with OpenStreetMap Standard tiles and attribution.
+- Exact circle markers.
+- Permanent PK_ID labels above markers.
+- Popup with Project ID, Project Name, Status, Contractor, Latitude, and Longitude.
+- Status legend, total project count, metric scale, responsive title, and full-screen mobile-compatible layout.
+- No AI-generated illustrated map background.
+
+Deliver the interactive HTML and GeoJSON, and state accepted and rejected record counts.
+",Multiline text,Required,,Use with the workbook or CSV attached
