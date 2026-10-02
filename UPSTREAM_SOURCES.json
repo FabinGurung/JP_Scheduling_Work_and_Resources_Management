@@ -1,0 +1,87 @@
+{
+  "version": "0.2",
+  "policy": "Use upstreams as libraries, adapters, interoperability references, or behavioral references according to license. Do not copy proprietary Primavera P6 or Microsoft Project code.",
+  "sources": [
+    {
+      "id": "IFCOPENSHELL_IFC4D",
+      "name": "IfcOpenShell / Ifc4D",
+      "source": "https://github.com/IfcOpenShell/IfcOpenShell",
+      "docs": "https://docs.ifcopenshell.org/",
+      "license": "LGPL-3.0-or-later for applicable library components; repository also contains GPL components",
+      "integration_mode": "library_and_adapter",
+      "capabilities": [
+        "IFC tasks/schedules/resources/costs",
+        "Oracle P6 XER/XML <-> IFC",
+        "MS Project XML <-> IFC",
+        "4D/BIM interoperability"
+      ]
+    },
+    {
+      "id": "OPENPROJECT",
+      "name": "OpenProject",
+      "source": "https://github.com/opf/openproject",
+      "docs": "https://www.openproject.org/docs/",
+      "license": "GPL-3.0",
+      "integration_mode": "api_and_behavior_reference",
+      "capabilities": [
+        "work packages",
+        "WBS-like hierarchy",
+        "Gantt",
+        "dependencies",
+        "baselines",
+        "collaboration",
+        "REST API"
+      ]
+    },
+    {
+      "id": "PROJECTLIBRE_DESKTOP",
+      "name": "ProjectLibre Desktop",
+      "source": "https://sourceforge.net/projects/projectlibre/",
+      "docs": "https://projectlibre.com/",
+      "license": "CPAL-covered code where applicable",
+      "integration_mode": "interoperability_and_behavior_reference",
+      "capabilities": [
+        "MS Project replacement semantics",
+        "CPM",
+        "float",
+        "resources",
+        "baselines",
+        "earned value",
+        "Microsoft Project / Primavera migration concepts"
+      ]
+    },
+    {
+      "id": "TASKJUGGLER",
+      "name": "TaskJuggler",
+      "source": "https://github.com/taskjuggler/TaskJuggler",
+      "docs": "https://taskjuggler.org/",
+      "license": "GPL-2.0-only",
+      "integration_mode": "scheduler_behavior_reference_and_optional_external_runner",
+      "capabilities": [
+        "optimizing scheduler",
+        "resource leveling",
+        "scenarios/baselines",
+        "costs",
+        "risk/status reporting",
+        "MS Project export"
+      ]
+    },
+    {
+      "id": "GANTTPROJECT",
+      "name": "GanttProject",
+      "source": "https://github.com/bardsoftware/ganttproject",
+      "docs": "https://www.ganttproject.biz/",
+      "license": "GPL-3.0",
+      "integration_mode": "interop_and_ui_behavior_reference",
+      "capabilities": [
+        "task hierarchy",
+        "dependencies",
+        "milestones",
+        "baselines",
+        "resource load",
+        "costs",
+        "MS Project MPX/MPP/MSPDI interoperability"
+      ]
+    }
+  ]
+}
