@@ -1,0 +1,587 @@
+{
+  "meta": {
+    "version": "0.2-p6-style-demo",
+    "authority": "SYNTHETIC_DEMO_ONLY",
+    "note": "No schedule/cost/resource value in this file is project truth."
+  },
+  "project": {
+    "project_id": "DEMO-PROJECT-001",
+    "name": "Building Construction Demo",
+    "data_date": "2026-10-02",
+    "timeline_start": "2026-09-28",
+    "timeline_end": "2026-11-15",
+    "planned_finish": "2026-11-08",
+    "forecast_finish": "2026-11-12",
+    "finish_variance_days": 4,
+    "baseline_id": "BL1"
+  },
+  "default_activity_id": "A090",
+  "activities": [
+    {
+      "activity_id": "A010",
+      "name": "Mobilization & temporary setup",
+      "wbs_id": "WBS-01",
+      "level": 1,
+      "type": "Task Dependent",
+      "calendar": "6D-8H",
+      "responsible": "Site Team",
+      "original_duration": 4,
+      "start": "2026-09-28",
+      "finish": "2026-10-01",
+      "baseline_start": "2026-09-28",
+      "baseline_finish": "2026-10-01",
+      "total_float": 0,
+      "percent_complete": 100,
+      "status": "Completed",
+      "actual_start": "2026-09-28",
+      "actual_finish": "2026-10-01",
+      "remaining_duration": 0,
+      "start_variance": 0,
+      "finish_variance": 0,
+      "performance_percent": 100,
+      "bac": 180000,
+      "pv": 180000,
+      "ev": 180000,
+      "ac": 175000,
+      "work_id": null,
+      "milestone": false,
+      "constraint": null,
+      "codes": {
+        "Phase": "Preconstruction",
+        "Discipline": "General",
+        "Area": "Sitewide"
+      },
+      "documents": [
+        {
+          "type": "Plan",
+          "name": "Mobilization plan",
+          "state": "DEMO"
+        }
+      ]
+    },
+    {
+      "activity_id": "A020",
+      "name": "Setting out",
+      "wbs_id": "WBS-02",
+      "level": 1,
+      "type": "Task Dependent",
+      "calendar": "6D-8H",
+      "responsible": "Survey Team",
+      "original_duration": 2,
+      "start": "2026-10-02",
+      "finish": "2026-10-03",
+      "baseline_start": "2026-10-02",
+      "baseline_finish": "2026-10-03",
+      "total_float": 0,
+      "percent_complete": 50,
+      "status": "In Progress",
+      "actual_start": "2026-10-02",
+      "actual_finish": null,
+      "remaining_duration": 1,
+      "start_variance": 0,
+      "finish_variance": 0,
+      "performance_percent": 50,
+      "bac": 60000,
+      "pv": 60000,
+      "ev": 30000,
+      "ac": 28000,
+      "work_id": null,
+      "milestone": false,
+      "constraint": null,
+      "codes": {
+        "Phase": "Substructure",
+        "Discipline": "Survey",
+        "Area": "Building"
+      },
+      "documents": [
+        {
+          "type": "Drawing",
+          "name": "Setting-out reference",
+          "state": "DEMO"
+        }
+      ]
+    },
+    {
+      "activity_id": "A030",
+      "name": "Excavation for foundations",
+      "wbs_id": "WBS-02",
+      "level": 1,
+      "type": "Task Dependent",
+      "calendar": "6D-8H",
+      "responsible": "Civil Crew",
+      "original_duration": 5,
+      "start": "2026-10-04",
+      "finish": "2026-10-08",
+      "baseline_start": "2026-10-04",
+      "baseline_finish": "2026-10-07",
+      "total_float": -1,
+      "percent_complete": 0,
+      "status": "Not Started",
+      "actual_start": null,
+      "actual_finish": null,
+      "remaining_duration": 5,
+      "start_variance": 0,
+      "finish_variance": 1,
+      "performance_percent": 0,
+      "bac": 250000,
+      "pv": 160000,
+      "ev": 0,
+      "ac": 0,
+      "work_id": null,
+      "milestone": false,
+      "constraint": null,
+      "codes": {
+        "Phase": "Substructure",
+        "Discipline": "Civil",
+        "Area": "Foundations"
+      },
+      "documents": [
+        {
+          "type": "Method",
+          "name": "Excavation method placeholder",
+          "state": "DEMO"
+        }
+      ]
+    },
+    {
+      "activity_id": "A040",
+      "name": "PCC below footings",
+      "wbs_id": "WBS-02",
+      "level": 1,
+      "type": "Task Dependent",
+      "calendar": "6D-8H",
+      "responsible": "Concrete Crew",
+      "original_duration": 2,
+      "start": "2026-10-09",
+      "finish": "2026-10-10",
+      "baseline_start": "2026-10-08",
+      "baseline_finish": "2026-10-09",
+      "total_float": -1,
+      "percent_complete": 0,
+      "status": "Not Started",
+      "actual_start": null,
+      "actual_finish": null,
+      "remaining_duration": 2,
+      "start_variance": 1,
+      "finish_variance": 1,
+      "performance_percent": 0,
+      "bac": 140000,
+      "pv": 70000,
+      "ev": 0,
+      "ac": 0,
+      "work_id": null,
+      "milestone": false,
+      "constraint": null,
+      "codes": {
+        "Phase": "Substructure",
+        "Discipline": "Concrete",
+        "Area": "Foundations"
+      },
+      "documents": [
+        {
+          "type": "ITP",
+          "name": "PCC inspection placeholder",
+          "state": "DEMO"
+        }
+      ]
+    },
+    {
+      "activity_id": "A050",
+      "name": "Footing rebar & formwork",
+      "wbs_id": "WBS-02",
+      "level": 1,
+      "type": "Task Dependent",
+      "calendar": "6D-8H",
+      "responsible": "Structural Crew",
+      "original_duration": 5,
+      "start": "2026-10-11",
+      "finish": "2026-10-15",
+      "baseline_start": "2026-10-10",
+      "baseline_finish": "2026-10-14",
+      "total_float": 0,
+      "percent_complete": 0,
+      "status": "Not Started",
+      "actual_start": null,
+      "actual_finish": null,
+      "remaining_duration": 5,
+      "start_variance": 1,
+      "finish_variance": 1,
+      "performance_percent": 0,
+      "bac": 520000,
+      "pv": 0,
+      "ev": 0,
+      "ac": 0,
+      "work_id": null,
+      "milestone": false,
+      "constraint": null,
+      "codes": {
+        "Phase": "Substructure",
+        "Discipline": "Structural",
+        "Area": "Foundations"
+      },
+      "documents": [
+        {
+          "type": "Drawing",
+          "name": "Footing reinforcement drawings",
+          "state": "DEMO"
+        }
+      ]
+    },
+    {
+      "activity_id": "A060",
+      "name": "RCC footings",
+      "wbs_id": "WBS-02",
+      "level": 1,
+      "type": "Task Dependent",
+      "calendar": "6D-8H",
+      "responsible": "Concrete Crew",
+      "original_duration": 3,
+      "start": "2026-10-16",
+      "finish": "2026-10-18",
+      "baseline_start": "2026-10-15",
+      "baseline_finish": "2026-10-17",
+      "total_float": 0,
+      "percent_complete": 0,
+      "status": "Not Started",
+      "actual_start": null,
+      "actual_finish": null,
+      "remaining_duration": 3,
+      "start_variance": 1,
+      "finish_variance": 1,
+      "performance_percent": 0,
+      "bac": 460000,
+      "pv": 0,
+      "ev": 0,
+      "ac": 0,
+      "work_id": null,
+      "milestone": false,
+      "constraint": null,
+      "codes": {
+        "Phase": "Substructure",
+        "Discipline": "Structural",
+        "Area": "Foundations"
+      },
+      "documents": [
+        {
+          "type": "ITP",
+          "name": "Pre-pour inspection",
+          "state": "DEMO"
+        }
+      ]
+    },
+    {
+      "activity_id": "A070",
+      "name": "Ground floor columns to plinth",
+      "wbs_id": "WBS-03",
+      "level": 1,
+      "type": "Task Dependent",
+      "calendar": "6D-8H",
+      "responsible": "Structural Crew",
+      "original_duration": 6,
+      "start": "2026-10-19",
+      "finish": "2026-10-24",
+      "baseline_start": "2026-10-18",
+      "baseline_finish": "2026-10-23",
+      "total_float": 2,
+      "percent_complete": 0,
+      "status": "Not Started",
+      "actual_start": null,
+      "actual_finish": null,
+      "remaining_duration": 6,
+      "start_variance": 1,
+      "finish_variance": 1,
+      "performance_percent": 0,
+      "bac": 680000,
+      "pv": 0,
+      "ev": 0,
+      "ac": 0,
+      "work_id": null,
+      "milestone": false,
+      "constraint": null,
+      "codes": {
+        "Phase": "Superstructure",
+        "Discipline": "Structural",
+        "Area": "Ground Floor"
+      },
+      "documents": [
+        {
+          "type": "Drawing",
+          "name": "Column schedule",
+          "state": "DEMO"
+        }
+      ]
+    },
+    {
+      "activity_id": "A080",
+      "name": "Masonry walls — wet areas",
+      "wbs_id": "WBS-04",
+      "level": 1,
+      "type": "Task Dependent",
+      "calendar": "6D-8H",
+      "responsible": "Masonry Crew",
+      "original_duration": 5,
+      "start": "2026-10-25",
+      "finish": "2026-10-29",
+      "baseline_start": "2026-10-24",
+      "baseline_finish": "2026-10-28",
+      "total_float": 3,
+      "percent_complete": 0,
+      "status": "Not Started",
+      "actual_start": null,
+      "actual_finish": null,
+      "remaining_duration": 5,
+      "start_variance": 1,
+      "finish_variance": 1,
+      "performance_percent": 0,
+      "bac": 310000,
+      "pv": 0,
+      "ev": 0,
+      "ac": 0,
+      "work_id": null,
+      "milestone": false,
+      "constraint": null,
+      "codes": {
+        "Phase": "Finishes",
+        "Discipline": "Masonry",
+        "Area": "Wet Areas"
+      },
+      "documents": [
+        {
+          "type": "Drawing",
+          "name": "Wet-area layouts",
+          "state": "DEMO"
+        }
+      ]
+    },
+    {
+      "activity_id": "A090",
+      "name": "Cementitious waterproofing — wet areas",
+      "wbs_id": "WBS-05",
+      "level": 1,
+      "type": "Task Dependent",
+      "calendar": "6D-8H",
+      "responsible": "Waterproofing Crew",
+      "original_duration": 4,
+      "start": "2026-10-30",
+      "finish": "2026-11-02",
+      "baseline_start": "2026-10-29",
+      "baseline_finish": "2026-11-01",
+      "total_float": 1,
+      "percent_complete": 0,
+      "status": "Not Started",
+      "actual_start": null,
+      "actual_finish": null,
+      "remaining_duration": 4,
+      "start_variance": 1,
+      "finish_variance": 1,
+      "performance_percent": 0,
+      "bac": 220000,
+      "pv": 0,
+      "ev": 0,
+      "ac": 0,
+      "work_id": "WRK-000023",
+      "milestone": false,
+      "constraint": "Finish On or Before (demo)",
+      "codes": {
+        "Phase": "Finishes",
+        "Discipline": "Waterproofing",
+        "Area": "Wet Areas"
+      },
+      "documents": [
+        {
+          "type": "Knowledge",
+          "name": "WRK-000023 linked ARC/WMS/ITP",
+          "state": "MAPPED"
+        },
+        {
+          "type": "QA",
+          "name": "CK-BLD-WP-001",
+          "state": "REFERENCE"
+        }
+      ]
+    },
+    {
+      "activity_id": "A100",
+      "name": "Waterproofing inspection / hold point",
+      "wbs_id": "WBS-05",
+      "level": 1,
+      "type": "Finish Milestone",
+      "calendar": "6D-8H",
+      "responsible": "QA/QC",
+      "original_duration": 0,
+      "start": "2026-11-03",
+      "finish": "2026-11-03",
+      "baseline_start": "2026-11-02",
+      "baseline_finish": "2026-11-02",
+      "total_float": 1,
+      "percent_complete": 0,
+      "status": "Not Started",
+      "actual_start": null,
+      "actual_finish": null,
+      "remaining_duration": 0,
+      "start_variance": 1,
+      "finish_variance": 1,
+      "performance_percent": 0,
+      "bac": 0,
+      "pv": 0,
+      "ev": 0,
+      "ac": 0,
+      "work_id": "WRK-000023",
+      "milestone": true,
+      "constraint": null,
+      "codes": {
+        "Phase": "Finishes",
+        "Discipline": "QA/QC",
+        "Area": "Wet Areas"
+      },
+      "documents": [
+        {
+          "type": "Checklist",
+          "name": "Execution ID created only when inspection actually occurs",
+          "state": "GUARDRAIL"
+        }
+      ]
+    },
+    {
+      "activity_id": "A110",
+      "name": "Protection screed / subsequent finish",
+      "wbs_id": "WBS-05",
+      "level": 1,
+      "type": "Task Dependent",
+      "calendar": "6D-8H",
+      "responsible": "Finishes Crew",
+      "original_duration": 5,
+      "start": "2026-11-04",
+      "finish": "2026-11-08",
+      "baseline_start": "2026-11-03",
+      "baseline_finish": "2026-11-07",
+      "total_float": 4,
+      "percent_complete": 0,
+      "status": "Not Started",
+      "actual_start": null,
+      "actual_finish": null,
+      "remaining_duration": 5,
+      "start_variance": 1,
+      "finish_variance": 1,
+      "performance_percent": 0,
+      "bac": 260000,
+      "pv": 0,
+      "ev": 0,
+      "ac": 0,
+      "work_id": null,
+      "milestone": false,
+      "constraint": null,
+      "codes": {
+        "Phase": "Finishes",
+        "Discipline": "Finishes",
+        "Area": "Wet Areas"
+      },
+      "documents": [
+        {
+          "type": "Method",
+          "name": "Protection layer method placeholder",
+          "state": "DEMO"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "predecessor": "A010",
+      "successor": "A020",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "A020",
+      "successor": "A030",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "A030",
+      "successor": "A040",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "A040",
+      "successor": "A050",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "A050",
+      "successor": "A060",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "A060",
+      "successor": "A070",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "A070",
+      "successor": "A080",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "A080",
+      "successor": "A090",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "A090",
+      "successor": "A100",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "A100",
+      "successor": "A110",
+      "type": "FS",
+      "lag": 0
+    }
+  ],
+  "resource_assignments": [
+    {
+      "activity_id": "A030",
+      "resource_id": "RES-CIV-01",
+      "resource_name": "Civil crew",
+      "units": "1 crew",
+      "role": "Labor"
+    },
+    {
+      "activity_id": "A050",
+      "resource_id": "RES-STR-01",
+      "resource_name": "Steel / formwork crew",
+      "units": "1 crew",
+      "role": "Labor"
+    },
+    {
+      "activity_id": "A090",
+      "resource_id": "RES-WP-01",
+      "resource_name": "Waterproofing applicators",
+      "units": "1 crew",
+      "role": "Labor"
+    },
+    {
+      "activity_id": "A090",
+      "resource_id": "RES-EQ-01",
+      "resource_name": "Mixing / application equipment",
+      "units": "As required",
+      "role": "Equipment"
+    },
+    {
+      "activity_id": "A100",
+      "resource_id": "RES-QA-01",
+      "resource_name": "QA/QC inspector",
+      "units": "1 person",
+      "role": "Inspection"
+    }
+  ]
+}
