@@ -1,4 +1,4 @@
-name: Deploy Construction Knowledge branch preview
+name: Deploy Project Controls branch preview
 on:
   push:
     branches:
@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages-construction-knowledge-preview"
+  group: "pages-project-controls-preview"
   cancel-in-progress: true
 
 jobs:
@@ -19,17 +19,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate fail-closed demo data
+      - name: Validate project-controls and fail-closed knowledge data
         run: |
           python - <<'PY'
           import json, pathlib
-          d=json.loads(pathlib.Path("construction-knowledge.json").read_text())
-          w={x["key"]:x for x in d["works"]}
-          assert w["waterproofing"]["work_id"]=="WRK-000023"
-          assert w["soak-pit"]["work_id"] is None
-          assert w["soak-pit"]["identity_status"]=="IDENTITY_PENDING"
+          k=json.loads(pathlib.Path("construction-knowledge.json").read_text())
+          p=json.loads(pathlib.Path("project-controls-demo.json").read_text())
+          works={x["key"]:x for x in k["works"]}
+          acts={x["activity_id"]:x for x in p["activities"]}
+          assert works["waterproofing"]["work_id"]=="WRK-000023"
+          assert works["soak-pit"]["work_id"] is None
+          assert works["soak-pit"]["identity_status"]=="IDENTITY_PENDING"
+          assert acts["A090"]["work_id"]=="WRK-000023"
+          assert p["meta"]["authority"]=="SYNTHETIC_DEMO_ONLY"
           assert pathlib.Path("schemas/construction-work.schema.json").exists()
-          print("Validation PASS")
+          print("Project Controls validation PASS")
           PY
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
