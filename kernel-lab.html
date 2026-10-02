@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Project Controls Kernel — Engine Lab</title>
+<style>
+:root{--bg:#f3f5f8;--p:#fff;--ink:#182230;--line:#dce1e8;--muted:#667085;--blue:#315fd4;--red:#c63f3f;--green:#138665}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,Arial;color:var(--ink)}header{background:#202733;color:#fff;padding:16px 20px}.wrap{max-width:1400px;margin:auto}h1{font-size:20px;margin:0 0 4px}.sub{font-size:11px;color:#c7cfda}main{padding:18px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px}.k{background:var(--p);border:1px solid var(--line);border-radius:8px;padding:12px}.k b{display:block;font-size:18px}.k span{font-size:10px;color:var(--muted)}
+.panel{background:var(--p);border:1px solid var(--line);border-radius:9px;margin-bottom:12px;overflow:auto}.ph{padding:10px 12px;font-size:12px;font-weight:800;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}
+table{border-collapse:collapse;width:100%;min-width:900px;font-size:11px}th,td{border-bottom:1px solid #edf0f4;padding:7px;text-align:right}th{background:#f7f8fa;position:sticky;top:0}th:nth-child(1),th:nth-child(2),td:nth-child(1),td:nth-child(2){text-align:left}.crit{color:var(--red);font-weight:800}.ok{color:var(--green)}pre{white-space:pre-wrap;background:#111827;color:#dbe4ef;padding:10px;border-radius:7px;max-height:300px;overflow:auto}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.box{padding:12px;font-size:11px;line-height:1.5}.btn{background:#315fd4;color:#fff;border-radius:6px;padding:7px 10px;text-decoration:none;font-size:11px}@media(max-width:850px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+</style></head>
+<body><header><div class="wrap"><h1>Project Controls Kernel — Engine Lab</h1><div class="sub">Native CPM + float + EV + resource checks, with five open-source adapter/reference lanes</div></div></header>
+<main class="wrap">
+<div class="kpis" id="kpis"></div>
+<div class="panel"><div class="ph"><span>Calculated CPM network</span><a class="btn" href="./index.html">Back to Project Controls UI</a></div><table><thead><tr><th>ID</th><th>Activity</th><th>Dur</th><th>ES</th><th>EF</th><th>LS</th><th>LF</th><th>TF</th><th>FF</th><th>Start</th><th>Finish</th></tr></thead><tbody id="rows"></tbody></table></div>
+<div class="grid"><div class="panel"><div class="ph">Earned value calculation</div><div class="box" id="ev"></div></div><div class="panel"><div class="ph">Resource over-allocation check</div><div class="box" id="res"></div></div></div>
+<div class="grid"><div class="panel"><div class="ph">Ifc4D neutral bridge</div><div class="box"><pre id="ifc"></pre></div></div><div class="panel"><div class="ph">TaskJuggler export preview</div><div class="box"><pre id="tj"></pre></div></div></div>
+<div class="panel"><div class="ph">Upstream capability sources</div><div class="box" id="sources"></div></div>
+</main>
+<script type="module">
+import {scheduleNetwork} from "./src/kernel/cpm.mjs";
+import {buildWorkingCalendar,scheduleToDates} from "./src/kernel/calendar.mjs";
+import {earnedValueMetrics} from "./src/kernel/earned-value.mjs";
+import {findResourceOverloads} from "./src/kernel/resources.mjs";
+import {toIfc4dNeutral} from "./src/adapters/ifc4d.mjs";
+import {toTaskJuggler} from "./src/adapters/taskjuggler.mjs";
+const [demo,up]=await Promise.all([fetch("./examples/kernel-network.json").then(r=>r.json()),fetch("./UPSTREAM_SOURCES.json").then(r=>r.json())]);
+const sched=scheduleNetwork({activities:demo.activities,relationships:demo.relationships,requiredFinish:demo.project.required_finish_slot});
+const workDates=buildWorkingCalendar({start:demo.project.start,end:"2027-03-31",workingWeekdays:demo.calendar.working_weekdays,holidays:demo.calendar.holidays});
+const dated=scheduleToDates(sched,workDates), ev=earnedValueMetrics(demo.earned_value), over=findResourceOverloads({scheduledActivities:sched.activities,assignments:demo.assignments,capacities:demo.capacities});
+document.querySelector("#kpis").innerHTML=[["Activities",sched.activities.length],["Early finish",sched.project.early_finish+" slots"],["Required finish",sched.project.required_finish+" slots"],["Finish variance",sched.project.finish_variance+" slots"],["Critical / ≤0 TF",sched.activities.filter(a=>a.critical).length]].map(([l,v])=>`<div class="k"><b>${v}</b><span>${l}</span></div>`).join("");
+document.querySelector("#rows").innerHTML=dated.map(a=>`<tr><td>${a.id}</td><td>${a.name}</td><td>${a.duration}</td><td>${a.es}</td><td>${a.ef}</td><td>${a.ls}</td><td>${a.lf}</td><td class="${a.total_float<=0?"crit":"ok"}">${a.total_float}</td><td>${a.free_float}</td><td>${a.start_date??"—"}</td><td>${a.finish_date??"—"}</td></tr>`).join("");
+const f=n=>n==null?"—":Number(n).toFixed(2);
+document.querySelector("#ev").innerHTML=`BAC: <b>${ev.bac.toLocaleString()}</b><br>PV: ${ev.pv.toLocaleString()} · EV: ${ev.ev.toLocaleString()} · AC: ${ev.ac.toLocaleString()}<br>SPI: <b>${f(ev.spi)}</b> · CPI: <b>${f(ev.cpi)}</b><br>SV: ${ev.sv.toLocaleString()} · CV: ${ev.cv.toLocaleString()} · EAC: ${ev.eac?Math.round(ev.eac).toLocaleString():"—"}`;
+document.querySelector("#res").innerHTML=over.length?over.map(x=>`<div><b>${x.resource_id}</b> slot ${x.slot}: ${x.units}/${x.capacity} units — ${x.activities.join(", ")}</div>`).join(""):"No overloads in this example.";
+document.querySelector("#ifc").textContent=JSON.stringify(toIfc4dNeutral(sched),null,2); document.querySelector("#tj").textContent=toTaskJuggler(sched,demo.relationships).text;
+document.querySelector("#sources").innerHTML=up.sources.map(s=>`<div style="padding:7px 0;border-bottom:1px solid #edf0f4"><b>${s.name}</b> — ${s.integration_mode}<br><span style="color:#667085">${s.capabilities.join(" · ")}</span></div>`).join("");
+</script></body></html>
