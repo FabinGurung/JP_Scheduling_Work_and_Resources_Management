@@ -2,71 +2,133 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Construction Knowledge Kernel — Demo</title>
+<title>Construction Project Controls — P6-style Demo</title>
 <style>
-:root{--bg:#f4f6fa;--panel:#fff;--ink:#172033;--muted:#667085;--line:#dfe4ec;--blue:#3157d5;--green:#087a55;--amber:#a15c00;--red:#b42318;--nav:#101828}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial;background:var(--bg);color:var(--ink)}
-header{background:linear-gradient(120deg,#101828,#263b66);color:white}.bar{max-width:1500px;margin:auto;padding:18px 22px;display:flex;justify-content:space-between;gap:18px;align-items:center}
-h1{margin:0 0 4px;font-size:23px}.sub{font-size:12px;color:#d0d5dd}.pill{display:inline-block;border-radius:999px;padding:5px 9px;font-size:10px;font-weight:800;background:#eef2ff;color:#3448a8}
-.demo{background:#344054;color:#fff;border:1px solid #667085}
-.shell{max-width:1500px;margin:auto;display:grid;grid-template-columns:310px 1fr;min-height:calc(100vh - 78px)}
-aside{background:#fff;border-right:1px solid var(--line);padding:18px;overflow:auto}.eyebrow{font-size:10px;font-weight:900;letter-spacing:.1em;color:#667085;text-transform:uppercase}
-.search{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:10px;margin:9px 0 12px}
-.work{width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px;margin:7px 0;cursor:pointer}.work.active{background:#f1f4ff;border-color:#8da2fb}.work b{display:block;font-size:13px}.work small{color:var(--muted)}
-.state{display:inline-block;margin-top:6px;padding:4px 7px;border-radius:999px;font-size:9px;font-weight:900}.mapped{background:#ecfdf3;color:#067647}.pending{background:#fff7ed;color:#b54708}
-main{padding:20px;min-width:0}.hero,.card,.kpi{background:#fff;border:1px solid var(--line);border-radius:14px}.hero{padding:17px 18px;display:flex;justify-content:space-between;gap:12px}.hero h2{font-size:25px;margin:3px 0 5px}.meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
-.tabs{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}.tab{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 11px;font-size:12px;font-weight:800;cursor:pointer}.tab.active{background:#1d2939;color:white}
-.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.kpi{padding:12px}.kpi .n{font-size:19px;font-weight:900}.kpi .l{font-size:10px;color:var(--muted)}
-.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px}.card{padding:15px;margin-bottom:14px}.card h3{margin:0 0 11px;font-size:14px}.card p{font-size:12px;line-height:1.55;color:var(--muted)}
-.tree ul{list-style:none;margin:4px 0;padding-left:19px}.tree li{position:relative;padding:5px 0 5px 14px;font-size:12px}.tree li:before{content:"";position:absolute;left:0;top:13px;width:9px;border-top:1px solid #98a2b3}.tree li:after{content:"";position:absolute;left:0;top:-5px;height:20px;border-left:1px solid #d0d5dd}.tree>ul>li:after{display:none}
-.line{display:grid;grid-template-columns:145px 22px 1fr;gap:7px;padding:7px 0;border-bottom:1px solid #eef1f5;font-size:11px}.line:last-child{border:0}.arrow{text-align:center;color:#98a2b3}
-.row{display:grid;grid-template-columns:30px 1fr auto;gap:9px;align-items:start;padding:10px 0;border-top:1px solid #eef1f5}.row:first-child{border-top:0}.num{width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:#eef2f6;font-size:10px;font-weight:900}.row b{font-size:12px}.row p{margin:3px 0 0;font-size:11px}.gate{font-size:9px;font-weight:900;border-radius:6px;padding:4px 6px;background:#fff1f0;color:#b42318}
-.notice{padding:11px;border-radius:8px;border-left:4px solid #f79009;background:#fffaeb;font-size:11px;line-height:1.5}.good{border-left-color:#12b76a;background:#ecfdf3}.bad{border-left-color:#f04438;background:#fef3f2}
-.check{display:flex;gap:8px;padding:7px 0;border-bottom:1px dashed #e4e7ec;font-size:11px}.check b{font-size:11px}pre{white-space:pre-wrap;background:#101828;color:#e4e7ec;padding:12px;border-radius:9px;font-size:10px;overflow:auto}.hidden{display:none!important}
-.source{font-size:10px;color:#475467;border:1px solid #e4e7ec;border-radius:8px;padding:8px;margin:6px 0}.source b{display:block;color:#344054}
-footer{font-size:10px;color:#667085;padding:5px 0 25px}
-@media(max-width:950px){.shell{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.line{grid-template-columns:115px 18px 1fr}}
+:root{--bg:#eef1f5;--panel:#fff;--ink:#182230;--muted:#667085;--line:#d6dce5;--nav:#202733;--nav2:#2b3442;--blue:#3069d8;--blue2:#5c83e6;--green:#15936e;--red:#d04444;--amber:#d78b1f;--purple:#7157c7;--gray:#8b95a5;--sel:#eaf2ff}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--bg)}
+button,select,input{font:inherit}
+.top{background:var(--nav);color:#fff;border-bottom:1px solid #111827}
+.top1{height:48px;display:flex;align-items:center;gap:16px;padding:0 14px}.brand{font-weight:800;font-size:14px;letter-spacing:.01em}.sep{height:22px;border-left:1px solid #4b5565}.project-name{font-size:13px;font-weight:700}.small{font-size:11px;color:#aeb7c4}
+.top2{height:42px;background:var(--nav2);display:flex;align-items:center;gap:7px;padding:0 12px;overflow:auto}.tool{border:1px solid #4a5565;background:#364152;color:#fff;border-radius:5px;padding:6px 9px;font-size:11px;white-space:nowrap}.tool.primary{background:#2f63c7;border-color:#4073d1}.tool.danger{color:#ffd4d4}.spacer{flex:1}
+.workspace{display:grid;grid-template-columns:195px 1fr;min-height:calc(100vh - 90px)}
+.sidebar{background:#f8fafc;border-right:1px solid var(--line);padding:10px 0}.side-title{padding:8px 13px;font-size:10px;font-weight:800;color:#667085;text-transform:uppercase;letter-spacing:.08em}.navitem{display:flex;align-items:center;gap:9px;padding:9px 13px;font-size:12px;color:#344054;cursor:pointer;border-left:3px solid transparent}.navitem.active{background:#eaf2ff;border-left-color:var(--blue);color:#1d4ed8;font-weight:700}.dot{width:8px;height:8px;border-radius:50%;background:#98a2b3}.navitem.active .dot{background:var(--blue)}
+.main{min-width:0;display:flex;flex-direction:column}
+.statusbar{background:#fff;border-bottom:1px solid var(--line);padding:8px 12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}.stat{display:flex;align-items:center;gap:6px;font-size:11px}.stat b{font-size:12px}.badge{padding:3px 6px;border-radius:999px;font-weight:800;font-size:9px}.b-green{background:#e7f7f1;color:#087a55}.b-red{background:#feeceb;color:#b42318}.b-amber{background:#fff4df;color:#a15c00}.b-blue{background:#eaf2ff;color:#2457b8}
+.schedule-shell{display:grid;grid-template-columns:minmax(660px,47%) 1fr;height:510px;background:#fff;border-bottom:1px solid var(--line)}
+.gridpane{overflow:auto;border-right:1px solid var(--line)}.gantt{overflow:auto;position:relative;background:#fff}
+table{border-collapse:collapse;width:100%;font-size:11px}.gridtable{min-width:860px}.gridtable th{position:sticky;top:0;z-index:3;background:#f3f5f8;border-bottom:1px solid var(--line);border-right:1px solid #e4e8ee;padding:7px 6px;text-align:left;font-weight:800;color:#475467}.gridtable td{height:28px;border-bottom:1px solid #edf0f4;border-right:1px solid #f0f2f5;padding:5px 6px;white-space:nowrap}.gridtable tr.sel td{background:var(--sel)}.gridtable tr:hover td{background:#f7faff}.id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#344054}.namecell{min-width:220px}.indent-1{padding-left:14px}.indent-2{padding-left:28px}.pct{font-variant-numeric:tabular-nums}.critical{color:var(--red);font-weight:800}.near{color:var(--amber);font-weight:800}
+.gantt-head{position:sticky;top:0;z-index:3;background:#f3f5f8;height:43px;border-bottom:1px solid var(--line);min-width:980px}.months{height:20px;display:flex;border-bottom:1px solid #e1e5eb}.month{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;border-right:1px solid #d8dde5}.days{height:23px;display:flex}.day{width:22px;flex:none;border-right:1px solid #e8ebef;text-align:center;padding-top:4px;font-size:9px;color:#667085}.weekend{background:#fafafa}
+.gantt-body{position:relative;min-width:980px}.grow{position:relative;height:28px;border-bottom:1px solid #edf0f4}.grow.sel{background:var(--sel)}.ggrid{position:absolute;inset:0;display:flex;pointer-events:none}.gcol{width:22px;flex:none;border-right:1px solid #f1f3f6}.gcol.weekend{background:#fafafa}.baseline{position:absolute;height:5px;top:6px;background:#aab2bf;border-radius:2px;opacity:.9}.bar{position:absolute;height:10px;top:13px;border-radius:2px;background:var(--blue);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}.bar.critical{background:var(--red)}.bar.near{background:var(--amber)}.bar.complete{background:var(--green)}.bar .prog{height:100%;background:rgba(0,0,0,.24);border-radius:2px 0 0 2px}.milestone{position:absolute;top:11px;width:12px;height:12px;transform:rotate(45deg);background:var(--purple)}.todayline{position:absolute;top:0;bottom:0;width:2px;background:#9e2b2b;z-index:2;pointer-events:none}.todaylabel{position:absolute;top:45px;transform:translateX(-50%);font-size:9px;background:#9e2b2b;color:#fff;padding:2px 4px;border-radius:3px;z-index:4}
+.details{background:#fff;min-height:290px}.detail-head{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}.detail-head h3{margin:0;font-size:13px}.detail-tabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);overflow:auto}.dt{border:0;background:transparent;padding:9px 10px;font-size:11px;font-weight:700;color:#667085;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer}.dt.active{color:#2457b8;border-bottom-color:#2f66d0}.detail-body{padding:12px;min-height:210px}
+.info-grid{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:10px}.field{border:1px solid #e4e7ec;border-radius:6px;padding:8px;background:#fafbfc}.field label{display:block;font-size:9px;color:#667085;text-transform:uppercase;font-weight:800;margin-bottom:3px}.field div{font-size:11px;font-weight:700}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{border:1px solid #e1e5eb;border-radius:8px;padding:10px;background:#fff}.card h4{margin:0 0 8px;font-size:11px}.relrow,.resrow,.costrow{display:grid;grid-template-columns:90px 1fr 90px 90px;gap:7px;border-bottom:1px solid #edf0f4;padding:6px 0;font-size:10px}.relrow:last-child,.resrow:last-child,.costrow:last-child{border-bottom:0}
+.knowledge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.kcard{border:1px solid #e0e5ec;border-radius:8px;padding:10px}.kcard h4{margin:0 0 7px;font-size:11px}.kcard ul{margin:0;padding-left:17px;font-size:10px;color:#475467;line-height:1.55}.notice{border-left:3px solid #d78b1f;background:#fff8eb;padding:9px;font-size:10px;line-height:1.45}.notice.good{border-left-color:#15936e;background:#edf9f5}
+.footer{padding:7px 11px;font-size:9px;color:#667085;background:#f8fafc;border-top:1px solid var(--line)}
+@media(max-width:1050px){.workspace{grid-template-columns:1fr}.sidebar{display:none}.schedule-shell{grid-template-columns:1fr;height:auto}.gridpane,.gantt{height:420px}.info-grid{grid-template-columns:repeat(2,1fr)}.split,.knowledge-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<header><div class="bar"><div><h1>Construction Knowledge Kernel</h1><div class="sub">ARC · WMS · ITP/QAQC · WBS · Resources · IFC/OpenBIM · Primavera interoperability</div></div><span class="pill demo">BRANCH DEMO · NOT FIELD TRUTH</span></div></header>
-<div class="shell">
-<aside>
-<div class="eyebrow">Reusable work catalogue</div><input id="q" class="search" placeholder="Search work, ID, category"><div id="workList"></div>
-<div class="card" style="margin-top:15px"><h3>Authority boundary</h3><p>This branch demonstrates schemas, mappings and sanitized knowledge. It does not create actual site execution, inspection, payment, resource or evidence records.</p></div>
-</aside>
-<main>
-<section class="hero"><div><div class="eyebrow" id="category"></div><h2 id="title"></h2><div id="description" class="sub" style="color:#667085"></div><div id="meta" class="meta"></div></div><div id="status"></div></section>
-<div class="tabs"><button class="tab active" data-tab="overview">Overview</button><button class="tab" data-tab="arc">ARC</button><button class="tab" data-tab="wms">WMS</button><button class="tab" data-tab="itp">ITP / QAQC</button><button class="tab" data-tab="wbs">WBS / Schedule</button><button class="tab" data-tab="open">Open Standards</button></div>
-
-<section id="overview" class="pane">
-<div class="kpis"><div class="kpi"><div class="n" id="kArc"></div><div class="l">ARC branches</div></div><div class="kpi"><div class="n" id="kWms"></div><div class="l">WMS steps</div></div><div class="kpi"><div class="n" id="kItp"></div><div class="l">ITP points</div></div><div class="kpi"><div class="n" id="kWbs"></div><div class="l">WBS nodes</div></div><div class="kpi"><div class="n">6</div><div class="l">Open-source/standard anchors</div></div></div>
-<div class="grid"><div><div class="card"><h3>Activity knowledge tree</h3><div id="tree" class="tree"></div></div><div class="card"><h3>Guardrail</h3><div id="guard"></div></div></div><div><div class="card"><h3>Identity traceability</h3><div id="trace"></div></div><div class="card"><h3>Core rule</h3><p><b>Reusable work knowledge</b> and <b>project execution occurrence</b> are separate. A work type can have ARC/WMS/ITP knowledge without pretending that a project activity, inspection, evidence record or acceptance has occurred.</p></div></div></div>
-</section>
-
-<section id="arc" class="pane hidden"><div class="grid"><div class="card"><h3>Activity Resource Checklist (ARC)</h3><p>Practical site-readiness layer: labour, tools, equipment, materials, safety and preconditions.</p><div id="arcTree" class="tree"></div></div><div class="card"><h3>Demo readiness run</h3><div id="checks"></div><p>Checkboxes are local browser demo state only.</p></div></div></section>
-<section id="wms" class="pane hidden"><div class="grid"><div class="card"><h3>Work Method Statement sequence</h3><div id="wmsRows"></div></div><div><div class="card"><h3>Authority note</h3><div id="wmsNotice" class="notice"></div></div><div class="card"><h3>Linked records</h3><div id="links"></div></div></div></div></section>
-<section id="itp" class="pane hidden"><div class="grid"><div class="card"><h3>Inspection & Test Plan</h3><div id="itpRows"></div></div><div class="card"><h3>Execution gate</h3><div class="notice good">Template knowledge may exist in advance. A checklist execution/result/evidence ID is created only for a real project event and must keep source/evidence lineage.</div></div></div></section>
-<section id="wbs" class="pane hidden"><div class="grid"><div class="card"><h3>WBS / activity relationship</h3><div id="wbsTree" class="tree"></div></div><div class="card"><h3>Schedule bridge</h3><div id="scheduleRows"></div><p>This is schema demonstration only; no project dates or progress are asserted.</p></div></div></section>
-<section id="open" class="pane hidden"><div class="grid"><div><div class="card"><h3>Open-standard mappings</h3><div id="mappings"></div></div><div class="card"><h3>Upstream source registry</h3><div id="sources"></div></div></div><div><div class="card"><h3>Machine-readable snapshot</h3><pre id="machine"></pre></div><div class="card"><h3>Direction</h3><p>IFC/IfcOpenShell can become the portable task/resource/cost/schedule layer; bSDD the vocabulary bridge; IDS the requirement-validation model; BCF the issue exchange; P6 remains an interoperable scheduler rather than the master knowledge store.</p></div></div></div></section>
-<footer>Prototype branch: construction-knowledge-kernel-demo-v0.1 · Main branch unchanged · No unverified construction number is presented as a code requirement.</footer>
-</main></div>
+<div class="top">
+  <div class="top1"><div class="brand">Construction Project Controls</div><div class="sep"></div><div><div class="project-name">DEMO-PROJECT-001 · Building Construction</div><div class="small">P6-style planning & control prototype · synthetic schedule</div></div><div class="spacer"></div><span class="badge b-amber">DEMO DATA</span></div>
+  <div class="top2">
+    <button class="tool primary">Schedule (F9)</button><button class="tool">Activities</button><button class="tool">WBS</button><button class="tool">Resources</button><button class="tool">Tracking</button><button class="tool">Layouts</button><button class="tool">Filters ▾</button><button class="tool">Group & Sort ▾</button><div class="spacer"></div><button class="tool">Baseline: BL1</button><button class="tool">Data Date: 02-Oct-2026</button>
+  </div>
+</div>
+<div class="workspace">
+  <aside class="sidebar"><div class="side-title">Project Controls</div>
+    <div class="navitem active"><span class="dot"></span>Activities</div><div class="navitem"><span class="dot"></span>WBS</div><div class="navitem"><span class="dot"></span>Projects</div><div class="navitem"><span class="dot"></span>Resources</div><div class="navitem"><span class="dot"></span>Resource Usage</div><div class="navitem"><span class="dot"></span>Reports</div>
+    <div class="side-title">Knowledge</div><div class="navitem"><span class="dot"></span>Work Catalogue</div><div class="navitem"><span class="dot"></span>ARC / Readiness</div><div class="navitem"><span class="dot"></span>WMS / ITP</div><div class="navitem"><span class="dot"></span>OpenBIM / P6</div>
+  </aside>
+  <main class="main">
+    <div class="statusbar" id="statusbar"></div>
+    <section class="schedule-shell">
+      <div class="gridpane"><table class="gridtable"><thead><tr><th style="width:92px">Activity ID</th><th class="namecell">Activity Name</th><th style="width:56px">OD</th><th style="width:80px">Start</th><th style="width:80px">Finish</th><th style="width:58px">TF</th><th style="width:64px">% Comp</th></tr></thead><tbody id="activityRows"></tbody></table></div>
+      <div class="gantt" id="gantt"><div class="gantt-head"><div class="months" id="months"></div><div class="days" id="days"></div></div><div class="gantt-body" id="ganttBody"></div></div>
+    </section>
+    <section class="details">
+      <div class="detail-head"><h3 id="detailTitle">Activity Details</h3><span id="detailWork" class="badge b-blue"></span><div class="spacer"></div><span id="detailState" class="badge b-green"></span></div>
+      <div class="detail-tabs">
+        <button class="dt active" data-tab="general">General</button><button class="dt" data-tab="status">Status</button><button class="dt" data-tab="relationships">Relationships</button><button class="dt" data-tab="resources">Resources</button><button class="dt" data-tab="costs">Costs / EV</button><button class="dt" data-tab="codes">Codes</button><button class="dt" data-tab="documents">Documents</button><button class="dt" data-tab="knowledge">Knowledge (ARC/WMS/ITP)</button>
+      </div>
+      <div class="detail-body">
+        <div id="general" class="pane"></div><div id="status" class="pane" hidden></div><div id="relationships" class="pane" hidden></div><div id="resources" class="pane" hidden></div><div id="costs" class="pane" hidden></div><div id="codes" class="pane" hidden></div><div id="documents" class="pane" hidden></div><div id="knowledge" class="pane" hidden></div>
+      </div>
+    </section>
+    <div class="footer">Branch prototype only · Project-Gantt_Chart/main untouched · Schedule/project values are synthetic examples and are not project truth.</div>
+  </main>
+</div>
 <script>
-let DB={works:[],sources:[]}, current;
-const $=s=>document.querySelector(s), esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
-async function start(){DB=await fetch("./construction-knowledge.json").then(r=>r.json());renderList();selectWork(DB.works[0].key);$("#q").oninput=renderList;document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>show(b.dataset.tab))}
-function renderList(){let q=$("#q").value.toLowerCase();$("#workList").innerHTML=DB.works.filter(w=>[w.title,w.work_id,w.category,w.key].join(" ").toLowerCase().includes(q)).map(w=>`<button class="work ${current&&current.key===w.key?"active":""}" onclick="selectWork('${w.key}')"><b>${esc(w.title)}</b><small>${esc(w.work_id||"work_id pending")} · ${esc(w.category)}</small><br><span class="state ${w.identity_status==="MAPPED"?"mapped":"pending"}">${esc(w.identity_status)}</span></button>`).join("")}
-function selectWork(key){current=DB.works.find(w=>w.key===key);renderList();$("#category").textContent=current.category;$("#title").textContent=current.title;$("#description").textContent=current.description;$("#status").innerHTML=`<span class="state ${current.identity_status==="MAPPED"?"mapped":"pending"}">${esc(current.identity_status)}</span>`;$("#meta").innerHTML=[current.work_id&&"work_id: "+current.work_id,current.checklist_template_id&&"QA: "+current.checklist_template_id,"source: "+current.source_status].filter(Boolean).map(x=>`<span class="pill">${esc(x)}</span>`).join("");
-$("#kArc").textContent=Object.keys(current.arc).length;$("#kWms").textContent=current.wms.length;$("#kItp").textContent=current.itp.length;$("#kWbs").textContent=current.wbs.length;
-let root=current.work_id||"IDENTITY PENDING";$("#tree").innerHTML=`<ul><li><strong>${esc(root)} — ${esc(current.title)}</strong><ul><li>ARC / resources & readiness</li><li>WMS / method statement</li><li>Technical & codal references</li><li>ITP / QAQC</li><li>Safety / JSA</li><li>BOQ / cost</li><li>Drawings / details</li><li>Evidence / lessons learned</li></ul></li></ul>`;
-$("#guard").innerHTML=current.identity_status==="MAPPED"?'<div class="notice good">Reusable identity is resolved. Knowledge may reference it, but the demo cannot create actual execution facts.</div>':'<div class="notice bad">Fail closed: do not fabricate a canonical work_id, dimension, ratio, reinforcement detail, clause or acceptance value.</div>';
-$("#trace").innerHTML=[["Reusable work",current.work_id||"PENDING"],["QA template",current.checklist_template_id||"PENDING"],["WMS",current.wms_id],["Project occurrence","activity_id when instantiated"],["Evidence","evidence_id only after real capture"]].map(x=>`<div class="line"><b>${esc(x[0])}</b><span class="arrow">→</span><span>${esc(x[1])}</span></div>`).join("");
-$("#arcTree").innerHTML="<ul>"+Object.entries(current.arc).map(([k,v])=>`<li><strong>${esc(k)}</strong><ul>${v.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></li>`).join("")+"</ul>";$("#checks").innerHTML=Object.entries(current.arc).flatMap(([k,v])=>v.map(x=>`<label class="check"><input type="checkbox"><span><b>${esc(k)}</b><br>${esc(x)}</span></label>`)).join("");
-$("#wmsRows").innerHTML=current.wms.map((x,i)=>`<div class="row"><div class="num">${i+1}</div><div><b>${esc(x.title)}</b><p>${esc(x.note)}</p></div><span class="gate">${esc(x.state)}</span></div>`).join("");$("#wmsNotice").textContent=current.wms_notice;$("#links").innerHTML=current.links.map(x=>`<div class="line"><b>${esc(x.type)}</b><span class="arrow">→</span><span>${esc(x.ref)}</span></div>`).join("");
-$("#itpRows").innerHTML=current.itp.map((x,i)=>`<div class="row"><div class="num">${i+1}</div><div><b>${esc(x.point)}</b><p>${esc(x.criteria)}</p></div><span class="gate">${esc(x.class)}</span></div>`).join("");
-$("#wbsTree").innerHTML="<ul>"+current.wbs.map(n=>`<li><strong>${esc(n.id)}</strong> — ${esc(n.name)}</li>`).join("")+"</ul>";$("#scheduleRows").innerHTML=current.schedule.map(x=>`<div class="line"><b>${esc(x.label)}</b><span class="arrow">→</span><span>${esc(x.value)}</span></div>`).join("");
-$("#mappings").innerHTML=Object.entries(current.mapping).map(([k,v])=>`<div class="line"><b>${esc(k)}</b><span class="arrow">→</span><span>${esc(v)}</span></div>`).join("");$("#sources").innerHTML=DB.sources.map(s=>`<div class="source"><b>${esc(s.source_id)} · ${esc(s.name)}</b>${esc(s.role)}<br><span>${esc(s.url)}</span></div>`).join("");
-$("#machine").textContent=JSON.stringify({work_id:current.work_id,identity_status:current.identity_status,arc:Object.keys(current.arc),wms_id:current.wms_id,checklist_template_id:current.checklist_template_id,wbs_nodes:current.wbs.map(x=>x.id),mapping:current.mapping},null,2)}
-function show(id){document.querySelectorAll(".pane").forEach(x=>x.classList.add("hidden"));$("#"+id).classList.remove("hidden");document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===id))}
-start().catch(e=>document.body.innerHTML="<pre style='padding:20px'>Load failed: "+esc(e.message)+"</pre>");
-</script></body></html>
+const DAY=86400000; let DB,KDB,selected;
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+const fmt=d=>new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"2-digit"});
+const daysBetween=(a,b)=>Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/DAY);
+const addDays=(a,n)=>{let d=new Date(a+"T00:00:00");d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+async function boot(){
+ [DB,KDB]=await Promise.all([fetch("./project-controls-demo.json").then(r=>r.json()),fetch("./construction-knowledge.json").then(r=>r.json())]);
+ renderStatus(); renderTimeline(); renderActivities(); selectActivity(DB.default_activity_id);
+ document.querySelectorAll(".dt").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+}
+function renderStatus(){
+ const a=DB.activities,crit=a.filter(x=>x.total_float<=0).length,near=a.filter(x=>x.total_float>0&&x.total_float<=3).length,neg=a.filter(x=>x.total_float<0).length;
+ const avg=Math.round(a.reduce((s,x)=>s+x.percent_complete,0)/a.length);
+ document.getElementById("statusbar").innerHTML=[
+ ["Data Date",fmt(DB.project.data_date),"b-blue"],["Planned Finish",fmt(DB.project.planned_finish),""],["Forecast Finish",fmt(DB.project.forecast_finish),DB.project.finish_variance_days>0?"b-red":"b-green"],["Finish Variance",(DB.project.finish_variance_days>0?"+":"")+DB.project.finish_variance_days+" d",DB.project.finish_variance_days>0?"b-red":"b-green"],["Critical",crit,"b-red"],["Near Critical",near,"b-amber"],["Negative Float",neg,neg?"b-red":"b-green"],["Average Complete",avg+"%","b-green"]
+ ].map(x=>`<div class="stat"><span>${esc(x[0])}</span><span class="badge ${x[2]}">${esc(x[1])}</span></div>`).join("");
+}
+function renderTimeline(){
+ const start=DB.project.timeline_start,end=DB.project.timeline_end,total=daysBetween(start,end)+1;
+ const dayBox=document.getElementById("days"),monthBox=document.getElementById("months");
+ let dh="", months=[], cur=null;
+ for(let i=0;i<total;i++){let ds=addDays(start,i),d=new Date(ds+"T00:00:00"),wk=d.getDay()===0||d.getDay()===6;dh+=`<div class="day ${wk?"weekend":""}">${d.getDate()}</div>`;let key=d.getFullYear()+"-"+d.getMonth();if(!cur||cur.key!==key){cur={key,label:d.toLocaleDateString("en-US",{month:"short",year:"numeric"}),count:1};months.push(cur)}else cur.count++;}
+ dayBox.innerHTML=dh;monthBox.innerHTML=months.map(m=>`<div class="month" style="width:${m.count*22}px">${m.label}</div>`).join("");
+}
+function renderActivities(){
+ document.getElementById("activityRows").innerHTML=DB.activities.map(a=>`<tr id="r-${a.activity_id}" onclick="selectActivity('${a.activity_id}')"><td class="id">${esc(a.activity_id)}</td><td class="namecell indent-${a.level}">${a.milestone?"◆ ":""}${esc(a.name)}</td><td>${a.original_duration}d</td><td>${fmt(a.start)}</td><td>${fmt(a.finish)}</td><td class="${a.total_float<=0?"critical":a.total_float<=3?"near":""}">${a.total_float}d</td><td class="pct">${a.percent_complete}%</td></tr>`).join("");
+ renderGantt();
+}
+function renderGantt(){
+ const start=DB.project.timeline_start,total=daysBetween(start,DB.project.timeline_end)+1,b=document.getElementById("ganttBody"); let html="";
+ const cols=Array.from({length:total},(_,i)=>{let d=new Date(addDays(start,i)+"T00:00:00"),w=d.getDay()===0||d.getDay()===6;return `<div class="gcol ${w?"weekend":""}"></div>`}).join("");
+ for(const a of DB.activities){let left=daysBetween(start,a.start)*22,width=Math.max(6,(daysBetween(a.start,a.finish)+1)*22),bl=daysBetween(start,a.baseline_start)*22,bw=Math.max(6,(daysBetween(a.baseline_start,a.baseline_finish)+1)*22),cls=a.percent_complete===100?"complete":a.total_float<=0?"critical":a.total_float<=3?"near":"";
+ html+=`<div class="grow" id="g-${a.activity_id}" onclick="selectActivity('${a.activity_id}')"><div class="ggrid">${cols}</div><div class="baseline" style="left:${bl}px;width:${bw}px"></div>${a.milestone?`<div class="milestone" style="left:${left}px"></div>`:`<div class="bar ${cls}" style="left:${left}px;width:${width}px"><div class="prog" style="width:${a.percent_complete}%"></div></div>`}</div>`;
+ }
+ const dd=daysBetween(start,DB.project.data_date)*22+11;html+=`<div class="todayline" style="left:${dd}px"></div><div class="todaylabel" style="left:${dd}px">DATA DATE</div>`;b.innerHTML=html;
+}
+function selectActivity(id){
+ selected=DB.activities.find(x=>x.activity_id===id); document.querySelectorAll(".gridtable tr").forEach(x=>x.classList.remove("sel"));document.querySelectorAll(".grow").forEach(x=>x.classList.remove("sel"));document.getElementById("r-"+id)?.classList.add("sel");document.getElementById("g-"+id)?.classList.add("sel");
+ document.getElementById("detailTitle").textContent=selected.activity_id+" · "+selected.name;document.getElementById("detailWork").textContent=selected.work_id||"No work_id binding";document.getElementById("detailState").textContent=selected.percent_complete===100?"COMPLETE":selected.status;
+ renderDetails();
+}
+function field(label,val){return `<div class="field"><label>${esc(label)}</label><div>${esc(val)}</div></div>`}
+function renderDetails(){
+ const a=selected;
+ document.getElementById("general").innerHTML=`<div class="info-grid">${[
+ ["WBS",a.wbs_id],["Activity Type",a.type],["Calendar",a.calendar],["Responsible",a.responsible],
+ ["Original Duration",a.original_duration+" days"],["Start",fmt(a.start)],["Finish",fmt(a.finish)],["Total Float",a.total_float+" days"],
+ ["Constraint",a.constraint||"None"],["Work ID",a.work_id||"Not mapped"],["Baseline Start",fmt(a.baseline_start)],["Baseline Finish",fmt(a.baseline_finish)]
+ ].map(x=>field(x[0],x[1])).join("")}</div>`;
+ document.getElementById("status").innerHTML=`<div class="info-grid">${[
+ ["Physical % Complete",a.percent_complete+"%"],["Status",a.status],["Actual Start",a.actual_start?fmt(a.actual_start):"—"],["Actual Finish",a.actual_finish?fmt(a.actual_finish):"—"],
+ ["Remaining Duration",a.remaining_duration+" days"],["Start Variance",a.start_variance+" days"],["Finish Variance",a.finish_variance+" days"],["Performance %",a.performance_percent+"%"]
+ ].map(x=>field(x[0],x[1])).join("")}</div>`;
+ const preds=DB.relationships.filter(r=>r.successor===a.activity_id),succs=DB.relationships.filter(r=>r.predecessor===a.activity_id);
+ document.getElementById("relationships").innerHTML=`<div class="split"><div class="card"><h4>Predecessors</h4>${rels(preds,true)}</div><div class="card"><h4>Successors</h4>${rels(succs,false)}</div></div>`;
+ const rs=DB.resource_assignments.filter(r=>r.activity_id===a.activity_id);document.getElementById("resources").innerHTML=`<div class="card"><h4>Resource Assignments</h4>${rs.length?rs.map(r=>`<div class="resrow"><b>${esc(r.resource_id)}</b><span>${esc(r.resource_name)}</span><span>${esc(r.units)}</span><span>${esc(r.role)}</span></div>`).join(""):"<div class='small'>No demo resource assignment.</div>"}</div>`;
+ document.getElementById("costs").innerHTML=`<div class="info-grid">${[["BAC",money(a.bac)],["PV",money(a.pv)],["EV",money(a.ev)],["AC",money(a.ac)],["SPI",ratio(a.ev,a.pv)],["CPI",ratio(a.ev,a.ac)],["EAC",a.ac?money(a.bac/(a.ev/a.ac)):"—"],["Cost Status",a.ac&&a.ev<a.ac?"Over EV":"Within demo threshold"]].map(x=>field(x[0],x[1])).join("")}</div><div class="notice" style="margin-top:10px">Earned-value figures are synthetic demonstration data, not company/project financial truth.</div>`;
+ document.getElementById("codes").innerHTML=`<div class="info-grid">${Object.entries(a.codes).map(([k,v])=>field(k,v)).join("")}</div>`;
+ document.getElementById("documents").innerHTML=`<div class="card"><h4>Linked Documents / Evidence</h4>${a.documents.map(x=>`<div class="line"><b>${esc(x.type)}</b><span>→</span><span>${esc(x.name)} · ${esc(x.state)}</span></div>`).join("")}</div>`;
+ renderKnowledge();
+}
+function rels(rows,pred){return rows.length?rows.map(r=>{let id=pred?r.predecessor:r.successor,n=DB.activities.find(x=>x.activity_id===id)?.name||"";return `<div class="relrow"><b>${id}</b><span>${esc(n)}</span><span>${r.type}</span><span>Lag ${r.lag}d</span></div>`}).join(""):"<div class='small'>None</div>"}
+function renderKnowledge(){
+ const a=selected,w=KDB.works.find(w=>w.work_id&&w.work_id===a.work_id);
+ if(!w){document.getElementById("knowledge").innerHTML=`<div class="notice">No governed reusable knowledge record is bound to this demo activity. The activity remains schedulable, but ARC/WMS/ITP content must not be invented.</div>`;return}
+ const arc=Object.entries(w.arc).slice(0,3).map(([k,v])=>`<div class="kcard"><h4>ARC · ${esc(k)}</h4><ul>${v.slice(0,5).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`).join("");
+ const wms=`<div class="kcard"><h4>WMS</h4><ul>${w.wms.slice(0,5).map(x=>`<li><b>${esc(x.title)}</b> — ${esc(x.state)}</li>`).join("")}</ul></div>`;
+ const itp=`<div class="kcard"><h4>ITP / QAQC</h4><ul>${w.itp.map(x=>`<li><b>${esc(x.point)}</b> — ${esc(x.class)}</li>`).join("")}</ul></div>`;
+ document.getElementById("knowledge").innerHTML=`<div class="notice good">Selected project activity → <b>${esc(a.work_id)}</b> → reusable construction knowledge. Schedule occurrence and knowledge remain separate identities.</div><div class="knowledge-grid" style="margin-top:10px">${arc}${wms}${itp}</div>`;
+}
+function money(v){return v==null?"—":"Rs "+Number(v).toLocaleString("en-IN",{maximumFractionDigits:0})} function ratio(a,b){return b?Number(a/b).toFixed(2):"—"}
+function showTab(id){document.querySelectorAll(".pane").forEach(x=>x.hidden=true);document.getElementById(id).hidden=false;document.querySelectorAll(".dt").forEach(x=>x.classList.toggle("active",x.dataset.tab===id))}
+boot().catch(e=>document.body.innerHTML="<pre style='padding:20px'>Demo load failed: "+esc(e.message)+"</pre>");
+</script>
+</body></html>
