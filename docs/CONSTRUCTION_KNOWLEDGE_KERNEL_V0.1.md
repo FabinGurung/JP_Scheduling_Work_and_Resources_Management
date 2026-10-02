@@ -1,43 +1,69 @@
-# Construction Knowledge Kernel — v0.1 branch prototype
+# Construction Project Controls — branch prototype v0.2
 
-This branch is a **prototype only**. The repository `main` branch remains untouched.
+This branch is evolving from a construction-knowledge browser into a **P6-style project planning and control surface**. The repository `main` branch remains untouched.
 
-## Identity model
-
-```
-work_id                 reusable construction work type
-wbs_id                  project scope hierarchy
-activity_id             project occurrence of reusable work
-checklist_template_id   reusable control template
-checklist_execution_id  real execution only
-source_system_id        source provenance
-source_record_id        provider/source identity
-evidence_id             actual captured evidence only
-```
-
-## Knowledge envelope
+## Product split
 
 ```
-WORK TYPE
+PROJECT CONTROLS SURFACE
+├── WBS
+├── Activities
+├── Baseline / Current Dates
+├── Logic / Relationships
+├── Total Float / Criticality
+├── Progress / Actuals
+├── Resources
+├── Costs / Earned Value
+├── Codes / Layouts / Filters
+└── Documents
+        │
+        ▼
+SELECTED ACTIVITY
+        │
+        └── work_id
+              │
+              ▼
+CONSTRUCTION KNOWLEDGE
 ├── ARC / Resource Readiness
 ├── WMS / Method Statement
-├── Technical Specification
-├── Codal / Authority References
+├── Technical / Codal References
 ├── ITP / QAQC
 ├── Safety / JSA
-├── BOQ / Cost
+├── BOQ / Cost Knowledge
 ├── Drawings / Details
 └── Evidence / Lessons Learned
 ```
 
-## Open ecosystem
+## Why this separation matters
 
-IFC 4.3 provides open task/schedule/resource/cost/document concepts. IfcOpenShell/Ifc4D supplies open-source programmatic manipulation and schedule interoperability. bSDD supplies reusable terminology/property dictionaries. IDS supplies machine-readable requirement/validation patterns. BCF provides issue exchange. Primavera P6 remains an external interoperable scheduler, not the canonical knowledge store.
+A Primavera-like schedule activity is a project occurrence. A reusable construction method/checklist is knowledge. They are linked, but they are not the same record.
+
+Example:
+
+```
+A090 (project activity)
+    -> work_id = WRK-000023
+        -> Waterproofing ARC
+        -> Waterproofing WMS
+        -> CK-BLD-WP-001 QA reference
+```
+
+## Prototype status
+
+The dashboard uses synthetic schedule, cost, resource and earned-value numbers only. It demonstrates UI/schema behavior and does not assert live project truth.
+
+## Open ecosystem direction
+
+- IFC 4.3 — task/schedule/resource/cost/document interoperability
+- IfcOpenShell / Ifc4D — open-source manipulation and 4D/schedule exchange
+- bSDD — reusable terminology and properties
+- IDS — machine-readable information requirements
+- BCF — issue exchange
+- Primavera P6 — external scheduling interoperability
 
 ## Guardrails
 
-1. Do not fabricate identifiers.
-2. Do not convert user/local practice into an approved standard without verification.
-3. Any numerical/codal technical requirement requires source, edition, clause/table/figure and applicability.
-4. Reusable work knowledge is separate from project execution facts.
-5. GitHub contains code, schemas, mappings, tests and sanitized/reference data — not confidential live site truth.
+1. Never fabricate real project dates, costs, progress, resources, evidence or execution IDs.
+2. Reusable work knowledge is distinct from activity occurrence.
+3. Technical/codal numeric requirements need authoritative source, edition and applicability.
+4. GitHub branch demo contains code and synthetic/reference data only.
