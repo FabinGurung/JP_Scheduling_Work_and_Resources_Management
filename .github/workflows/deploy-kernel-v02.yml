@@ -1,0 +1,48 @@
+name: Test and deploy Project Controls Kernel v0.2
+on:
+  push:
+    branches:
+      - kernel-v0.2-open-source-engines
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages-project-controls-kernel-v02"
+  cancel-in-progress: true
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run kernel unit tests
+        run: npm test
+      - name: Validate upstream registry and fail-closed project data
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          upstream=json.loads(pathlib.Path("UPSTREAM_SOURCES.json").read_text())
+          knowledge=json.loads(pathlib.Path("construction-knowledge.json").read_text())
+          demo=json.loads(pathlib.Path("project-controls-demo.json").read_text())
+          assert len(upstream["sources"]) == 5
+          works={x["key"]:x for x in knowledge["works"]}
+          acts={x["activity_id"]:x for x in demo["activities"]}
+          assert works["waterproofing"]["work_id"]=="WRK-000023"
+          assert works["soak-pit"]["work_id"] is None
+          assert works["soak-pit"]["identity_status"]=="IDENTITY_PENDING"
+          assert acts["A090"]["work_id"]=="WRK-000023"
+          print("Governance/data validation PASS")
+          PY
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+      - id: deployment
+        uses: actions/deploy-pages@v4
