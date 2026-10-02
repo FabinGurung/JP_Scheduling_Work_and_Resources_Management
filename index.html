@@ -1,112 +1,72 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Project Locations in Pokhara, Nepal</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-  <style>
-    html, body { height: 100%; margin: 0; }
-    #map { height: 100%; width: 100%; }
-    .title {
-      position:absolute; z-index:1000; top:12px; left:50%; transform:translateX(-50%);
-      background:white; padding:10px 16px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.25);
-      font:700 20px Arial,sans-serif;
-    }
-    .legend {
-      position:absolute; z-index:1000; right:12px; bottom:22px;
-      background:white; padding:12px 14px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.25);
-      font:14px Arial,sans-serif; line-height:1.7;
-    }
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Construction Knowledge Kernel — Demo</title>
+<style>
+:root{--bg:#f4f6fa;--panel:#fff;--ink:#172033;--muted:#667085;--line:#dfe4ec;--blue:#3157d5;--green:#087a55;--amber:#a15c00;--red:#b42318;--nav:#101828}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(120deg,#101828,#263b66);color:white}.bar{max-width:1500px;margin:auto;padding:18px 22px;display:flex;justify-content:space-between;gap:18px;align-items:center}
+h1{margin:0 0 4px;font-size:23px}.sub{font-size:12px;color:#d0d5dd}.pill{display:inline-block;border-radius:999px;padding:5px 9px;font-size:10px;font-weight:800;background:#eef2ff;color:#3448a8}
+.demo{background:#344054;color:#fff;border:1px solid #667085}
+.shell{max-width:1500px;margin:auto;display:grid;grid-template-columns:310px 1fr;min-height:calc(100vh - 78px)}
+aside{background:#fff;border-right:1px solid var(--line);padding:18px;overflow:auto}.eyebrow{font-size:10px;font-weight:900;letter-spacing:.1em;color:#667085;text-transform:uppercase}
+.search{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:10px;margin:9px 0 12px}
+.work{width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px;margin:7px 0;cursor:pointer}.work.active{background:#f1f4ff;border-color:#8da2fb}.work b{display:block;font-size:13px}.work small{color:var(--muted)}
+.state{display:inline-block;margin-top:6px;padding:4px 7px;border-radius:999px;font-size:9px;font-weight:900}.mapped{background:#ecfdf3;color:#067647}.pending{background:#fff7ed;color:#b54708}
+main{padding:20px;min-width:0}.hero,.card,.kpi{background:#fff;border:1px solid var(--line);border-radius:14px}.hero{padding:17px 18px;display:flex;justify-content:space-between;gap:12px}.hero h2{font-size:25px;margin:3px 0 5px}.meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.tabs{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}.tab{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 11px;font-size:12px;font-weight:800;cursor:pointer}.tab.active{background:#1d2939;color:white}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.kpi{padding:12px}.kpi .n{font-size:19px;font-weight:900}.kpi .l{font-size:10px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px}.card{padding:15px;margin-bottom:14px}.card h3{margin:0 0 11px;font-size:14px}.card p{font-size:12px;line-height:1.55;color:var(--muted)}
+.tree ul{list-style:none;margin:4px 0;padding-left:19px}.tree li{position:relative;padding:5px 0 5px 14px;font-size:12px}.tree li:before{content:"";position:absolute;left:0;top:13px;width:9px;border-top:1px solid #98a2b3}.tree li:after{content:"";position:absolute;left:0;top:-5px;height:20px;border-left:1px solid #d0d5dd}.tree>ul>li:after{display:none}
+.line{display:grid;grid-template-columns:145px 22px 1fr;gap:7px;padding:7px 0;border-bottom:1px solid #eef1f5;font-size:11px}.line:last-child{border:0}.arrow{text-align:center;color:#98a2b3}
+.row{display:grid;grid-template-columns:30px 1fr auto;gap:9px;align-items:start;padding:10px 0;border-top:1px solid #eef1f5}.row:first-child{border-top:0}.num{width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:#eef2f6;font-size:10px;font-weight:900}.row b{font-size:12px}.row p{margin:3px 0 0;font-size:11px}.gate{font-size:9px;font-weight:900;border-radius:6px;padding:4px 6px;background:#fff1f0;color:#b42318}
+.notice{padding:11px;border-radius:8px;border-left:4px solid #f79009;background:#fffaeb;font-size:11px;line-height:1.5}.good{border-left-color:#12b76a;background:#ecfdf3}.bad{border-left-color:#f04438;background:#fef3f2}
+.check{display:flex;gap:8px;padding:7px 0;border-bottom:1px dashed #e4e7ec;font-size:11px}.check b{font-size:11px}pre{white-space:pre-wrap;background:#101828;color:#e4e7ec;padding:12px;border-radius:9px;font-size:10px;overflow:auto}.hidden{display:none!important}
+.source{font-size:10px;color:#475467;border:1px solid #e4e7ec;border-radius:8px;padding:8px;margin:6px 0}.source b{display:block;color:#344054}
+footer{font-size:10px;color:#667085;padding:5px 0 25px}
+@media(max-width:950px){.shell{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.line{grid-template-columns:115px 18px 1fr}}
+</style>
 </head>
 <body>
-<div class="title">Project Locations in Pokhara, Nepal</div>
-<div id="map"></div>
-<div class="legend"><b>Status</b><div><span style='display:inline-block;width:12px;height:12px;border-radius:50%;background:#d73027;margin-right:8px'></span>Construction</div><div><span style='display:inline-block;width:12px;height:12px;border-radius:50%;background:#1a9850;margin-right:8px'></span>Completed</div><div><span style='display:inline-block;width:12px;height:12px;border-radius:50%;background:#4575b4;margin-right:8px'></span>Approval</div><hr style="border:none;border-top:1px solid #ddd">Total projects: 7</div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-  const map = L.map('map').setView([28.200036885714287, 84.0305180142857], 12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map);
+<header><div class="bar"><div><h1>Construction Knowledge Kernel</h1><div class="sub">ARC · WMS · ITP/QAQC · WBS · Resources · IFC/OpenBIM · Primavera interoperability</div></div><span class="pill demo">BRANCH DEMO · NOT FIELD TRUTH</span></div></header>
+<div class="shell">
+<aside>
+<div class="eyebrow">Reusable work catalogue</div><input id="q" class="search" placeholder="Search work, ID, category"><div id="workList"></div>
+<div class="card" style="margin-top:15px"><h3>Authority boundary</h3><p>This branch demonstrates schemas, mappings and sanitized knowledge. It does not create actual site execution, inspection, payment, resource or evidence records.</p></div>
+</aside>
+<main>
+<section class="hero"><div><div class="eyebrow" id="category"></div><h2 id="title"></h2><div id="description" class="sub" style="color:#667085"></div><div id="meta" class="meta"></div></div><div id="status"></div></section>
+<div class="tabs"><button class="tab active" data-tab="overview">Overview</button><button class="tab" data-tab="arc">ARC</button><button class="tab" data-tab="wms">WMS</button><button class="tab" data-tab="itp">ITP / QAQC</button><button class="tab" data-tab="wbs">WBS / Schedule</button><button class="tab" data-tab="open">Open Standards</button></div>
 
-  const bounds = [];
-  
-        L.circleMarker([28.200667, 84.018222], {
-            radius: 9,
-            color: "#d73027",
-            fillColor: "#d73027",
-            fillOpacity: 0.9,
-            weight: 2
-        }).addTo(map)
-          .bindTooltip("P001", {permanent: true, direction: "top", offset: [0,-8]})
-          .bindPopup("     <div style='font-family:Arial,sans-serif; min-width:240px'>       <h3 style='margin:0 0 8px 0'>P001 \u2014 14_bishal_paija</h3>       <div><b>Status:</b> Construction</div>       <div><b>Contractor:</b> Rohini Engineering and Builders Pvt Ltd</div>       <div><b>Latitude:</b> 28.200667</div>       <div><b>Longitude:</b> 84.018222</div>     </div>     ");
-        
-        L.circleMarker([28.196778, 83.970778], {
-            radius: 9,
-            color: "#d73027",
-            fillColor: "#d73027",
-            fillOpacity: 0.9,
-            weight: 2
-        }).addTo(map)
-          .bindTooltip("P002", {permanent: true, direction: "top", offset: [0,-8]})
-          .bindPopup("     <div style='font-family:Arial,sans-serif; min-width:240px'>       <h3 style='margin:0 0 8px 0'>P002 \u2014 17_samir_man_ghubaju</h3>       <div><b>Status:</b> Construction</div>       <div><b>Contractor:</b> Fishtail Builders Pvt Ltd</div>       <div><b>Latitude:</b> 28.196778</div>       <div><b>Longitude:</b> 83.970778</div>     </div>     ");
-        
-        L.circleMarker([28.226111, 84.051389], {
-            radius: 9,
-            color: "#d73027",
-            fillColor: "#d73027",
-            fillOpacity: 0.9,
-            weight: 2
-        }).addTo(map)
-          .bindTooltip("P003", {permanent: true, direction: "top", offset: [0,-8]})
-          .bindPopup("     <div style='font-family:Arial,sans-serif; min-width:240px'>       <h3 style='margin:0 0 8px 0'>P003 \u2014 13_hari_baral</h3>       <div><b>Status:</b> Construction</div>       <div><b>Contractor:</b> Fishtail Builders Pvt Ltd</div>       <div><b>Latitude:</b> 28.226111</div>       <div><b>Longitude:</b> 84.051389</div>     </div>     ");
-        
-        L.circleMarker([28.2555, 83.97975], {
-            radius: 9,
-            color: "#1a9850",
-            fillColor: "#1a9850",
-            fillOpacity: 0.9,
-            weight: 2
-        }).addTo(map)
-          .bindTooltip("P004", {permanent: true, direction: "top", offset: [0,-8]})
-          .bindPopup("     <div style='font-family:Arial,sans-serif; min-width:240px'>       <h3 style='margin:0 0 8px 0'>P004 \u2014 16_yamuna_pun_adai</h3>       <div><b>Status:</b> Completed</div>       <div><b>Contractor:</b> Fishtail Builders Pvt Ltd</div>       <div><b>Latitude:</b> 28.2555</div>       <div><b>Longitude:</b> 83.97975</div>     </div>     ");
-        
-        L.circleMarker([28.160278, 84.0825], {
-            radius: 9,
-            color: "#d73027",
-            fillColor: "#d73027",
-            fillOpacity: 0.9,
-            weight: 2
-        }).addTo(map)
-          .bindTooltip("P005", {permanent: true, direction: "top", offset: [0,-8]})
-          .bindPopup("     <div style='font-family:Arial,sans-serif; min-width:240px'>       <h3 style='margin:0 0 8px 0'>P005 \u2014 30_sabitri_giri_dipti_giri</h3>       <div><b>Status:</b> Construction</div>       <div><b>Contractor:</b> Fishtail Builders Pvt Ltd</div>       <div><b>Latitude:</b> 28.160278</div>       <div><b>Longitude:</b> 84.0825</div>     </div>     ");
-        
-        L.circleMarker([28.1657989, 84.115339], {
-            radius: 9,
-            color: "#d73027",
-            fillColor: "#d73027",
-            fillOpacity: 0.9,
-            weight: 2
-        }).addTo(map)
-          .bindTooltip("P006", {permanent: true, direction: "top", offset: [0,-8]})
-          .bindPopup("     <div style='font-family:Arial,sans-serif; min-width:240px'>       <h3 style='margin:0 0 8px 0'>P006 \u2014 31_sharada_adhikari</h3>       <div><b>Status:</b> Construction</div>       <div><b>Contractor:</b> Fishtail Builders Pvt Ltd</div>       <div><b>Latitude:</b> 28.1657989</div>       <div><b>Longitude:</b> 84.115339</div>     </div>     ");
-        
-        L.circleMarker([28.1951253, 83.9956481], {
-            radius: 9,
-            color: "#4575b4",
-            fillColor: "#4575b4",
-            fillOpacity: 0.9,
-            weight: 2
-        }).addTo(map)
-          .bindTooltip("P007", {permanent: true, direction: "top", offset: [0,-8]})
-          .bindPopup("     <div style='font-family:Arial,sans-serif; min-width:240px'>       <h3 style='margin:0 0 8px 0'>P007 \u2014 15_narayani_parajuli</h3>       <div><b>Status:</b> Approval</div>       <div><b>Contractor:</b> Fishtail Builders Pvt Ltd</div>       <div><b>Latitude:</b> 28.1951253</div>       <div><b>Longitude:</b> 83.9956481</div>     </div>     ");
-        
-  bounds.push([28.200667, 84.018222]);bounds.push([28.196778, 83.970778]);bounds.push([28.226111, 84.051389]);bounds.push([28.2555, 83.97975]);bounds.push([28.160278, 84.0825]);bounds.push([28.1657989, 84.115339]);bounds.push([28.1951253, 83.9956481]);
-  map.fitBounds(bounds, {padding:[45,45]});
-  L.control.scale({imperial:false}).addTo(map);
-</script>
-</body>
-</html>
+<section id="overview" class="pane">
+<div class="kpis"><div class="kpi"><div class="n" id="kArc"></div><div class="l">ARC branches</div></div><div class="kpi"><div class="n" id="kWms"></div><div class="l">WMS steps</div></div><div class="kpi"><div class="n" id="kItp"></div><div class="l">ITP points</div></div><div class="kpi"><div class="n" id="kWbs"></div><div class="l">WBS nodes</div></div><div class="kpi"><div class="n">6</div><div class="l">Open-source/standard anchors</div></div></div>
+<div class="grid"><div><div class="card"><h3>Activity knowledge tree</h3><div id="tree" class="tree"></div></div><div class="card"><h3>Guardrail</h3><div id="guard"></div></div></div><div><div class="card"><h3>Identity traceability</h3><div id="trace"></div></div><div class="card"><h3>Core rule</h3><p><b>Reusable work knowledge</b> and <b>project execution occurrence</b> are separate. A work type can have ARC/WMS/ITP knowledge without pretending that a project activity, inspection, evidence record or acceptance has occurred.</p></div></div></div>
+</section>
+
+<section id="arc" class="pane hidden"><div class="grid"><div class="card"><h3>Activity Resource Checklist (ARC)</h3><p>Practical site-readiness layer: labour, tools, equipment, materials, safety and preconditions.</p><div id="arcTree" class="tree"></div></div><div class="card"><h3>Demo readiness run</h3><div id="checks"></div><p>Checkboxes are local browser demo state only.</p></div></div></section>
+<section id="wms" class="pane hidden"><div class="grid"><div class="card"><h3>Work Method Statement sequence</h3><div id="wmsRows"></div></div><div><div class="card"><h3>Authority note</h3><div id="wmsNotice" class="notice"></div></div><div class="card"><h3>Linked records</h3><div id="links"></div></div></div></div></section>
+<section id="itp" class="pane hidden"><div class="grid"><div class="card"><h3>Inspection & Test Plan</h3><div id="itpRows"></div></div><div class="card"><h3>Execution gate</h3><div class="notice good">Template knowledge may exist in advance. A checklist execution/result/evidence ID is created only for a real project event and must keep source/evidence lineage.</div></div></div></section>
+<section id="wbs" class="pane hidden"><div class="grid"><div class="card"><h3>WBS / activity relationship</h3><div id="wbsTree" class="tree"></div></div><div class="card"><h3>Schedule bridge</h3><div id="scheduleRows"></div><p>This is schema demonstration only; no project dates or progress are asserted.</p></div></div></section>
+<section id="open" class="pane hidden"><div class="grid"><div><div class="card"><h3>Open-standard mappings</h3><div id="mappings"></div></div><div class="card"><h3>Upstream source registry</h3><div id="sources"></div></div></div><div><div class="card"><h3>Machine-readable snapshot</h3><pre id="machine"></pre></div><div class="card"><h3>Direction</h3><p>IFC/IfcOpenShell can become the portable task/resource/cost/schedule layer; bSDD the vocabulary bridge; IDS the requirement-validation model; BCF the issue exchange; P6 remains an interoperable scheduler rather than the master knowledge store.</p></div></div></div></section>
+<footer>Prototype branch: construction-knowledge-kernel-demo-v0.1 · Main branch unchanged · No unverified construction number is presented as a code requirement.</footer>
+</main></div>
+<script>
+let DB={works:[],sources:[]}, current;
+const $=s=>document.querySelector(s), esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+async function start(){DB=await fetch("./construction-knowledge.json").then(r=>r.json());renderList();selectWork(DB.works[0].key);$("#q").oninput=renderList;document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>show(b.dataset.tab))}
+function renderList(){let q=$("#q").value.toLowerCase();$("#workList").innerHTML=DB.works.filter(w=>[w.title,w.work_id,w.category,w.key].join(" ").toLowerCase().includes(q)).map(w=>`<button class="work ${current&&current.key===w.key?"active":""}" onclick="selectWork('${w.key}')"><b>${esc(w.title)}</b><small>${esc(w.work_id||"work_id pending")} · ${esc(w.category)}</small><br><span class="state ${w.identity_status==="MAPPED"?"mapped":"pending"}">${esc(w.identity_status)}</span></button>`).join("")}
+function selectWork(key){current=DB.works.find(w=>w.key===key);renderList();$("#category").textContent=current.category;$("#title").textContent=current.title;$("#description").textContent=current.description;$("#status").innerHTML=`<span class="state ${current.identity_status==="MAPPED"?"mapped":"pending"}">${esc(current.identity_status)}</span>`;$("#meta").innerHTML=[current.work_id&&"work_id: "+current.work_id,current.checklist_template_id&&"QA: "+current.checklist_template_id,"source: "+current.source_status].filter(Boolean).map(x=>`<span class="pill">${esc(x)}</span>`).join("");
+$("#kArc").textContent=Object.keys(current.arc).length;$("#kWms").textContent=current.wms.length;$("#kItp").textContent=current.itp.length;$("#kWbs").textContent=current.wbs.length;
+let root=current.work_id||"IDENTITY PENDING";$("#tree").innerHTML=`<ul><li><strong>${esc(root)} — ${esc(current.title)}</strong><ul><li>ARC / resources & readiness</li><li>WMS / method statement</li><li>Technical & codal references</li><li>ITP / QAQC</li><li>Safety / JSA</li><li>BOQ / cost</li><li>Drawings / details</li><li>Evidence / lessons learned</li></ul></li></ul>`;
+$("#guard").innerHTML=current.identity_status==="MAPPED"?'<div class="notice good">Reusable identity is resolved. Knowledge may reference it, but the demo cannot create actual execution facts.</div>':'<div class="notice bad">Fail closed: do not fabricate a canonical work_id, dimension, ratio, reinforcement detail, clause or acceptance value.</div>';
+$("#trace").innerHTML=[["Reusable work",current.work_id||"PENDING"],["QA template",current.checklist_template_id||"PENDING"],["WMS",current.wms_id],["Project occurrence","activity_id when instantiated"],["Evidence","evidence_id only after real capture"]].map(x=>`<div class="line"><b>${esc(x[0])}</b><span class="arrow">→</span><span>${esc(x[1])}</span></div>`).join("");
+$("#arcTree").innerHTML="<ul>"+Object.entries(current.arc).map(([k,v])=>`<li><strong>${esc(k)}</strong><ul>${v.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></li>`).join("")+"</ul>";$("#checks").innerHTML=Object.entries(current.arc).flatMap(([k,v])=>v.map(x=>`<label class="check"><input type="checkbox"><span><b>${esc(k)}</b><br>${esc(x)}</span></label>`)).join("");
+$("#wmsRows").innerHTML=current.wms.map((x,i)=>`<div class="row"><div class="num">${i+1}</div><div><b>${esc(x.title)}</b><p>${esc(x.note)}</p></div><span class="gate">${esc(x.state)}</span></div>`).join("");$("#wmsNotice").textContent=current.wms_notice;$("#links").innerHTML=current.links.map(x=>`<div class="line"><b>${esc(x.type)}</b><span class="arrow">→</span><span>${esc(x.ref)}</span></div>`).join("");
+$("#itpRows").innerHTML=current.itp.map((x,i)=>`<div class="row"><div class="num">${i+1}</div><div><b>${esc(x.point)}</b><p>${esc(x.criteria)}</p></div><span class="gate">${esc(x.class)}</span></div>`).join("");
+$("#wbsTree").innerHTML="<ul>"+current.wbs.map(n=>`<li><strong>${esc(n.id)}</strong> — ${esc(n.name)}</li>`).join("")+"</ul>";$("#scheduleRows").innerHTML=current.schedule.map(x=>`<div class="line"><b>${esc(x.label)}</b><span class="arrow">→</span><span>${esc(x.value)}</span></div>`).join("");
+$("#mappings").innerHTML=Object.entries(current.mapping).map(([k,v])=>`<div class="line"><b>${esc(k)}</b><span class="arrow">→</span><span>${esc(v)}</span></div>`).join("");$("#sources").innerHTML=DB.sources.map(s=>`<div class="source"><b>${esc(s.source_id)} · ${esc(s.name)}</b>${esc(s.role)}<br><span>${esc(s.url)}</span></div>`).join("");
+$("#machine").textContent=JSON.stringify({work_id:current.work_id,identity_status:current.identity_status,arc:Object.keys(current.arc),wms_id:current.wms_id,checklist_template_id:current.checklist_template_id,wbs_nodes:current.wbs.map(x=>x.id),mapping:current.mapping},null,2)}
+function show(id){document.querySelectorAll(".pane").forEach(x=>x.classList.add("hidden"));$("#"+id).classList.remove("hidden");document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===id))}
+start().catch(e=>document.body.innerHTML="<pre style='padding:20px'>Load failed: "+esc(e.message)+"</pre>");
+</script></body></html>

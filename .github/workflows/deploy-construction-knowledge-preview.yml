@@ -1,0 +1,42 @@
+name: Deploy Construction Knowledge branch preview
+on:
+  push:
+    branches:
+      - construction-knowledge-kernel-demo-v0.1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages-construction-knowledge-preview"
+  cancel-in-progress: true
+
+jobs:
+  validate-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate fail-closed demo data
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          d=json.loads(pathlib.Path("construction-knowledge.json").read_text())
+          w={x["key"]:x for x in d["works"]}
+          assert w["waterproofing"]["work_id"]=="WRK-000023"
+          assert w["soak-pit"]["work_id"] is None
+          assert w["soak-pit"]["identity_status"]=="IDENTITY_PENDING"
+          assert pathlib.Path("schemas/construction-work.schema.json").exists()
+          print("Validation PASS")
+          PY
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+      - id: deployment
+        uses: actions/deploy-pages@v4

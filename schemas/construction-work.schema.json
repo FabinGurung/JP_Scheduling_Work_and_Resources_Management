@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Construction Work Knowledge Record",
+  "type": "object",
+  "required": [
+    "work_id",
+    "title",
+    "identity_status"
+  ],
+  "properties": {
+    "work_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^WRK-[0-9]{6}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "identity_status": {
+      "enum": [
+        "MAPPED",
+        "IDENTITY_PENDING"
+      ]
+    },
+    "arc": {
+      "type": "object"
+    },
+    "wms_id": {
+      "type": "string"
+    },
+    "checklist_template_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_status": {
+      "type": "string"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "identity_status": {
+            "const": "IDENTITY_PENDING"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "work_id": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
+}

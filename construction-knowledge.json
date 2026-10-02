@@ -1,0 +1,346 @@
+{
+  "meta": {
+    "version": "0.1-demo",
+    "authority": "SANITIZED_DEMO_ONLY",
+    "base_commit": "d38cd5e7b9d769917070df1b2eefb83c709b0e89",
+    "branch": "construction-knowledge-kernel-demo-v0.1"
+  },
+  "sources": [
+    {
+      "source_id": "BS-IFC43",
+      "name": "buildingSMART IFC 4.3",
+      "role": "Task, schedule, resource, cost and document interoperability model",
+      "url": "https://standards.buildingsmart.org/IFC/RELEASE/IFC4_3/"
+    },
+    {
+      "source_id": "IFCOS",
+      "name": "IfcOpenShell / Ifc4D",
+      "role": "Open-source IFC manipulation, sequence/resource/cost APIs and schedule conversion",
+      "url": "https://docs.ifcopenshell.org/"
+    },
+    {
+      "source_id": "BSDD",
+      "name": "buildingSMART Data Dictionary",
+      "role": "Shared classifications, concepts and properties",
+      "url": "https://github.com/buildingSMART/bSDD"
+    },
+    {
+      "source_id": "IDS",
+      "name": "Information Delivery Specification",
+      "role": "Machine-readable applicability and information requirements",
+      "url": "https://github.com/buildingSMART/IDS"
+    },
+    {
+      "source_id": "BCF",
+      "name": "BIM Collaboration Format",
+      "role": "Open issue / coordination exchange",
+      "url": "https://github.com/buildingSMART/BCF-API"
+    },
+    {
+      "source_id": "P6",
+      "name": "Oracle Primavera P6 exchange",
+      "role": "External scheduling interoperability through supported exchange formats",
+      "url": "https://docs.oracle.com/"
+    }
+  ],
+  "works": [
+    {
+      "key": "waterproofing",
+      "work_id": "WRK-000023",
+      "title": "Cementitious Waterproofing",
+      "category": "Waterproofing",
+      "description": "Mapped example showing how practical site readiness, method, inspection and open-standard mappings attach to one reusable work identity.",
+      "identity_status": "MAPPED",
+      "source_status": "EXISTING_GOVERNED_WORK_REFERENCE",
+      "checklist_template_id": "CK-BLD-WP-001",
+      "wms_id": "WMS-DEMO-WRK-000023",
+      "arc": {
+        "Labor": [
+          "Contractor-provided labour requirement is kept separate from tools and materials."
+        ],
+        "Tools": [
+          "Hard broom / full jhadoo",
+          "Brush / scraper / wire brush",
+          "Chisel, hammer and chipping tools",
+          "Measuring and marking tools",
+          "Application brush / roller / tray"
+        ],
+        "Equipment": [
+          "Buckets / baltee",
+          "Water provision",
+          "Mixer where applicable",
+          "Power/access equipment where applicable"
+        ],
+        "Materials": [
+          "Approved waterproofing system",
+          "Approved repair/sealant materials where specified",
+          "Protection/drainage components where specified"
+        ],
+        "Safety": [
+          "Required PPE",
+          "Barricading / warnings",
+          "First aid",
+          "Electrical/hot-work controls where applicable"
+        ],
+        "Preconditions": [
+          "Approved documents available",
+          "Substrate readiness checked",
+          "Defects/rework resolved",
+          "Drain/slope interfaces checked",
+          "Access, weather, water and power readiness checked"
+        ]
+      },
+      "wms": [
+        {
+          "title": "Authority & scope check",
+          "note": "Confirm approved drawing/specification/product system and project-specific method before work.",
+          "state": "GATE"
+        },
+        {
+          "title": "Substrate readiness",
+          "note": "Inspect and prepare substrate; record defects before proceeding.",
+          "state": "VERIFY"
+        },
+        {
+          "title": "Repairs & interfaces",
+          "note": "Treat joints, cracks, corners, penetrations and drains only to approved detail.",
+          "state": "VERIFY"
+        },
+        {
+          "title": "Application sequence",
+          "note": "Follow approved project/manufacturer method; no demo thickness, mix ratio or curing time is invented.",
+          "state": "CONTROL"
+        },
+        {
+          "title": "Inspection / test",
+          "note": "Complete governed test/inspection before covering.",
+          "state": "HOLD"
+        },
+        {
+          "title": "Protection & records",
+          "note": "Protect accepted work and link evidence to the real execution identity.",
+          "state": "CLOSE"
+        }
+      ],
+      "wms_notice": "Illustrative workflow only. Numerical requirements must come from verified project specifications, manufacturer requirements and applicable authoritative standards.",
+      "itp": [
+        {
+          "point": "Pre-work readiness",
+          "criteria": "Approved references, substrate and interfaces verified.",
+          "class": "HOLD/VERIFY"
+        },
+        {
+          "point": "During application",
+          "criteria": "Work follows approved system; deviations are recorded.",
+          "class": "WITNESS"
+        },
+        {
+          "point": "Before covering",
+          "criteria": "Required inspection/test passes and real evidence is linked.",
+          "class": "HOLD"
+        }
+      ],
+      "wbs": [
+        {
+          "id": "WBS-DEMO-01",
+          "name": "Building Finishes / Protection"
+        },
+        {
+          "id": "WRK-000023",
+          "name": "Waterproofing reusable work type"
+        },
+        {
+          "id": "ACTIVITY_ID",
+          "name": "Project-specific occurrence created only in a real project"
+        }
+      ],
+      "schedule": [
+        {
+          "label": "Predecessors",
+          "value": "Stored as project activity relationships, not in reusable WMS text"
+        },
+        {
+          "label": "Resources",
+          "value": "ARC/resource assignments bridge to task occurrence"
+        },
+        {
+          "label": "Baseline / Actual",
+          "value": "Project schedule layer; reusable work knowledge remains separate"
+        },
+        {
+          "label": "P6",
+          "value": "External interoperable scheduler, not knowledge master"
+        }
+      ],
+      "links": [
+        {
+          "type": "Work catalogue",
+          "ref": "WRK-000023"
+        },
+        {
+          "type": "QA template",
+          "ref": "CK-BLD-WP-001"
+        },
+        {
+          "type": "ARC",
+          "ref": "Readiness subtype complementary to QA checklist"
+        },
+        {
+          "type": "WMS",
+          "ref": "Construction-execution knowledge record"
+        }
+      ],
+      "mapping": {
+        "IFC": "IfcTaskType → project IfcTask occurrence",
+        "IfcOpenShell": "Sequence/resource/cost APIs",
+        "bSDD": "Vocabulary/property mapping",
+        "IDS": "Machine-readable requirements where appropriate",
+        "BCF": "Issues / exceptions / coordination",
+        "P6": "Schedule exchange bridge"
+      }
+    },
+    {
+      "key": "soak-pit",
+      "work_id": null,
+      "title": "Construction of Soak Pit",
+      "category": "Sanitary / External Works",
+      "description": "Fail-closed research example. Identity and numerical technical requirements stay unresolved until live catalogue/design/codal authority is verified.",
+      "identity_status": "IDENTITY_PENDING",
+      "source_status": "HANDOFF_INTAKE_USER_KNOWLEDGE",
+      "checklist_template_id": null,
+      "wms_id": "WMS-DRAFT-SOAK-PIT",
+      "arc": {
+        "Labor": [
+          "Crew requirement pending approved execution plan."
+        ],
+        "Tools": [
+          "Digging tools",
+          "Setting-out tools",
+          "Masonry tools",
+          "Cleaning/finishing tools"
+        ],
+        "Equipment": [
+          "Excavation/dewatering/access equipment only if verified site conditions require it"
+        ],
+        "Materials": [
+          "Stone/aggregate/masonry/pipe/cover/filter materials only after design/specification verification"
+        ],
+        "Safety": [
+          "Excavation controls",
+          "Barricading",
+          "PPE",
+          "Safe access/support where required"
+        ],
+        "Preconditions": [
+          "Design basis verified",
+          "Location/utilities checked",
+          "Soil/percolation/groundwater suitability verified",
+          "Applicable authority/codal references resolved"
+        ]
+      },
+      "wms": [
+        {
+          "title": "Resolve work identity",
+          "note": "Check governed work catalogue/BOQ before creating a new work_id.",
+          "state": "BLOCK"
+        },
+        {
+          "title": "Verify design basis",
+          "note": "Resolve hydraulic basis, site suitability and governing authority.",
+          "state": "BLOCK"
+        },
+        {
+          "title": "Clause-level research",
+          "note": "Trace every numerical requirement to source, edition, clause/table/figure and applicability.",
+          "state": "BLOCK"
+        },
+        {
+          "title": "Develop construction sequence",
+          "note": "Only then define setting out, excavation, base/walls/inlet/cover/backfill/inspection/as-built steps.",
+          "state": "DRAFT"
+        },
+        {
+          "title": "Engineering review of local practice",
+          "note": "The user-supplied two-rebar alternative remains unapproved until structural/durability/detail checks are complete.",
+          "state": "BLOCK"
+        }
+      ],
+      "wms_notice": "No soak-pit dimension, mortar ratio, weep-hole spacing, reinforcement size or separation distance is asserted by this demo.",
+      "itp": [
+        {
+          "point": "Design/authority gate",
+          "criteria": "Applicable design and authority requirements resolved.",
+          "class": "HOLD"
+        },
+        {
+          "point": "Excavation/site gate",
+          "criteria": "Actual soil, groundwater, utility and safe-excavation conditions recorded.",
+          "class": "HOLD"
+        },
+        {
+          "point": "Pre-cover/handover",
+          "criteria": "Real inspection, photos/as-built and acceptance captured.",
+          "class": "HOLD"
+        }
+      ],
+      "wbs": [
+        {
+          "id": "WBS-PENDING",
+          "name": "Final governed WBS location pending"
+        },
+        {
+          "id": "WORK_ID_PENDING",
+          "name": "Reusable work identity unresolved"
+        },
+        {
+          "id": "ACTIVITY_ID",
+          "name": "Must not exist until project occurrence is created"
+        }
+      ],
+      "schedule": [
+        {
+          "label": "Identity gate",
+          "value": "BLOCKED until work catalogue authority resolves"
+        },
+        {
+          "label": "Duration",
+          "value": "Not calculated before scope/resources/productivity are verified"
+        },
+        {
+          "label": "Predecessors",
+          "value": "Not fabricated"
+        },
+        {
+          "label": "P6",
+          "value": "Future exchange only after governed activity exists"
+        }
+      ],
+      "links": [
+        {
+          "type": "Source",
+          "ref": "ARC/WMS/Soak Pit intake"
+        },
+        {
+          "type": "Work catalogue",
+          "ref": "No governed soak-pit work_id resolved yet"
+        },
+        {
+          "type": "Codal research",
+          "ref": "Fresh clause-level verification required"
+        },
+        {
+          "type": "Field note",
+          "ref": "Two-rebar alternative = UNVERIFIED user practice"
+        }
+      ],
+      "mapping": {
+        "IFC": "Future IfcTaskType only after identity resolution",
+        "IfcOpenShell": "Future calculation/schedule model",
+        "bSDD": "Vocabulary lookup",
+        "IDS": "Future requirement rules",
+        "BCF": "Future site issue exchange",
+        "P6": "Future schedule exchange"
+      }
+    }
+  ]
+}

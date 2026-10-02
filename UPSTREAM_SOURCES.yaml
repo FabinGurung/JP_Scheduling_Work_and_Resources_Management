@@ -1,0 +1,23 @@
+version: 0.1-demo
+authority: REFERENCE_ONLY
+sources:
+  - source_id: BS-IFC43
+    provider: buildingSMART
+    role: task_schedule_resource_cost_interoperability
+    url: https://standards.buildingsmart.org/IFC/RELEASE/IFC4_3/
+  - source_id: IFCOS
+    provider: IfcOpenShell
+    role: open_source_ifc_engine_and_4d_interoperability
+    url: https://docs.ifcopenshell.org/
+  - source_id: BSDD
+    provider: buildingSMART
+    role: terminology_and_properties
+    url: https://github.com/buildingSMART/bSDD
+  - source_id: IDS
+    provider: buildingSMART
+    role: machine_readable_requirements
+    url: https://github.com/buildingSMART/IDS
+  - source_id: BCF
+    provider: buildingSMART
+    role: issue_exchange
+    url: https://github.com/buildingSMART/BCF-API
