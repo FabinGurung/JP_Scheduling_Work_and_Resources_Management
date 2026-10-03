@@ -3,7 +3,9 @@
     "id": "DEMO-KERNEL-001",
     "name": "Kernel CPM Demo",
     "start": "2026-10-01",
-    "required_finish_slot": 29
+    "required_finish_slot": 29,
+    "data_date_slot": 7,
+    "current_milestone": "v0.3-professional-scheduling-core"
   },
   "calendar": {
     "working_weekdays": [
@@ -21,61 +23,71 @@
       "activity_id": "A010",
       "name": "Mobilization",
       "duration": 3,
-      "work_id": null
+      "work_id": null,
+      "wbs_id": "WBS-STR"
     },
     {
       "activity_id": "A020",
       "name": "Setting out",
       "duration": 2,
-      "work_id": null
+      "work_id": null,
+      "wbs_id": "WBS-STR"
     },
     {
       "activity_id": "A030",
       "name": "Excavation",
       "duration": 5,
-      "work_id": null
+      "work_id": null,
+      "wbs_id": "WBS-STR"
     },
     {
       "activity_id": "A040",
       "name": "PCC",
       "duration": 2,
-      "work_id": null
+      "work_id": null,
+      "wbs_id": "WBS-STR"
     },
     {
       "activity_id": "A050",
       "name": "Footing reinforcement & formwork",
       "duration": 5,
-      "work_id": null
+      "work_id": null,
+      "wbs_id": "WBS-STR"
     },
     {
       "activity_id": "A060",
       "name": "RCC footings",
       "duration": 3,
-      "work_id": null
+      "work_id": null,
+      "wbs_id": "WBS-STR"
     },
     {
       "activity_id": "A070",
       "name": "Wet-area masonry",
       "duration": 4,
-      "work_id": null
+      "work_id": null,
+      "wbs_id": "WBS-FIN"
     },
     {
       "activity_id": "A080",
       "name": "Cementitious waterproofing",
       "duration": 4,
-      "work_id": "WRK-000023"
+      "work_id": "WRK-000023",
+      "wbs_id": "WBS-FIN"
     },
     {
       "activity_id": "A090",
       "name": "Waterproofing hold point",
       "duration": 0,
-      "work_id": "WRK-000023"
+      "work_id": "WRK-000023",
+      "wbs_id": "WBS-FIN"
     },
     {
       "activity_id": "A100",
       "name": "Protection screed",
       "duration": 4,
-      "work_id": null
+      "work_id": null,
+      "wbs_id": "WBS-FIN"
     }
   ],
   "relationships": [
@@ -160,5 +172,42 @@
       "resource_id": "CREW-WP",
       "units": 1
     }
-  ]
+  ],
+  "wbs": [
+    {
+      "wbs_id": "WBS-ROOT",
+      "name": "Demo Project"
+    },
+    {
+      "wbs_id": "WBS-STR",
+      "parent_wbs_id": "WBS-ROOT",
+      "name": "Structural / Substructure"
+    },
+    {
+      "wbs_id": "WBS-FIN",
+      "parent_wbs_id": "WBS-ROOT",
+      "name": "Finishes / Wet Areas"
+    }
+  ],
+  "constraints": [
+    {
+      "activity_id": "A080",
+      "type": "FINISH_ON_OR_BEFORE",
+      "slot": 27
+    }
+  ],
+  "status_updates": {
+    "A010": {
+      "actual_start_slot": 0,
+      "actual_finish_slot": 3
+    },
+    "A020": {
+      "actual_start_slot": 3,
+      "actual_finish_slot": 5
+    },
+    "A030": {
+      "actual_start_slot": 5,
+      "remaining_duration": 3
+    }
+  }
 }
