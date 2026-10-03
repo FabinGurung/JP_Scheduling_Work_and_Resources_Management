@@ -1,9 +1,9 @@
 {
   "meta": {
-    "version": "0.1-demo",
+    "version": "0.2-knowledge",
     "authority": "SANITIZED_DEMO_ONLY",
     "base_commit": "d38cd5e7b9d769917070df1b2eefb83c709b0e89",
-    "branch": "construction-knowledge-kernel-demo-v0.1"
+    "branch": "kernel-v0.2-open-source-engines"
   },
   "sources": [
     {
@@ -44,6 +44,174 @@
     }
   ],
   "works": [
+    {
+      "key": "shuttering",
+      "share_slug": "shuttering",
+      "work_id": "WRK-000002",
+      "title": "Centering / Shuttering (Formwork)",
+      "category": "Structural / Formwork",
+      "description": "Practical site-readiness and execution knowledge for formwork/shuttering, linked to the existing governed reusable work identity and QA hold-point template.",
+      "identity_status": "MAPPED",
+      "source_status": "LIVE_DRIVE_TEMPLATE_REFERENCE_PLUS_PRACTICAL_BASELINE",
+      "checklist_template_id": "CK-BLD-STRUCT-FORM-001",
+      "wms_id": "WMS-DRAFT-WRK-000002",
+      "arc": {
+        "Labor": [
+          "Skilled formwork / shuttering carpenter or equivalent competent formwork worker",
+          "Helpers for handling, cleaning, lifting and positioning",
+          "Foreman / supervisor as required by the site organization"
+        ],
+        "Tools": [
+          "Measuring tape, marker / pencil and chalk line",
+          "Spirit level / laser level and plumb checking tools",
+          "Hammer, nail puller / pry bar and general hand tools",
+          "Saw / cutting tools suitable for the selected formwork system",
+          "Drill / driver, spanners and clamps where the system requires them"
+        ],
+        "Equipment": [
+          "Approved props / jacks / support system as applicable",
+          "Safe scaffolding, working platforms and access ladders where required",
+          "Lifting / handling equipment where panel weight or site conditions require it"
+        ],
+        "Materials": [
+          "Approved plywood, boards or proprietary formwork panels for the selected system",
+          "Timber / steel / aluminium secondary members, walers and supports as applicable",
+          "Ties, clamps, nails, screws and connection accessories required by the selected system",
+          "Approved form-release agent",
+          "Joint sealing material / foam / tape where required by the approved detail"
+        ],
+        "Safety": [
+          "Required PPE",
+          "Safe access and working-platform control",
+          "Edge / fall protection where there is fall exposure",
+          "Stable support, bracing and base bearing before loading",
+          "Housekeeping and controlled lifting / electrical-tool use"
+        ],
+        "Preconditions": [
+          "Latest approved structural / architectural drawings and dimensions are available",
+          "Formwork arrangement / support plan is resolved where design is required",
+          "Bearing surface and support locations are stable and suitable",
+          "Rebar, openings, sleeves, embeds and MEP interfaces are coordinated",
+          "Panels / contact surfaces are clean and release-agent requirements are understood",
+          "Pre-pour formwork inspection / hold point is planned"
+        ]
+      },
+      "wms": [
+        {
+          "title": "Review drawings and formwork system",
+          "note": "Confirm dimensions, levels, openings, supports, interfaces and the approved formwork method before fabrication/erection.",
+          "state": "GATE"
+        },
+        {
+          "title": "Prepare panels and support components",
+          "note": "Clean, inspect, cut/assemble and stage the selected formwork components without inventing unapproved member sizes or spacings.",
+          "state": "PREP"
+        },
+        {
+          "title": "Set out line and level",
+          "note": "Transfer the required lines, dimensions and levels before fixing the formwork.",
+          "state": "VERIFY"
+        },
+        {
+          "title": "Erect, support and brace",
+          "note": "Install panels, props, ties, walers and bracing in accordance with the approved system / design.",
+          "state": "CONTROL"
+        },
+        {
+          "title": "Check geometry and tightness",
+          "note": "Verify dimensions, line, level, plumb, joints, openings and leakage-prone gaps.",
+          "state": "VERIFY"
+        },
+        {
+          "title": "Coordinate embeds and reinforcement interfaces",
+          "note": "Confirm sleeves, inserts, openings, reinforcement clearances and other concealed interfaces before closure.",
+          "state": "VERIFY"
+        },
+        {
+          "title": "Release-agent / cleanliness check",
+          "note": "Confirm contact surfaces are clean and approved release agent is correctly applied without contaminating reinforcement or construction joints.",
+          "state": "VERIFY"
+        },
+        {
+          "title": "Pre-pour inspection",
+          "note": "Do not permit concrete placement until the governed formwork hold point is accepted.",
+          "state": "HOLD"
+        },
+        {
+          "title": "Monitor during concrete placement",
+          "note": "Observe formwork movement, leakage, bracing and supports during placement; stop/escalate if unsafe or unstable conditions appear.",
+          "state": "CONTROL"
+        },
+        {
+          "title": "Strip, clean and stack",
+          "note": "Remove formwork only after approved stripping/strength criteria are satisfied; clean, inspect and store reusable components.",
+          "state": "CLOSE"
+        }
+      ],
+      "wms_notice": "This knowledge page does not assert prop spacing, tie spacing, panel thickness, stripping time, concrete-pressure limits or other design values. Those must come from the approved formwork design/system, project documents and applicable engineering requirements.",
+      "itp": [
+        {
+          "point": "Geometry check",
+          "criteria": "Dimensions, line, level and plumb match approved drawings.",
+          "class": "VERIFY"
+        },
+        {
+          "point": "Support / stability check",
+          "criteria": "Supports, base bearing, ties, clamps and bracing are stable and appropriate to the approved system.",
+          "class": "HOLD"
+        },
+        {
+          "point": "Tightness / surface check",
+          "criteria": "Joints, cleanliness and release-agent condition are acceptable before concrete.",
+          "class": "VERIFY"
+        },
+        {
+          "point": "Interfaces check",
+          "criteria": "Openings, sleeves, embeds and reinforcement/MEP interfaces are coordinated before closure.",
+          "class": "VERIFY"
+        },
+        {
+          "point": "Pre-pour acceptance",
+          "criteria": "Formwork is accepted before concrete placement.",
+          "class": "HOLD"
+        },
+        {
+          "point": "Stripping authorization",
+          "criteria": "Removal follows approved strength/time/project criteria and does not damage the concrete.",
+          "class": "HOLD/VERIFY"
+        }
+      ],
+      "field_notes": [
+        "Field-knowledge principle: the page should answer what labour, tools, equipment, materials, safety controls and preconditions the site needs before starting work.",
+        "Future site-team additions should remain visibly tagged as FIELD KNOWLEDGE until they are reconciled with project/design/codal authority."
+      ],
+      "links": [
+        {
+          "type": "Work catalogue",
+          "ref": "WRK-000002"
+        },
+        {
+          "type": "QA template",
+          "ref": "CK-BLD-STRUCT-FORM-001"
+        },
+        {
+          "type": "Live Drive source",
+          "ref": "CONTINENT_07__CHECKLISTS_CONTROLS__v0.1"
+        },
+        {
+          "type": "Hold point",
+          "ref": "Formwork stable/accepted before concrete"
+        }
+      ],
+      "mapping": {
+        "IFC": "Reusable work knowledge can map to task type; real project formwork activity remains an activity occurrence",
+        "IfcOpenShell": "Future schedule/resource bridge",
+        "bSDD": "Vocabulary/property mapping",
+        "IDS": "Future machine-checkable requirements where appropriate",
+        "BCF": "Site issue / nonconformance exchange",
+        "P6": "Schedule activity links through work_id, not by copying WMS text into P6"
+      }
+    },
     {
       "key": "waterproofing",
       "work_id": "WRK-000023",
