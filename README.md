@@ -2,27 +2,41 @@
 
 Open, testable project-controls kernel for construction planning and execution.
 
-Development is isolated on feature branches before any merge to `main`.
+## Branch policy
 
-## Current development branch
+All new ChatGPT development continues on **one working branch**:
 
 `kernel-v0.2-open-source-engines`
 
-## Native v0.2 functions
+The branch name is historical. Milestones v0.3, v0.4 and later evolve **in place on this same branch**. `main` and the earlier prototype branch remain preserved and are not used as scratch branches.
 
-- CPM forward/backward pass
-- FS / SS / FF / SF relationships + lag
-- required-finish negative float
-- total float / free float / critical flag
-- working-calendar date mapping
-- earned value metrics
-- resource over-allocation detection
-- adapter contracts for IfcOpenShell/Ifc4D, OpenProject, ProjectLibre, TaskJuggler and GanttProject
+## Product surfaces
 
-## Product model
+- `index.html` — P6-style Project Controls operations
+- `kernel-lab.html` — scheduling calculation / adapter engine lab
+- `roadmap.html` — one-page development roadmap
+- `knowledge/` — separate Construction Knowledge portal for engineers
+- `knowledge/shuttering.html` — direct share link for Shuttering / Formwork
+- `knowledge/waterproofing.html` — direct share link for Waterproofing
+- `knowledge/soak-pit.html` — direct research-gated Soak Pit link
 
-`activity_id` is a project schedule occurrence. `work_id` links the activity to reusable construction knowledge such as ARC, WMS and ITP/QAQC.
+## v0.2 foundation
 
-Open `kernel-lab.html` in the deployed branch to inspect computed schedule output and adapter previews.
+CPM forward/backward pass, FS/SS/FF/SF + lag, negative float, total/free float, working-calendar mapping, earned value, resource-overload detection and five upstream adapter contracts.
 
-See `docs/UPSTREAM_CAPABILITY_MATRIX.md` and `UPSTREAM_SOURCES.json` for the five upstream capability sources and their license boundaries.
+## v0.3 — in progress
+
+- WBS tree validation and rollups
+- schedule constraint evaluation
+- data-date activity statusing
+- actual start / actual finish validation
+- remaining-duration validation
+- basic FS remaining-work rescheduling
+- explicit fail-closed behavior for unsupported non-FS status rescheduling
+- fuller calendar / constraint semantics next
+
+## Knowledge separation
+
+`activity_id` is a project schedule occurrence. `work_id` links that occurrence to reusable site knowledge such as ARC, WMS and ITP/QAQC.
+
+Construction knowledge is deliberately usable as a standalone engineer-facing site rather than forcing field engineers into the Project Controls UI.
