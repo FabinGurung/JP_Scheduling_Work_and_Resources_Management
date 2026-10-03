@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Construction Task Knowledge</title>
+<style>
+:root{--bg:#f5f7fa;--p:#fff;--ink:#182230;--muted:#667085;--line:#dde3eb;--blue:#315fd4}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial;background:var(--bg);color:var(--ink)}header{background:#16202f;color:#fff}.bar{max-width:1180px;margin:auto;padding:15px;display:flex;gap:8px;align-items:center}.brand{font-weight:900}.sp{flex:1}.nav,.copy{color:#fff;text-decoration:none;border:1px solid #4b586b;background:transparent;border-radius:6px;padding:7px 9px;font-size:11px}.wrap{max-width:1180px;margin:auto;padding:20px}.hero,.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px;margin-bottom:13px}.hero h1{margin:5px 0 7px;font-size:25px}.muted{color:var(--muted);font-size:11px;line-height:1.55}.tag{display:inline-block;border-radius:999px;padding:4px 7px;font-size:9px;font-weight:900}.mapped{background:#eaf8f2;color:#087a55}.pending{background:#fff2dc;color:#a15c00}.ids{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:#475467}.arc{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.card h2,.card h3{margin:0 0 8px;font-size:14px}.card ul{margin:0;padding-left:18px;font-size:11px;line-height:1.55}.step{display:grid;grid-template-columns:28px 1fr auto;gap:9px;padding:10px 0;border-top:1px solid #edf0f4}.step:first-child{border-top:0}.num{width:25px;height:25px;border-radius:50%;background:#edf2ff;display:grid;place-items:center;font-size:10px;font-weight:900}.step b{font-size:11px}.step p{margin:3px 0 0;font-size:10px;color:var(--muted)}.state{font-size:8px;background:#fff0ef;color:#b42318;padding:4px 6px;border-radius:5px;font-weight:900}.note{border-left:4px solid #d78b1f;background:#fff8eb;padding:10px;border-radius:7px;font-size:10px;line-height:1.5}.field{border-left-color:#315fd4;background:#edf3ff}.refs{display:grid;grid-template-columns:140px 1fr;gap:6px;font-size:10px;padding:6px 0;border-bottom:1px solid #edf0f4}.refs:last-child{border:0}
+@media(max-width:850px){.arc{grid-template-columns:1fr}.refs{grid-template-columns:100px 1fr}}
+</style></head><body>
+<header><div class="bar"><div class="brand">Construction Knowledge</div><div class="sp"></div><a class="nav" href="./">All Tasks</a><a class="nav" href="../index.html">Project Controls</a><button class="copy" id="copy">Copy link</button></div></header>
+<main class="wrap" id="app"><div class="hero">Loading…</div></main>
+<script>
+function esc(s){return String(s??"").replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+async function boot(){
+  var key=new URLSearchParams(location.search).get("key");
+  var db=await fetch("../construction-knowledge.json").then(function(r){return r.json()});
+  var w=db.works.find(function(x){return x.key===key});
+  if(!w){document.querySelector("#app").innerHTML='<div class="hero"><h1>Task not found</h1><a href="./">Return to catalogue</a></div>';return}
+  document.title=w.title+" — Construction Knowledge";
+  var arc=Object.entries(w.arc).map(function(pair){
+    var k=pair[0],v=pair[1];
+    return '<section class="card"><h3>'+esc(k)+'</h3><ul>'+v.map(function(x){return '<li>'+esc(x)+'</li>'}).join("")+'</ul></section>';
+  }).join("");
+  var steps=w.wms.map(function(x,i){
+    return '<div class="step"><div class="num">'+(i+1)+'</div><div><b>'+esc(x.title)+'</b><p>'+esc(x.note)+'</p></div><span class="state">'+esc(x.state)+'</span></div>';
+  }).join("");
+  var itp=w.itp.map(function(x){
+    return '<div class="refs"><b>'+esc(x.class)+'</b><span><b>'+esc(x.point)+'</b><br>'+esc(x.criteria)+'</span></div>';
+  }).join("");
+  var notes=(w.field_notes||[]).map(function(x){return '<div class="note field" style="margin-top:7px">'+esc(x)+'</div>'}).join("");
+  var refs=(w.links||[]).map(function(x){return '<div class="refs"><b>'+esc(x.type)+'</b><span>'+esc(x.ref)+'</span></div>'}).join("");
+  var cls=w.identity_status==="MAPPED"?"mapped":"pending";
+  var body='';
+  body+='<section class="hero"><span class="tag '+cls+'">'+esc(w.identity_status)+'</span><h1>'+esc(w.title)+'</h1><div class="ids">'+esc(w.work_id||"work_id unresolved")+' · '+esc(w.checklist_template_id||"QA template unresolved")+'</div><p class="muted">'+esc(w.description)+'</p></section>';
+  body+='<div class="note"><b>Authority boundary:</b> '+esc(w.wms_notice)+'</div>';
+  body+='<h2 style="font-size:16px;margin:18px 0 9px">Before starting — ARC readiness</h2><div class="arc">'+arc+'</div>';
+  body+='<section class="card"><h2>Work Method — practical sequence</h2>'+steps+'</section>';
+  body+='<section class="card"><h2>ITP / QAQC controls</h2>'+itp+'</section>';
+  if(notes) body+='<section class="card"><h2>Field knowledge</h2>'+notes+'</section>';
+  body+='<section class="card"><h2>Traceability / linked records</h2>'+refs+'</section>';
+  document.querySelector("#app").innerHTML=body;
+}
+document.querySelector("#copy").onclick=async function(){await navigator.clipboard.writeText(location.href);document.querySelector("#copy").textContent="Copied"};
+boot();
+</script></body></html>
