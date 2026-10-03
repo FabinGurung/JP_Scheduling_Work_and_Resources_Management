@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Project Controls Kernel — Roadmap</title>
+<style>
+:root{--bg:#f4f6f9;--p:#fff;--ink:#182230;--muted:#667085;--line:#dfe4eb;--blue:#315fd4}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial;background:var(--bg);color:var(--ink)}header{background:#202733;color:#fff}.bar{max-width:1250px;margin:auto;padding:18px;display:flex;align-items:center;gap:10px}.brand{font-weight:900}.sp{flex:1}.nav{color:#fff;text-decoration:none;border:1px solid #4a5565;border-radius:6px;padding:7px 9px;font-size:11px}.wrap{max-width:1250px;margin:auto;padding:18px}.hero,.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}.hero h1{margin:0 0 6px;font-size:25px}.hero p,.card p{color:var(--muted);font-size:12px;line-height:1.6}.branch{display:inline-block;background:#edf2ff;color:#3452b5;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:800}.surface{display:grid;grid-template-columns:1fr 1fr;gap:12px}.road{display:grid;gap:10px}.phase{background:#fff;border:1px solid var(--line);border-radius:10px;padding:13px;display:grid;grid-template-columns:84px 1fr auto;gap:12px;align-items:start}.ver{font-weight:900;font-size:16px}.phase h3{margin:0 0 5px;font-size:13px}.phase p{margin:0;color:var(--muted);font-size:11px;line-height:1.5}.state{font-size:9px;font-weight:900;border-radius:999px;padding:5px 7px}.done{background:#eaf8f2;color:#087a55}.active{background:#fff2dc;color:#a15c00}.future{background:#eef2f6;color:#475467}.tree{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;background:#111827;color:#dbe4ef;border-radius:8px;padding:13px;white-space:pre-wrap}.note{border-left:4px solid var(--blue);background:#eef4ff;padding:11px;font-size:11px;line-height:1.5;border-radius:7px}
+@media(max-width:800px){.surface{grid-template-columns:1fr}.phase{grid-template-columns:68px 1fr}.phase .state{grid-column:2}}
+</style></head><body>
+<header><div class="bar"><div class="brand">Project Controls Kernel</div><div class="sp"></div><a class="nav" href="./index.html">Project Controls</a><a class="nav" href="./kernel-lab.html">Engine Lab</a><a class="nav" href="./knowledge/">Construction Knowledge</a></div></header>
+<main class="wrap">
+<div class="hero"><span class="branch">ONE WORKING BRANCH · kernel-v0.2-open-source-engines</span><h1>Development Roadmap</h1><p>Versions are milestones inside this same ChatGPT working branch. Older branches stay preserved; v0.3, v0.4 and later development continues here.</p></div>
+<div class="surface">
+<div class="card"><h3>Operational surface</h3><div class="tree">Project Controls
+├── WBS / Activities
+├── CPM / Calendars / Constraints
+├── Baselines / Progress
+├── Resources / Productivity
+├── Cost / Earned Value
+├── P6 / MS Project Interop
+├── IFC / 4D
+└── Schedule QA / Risk
+
+Engine Lab
+└── calculations and adapter internals</div></div>
+<div class="card"><h3>Separate engineer knowledge surface</h3><div class="tree">Construction Knowledge
+├── Shuttering / Formwork
+├── Waterproofing
+├── Soak Pit
+└── future work catalogue
+    ├── ARC
+    ├── WMS
+    ├── ITP / QAQC
+    ├── Safety
+    └── field lessons</div><p>These task pages are directly shareable with engineers without exposing the scheduling-engine complexity.</p></div>
+</div>
+<div class="note">Current focus: <b>v0.3 Professional Scheduling Core</b> — constraints, data date/status updates, remaining-work rescheduling, WBS validation/rollups and fuller calendar behavior.</div>
+<div class="road" style="margin-top:14px">
+<div class="phase"><div class="ver">v0.2</div><div><h3>Kernel Foundation</h3><p>CPM, FS/SS/FF/SF + lag, float, criticality, EV, resource-overload detection and five upstream adapters.</p></div><span class="state done">FOUNDATION PASS</span></div>
+<div class="phase"><div class="ver">v0.3</div><div><h3>Professional Scheduling Core</h3><p>WBS validation/rollup, constraints, data date, actuals, remaining duration, status anomalies, rescheduling and stronger calendar semantics.</p></div><span class="state active">IN PROGRESS</span></div>
+<div class="phase"><div class="ver">v0.4</div><div><h3>Resource & Productivity Engine</h3><p>Labor/equipment/material resources, crew calendars, quantity → productivity → duration, histograms and resource leveling.</p></div><span class="state future">NEXT</span></div>
+<div class="phase"><div class="ver">v0.5</div><div><h3>Baseline & Progress Control</h3><p>BL1/BL2, current-vs-baseline, variance, progress cycles, S-curves and stronger EV integration.</p></div><span class="state future">PLANNED</span></div>
+<div class="phase"><div class="ver">v0.6</div><div><h3>P6 / Microsoft Project Interoperability</h3><p>Ifc4D-backed P6 XER/XML and MS Project XML/MSPDI exchange with loss validation.</p></div><span class="state future">PLANNED</span></div>
+<div class="phase"><div class="ver">v0.7</div><div><h3>Construction Knowledge Integration</h3><p>Activity → work_id → ARC/WMS/ITP/QAQC/spec/code/resources while keeping the knowledge portal independently useful.</p></div><span class="state future">PLANNED</span></div>
+<div class="phase"><div class="ver">v0.8</div><div><h3>4D / IFC</h3><p>IfcWorkPlan, IfcWorkSchedule, IfcTask, resources/costs and model-element ↔ activity links.</p></div><span class="state future">PLANNED</span></div>
+<div class="phase"><div class="ver">v0.9</div><div><h3>Schedule QA + Risk</h3><p>Open ends, lag/constraint/float checks, relationship density, three-point durations and Monte Carlo P50/P80.</p></div><span class="state future">PLANNED</span></div>
+<div class="phase"><div class="ver">v1.0</div><div><h3>Governed Live System</h3><p>Governed project/schedule/progress/work-catalogue sources, authenticated writes, provenance and A9-aligned release controls.</p></div><span class="state future">PLANNED</span></div>
+</div></main></body></html>
