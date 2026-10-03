@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
       - name: Run kernel unit tests
         run: npm test
       - name: Validate upstream registry and fail-closed project data
@@ -34,10 +34,16 @@ jobs:
           assert len(upstream["sources"]) == 5
           works={x["key"]:x for x in knowledge["works"]}
           acts={x["activity_id"]:x for x in demo["activities"]}
-          assert works["shuttering"]["work_id"]=="WRK-000002"\n          assert works["shuttering"]["checklist_template_id"]=="CK-BLD-STRUCT-FORM-001"\n          assert works["waterproofing"]["work_id"]=="WRK-000023"
+          assert works["shuttering"]["work_id"]=="WRK-000002"
+          assert works["shuttering"]["checklist_template_id"]=="CK-BLD-STRUCT-FORM-001"
+          assert works["waterproofing"]["work_id"]=="WRK-000023"
           assert works["soak-pit"]["work_id"] is None
           assert works["soak-pit"]["identity_status"]=="IDENTITY_PENDING"
-          assert acts["A090"]["work_id"]=="WRK-000023"\n          assert pathlib.Path("knowledge/index.html").exists()\n          assert pathlib.Path("knowledge/task.html").exists()\n          assert pathlib.Path("roadmap.html").exists()
+          assert acts["A090"]["work_id"]=="WRK-000023"
+          assert pathlib.Path("knowledge/index.html").exists()
+          assert pathlib.Path("knowledge/task.html").exists()
+          assert pathlib.Path("knowledge/shuttering.html").exists()
+          assert pathlib.Path("roadmap.html").exists()
           print("Governance/data validation PASS")
           PY
       - uses: actions/configure-pages@v5
