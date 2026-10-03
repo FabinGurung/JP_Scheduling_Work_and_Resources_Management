@@ -1,4 +1,4 @@
-name: Test and deploy Project Controls Kernel v0.2
+name: Test and deploy Project Controls Kernel v0.3
 on:
   push:
     branches:
@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages-project-controls-kernel-v02"
+  group: "pages-project-controls-kernel-working-branch"
   cancel-in-progress: true
 
 jobs:
@@ -34,10 +34,10 @@ jobs:
           assert len(upstream["sources"]) == 5
           works={x["key"]:x for x in knowledge["works"]}
           acts={x["activity_id"]:x for x in demo["activities"]}
-          assert works["waterproofing"]["work_id"]=="WRK-000023"
+          assert works["shuttering"]["work_id"]=="WRK-000002"\n          assert works["shuttering"]["checklist_template_id"]=="CK-BLD-STRUCT-FORM-001"\n          assert works["waterproofing"]["work_id"]=="WRK-000023"
           assert works["soak-pit"]["work_id"] is None
           assert works["soak-pit"]["identity_status"]=="IDENTITY_PENDING"
-          assert acts["A090"]["work_id"]=="WRK-000023"
+          assert acts["A090"]["work_id"]=="WRK-000023"\n          assert pathlib.Path("knowledge/index.html").exists()\n          assert pathlib.Path("knowledge/task.html").exists()\n          assert pathlib.Path("roadmap.html").exists()
           print("Governance/data validation PASS")
           PY
       - uses: actions/configure-pages@v5
