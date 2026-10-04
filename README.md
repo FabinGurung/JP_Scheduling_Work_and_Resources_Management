@@ -31,9 +31,9 @@ CPM forward/backward pass, FS/SS/FF/SF + lag, negative float, total/free float, 
 - data-date activity statusing
 - actual start / actual finish validation
 - remaining-duration validation
-- basic FS remaining-work rescheduling
-- explicit fail-closed behavior for unsupported non-FS status rescheduling
-- fuller calendar / constraint semantics next
+- remaining-work rescheduling across FS / SS / FF / SF relationships + lag
+- completed-predecessor actuals carried forward as remaining-work boundary constraints\n- FS / SS start-driving logic into already in-progress successors treated as satisfied; FF / SF finish-driving logic remains active\n- fail-closed validation when relationship actuals / IDs / types are insufficient
+- fuller multi-calendar / schedule-driving constraint semantics next
 
 ## Knowledge separation
 
