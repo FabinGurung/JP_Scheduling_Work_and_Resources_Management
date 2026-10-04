@@ -1,19 +1,18 @@
 import {normalizeConstraints,constraintStartBounds,evaluateConstraintViolations} from "./constraints.mjs";
+import {normalizeActivity} from "./activities.mjs";
+import {numeric} from "./validation.mjs";
 
 const REL_TYPES = new Set(["FS","SS","FF","SF"]);
-const asId = a => a.activity_id ?? a.id;
 
 export function scheduleNetwork({activities, relationships = [], constraints = [], requiredFinish = null}) {
   if (!Array.isArray(activities) || activities.length === 0) throw new Error("activities must be a non-empty array");
   const map = new Map();
   for (const raw of activities) {
-    const id = asId(raw);
-    if (!id) throw new Error("Every activity requires id or activity_id");
+    const a = normalizeActivity(raw), id = a.id;
     if (map.has(id)) throw new Error(`Duplicate activity id: ${id}`);
-    const duration = Number(raw.duration ?? raw.original_duration ?? 0);
-    if (!Number.isFinite(duration) || duration < 0) throw new Error(`Invalid duration for ${id}`);
-    map.set(id, {...raw,id,duration});
+    map.set(id, a);
   }
+  if(new Set([...map.values()].map(a=>a.calendar_id??"__DEFAULT__")).size>1) throw new Error("Multiple activity calendars are unsupported in the shared-slot scheduler");
   const normalizedConstraints=normalizeConstraints({activities:[...map.values()],constraints});
   const constraintsById=new Map([...map.keys()].map(id=>[id,[]]));
   for(const c of normalizedConstraints) constraintsById.get(c.activity_id).push(c);
@@ -24,10 +23,10 @@ export function scheduleNetwork({activities, relationships = [], constraints = [
     const predecessor=raw.predecessor ?? raw.predecessor_id;
     const successor=raw.successor ?? raw.successor_id;
     const type=String(raw.type ?? "FS").toUpperCase();
-    const lag=Number(raw.lag ?? 0);
+    const lag=numeric(raw.lag ?? 0,"Relationship lag");
     if (!map.has(predecessor) || !map.has(successor)) throw new Error(`Relationship references unknown activity: ${predecessor} -> ${successor}`);
     if (!REL_TYPES.has(type)) throw new Error(`Unsupported relationship type: ${type}`);
-    if (!Number.isFinite(lag)) throw new Error("Relationship lag must be numeric");
+    if(raw.lag_calendar_id!=null) throw new Error("Relationship lag calendars are unsupported in the shared-slot scheduler");
     const rel={predecessor,successor,type,lag};
     incoming.get(successor).push(rel); outgoing.get(predecessor).push(rel);
   }
@@ -56,12 +55,11 @@ export function scheduleNetwork({activities, relationships = [], constraints = [
     calc.set(id,{...a,es,ef:es+a.duration});
   }
   const earlyProjectFinish=Math.max(...[...calc.values()].map(a=>a.ef));
-  const targetFinish=requiredFinish==null?earlyProjectFinish:Number(requiredFinish);
-  if(!Number.isFinite(targetFinish)) throw new Error("requiredFinish must be numeric");
+  const targetFinish=numeric(requiredFinish??earlyProjectFinish,"requiredFinish");
   for(const id of [...order].reverse()){
-    const a=calc.get(id), successors=outgoing.get(id); let ls;
-    if(successors.length===0) ls=targetFinish-a.duration;
-    else ls=Math.min(...successors.map(rel=>{
+    const a=calc.get(id), successors=outgoing.get(id);
+    // Every activity contributes to project completion, including long SS/SF predecessors.
+    let ls=Math.min(targetFinish-a.duration,...successors.map(rel=>{
       const s=calc.get(rel.successor);
       if(rel.type==="FS") return s.ls-rel.lag-a.duration;
       if(rel.type==="SS") return s.ls-rel.lag;
@@ -75,9 +73,8 @@ export function scheduleNetwork({activities, relationships = [], constraints = [
     a.ls=ls; a.lf=ls+a.duration;
   }
   for(const id of order){
-    const a=calc.get(id), successors=outgoing.get(id); let ff;
-    if(successors.length===0) ff=targetFinish-a.ef;
-    else ff=Math.min(...successors.map(rel=>{
+    const a=calc.get(id), successors=outgoing.get(id);
+    const ff=Math.min(targetFinish-a.ef,...successors.map(rel=>{
       const s=calc.get(rel.successor);
       if(rel.type==="FS") return s.es-a.ef-rel.lag;
       if(rel.type==="SS") return s.es-a.es-rel.lag;

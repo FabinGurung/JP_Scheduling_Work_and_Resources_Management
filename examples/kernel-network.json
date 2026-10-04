@@ -79,6 +79,7 @@
       "activity_id": "A090",
       "name": "Waterproofing hold point",
       "duration": 0,
+      "activity_type": "FINISH_MILESTONE",
       "work_id": "WRK-000023",
       "wbs_id": "WBS-FIN"
     },
@@ -190,6 +191,11 @@
     }
   ],
   "constraints": [
+    {
+      "activity_id": "A060",
+      "type": "START_ON_OR_AFTER",
+      "slot": 19
+    },
     {
       "activity_id": "A080",
       "type": "FINISH_ON_OR_BEFORE",
