@@ -11,6 +11,47 @@ test("v0.3 constraint evaluator identifies violated latest finish",()=>{
   assert.equal(r[0].ok,false); assert.equal(r[0].calculated_slot,10); assert.equal(r[0].variance,2);
 });
 
+test("v0.3 start-not-earlier constraint drives forward scheduling",()=>{
+  const s=scheduleNetwork({
+    activities:[{id:"A",duration:3},{id:"B",duration:2}],
+    relationships:[{predecessor:"A",successor:"B",type:"FS"}],
+    constraints:[{activity_id:"B",type:"START_ON_OR_AFTER",slot:6}]
+  });
+  const by=Object.fromEntries(s.activities.map(a=>[a.id,a]));
+  assert.equal(by.B.es,6); assert.equal(by.B.ef,8);
+  assert.equal(s.constraints[0].ok,true);
+});
+
+test("v0.3 latest-finish constraint drives backward pass and exposes negative float when impossible",()=>{
+  const s=scheduleNetwork({
+    activities:[{id:"A",duration:5},{id:"B",duration:5}],
+    relationships:[{predecessor:"A",successor:"B",type:"FS"}],
+    constraints:[{activity_id:"B",type:"FINISH_ON_OR_BEFORE",slot:8}]
+  });
+  const by=Object.fromEntries(s.activities.map(a=>[a.id,a]));
+  assert.equal(by.B.ls,3); assert.equal(by.B.total_float,-2);
+  assert.equal(by.A.total_float,-2);
+  assert.equal(s.constraints[0].ok,false);
+});
+
+test("v0.3 must-start constraint is exact when feasible and reports a conflict when relationship logic forces later",()=>{
+  const feasible=scheduleNetwork({
+    activities:[{id:"A",duration:5},{id:"B",duration:2}],
+    relationships:[{predecessor:"A",successor:"B",type:"FS"}],
+    constraints:[{activity_id:"B",type:"MUST_START_ON",slot:5}]
+  });
+  let b=feasible.activities.find(a=>a.id==="B");
+  assert.equal(b.es,5); assert.equal(b.ls,5); assert.equal(feasible.constraints[0].ok,true);
+
+  const conflict=scheduleNetwork({
+    activities:[{id:"A",duration:5},{id:"B",duration:2}],
+    relationships:[{predecessor:"A",successor:"B",type:"FS",lag:2}],
+    constraints:[{activity_id:"B",type:"MUST_START_ON",slot:5}]
+  });
+  b=conflict.activities.find(a=>a.id==="B");
+  assert.equal(b.es,7); assert.equal(b.ls,5); assert.equal(b.total_float,-2); assert.equal(conflict.constraints[0].ok,false);
+});
+
 test("v0.3 data-date rescheduler removes completed predecessor and preserves FS behavior",()=>{
   const rels=[{predecessor:"A",successor:"B",type:"FS"},{predecessor:"B",successor:"C",type:"FS"}];
   const base=scheduleNetwork({activities:[{id:"A",duration:3},{id:"B",duration:4},{id:"C",duration:2}],relationships:rels});

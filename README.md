@@ -27,13 +27,21 @@ CPM forward/backward pass, FS/SS/FF/SF + lag, negative float, total/free float, 
 ## v0.3 — in progress
 
 - WBS tree validation and rollups
-- schedule constraint evaluation
 - data-date activity statusing
 - actual start / actual finish validation
 - remaining-duration validation
 - remaining-work rescheduling across FS / SS / FF / SF relationships + lag
-- completed-predecessor actuals carried forward as remaining-work boundary constraints\n- FS / SS start-driving logic into already in-progress successors treated as satisfied; FF / SF finish-driving logic remains active\n- fail-closed validation when relationship actuals / IDs / types are insufficient
-- fuller multi-calendar / schedule-driving constraint semantics next
+- completed-predecessor actuals carried forward as remaining-work boundary constraints
+- FS / SS start-driving logic into already in-progress successors treated as satisfied; FF / SF finish-driving logic remains active
+- fail-closed validation when relationship actuals / IDs / types are insufficient
+- schedule-driving constraints in base CPM:
+  - START_ON_OR_AFTER / FINISH_ON_OR_AFTER drive the forward pass
+  - START_ON_OR_BEFORE / FINISH_ON_OR_BEFORE drive the backward pass / float
+  - MUST_START_ON / MUST_FINISH_ON act as exact bounds when feasible
+  - conflicts remain explicit constraint violations and can create negative float
+- fuller multi-calendar semantics remain open
+- remaining-work/data-date constraint translation remains open
+- richer activity types / milestone behavior and deeper schedule QA remain open
 
 ## Knowledge separation
 

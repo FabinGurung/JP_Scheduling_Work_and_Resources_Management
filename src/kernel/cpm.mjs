@@ -1,7 +1,9 @@
+import {normalizeConstraints,constraintStartBounds,evaluateConstraintViolations} from "./constraints.mjs";
+
 const REL_TYPES = new Set(["FS","SS","FF","SF"]);
 const asId = a => a.activity_id ?? a.id;
 
-export function scheduleNetwork({activities, relationships = [], requiredFinish = null}) {
+export function scheduleNetwork({activities, relationships = [], constraints = [], requiredFinish = null}) {
   if (!Array.isArray(activities) || activities.length === 0) throw new Error("activities must be a non-empty array");
   const map = new Map();
   for (const raw of activities) {
@@ -12,6 +14,10 @@ export function scheduleNetwork({activities, relationships = [], requiredFinish 
     if (!Number.isFinite(duration) || duration < 0) throw new Error(`Invalid duration for ${id}`);
     map.set(id, {...raw,id,duration});
   }
+  const normalizedConstraints=normalizeConstraints({activities:[...map.values()],constraints});
+  const constraintsById=new Map([...map.keys()].map(id=>[id,[]]));
+  for(const c of normalizedConstraints) constraintsById.get(c.activity_id).push(c);
+
   const incoming = new Map([...map.keys()].map(id=>[id,[]]));
   const outgoing = new Map([...map.keys()].map(id=>[id,[]]));
   for (const raw of relationships) {
@@ -43,6 +49,10 @@ export function scheduleNetwork({activities, relationships = [], requiredFinish 
       if(rel.type==="SF") candidate=p.es+rel.lag-a.duration;
       es=Math.max(es,candidate);
     }
+    for(const c of constraintsById.get(id)){
+      const b=constraintStartBounds(c,a.duration);
+      if(b.min_start!=null) es=Math.max(es,b.min_start);
+    }
     calc.set(id,{...a,es,ef:es+a.duration});
   }
   const earlyProjectFinish=Math.max(...[...calc.values()].map(a=>a.ef));
@@ -58,6 +68,10 @@ export function scheduleNetwork({activities, relationships = [], requiredFinish 
       if(rel.type==="FF") return s.lf-rel.lag-a.duration;
       return s.lf-rel.lag;
     }));
+    for(const c of constraintsById.get(id)){
+      const b=constraintStartBounds(c,a.duration);
+      if(b.max_start!=null) ls=Math.min(ls,b.max_start);
+    }
     a.ls=ls; a.lf=ls+a.duration;
   }
   for(const id of order){
@@ -72,5 +86,12 @@ export function scheduleNetwork({activities, relationships = [], requiredFinish 
     }));
     a.total_float=a.ls-a.es; a.free_float=ff; a.critical=a.total_float<=0;
   }
-  return {order,project:{early_finish:earlyProjectFinish,required_finish:targetFinish,finish_variance:earlyProjectFinish-targetFinish},activities:order.map(id=>({...calc.get(id)}))};
+  const scheduledActivities=order.map(id=>({...calc.get(id)}));
+  const constraintResults=evaluateConstraintViolations({scheduledActivities,constraints:normalizedConstraints});
+  return {
+    order,
+    project:{early_finish:earlyProjectFinish,required_finish:targetFinish,finish_variance:earlyProjectFinish-targetFinish},
+    activities:scheduledActivities,
+    constraints:constraintResults
+  };
 }
