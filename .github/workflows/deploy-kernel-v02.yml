@@ -1,4 +1,4 @@
-name: Test and deploy Project Controls Kernel v0.3
+name: Build and deploy JP Scheduling Work and Resource Management
 on:
   push:
     branches:
@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages-project-controls-kernel-working-branch"
+  group: "jp-scheduling-production-pages"
   cancel-in-progress: true
 
 jobs:
@@ -19,6 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: kernel-v0.2-open-source-engines
+      - name: Enforce canonical Pages source
+        run: test "$GITHUB_REF_NAME" = "kernel-v0.2-open-source-engines"
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
