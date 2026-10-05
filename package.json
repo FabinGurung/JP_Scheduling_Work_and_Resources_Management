@@ -1,10 +1,11 @@
 {
   "name": "project-controls-kernel",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "verify:calendar": "node scripts/verify-calendar-oracle.mjs"
   },
   "engines": {
     "node": ">=20"

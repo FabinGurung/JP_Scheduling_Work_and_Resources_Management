@@ -24,6 +24,8 @@ jobs:
           node-version: "24"
       - name: Run kernel unit tests
         run: npm test
+      - name: Verify calendar scheduling oracle
+        run: npm run verify:calendar
       - name: Validate upstream registry and fail-closed project data
         run: |
           python - <<'PY'

@@ -101,6 +101,55 @@ float, constraint violations and missed planned starts are warnings. It does not
 approve a schedule. Engine Lab displays synthetic example data and shares its
 calculation function with integration tests.
 
+## Calendar-aware day scheduler (SEQ5)
+
+`scheduleCalendarNetwork` is a separate native path; the legacy `scheduleNetwork`
+shared-slot API is intentionally unchanged. Calendar-aware time is an integer
+**civil-day event coordinate** whose origin is `projectStart`. Task duration is
+an integer number of working days on that activity's `calendar_id`. Start and
+finish are event points; finish is exclusive. A task's displayed `finish_date`
+is its last worked day, while an input `actual_finish_date` is an exclusive
+finish event boundary, consistent with `ef`.
+
+Each calendar declares working weekdays and holiday dates. Scheduling is bounded
+by explicit `horizonStart` / `horizonEnd`; exhausting that horizon is an error,
+not silent clipping. Zero-duration START_MILESTONE and FINISH_MILESTONE activities
+remain atomic event points.
+
+FS, SS, FF and SF use the same event inequalities as the shared-slot model, but
+signed lag is consumed on an explicitly resolved lag calendar. Supported
+`lag_calendar_mode` values are:
+
+- `PREDECESSOR` — predecessor activity calendar (default when not declared)
+- `SUCCESSOR` — successor activity calendar
+- `PROJECT` — project calendar
+- `EXPLICIT` — requires `lag_calendar_id`
+
+A resolved relationship records its lag calendar. Supplying a conflicting
+`lag_calendar_id` outside EXPLICIT mode fails closed. Positive lag consumes
+working days forward; negative lag moves backward through working days.
+
+The forward pass finds the earliest feasible placement for each activity across
+its calendar. The backward pass finds the latest feasible placement within the
+project completion target, relationships and native latest/exact constraints.
+The implementation uses bounded exhaustive placement search for correctness and
+clarity at day resolution. Calendar-aware total/free float is therefore measured
+as **civil-day event distance**; it is not P6 work-period float.
+
+The six native constraint types use the same conflict policy as the shared-slot
+model. Calendar-aware constraints accept an integer event `slot` or ISO `date`.
+Per-constraint calendars and explicit priority are still rejected.
+
+`rescheduleCalendarRemaining` keeps the data date in the same absolute event
+coordinate. Completed predecessors contribute actual finish for FS/FF and actual
+start for SS/SF, then relationship lag is shifted on the resolved lag calendar.
+SS/SF from an in-progress predecessor use its immutable actual start. FS/SS into
+an already in-progress successor are treated as satisfied. Start constraints on
+started work evaluate the actual start; finish constraints govern remaining work.
+Completed work retains actual-based constraint checks even when no remaining
+segment exists. Missing or contradictory actuals, missing remaining duration,
+unknown IDs, cycles and horizon overflow fail closed.
+
 ## Verification and remaining limitations
 
 `npm test` covers all six native constraints across status states, immutable
@@ -115,8 +164,8 @@ and bound slots -2/0/3/6/8. Forward bounds and backward bounds are checked
 separately, matching the documented conflict policy. Its finite horizons are
 chosen to contain this matrix; this is not a proof for arbitrary networks.
 
-Still open: multi-calendar scheduling and lag-calendar semantics, resource-dependent
-and level-of-effort activity types, advanced priority, working hours/time zones,
-suspended/intermittent work, broader real-project QA and production editing.
+Still open: resource-dependent and level-of-effort activity types, advanced
+priority, working hours/time zones, suspended/intermittent work, broader
+real-project QA and production editing.
 Resource/productivity, baselines/progress, P6/MS Project exchange, IFC/4D and risk
 remain separate later milestones. Soak Pit stays IDENTITY_PENDING.

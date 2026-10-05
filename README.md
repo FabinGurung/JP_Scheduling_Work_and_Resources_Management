@@ -47,12 +47,28 @@ CPM forward/backward pass, FS/SS/FF/SF + lag, negative float, total/free float, 
 - all activities, including long SS/SF predecessors, respect the backward-pass project completion boundary
 - forecast QA findings: open ends, leads, duplicate relationships, negative float, constraint violations and missed starts
 - Engine Lab applies the same constraints to both baseline and remaining forecasts, with data-date and constraint controls
-- malformed actuals, numeric fields, priority semantics and multiple activity calendars fail closed
-- fuller multi-calendar semantics, resource-dependent/level-of-effort activity types, advanced priority rules and deeper QA remain open
+- malformed actuals, numeric fields and unsupported priority semantics fail closed; the legacy shared-slot scheduler still rejects multiple activity calendars
+- working hours/time zones, resource-dependent/level-of-effort activity types, advanced priority rules and deeper QA remain open
 
-The native model is a **shared working-slot model**, not a claim of P6 compatibility. See [Scheduling semantics](docs/SCHEDULING_SEMANTICS.md) for exact supported rules and limitations.
+The original `scheduleNetwork` API remains a **shared working-slot model** for regression stability. SEQ5 adds a separate native calendar-aware day scheduler; neither path is a claim of P6 compatibility. See [Scheduling semantics](docs/SCHEDULING_SEMANTICS.md) for exact supported rules and limitations.
 
 Run `npm test` for the regression suite. `node scripts/verify-schedule-oracle.mjs` performs a longer, independent bounded placement enumeration; it is deliberately separate from the fast CI suite. All dates, actuals and quantities in Engine Lab are synthetic demo data.
+
+## SEQ5 — native calendar-aware day scheduling
+
+The separate `scheduleCalendarNetwork` / `rescheduleCalendarRemaining` path now supports:
+
+- per-activity working-week calendars and holidays
+- FS / SS / FF / SF relationships in a common civil-day event coordinate
+- signed working-day lag with explicit `PREDECESSOR`, `SUCCESSOR`, `PROJECT` or `EXPLICIT` lag-calendar policy
+- forward and backward feasible placement across different calendars
+- the same six native date constraints and typed zero-duration milestones
+- data-date remaining-work scheduling with immutable actual starts/finishes and completed-predecessor boundaries
+- bounded-horizon, integer-working-day, fail-closed validation
+
+Calendar-aware total/free float is reported as **civil-day event distance**, not P6 work-period float. Working hours/time zones, suspended/intermittent work, resource-dependent/level-of-effort types, advanced priority, and P6/MS Project parity/exchange remain later work.
+
+The SEQ5 regression file contains 18 focused tests. `npm run verify:calendar` independently enumerates 3,888 bounded placements across calendar pairs, holidays, all four relationship types, signed lag and three non-explicit lag-calendar modes.
 
 ## Knowledge separation
 
