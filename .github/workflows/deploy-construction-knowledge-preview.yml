@@ -1,4 +1,5 @@
-name: Deploy Project Controls branch preview
+name: Validate construction-knowledge historical branch
+
 on:
   push:
     branches:
@@ -7,15 +8,9 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages-project-controls-preview"
-  cancel-in-progress: true
 
 jobs:
-  validate-and-deploy:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,11 +28,9 @@ jobs:
           assert acts["A090"]["work_id"]=="WRK-000023"
           assert p["meta"]["authority"]=="SYNTHETIC_DEMO_ONLY"
           assert pathlib.Path("schemas/construction-work.schema.json").exists()
-          print("Project Controls validation PASS")
+          print("Historical construction-knowledge validation PASS")
           PY
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: "."
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Confirm non-production boundary
+        run: |
+          echo "VALIDATION_ONLY=PASS"
+          echo "This branch cannot deploy to the github-pages environment."
