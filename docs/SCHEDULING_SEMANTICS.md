@@ -87,13 +87,22 @@ on a completed activity, unknown update IDs and cycles fail closed. A planned
 start before the data date without an actual start is a visible warning, not
 automatic fabricated progress.
 
+## Suspend/resume progress boundary (SEQ8)
+
+Both remaining-work paths accept one paired suspend/resume boundary for an in-progress TASK. In the shared-slot model the fields are `suspend_slot` and `resume_slot`; the calendar-aware model also accepts `suspend_date` and `resume_date`.
+
+The pair is fail-closed: both points must be supplied together, the activity must already be in progress, suspension cannot precede immutable actual start or lie after the data date, and resume cannot precede suspension. Milestones cannot be suspended.
+
+When resume is later than the data date, the remaining segment receives a system not-before boundary at resume. In the calendar-aware scheduler the resume point is a civil-day event boundary, so the actual remaining start may move to the activity calendar's next working day. When resume is on or before the data date, no extra forecast delay is introduced.
+
+This models one forecast resume boundary only. It does not model multiple suspension windows, intermittent actual-work segments, time-of-day shifts, or Primavera P6 suspend/resume parity.
+
 ## Activity types and diagnostics
 
 Supported native types are TASK, START_MILESTONE and FINISH_MILESTONE. The two
 milestone labels identify atomic zero-duration points in this slot model. They
 must have zero duration and either no actuals or equal actual start/finish points.
-They do not implement P6 milestone date-resolution rules. Level of effort,
-resource-dependent types, suspended work and calendar-based shifts remain open.
+They do not implement P6 milestone date-resolution rules. Level of effort, resource-dependent types, multi-window intermittent work and time-of-day/calendar-shift semantics remain open.
 
 `inspectSchedule` provides diagnostic findings: open starts/finishes are information
 requiring a topology decision; negative lag, duplicate relationships, negative

@@ -259,6 +259,8 @@ function statusRowsFor(source,updates,dataDate,engine){
     const u=updates?.[a.id]??{};
     const actual_start_slot=readUpdatePoint(u,"actual_start_slot","actual_start_date",engine,`actual start for ${a.id}`);
     const actual_finish_slot=readUpdatePoint(u,"actual_finish_slot","actual_finish_date",engine,`actual finish for ${a.id}`);
+    const suspend_slot=readUpdatePoint(u,"suspend_slot","suspend_date",engine,`suspend point for ${a.id}`);
+    const resume_slot=readUpdatePoint(u,"resume_slot","resume_date",engine,`resume point for ${a.id}`);
     if(actual_finish_slot!=null&&actual_start_slot==null) throw new Error(`Activity ${a.id} requires actual start when actual finish is supplied`);
     if(actual_start_slot!=null&&actual_start_slot>dataDate) throw new Error(`Invalid status data for ${a.id}: ACTUAL_START_AFTER_DATA_DATE`);
     if(actual_finish_slot!=null&&actual_finish_slot>dataDate) throw new Error(`Invalid status data for ${a.id}: ACTUAL_FINISH_AFTER_DATA_DATE`);
@@ -267,10 +269,19 @@ function statusRowsFor(source,updates,dataDate,engine){
     let remaining_duration=u.remaining_duration==null?null:integer(u.remaining_duration,`remaining_duration for ${a.id}`,{nonnegative:true});
     if(status==="IN_PROGRESS"&&remaining_duration==null) throw new Error(`Invalid status data for ${a.id}: REMAINING_DURATION_REQUIRED`);
     if(status==="COMPLETED"&&remaining_duration!=null&&remaining_duration!==0) throw new Error(`Invalid status data for ${a.id}: COMPLETED_REMAINING_DURATION_NONZERO`);
+    const suspendResumePaired=(suspend_slot==null)===(resume_slot==null);
+    const hasSuspendResume=suspend_slot!=null&&resume_slot!=null;
+    if(!suspendResumePaired) throw new Error(`Invalid status data for ${a.id}: SUSPEND_RESUME_PAIR_REQUIRED`);
+    if(hasSuspendResume&&status!=="IN_PROGRESS") throw new Error(`Invalid status data for ${a.id}: SUSPEND_RESUME_REQUIRES_IN_PROGRESS`);
+    if(hasSuspendResume&&a.milestone) throw new Error(`Invalid status data for ${a.id}: MILESTONE_SUSPEND_RESUME_UNSUPPORTED`);
+    if(hasSuspendResume&&actual_start_slot!=null&&suspend_slot<actual_start_slot) throw new Error(`Invalid status data for ${a.id}: SUSPEND_BEFORE_ACTUAL_START`);
+    if(hasSuspendResume&&suspend_slot>dataDate) throw new Error(`Invalid status data for ${a.id}: SUSPEND_AFTER_DATA_DATE`);
+    if(hasSuspendResume&&resume_slot<suspend_slot) throw new Error(`Invalid status data for ${a.id}: RESUME_BEFORE_SUSPEND`);
     if(a.milestone&&(actual_start_slot!=null||actual_finish_slot!=null)&&(actual_start_slot==null||actual_finish_slot==null||actual_start_slot!==actual_finish_slot)) throw new Error(`Invalid status data for ${a.id}: MILESTONE_ACTUALS_MUST_MATCH`);
     if(status==="NOT_STARTED") remaining_duration=a.duration;
     if(status==="COMPLETED") remaining_duration=0;
-    return {activity_id:a.id,status,actual_start_slot,actual_finish_slot,remaining_duration,issues:status==="NOT_STARTED"&&(a.es??0)<dataDate?["SHOULD_HAVE_STARTED"]:[]};
+    return {activity_id:a.id,status,actual_start_slot,actual_finish_slot,remaining_duration,suspend_slot,resume_slot,
+      suspended_at_data_date:hasSuspendResume&&resume_slot>dataDate,issues:status==="NOT_STARTED"&&(a.es??0)<dataDate?["SHOULD_HAVE_STARTED"]:[]};
   });
 }
 
@@ -300,6 +311,13 @@ export function rescheduleCalendarRemaining({scheduledActivities,relationships=[
   if(incomplete.length===0) return finalize(null,[]);
   const remActs=incomplete.map(a=>({...a,duration:byStatus.get(a.id).status==="IN_PROGRESS"?byStatus.get(a.id).remaining_duration:a.duration}));
   const remIds=new Set(remActs.map(a=>a.id)),remRels=[],boundaryConstraints=[],generated=[];
+  for(const st of statuses){
+    if(st.status==="IN_PROGRESS"&&st.suspended_at_data_date){
+      generated.push({activity_id:st.activity_id,type:"START_ON_OR_AFTER",slot:st.resume_slot,source:"SUSPEND_RESUME"});
+      boundaryConstraints.push({predecessor:null,successor:st.activity_id,type:"SUSPEND_RESUME",lag:0,
+        bound_type:"START_ON_OR_AFTER",required_slot:st.resume_slot,required_date:engine.eventDate(st.resume_slot),source:"SUSPEND_RESUME"});
+    }
+  }
   for(const rel of rels){
     const ps=byStatus.get(rel.predecessor),ss=byStatus.get(rel.successor);
     if(ss.status==="COMPLETED") continue;

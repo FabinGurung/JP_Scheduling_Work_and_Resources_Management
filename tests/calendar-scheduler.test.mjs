@@ -120,3 +120,24 @@ test("ambiguous lag calendar declarations fail closed",()=>{
   assert.throws(()=>scheduleCalendarNetwork({...base,activities:[{id:"A",duration:1},{id:"B",duration:1}],relationships:[{predecessor:"A",successor:"B",lag_calendar_mode:"PROJECT",lag_calendar_id:"FIVE"}]}),/requires EXPLICIT/);
   assert.throws(()=>scheduleCalendarNetwork({...base,activities:[{id:"A",duration:1},{id:"B",duration:1}],relationships:[{predecessor:"A",successor:"B",lag_calendar_mode:"MAGIC"}]}),/Unsupported lag calendar mode/);
 });
+
+
+test("calendar remaining work respects a future resume boundary on the activity calendar",()=>{
+  const baseline=scheduleCalendarNetwork({...base,activities:[{id:"A",duration:8,calendar_id:"FIVE"}]});
+  const r=rescheduleCalendarRemaining({...base,scheduledActivities:baseline.activities,dataDate:"2026-10-08",
+    updates:{A:{actual_start_date:"2026-10-05",remaining_duration:2,suspend_date:"2026-10-07",resume_date:"2026-10-11"}}});
+  const a=r.forecast[0];
+  assert.equal(a.start_date,"2026-10-12");
+  assert.equal(a.finish_date,"2026-10-13");
+  assert.equal(r.status[0].suspended_at_data_date,true);
+  assert.equal(r.boundary_constraints[0].source,"SUSPEND_RESUME");
+  assert.equal(r.boundary_constraints[0].required_date,"2026-10-11");
+});
+
+test("calendar suspend/resume validation fails closed",()=>{
+  const baseline=scheduleCalendarNetwork({...base,activities:[{id:"A",duration:8,calendar_id:"FIVE"}]});
+  const args={...base,scheduledActivities:baseline.activities,dataDate:"2026-10-08"};
+  assert.throws(()=>rescheduleCalendarRemaining({...args,updates:{A:{actual_start_date:"2026-10-05",remaining_duration:2,suspend_date:"2026-10-07"}}}),/SUSPEND_RESUME_PAIR_REQUIRED/);
+  assert.throws(()=>rescheduleCalendarRemaining({...args,updates:{A:{actual_start_date:"2026-10-05",remaining_duration:2,suspend_date:"2026-10-09",resume_date:"2026-10-12"}}}),/SUSPEND_AFTER_DATA_DATE/);
+  assert.throws(()=>rescheduleCalendarRemaining({...args,updates:{A:{actual_start_date:"2026-10-05",remaining_duration:2,suspend_date:"2026-10-07",resume_date:"2026-10-06"}}}),/RESUME_BEFORE_SUSPEND/);
+});

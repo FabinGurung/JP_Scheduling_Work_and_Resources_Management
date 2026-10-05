@@ -189,3 +189,33 @@ test("fractional slot roundoff does not manufacture an exact-date violation",()=
   assert.equal(s.constraints[0].ok,true);
   assert.ok(Math.abs(s.constraints[0].variance)<1e-9);
 });
+
+
+test("suspend/resume progress delays only the remaining segment",()=>{
+  const r=rescheduleRemaining({scheduledActivities:[{id:"A",duration:10}],dataDateSlot:5,
+    updates:{A:{actual_start_slot:0,remaining_duration:3,suspend_slot:4,resume_slot:8}}});
+  const a=r.forecast[0];
+  assert.equal(a.forecast_start_slot,8);
+  assert.equal(a.forecast_finish_slot,11);
+  assert.equal(r.status[0].suspended_at_data_date,true);
+  assert.equal(r.status[0].suspend_slot,4);
+  assert.equal(r.status[0].resume_slot,8);
+  assert.equal(r.boundary_constraints[0].source,"SUSPEND_RESUME");
+  assert.equal(r.boundary_constraints[0].min_start_slot,8);
+
+  const resumed=rescheduleRemaining({scheduledActivities:[{id:"A",duration:10}],dataDateSlot:5,
+    updates:{A:{actual_start_slot:0,remaining_duration:3,suspend_slot:3,resume_slot:4}}});
+  assert.equal(resumed.forecast[0].forecast_start_slot,5);
+  assert.equal(resumed.status[0].suspended_at_data_date,false);
+  assert.equal(resumed.boundary_constraints.length,0);
+});
+
+test("suspend/resume progress validation fails closed",()=>{
+  const base={scheduledActivities:[{id:"A",duration:10}],dataDateSlot:5};
+  assert.throws(()=>rescheduleRemaining({...base,updates:{A:{actual_start_slot:0,remaining_duration:3,suspend_slot:4}}}),/SUSPEND_RESUME_PAIR_REQUIRED/);
+  assert.throws(()=>rescheduleRemaining({...base,updates:{A:{actual_start_slot:0,remaining_duration:3,resume_slot:8}}}),/SUSPEND_RESUME_PAIR_REQUIRED/);
+  assert.throws(()=>rescheduleRemaining({...base,updates:{A:{actual_start_slot:2,remaining_duration:3,suspend_slot:1,resume_slot:8}}}),/SUSPEND_BEFORE_ACTUAL_START/);
+  assert.throws(()=>rescheduleRemaining({...base,updates:{A:{actual_start_slot:0,remaining_duration:3,suspend_slot:6,resume_slot:8}}}),/SUSPEND_AFTER_DATA_DATE/);
+  assert.throws(()=>rescheduleRemaining({...base,updates:{A:{actual_start_slot:0,remaining_duration:3,suspend_slot:4,resume_slot:3}}}),/RESUME_BEFORE_SUSPEND/);
+  assert.throws(()=>rescheduleRemaining({...base,updates:{A:{suspend_slot:4,resume_slot:8}}}),/SUSPEND_RESUME_REQUIRES_IN_PROGRESS/);
+});

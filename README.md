@@ -30,6 +30,7 @@ CPM forward/backward pass, FS/SS/FF/SF + lag, negative float, total/free float, 
 - data-date activity statusing
 - actual start / actual finish validation
 - remaining-duration validation
+- paired suspend/resume progress boundaries for in-progress tasks; a future resume holds the remaining segment without changing immutable actual start
 - remaining-work rescheduling across FS / SS / FF / SF relationships + lag
 - completed-predecessor actuals carried forward as remaining-work boundary constraints
 - FS / SS start-driving logic into already in-progress successors treated as satisfied; FF / SF finish-driving logic remains active
@@ -48,7 +49,7 @@ CPM forward/backward pass, FS/SS/FF/SF + lag, negative float, total/free float, 
 - forecast QA findings: open ends, leads, duplicate relationships, negative float, constraint violations and missed starts
 - Engine Lab applies the same constraints to both baseline and remaining forecasts, with data-date and constraint controls
 - malformed actuals, numeric fields and unsupported priority semantics fail closed; the legacy shared-slot scheduler still rejects multiple activity calendars
-- working hours/time zones, resource-dependent/level-of-effort activity types, advanced priority rules and deeper QA remain open
+- working hours/time zones, resource-dependent/level-of-effort activity types, advanced priority rules, multi-window intermittent progress and deeper QA remain open
 
 The original `scheduleNetwork` API remains a **shared working-slot model** for regression stability. SEQ5 adds a separate native calendar-aware day scheduler; neither path is a claim of P6 compatibility. See [Scheduling semantics](docs/SCHEDULING_SEMANTICS.md) for exact supported rules and limitations.
 
@@ -69,6 +70,19 @@ The separate `scheduleCalendarNetwork` / `rescheduleCalendarRemaining` path now 
 Calendar-aware total/free float is reported as **civil-day event distance**, not P6 work-period float. Working hours/time zones, suspended/intermittent work, resource-dependent/level-of-effort types, advanced priority, and P6/MS Project parity/exchange remain later work.
 
 The SEQ5 regression file contains 18 focused tests. `npm run verify:calendar` independently enumerates 3,888 bounded placements across calendar pairs, holidays, all four relationship types, signed lag and three non-explicit lag-calendar modes.
+
+## SEQ8 — suspend/resume progress semantics
+
+The remaining-work APIs now accept a paired suspension/resume boundary for **in-progress TASK activities**:
+
+- shared-slot updates use `suspend_slot` + `resume_slot`
+- calendar-aware updates also accept `suspend_date` + `resume_date`
+- the suspension must be on/after actual start and on/before the data date
+- the resume must not precede suspension
+- when resume is after the data date, the remaining segment is held until that boundary; calendar-aware placement then advances to the activity's next working day
+- incomplete pairs, not-started/completed activities and milestones fail closed
+
+This is intentionally one suspension/resume boundary for forecast control. Multiple intermittent work windows, P6 suspend/resume parity and time-of-day semantics remain later work.
 
 ## Knowledge separation
 

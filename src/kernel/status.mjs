@@ -48,6 +48,8 @@ export function classifyStatus(activity,update={},dataDateSlot=0){
   const actualStart=read("actual_start_slot","ACTUAL_START_INVALID");
   const actualFinish=read("actual_finish_slot","ACTUAL_FINISH_INVALID");
   const remaining=read("remaining_duration","REMAINING_DURATION_INVALID");
+  const suspend=read("suspend_slot","SUSPEND_SLOT_INVALID");
+  const resume=read("resume_slot","RESUME_SLOT_INVALID");
   if(actualFinish!=null&&actualStart==null) issues.push("ACTUAL_FINISH_WITHOUT_ACTUAL_START");
   if(actualStart!=null&&actualStart>dataDateSlot) issues.push("ACTUAL_START_AFTER_DATA_DATE");
   if(actualFinish!=null&&actualFinish>dataDateSlot) issues.push("ACTUAL_FINISH_AFTER_DATA_DATE");
@@ -58,10 +60,19 @@ export function classifyStatus(activity,update={},dataDateSlot=0){
   else status="NOT_STARTED";
   if(status==="IN_PROGRESS"&&remaining==null) issues.push("REMAINING_DURATION_REQUIRED");
   if(status==="COMPLETED"&&remaining!=null&&remaining!==0) issues.push("COMPLETED_REMAINING_DURATION_NONZERO");
+  const suspendResumePaired=(suspend==null)===(resume==null);
+  const hasSuspendResume=suspend!=null&&resume!=null;
+  if(!suspendResumePaired) issues.push("SUSPEND_RESUME_PAIR_REQUIRED");
+  if(hasSuspendResume&&status!=="IN_PROGRESS") issues.push("SUSPEND_RESUME_REQUIRES_IN_PROGRESS");
+  if(hasSuspendResume&&activity.milestone) issues.push("MILESTONE_SUSPEND_RESUME_UNSUPPORTED");
+  if(hasSuspendResume&&actualStart!=null&&suspend<actualStart) issues.push("SUSPEND_BEFORE_ACTUAL_START");
+  if(hasSuspendResume&&suspend>dataDateSlot) issues.push("SUSPEND_AFTER_DATA_DATE");
+  if(hasSuspendResume&&resume<suspend) issues.push("RESUME_BEFORE_SUSPEND");
   if(activity.milestone&&(actualStart!=null||actualFinish!=null)&&
       (actualStart==null||actualFinish==null||actualStart!==actualFinish)) issues.push("MILESTONE_ACTUALS_MUST_MATCH");
   if(status==="NOT_STARTED"&&(activity.es??0)<dataDateSlot) issues.push("SHOULD_HAVE_STARTED");
-  return {status,actual_start_slot:actualStart,actual_finish_slot:actualFinish,remaining_duration:status==="COMPLETED"?0:(remaining??activity.duration),issues};
+  return {status,actual_start_slot:actualStart,actual_finish_slot:actualFinish,remaining_duration:status==="COMPLETED"?0:(remaining??activity.duration),
+    suspend_slot:suspend,resume_slot:resume,suspended_at_data_date:hasSuspendResume&&resume>dataDateSlot,issues};
 }
 
 export function rescheduleRemaining({scheduledActivities,relationships=[],constraints=[],updates={},dataDateSlot=0,requiredFinishSlot=null}){
@@ -120,6 +131,13 @@ export function rescheduleRemaining({scheduledActivities,relationships=[],constr
   const activeIds=new Set(remById.keys());
   const remRels=[];
   const boundaryConstraints=[];
+  for(const st of statusRows){
+    if(st.status==="IN_PROGRESS"&&st.suspended_at_data_date){
+      const offset=st.resume_slot-dataDate;
+      boundaryConstraints.push({predecessor:null,successor:st.activity_id,type:"SUSPEND_RESUME",lag:0,
+        min_start_offset:offset,min_start_slot:st.resume_slot,source:"SUSPEND_RESUME"});
+    }
+  }
 
   for(const rel of normalizedRelationships){
     const pStatus=byStatus.get(rel.predecessor),sStatus=byStatus.get(rel.successor);
