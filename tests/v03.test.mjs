@@ -127,7 +127,7 @@ test("v0.3 activity contract exposes resource-dependent semantics separately fro
   assert.equal(a.duration_mode,"RESOURCE_CALENDAR_DEPENDENT");
   assert.equal(a.calendar_mode,"ASSIGNED_RESOURCE_CALENDARS");
   assert.equal(a.requires_resource_assignments,true);
-  assert.equal(a.native_schedule_support,"CONTRACT_ONLY");
+  assert.equal(a.native_schedule_support,"RESOURCE_ENGINE");
   assert.equal(a.effort_driven,true);
   assert.equal(activityTypeContract("resource_dependent").activity_type,"RESOURCE_DEPENDENT");
 });
