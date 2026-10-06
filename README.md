@@ -24,7 +24,7 @@ The branch name is historical. Milestones v0.3, v0.4 and later evolve **in place
 
 CPM forward/backward pass, FS/SS/FF/SF + lag, negative float, total/free float, working-calendar mapping, earned value, resource-overload detection and five upstream adapter contracts.
 
-## v0.3 — in progress
+## v0.3 — core pass
 
 - WBS tree validation and rollups
 - data-date activity statusing
@@ -52,7 +52,7 @@ CPM forward/backward pass, FS/SS/FF/SF + lag, negative float, total/free float, 
 - malformed actuals and numeric fields fail closed; the legacy shared-slot scheduler still rejects multiple activity calendars
 - constraint policy supports `STRICT_ALL` and deterministic `PRIORITY_RANKED`; priority never overrides relationships, required finish or immutable actuals
 - calendar contracts now preserve validated IANA time zones and weekday working periods, while native intraday execution remains fail-closed
-- native execution of contract-only resource-dependent/level-of-effort activity types, retained-logic/progress-override modes, multi-window intermittent progress and broader real-project QA remain open
+- native execution of contract-only resource-dependent/level-of-effort activity types, retained-logic/progress-override modes, multi-window intermittent progress and broader real-project QA remain deferred beyond the v0.3 core
 
 The original `scheduleNetwork` API remains a **shared working-slot model** for regression stability. SEQ5 adds a separate native calendar-aware day scheduler; neither path is a claim of P6 compatibility. See [Scheduling semantics](docs/SCHEDULING_SEMANTICS.md) for exact supported rules and limitations.
 
@@ -131,6 +131,21 @@ The calendar-aware path also validates a time contract without pretending that d
 - returned schedule metadata labels native intraday support as `CONTRACT_ONLY`.
 
 The same five upstream references remain the basis for interoperability and behavior research: IfcOpenShell/Ifc4D, OpenProject, ProjectLibre Desktop, TaskJuggler and GanttProject. Seq11 reimplements its own deterministic contract and copies no upstream scheduler code.
+
+## v0.4 — Resource & Productivity Engine
+
+SEQ12 starts the v0.4 engine with explicit resource/productivity contracts rather than stretching the legacy overload detector.
+
+- resources are typed as `LABOR`, `EQUIPMENT` or `MATERIAL`
+- labor/equipment are renewable-capacity resources with `max_units`; materials are consumable resources with quantity/inventory metadata
+- resources can carry explicit `calendar_id` values for later resource-dependent scheduling
+- crews require an explicit crew calendar and reusable labor/equipment members; crew expansion preserves source-crew traceability
+- quantity-to-productivity duration supports per-workday rates and per-hour rates using explicit working minutes/day
+- productivity-derived durations preserve original duration and calculation provenance
+- resource histograms report renewable demand/capacity/utilization/overloads and material consumption/cumulative totals by integer schedule slot
+- the legacy `findResourceOverloads` API remains backward-compatible
+
+This first v0.4 boundary does not move activities to resolve overloads, enforce material inventory availability, or execute RESOURCE_DEPENDENT activities against resource calendars. Those remain later v0.4 boundaries before resource leveling is claimed.
 
 ## Knowledge separation
 
