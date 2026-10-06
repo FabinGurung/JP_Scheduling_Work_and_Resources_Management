@@ -147,6 +147,21 @@ SEQ12 starts the v0.4 engine with explicit resource/productivity contracts rathe
 
 This first v0.4 boundary does not move activities to resolve overloads, enforce material inventory availability, or execute RESOURCE_DEPENDENT activities against resource calendars. Those remain later v0.4 boundaries before resource leveling is claimed.
 
+## SEQ13 — resource-dependent placement + availability
+
+The v0.4 resource engine now has a dedicated native placement path for `RESOURCE_DEPENDENT` activities.
+
+- the canonical activity contract marks Resource Dependent work as `RESOURCE_ENGINE`, while the ordinary shared-slot/calendar CPM paths still fail closed instead of substituting an activity calendar
+- at least one renewable LABOR or EQUIPMENT assignment is required
+- direct renewable assignments require a resource calendar; crew assignments contribute their explicit crew calendar; when both resource and crew calendars exist, availability is their intersection
+- resource demand is aggregated per assigned renewable resource and checked against `max_units`
+- optional fixed `resourceReservations` consume capacity by slot/date; the activity waits for a feasible slot but the engine does not resequence or optimize other activities
+- material assignments require explicit inventory truth, support total quantity or quantity-per-work-slot, and may receive dated `materialReceipts`
+- material is consumed only on actual eligible work slots; insufficient supply delays forecast work until supply exists, otherwise the declared horizon fails closed
+- output exposes the exact working slots, required calendar IDs, renewable demand, material consumption, and `resource_leveling_applied: false`
+
+This is deterministic single-activity resource-dependent placement against declared/frozen availability. It is **not resource leveling** and does not optimize a multi-activity resource-constrained network. Resource leveling remains the next v0.4 boundary.
+
 ## Knowledge separation
 
 `activity_id` is a project schedule occurrence. `work_id` links that occurrence to reusable site knowledge such as ARC, WMS and ITP/QAQC.
