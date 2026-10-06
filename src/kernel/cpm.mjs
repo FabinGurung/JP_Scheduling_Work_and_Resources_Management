@@ -1,5 +1,5 @@
 import {normalizeConstraints,constraintStartBounds,evaluateConstraintViolations} from "./constraints.mjs";
-import {normalizeActivity} from "./activities.mjs";
+import {assertNativeSchedulingSupported,normalizeActivity} from "./activities.mjs";
 import {numeric} from "./validation.mjs";
 
 const REL_TYPES = new Set(["FS","SS","FF","SF"]);
@@ -9,6 +9,7 @@ export function scheduleNetwork({activities, relationships = [], constraints = [
   const map = new Map();
   for (const raw of activities) {
     const a = normalizeActivity(raw), id = a.id;
+    assertNativeSchedulingSupported(a,"Shared-slot scheduler");
     if (map.has(id)) throw new Error(`Duplicate activity id: ${id}`);
     map.set(id, a);
   }

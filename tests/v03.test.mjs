@@ -4,6 +4,8 @@ import {scheduleNetwork} from "../src/kernel/cpm.mjs";
 import {evaluateConstraintViolations} from "../src/kernel/constraints.mjs";
 import {rescheduleRemaining,rescheduleRemainingFS} from "../src/kernel/status.mjs";
 import {buildWbsTree,rollupWbs} from "../src/kernel/wbs.mjs";
+import {activityTypeContract,normalizeActivity} from "../src/kernel/activities.mjs";
+import {scheduleCalendarNetwork} from "../src/kernel/calendar-scheduler.mjs";
 
 test("v0.3 constraint evaluator identifies violated latest finish",()=>{
   const s=scheduleNetwork({activities:[{id:"A",duration:5},{id:"B",duration:5}],relationships:[{predecessor:"A",successor:"B",type:"FS"}]});
@@ -106,4 +108,42 @@ test("v0.3 WBS tree validates and rolls up activities",()=>{
   const tree=buildWbsTree(nodes); assert.equal(tree[0].children[0].wbs_id,"W1.1");
   const roll=rollupWbs({nodes,activities:[{id:"A",wbs_id:"W1.1",duration:5},{id:"B",wbs_id:"W1.1",duration:3}]});
   assert.equal(roll[0].activity_count,2); assert.equal(roll[0].total_activity_duration,8);
+});
+
+
+test("v0.3 activity contract exposes level-of-effort semantics without treating it as a milestone",()=>{
+  const a=normalizeActivity({id:"LOE",activity_type:"LEVEL_OF_EFFORT",duration:9});
+  assert.equal(a.milestone,false);
+  assert.equal(a.duration,9);
+  assert.equal(a.duration_mode,"DERIVED_FROM_LOGIC_BOUNDARIES");
+  assert.equal(a.calendar_mode,"BOUNDARY_DERIVED");
+  assert.equal(a.native_schedule_support,"CONTRACT_ONLY");
+  assert.equal(a.requires_resource_assignments,false);
+});
+
+test("v0.3 activity contract exposes resource-dependent semantics separately from effort-driven scheduling",()=>{
+  const a=normalizeActivity({id:"R",activity_type:"RESOURCE_DEPENDENT",duration:5,effort_driven:true});
+  assert.equal(a.milestone,false);
+  assert.equal(a.duration_mode,"RESOURCE_CALENDAR_DEPENDENT");
+  assert.equal(a.calendar_mode,"ASSIGNED_RESOURCE_CALENDARS");
+  assert.equal(a.requires_resource_assignments,true);
+  assert.equal(a.native_schedule_support,"CONTRACT_ONLY");
+  assert.equal(a.effort_driven,true);
+  assert.equal(activityTypeContract("resource_dependent").activity_type,"RESOURCE_DEPENDENT");
+});
+
+test("v0.3 shared-slot scheduler fails closed for contract-only LOE and resource-dependent activities",()=>{
+  assert.throws(()=>scheduleNetwork({activities:[{id:"L",activity_type:"LEVEL_OF_EFFORT",duration:4}]}),/does not execute LEVEL_OF_EFFORT/i);
+  assert.throws(()=>scheduleNetwork({activities:[{id:"R",activity_type:"RESOURCE_DEPENDENT",duration:4}]}),/assigned-resource calendars/i);
+});
+
+test("v0.3 calendar-aware scheduler fails closed rather than substituting the activity calendar for resource-dependent work",()=>{
+  const common={relationships:[],constraints:[],calendars:[{id:"DAY",working_weekdays:[1,2,3,4,5]}],projectStart:"2026-10-05",horizonEnd:"2026-10-30",projectCalendarId:"DAY"};
+  assert.throws(()=>scheduleCalendarNetwork({...common,activities:[{id:"R",activity_type:"RESOURCE_DEPENDENT",duration:4,calendar_id:"DAY"}]}),/does not execute RESOURCE_DEPENDENT/i);
+});
+
+test("v0.3 milestone zero-duration rule remains isolated from the new contract-only activity types",()=>{
+  assert.throws(()=>normalizeActivity({id:"M",activity_type:"START_MILESTONE",duration:1}),/must have zero duration/i);
+  assert.doesNotThrow(()=>normalizeActivity({id:"L",activity_type:"LEVEL_OF_EFFORT",duration:1}));
+  assert.doesNotThrow(()=>normalizeActivity({id:"R",activity_type:"RESOURCE_DEPENDENT",duration:1}));
 });

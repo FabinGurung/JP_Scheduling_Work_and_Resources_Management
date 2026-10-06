@@ -49,7 +49,7 @@ CPM forward/backward pass, FS/SS/FF/SF + lag, negative float, total/free float, 
 - forecast QA findings: open ends, leads, duplicate relationships, negative float, constraint violations and missed starts
 - Engine Lab applies the same constraints to both baseline and remaining forecasts, with data-date and constraint controls
 - malformed actuals, numeric fields and unsupported priority semantics fail closed; the legacy shared-slot scheduler still rejects multiple activity calendars
-- working hours/time zones, resource-dependent/level-of-effort activity types, advanced priority rules, multi-window intermittent progress and deeper QA remain open
+- working hours/time zones, native execution of contract-only resource-dependent/level-of-effort activity types, advanced priority rules, multi-window intermittent progress and deeper QA remain open
 
 The original `scheduleNetwork` API remains a **shared working-slot model** for regression stability. SEQ5 adds a separate native calendar-aware day scheduler; neither path is a claim of P6 compatibility. See [Scheduling semantics](docs/SCHEDULING_SEMANTICS.md) for exact supported rules and limitations.
 
@@ -67,7 +67,7 @@ The separate `scheduleCalendarNetwork` / `rescheduleCalendarRemaining` path now 
 - data-date remaining-work scheduling with immutable actual starts/finishes and completed-predecessor boundaries
 - bounded-horizon, integer-working-day, fail-closed validation
 
-Calendar-aware total/free float is reported as **civil-day event distance**, not P6 work-period float. Working hours/time zones, suspended/intermittent work, resource-dependent/level-of-effort types, advanced priority, and P6/MS Project parity/exchange remain later work.
+Calendar-aware total/free float is reported as **civil-day event distance**, not P6 work-period float. Working hours/time zones, suspended/intermittent work, native execution of contract-only resource-dependent/level-of-effort types, advanced priority, and P6/MS Project parity/exchange remain later work.
 
 The SEQ5 regression file contains 18 focused tests. `npm run verify:calendar` independently enumerates 3,888 bounded placements across calendar pairs, holidays, all four relationship types, signed lag and three non-explicit lag-calendar modes.
 
@@ -83,6 +83,18 @@ The remaining-work APIs now accept a paired suspension/resume boundary for **in-
 - incomplete pairs, not-started/completed activities and milestones fail closed
 
 This is intentionally one suspension/resume boundary for forecast control. Multiple intermittent work windows, P6 suspend/resume parity and time-of-day semantics remain later work.
+
+## SEQ9 — level-of-effort + resource-dependent activity contract
+
+The canonical activity schema now recognizes `LEVEL_OF_EFFORT` and `RESOURCE_DEPENDENT` alongside TASK and the two milestone types.
+
+- LOE is modeled as a boundary-derived span, not as a milestone and not as an independently fixed-duration task.
+- Resource Dependent is modeled as assigned-resource-calendar dependent; it is **not** treated as a synonym for generic effort-driven scheduling.
+- Both types are `CONTRACT_ONLY` in v0.3 so adapters can preserve/round-trip their identity and source fields without the native schedulers fabricating unsupported dates.
+- The shared-slot and calendar-aware schedulers fail closed when asked to execute either contract-only type.
+- TASK and milestone behavior remain unchanged.
+
+The contract is intentionally informed by the same five upstream references already used by the kernel: IfcOpenShell/Ifc4D, OpenProject, ProjectLibre Desktop, TaskJuggler and GanttProject. Their behavior is used as compatibility/reference evidence; implementation code is not copied.
 
 ## Knowledge separation
 

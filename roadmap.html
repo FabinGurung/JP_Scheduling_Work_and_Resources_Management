@@ -33,10 +33,10 @@ Engine Lab
     ├── Safety
     └── field lessons</div><p>These task pages are directly shareable with engineers without exposing the scheduling-engine complexity.</p></div>
 </div>
-<div class="note">Current focus: <b>v0.3 Professional Scheduling Core</b> — SEQ8 adds fail-closed suspend/resume progress boundaries for in-progress tasks on both shared-slot and calendar-aware remaining-work paths. The next v0.3 work is richer activity types, progress QA, priority policy and time-of-day foundations before the resource engine.</div>
+<div class="note">Current focus: <b>v0.3 Professional Scheduling Core</b> — SEQ9 adds canonical Level-of-Effort and Resource Dependent activity contracts with fail-closed native execution. The next v0.3 work is progress QA, then priority policy and working-hours/time-zone foundations before the resource engine.</div>
 <div class="card"><h3>Near-term execution order</h3><div class="tree">DONE · SEQ8  Suspend / resume remaining-work boundary
-NEXT · Activity semantics: level-of-effort + resource-dependent contract
-THEN · Progress QA: out-of-sequence / actual-vs-data-date diagnostics
+DONE · SEQ9  Level-of-Effort + Resource Dependent activity contract
+NEXT · Progress QA: out-of-sequence / actual-vs-data-date diagnostics
 THEN · Constraint priority policy + working-hours / time-zone foundation
 → v0.4 Resource & Productivity Engine
 → v0.5 Baseline & Progress Control
@@ -47,7 +47,7 @@ THEN · Constraint priority policy + working-hours / time-zone foundation
 → v1.0 Governed Live System</div></div>
 <div class="road" style="margin-top:14px">
 <div class="phase"><div class="ver">v0.2</div><div><h3>Kernel Foundation</h3><p>CPM, FS/SS/FF/SF + lag, float, criticality, EV, resource-overload detection and five upstream adapters.</p></div><span class="state done">FOUNDATION PASS</span></div>
-<div class="phase"><div class="ver">v0.3</div><div><h3>Professional Scheduling Core</h3><p>WBS validation/rollup, immutable actuals, native constraints, FS/SS/FF/SF remaining-work forecasts, typed milestones, basic schedule QA, SEQ5 day-resolution calendars/holidays/lag-calendar modes, and SEQ8 paired suspend/resume forecast boundaries. Resource-dependent/level-of-effort types, multi-window intermittent progress, working hours/time zones, progress QA and advanced priority remain open.</p></div><span class="state active">IN PROGRESS</span></div>
+<div class="phase"><div class="ver">v0.3</div><div><h3>Professional Scheduling Core</h3><p>WBS validation/rollup, immutable actuals, native constraints, FS/SS/FF/SF remaining-work forecasts, typed milestones, basic schedule QA, SEQ5 day-resolution calendars/holidays/lag-calendar modes, SEQ8 paired suspend/resume boundaries, and SEQ9 LOE/Resource Dependent type contracts. Native LOE/RD execution, multi-window intermittent progress, working hours/time zones, progress QA and advanced priority remain open.</p></div><span class="state active">IN PROGRESS</span></div>
 <div class="phase"><div class="ver">v0.4</div><div><h3>Resource & Productivity Engine</h3><p>Labor/equipment/material resources, crew calendars, quantity → productivity → duration, histograms and resource leveling.</p></div><span class="state future">NEXT</span></div>
 <div class="phase"><div class="ver">v0.5</div><div><h3>Baseline & Progress Control</h3><p>BL1/BL2, current-vs-baseline, variance, progress cycles, S-curves and stronger EV integration.</p></div><span class="state future">PLANNED</span></div>
 <div class="phase"><div class="ver">v0.6</div><div><h3>P6 / Microsoft Project Interoperability</h3><p>Ifc4D-backed P6 XER/XML and MS Project XML/MSPDI exchange with loss validation.</p></div><span class="state future">PLANNED</span></div>

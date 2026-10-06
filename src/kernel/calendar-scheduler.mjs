@@ -1,4 +1,4 @@
-import {normalizeActivity} from "./activities.mjs";
+import {assertNativeSchedulingSupported,normalizeActivity} from "./activities.mjs";
 import {activityId,numeric} from "./validation.mjs";
 
 const DAY=86400000;
@@ -106,6 +106,7 @@ function normalizeActivities(activities,engine){
   const map=new Map();
   for(const raw of activities){
     const a=normalizeActivity(raw),id=a.id;
+    assertNativeSchedulingSupported(a,"Calendar-aware scheduler");
     if(!Number.isInteger(a.duration)) throw new Error(`Calendar-aware duration for ${id} must be an integer number of working days`);
     if(map.has(id)) throw new Error(`Duplicate activity id: ${id}`);
     const calendar_id=a.calendar_id??engine.projectCalendarId;

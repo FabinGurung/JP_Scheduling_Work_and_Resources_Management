@@ -99,10 +99,18 @@ This models one forecast resume boundary only. It does not model multiple suspen
 
 ## Activity types and diagnostics
 
-Supported native types are TASK, START_MILESTONE and FINISH_MILESTONE. The two
-milestone labels identify atomic zero-duration points in this slot model. They
-must have zero duration and either no actuals or equal actual start/finish points.
-They do not implement P6 milestone date-resolution rules. Level of effort, resource-dependent types, multi-window intermittent work and time-of-day/calendar-shift semantics remain open.
+The canonical activity contract now recognizes five types:
+
+- `TASK` — fixed activity duration on the activity calendar; native scheduling support is FULL.
+- `START_MILESTONE` / `FINISH_MILESTONE` — atomic zero-duration points; native scheduling support is FULL.
+- `LEVEL_OF_EFFORT` — duration/span is derived from surrounding logic boundaries rather than treated as a fixed independent task duration.
+- `RESOURCE_DEPENDENT` — placement/duration semantics depend on assigned-resource calendars rather than silently substituting the activity calendar.
+
+SEQ9 deliberately separates **type recognition / interchange contract** from **native execution**. LOE and Resource Dependent are therefore `CONTRACT_ONLY` in v0.3. Their source duration and other adapter fields are preserved for round-trip/interchange, but both native schedulers fail closed if asked to calculate them. This prevents a LOE from being misread as a milestone and prevents a Resource Dependent activity from being calculated as an ordinary activity-calendar task.
+
+`RESOURCE_DEPENDENT` is not defined as a synonym for `effort_driven`. ProjectLibre/OpenProj-family scheduling exposes fixed-work/fixed-units/fixed-duration and effort-driven modes separately, while its Primavera reader distinguishes P6 Resource Dependent activities by whether resource calendars participate in scheduling. TaskJuggler and GanttProject effort-driven work reinforce that effort/resource-allocation equations are a separate scheduling concern. OpenProject and IfcOpenShell/Ifc4D remain schema/interchange references rather than claims of P6 execution parity.
+
+The two milestone labels must have zero duration and either no actuals or equal actual start/finish points. They do not implement P6 milestone date-resolution rules. Multi-window intermittent work and time-of-day/calendar-shift semantics remain open.
 
 `inspectSchedule` provides diagnostic findings: open starts/finishes are information
 requiring a topology decision; negative lag, duplicate relationships, negative
@@ -173,7 +181,7 @@ and bound slots -2/0/3/6/8. Forward bounds and backward bounds are checked
 separately, matching the documented conflict policy. Its finite horizons are
 chosen to contain this matrix; this is not a proof for arbitrary networks.
 
-Still open: resource-dependent and level-of-effort activity types, advanced
+Still open: native execution of contract-only RESOURCE_DEPENDENT and LEVEL_OF_EFFORT activity types, advanced
 priority, working hours/time zones, suspended/intermittent work, broader
 real-project QA and production editing.
 Resource/productivity, baselines/progress, P6/MS Project exchange, IFC/4D and risk
