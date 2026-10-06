@@ -256,4 +256,45 @@ test("progress QA reports data-date slippage and zero-remaining in-progress cont
   assert.equal(r.progress_qa.counts.errors,0);
   assert.ok(r.progress_qa.counts.warnings>=3);
 });
-\ntest("ranked constraint policy resolves lower-priority direct conflicts",()=>{\n  const constraints=[\n    {activity_id:"A",type:"START_ON_OR_AFTER",slot:8,priority:100},\n    {activity_id:"A",type:"START_ON_OR_BEFORE",slot:4,priority:10},\n    {activity_id:"A",type:"FINISH_ON_OR_BEFORE",slot:12,priority:5}\n  ];\n  const r=scheduleNetwork({activities:[{id:"A",duration:2}],constraints,constraintPolicy:"PRIORITY_RANKED"});\n  assert.equal(r.activities[0].es,8);\n  assert.equal(r.constraint_policy.suppressed_count,1);\n  assert.equal(r.constraints.find(c=>c.type==="START_ON_OR_BEFORE").applied,false);\n  assert.equal(r.constraints.find(c=>c.type==="FINISH_ON_OR_BEFORE").applied,true);\n});\n\ntest("ranked policy rejects ambiguous equal-priority conflicts",()=>{\n  const constraints=[\n    {activity_id:"A",type:"START_ON_OR_AFTER",slot:8,priority:50},\n    {activity_id:"A",type:"START_ON_OR_BEFORE",slot:4,priority:50}\n  ];\n  assert.throws(()=>scheduleNetwork({activities:[{id:"A",duration:2}],constraints,constraintPolicy:"PRIORITY_RANKED"}),/Equal-priority constraint conflict/);\n});\n\ntest("strict constraint policy keeps priority metadata without overriding constraints",()=>{\n  const constraints=[\n    {activity_id:"A",type:"START_ON_OR_AFTER",slot:8,priority:100},\n    {activity_id:"A",type:"START_ON_OR_BEFORE",slot:4,priority:10}\n  ];\n  const r=scheduleNetwork({activities:[{id:"A",duration:2}],constraints});\n  assert.equal(r.constraint_policy.mode,"STRICT_ALL");\n  assert.equal(r.constraint_policy.suppressed_count,0);\n  assert.ok(r.activities[0].total_float<0);\n});\n\ntest("remaining work applies ranked policy before data-date translation",()=>{\n  const r=rescheduleRemaining({scheduledActivities:[{id:"A",duration:3}],dataDateSlot:5,constraintPolicy:"PRIORITY_RANKED",constraints:[\n    {activity_id:"A",type:"START_ON_OR_AFTER",slot:9,priority:100},\n    {activity_id:"A",type:"START_ON_OR_BEFORE",slot:6,priority:5}\n  ]});\n  assert.equal(r.forecast[0].forecast_start_slot,9);\n  assert.equal(r.translated_constraints.length,1);\n  assert.equal(r.constraint_policy.suppressed_count,1);\n});\n
+
+test("ranked constraint policy resolves lower-priority direct conflicts",()=>{
+  const constraints=[
+    {activity_id:"A",type:"START_ON_OR_AFTER",slot:8,priority:100},
+    {activity_id:"A",type:"START_ON_OR_BEFORE",slot:4,priority:10},
+    {activity_id:"A",type:"FINISH_ON_OR_BEFORE",slot:12,priority:5}
+  ];
+  const r=scheduleNetwork({activities:[{id:"A",duration:2}],constraints,constraintPolicy:"PRIORITY_RANKED"});
+  assert.equal(r.activities[0].es,8);
+  assert.equal(r.constraint_policy.suppressed_count,1);
+  assert.equal(r.constraints.find(c=>c.type==="START_ON_OR_BEFORE").applied,false);
+  assert.equal(r.constraints.find(c=>c.type==="FINISH_ON_OR_BEFORE").applied,true);
+});
+
+test("ranked policy rejects ambiguous equal-priority conflicts",()=>{
+  const constraints=[
+    {activity_id:"A",type:"START_ON_OR_AFTER",slot:8,priority:50},
+    {activity_id:"A",type:"START_ON_OR_BEFORE",slot:4,priority:50}
+  ];
+  assert.throws(()=>scheduleNetwork({activities:[{id:"A",duration:2}],constraints,constraintPolicy:"PRIORITY_RANKED"}),/Equal-priority constraint conflict/);
+});
+
+test("strict constraint policy keeps priority metadata without overriding constraints",()=>{
+  const constraints=[
+    {activity_id:"A",type:"START_ON_OR_AFTER",slot:8,priority:100},
+    {activity_id:"A",type:"START_ON_OR_BEFORE",slot:4,priority:10}
+  ];
+  const r=scheduleNetwork({activities:[{id:"A",duration:2}],constraints});
+  assert.equal(r.constraint_policy.mode,"STRICT_ALL");
+  assert.equal(r.constraint_policy.suppressed_count,0);
+  assert.ok(r.activities[0].total_float<0);
+});
+
+test("remaining work applies ranked policy before data-date translation",()=>{
+  const r=rescheduleRemaining({scheduledActivities:[{id:"A",duration:3}],dataDateSlot:5,constraintPolicy:"PRIORITY_RANKED",constraints:[
+    {activity_id:"A",type:"START_ON_OR_AFTER",slot:9,priority:100},
+    {activity_id:"A",type:"START_ON_OR_BEFORE",slot:6,priority:5}
+  ]});
+  assert.equal(r.forecast[0].forecast_start_slot,9);
+  assert.equal(r.translated_constraints.length,1);
+  assert.equal(r.constraint_policy.suppressed_count,1);
+});

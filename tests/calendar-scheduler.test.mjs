@@ -160,4 +160,45 @@ test("calendar progress QA evaluates out-of-sequence actuals on the resolved lag
   assert.equal(finding.relationship.lag_calendar_id,"FIVE");
   assert.ok(finding.required_slot>finding.actual_slot);
 });
-\ntest("calendar engine validates time-zone and working-period contracts without pretending intraday execution",()=>{\n  const periods={\n    1:[{start:"08:00",end:"12:00"},{start:"13:00",end:"17:00"}],\n    2:[{start:"08:00",end:"12:00"},{start:"13:00",end:"17:00"}],\n    3:[{start:"08:00",end:"12:00"},{start:"13:00",end:"17:00"}],\n    4:[{start:"08:00",end:"12:00"},{start:"13:00",end:"17:00"}],\n    5:[{start:"08:00",end:"12:00"},{start:"13:00",end:"17:00"}]\n  };\n  const e=createCalendarEngine({...base,projectTimeZone:"Asia/Kathmandu",calendars:{FIVE:{...calendars.FIVE,time_zone:"Asia/Kathmandu",working_periods:periods}}});\n  assert.equal(e.projectTimeZone,"Asia/Kathmandu");\n  assert.equal(e.timeResolution,"DAY");\n  assert.equal(e.calendarTimeContracts.FIVE.nominal_day_minutes,480);\n  assert.equal(e.calendarTimeContracts.FIVE.minutes_per_week,2400);\n  assert.equal(e.calendarTimeContracts.FIVE.native_intraday_support,"CONTRACT_ONLY");\n});\n\ntest("time-zone and working-period contract validation fails closed",()=>{\n  assert.throws(()=>createCalendarEngine({...base,projectTimeZone:"Not/A_Zone"}),/valid IANA/);\n  const overlap={1:[{start:"08:00",end:"12:00"},{start:"11:00",end:"13:00"}],2:[{start:"08:00",end:"12:00"}],3:[{start:"08:00",end:"12:00"}],4:[{start:"08:00",end:"12:00"}],5:[{start:"08:00",end:"12:00"}]};\n  assert.throws(()=>createCalendarEngine({...base,calendars:{FIVE:{...calendars.FIVE,working_periods:overlap}}}),/must not overlap/);\n  assert.throws(()=>createCalendarEngine({...base,timeResolution:"MINUTE"}),/intraday scheduling is not implemented/i);\n});\n\ntest("calendar day scheduling exposes the intraday contract but keeps day results unchanged",()=>{\n  const periods={1:[{start:"07:30",end:"15:30"}],2:[{start:"07:30",end:"15:30"}],3:[{start:"07:30",end:"15:30"}],4:[{start:"07:30",end:"15:30"}],5:[{start:"07:30",end:"15:30"}]};\n  const s=scheduleCalendarNetwork({...base,projectTimeZone:"Asia/Kathmandu",calendars:{FIVE:{...calendars.FIVE,working_periods:periods}},activities:[{id:"A",duration:1,calendar_id:"FIVE"}]});\n  assert.equal(s.activities[0].start_date,"2026-10-05");\n  assert.equal(s.activities[0].finish_date,"2026-10-05");\n  assert.equal(s.time_contract.project_time_zone,"Asia/Kathmandu");\n  assert.equal(s.time_contract.native_intraday_support,"CONTRACT_ONLY");\n});\n\ntest("calendar ranked constraint policy suppresses lower-priority direct conflicts",()=>{\n  const s=scheduleCalendarNetwork({...base,activities:[{id:"A",duration:1,calendar_id:"FIVE"}],constraintPolicy:"PRIORITY_RANKED",constraints:[\n    {activity_id:"A",type:"START_ON_OR_AFTER",date:"2026-10-12",priority:100},\n    {activity_id:"A",type:"START_ON_OR_BEFORE",date:"2026-10-06",priority:10}\n  ]});\n  assert.equal(s.activities[0].start_date,"2026-10-12");\n  assert.equal(s.constraint_policy.suppressed_count,1);\n  assert.equal(s.constraints.find(c=>c.type==="START_ON_OR_BEFORE").applied,false);\n});\n
+
+test("calendar engine validates time-zone and working-period contracts without pretending intraday execution",()=>{
+  const periods={
+    1:[{start:"08:00",end:"12:00"},{start:"13:00",end:"17:00"}],
+    2:[{start:"08:00",end:"12:00"},{start:"13:00",end:"17:00"}],
+    3:[{start:"08:00",end:"12:00"},{start:"13:00",end:"17:00"}],
+    4:[{start:"08:00",end:"12:00"},{start:"13:00",end:"17:00"}],
+    5:[{start:"08:00",end:"12:00"},{start:"13:00",end:"17:00"}]
+  };
+  const e=createCalendarEngine({...base,projectTimeZone:"Asia/Kathmandu",calendars:{FIVE:{...calendars.FIVE,time_zone:"Asia/Kathmandu",working_periods:periods}}});
+  assert.equal(e.projectTimeZone,"Asia/Kathmandu");
+  assert.equal(e.timeResolution,"DAY");
+  assert.equal(e.calendarTimeContracts.FIVE.nominal_day_minutes,480);
+  assert.equal(e.calendarTimeContracts.FIVE.minutes_per_week,2400);
+  assert.equal(e.calendarTimeContracts.FIVE.native_intraday_support,"CONTRACT_ONLY");
+});
+
+test("time-zone and working-period contract validation fails closed",()=>{
+  assert.throws(()=>createCalendarEngine({...base,projectTimeZone:"Not/A_Zone"}),/valid IANA/);
+  const overlap={1:[{start:"08:00",end:"12:00"},{start:"11:00",end:"13:00"}],2:[{start:"08:00",end:"12:00"}],3:[{start:"08:00",end:"12:00"}],4:[{start:"08:00",end:"12:00"}],5:[{start:"08:00",end:"12:00"}]};
+  assert.throws(()=>createCalendarEngine({...base,calendars:{FIVE:{...calendars.FIVE,working_periods:overlap}}}),/must not overlap/);
+  assert.throws(()=>createCalendarEngine({...base,timeResolution:"MINUTE"}),/intraday scheduling is not implemented/i);
+});
+
+test("calendar day scheduling exposes the intraday contract but keeps day results unchanged",()=>{
+  const periods={1:[{start:"07:30",end:"15:30"}],2:[{start:"07:30",end:"15:30"}],3:[{start:"07:30",end:"15:30"}],4:[{start:"07:30",end:"15:30"}],5:[{start:"07:30",end:"15:30"}]};
+  const s=scheduleCalendarNetwork({...base,projectTimeZone:"Asia/Kathmandu",calendars:{FIVE:{...calendars.FIVE,working_periods:periods}},activities:[{id:"A",duration:1,calendar_id:"FIVE"}]});
+  assert.equal(s.activities[0].start_date,"2026-10-05");
+  assert.equal(s.activities[0].finish_date,"2026-10-05");
+  assert.equal(s.time_contract.project_time_zone,"Asia/Kathmandu");
+  assert.equal(s.time_contract.native_intraday_support,"CONTRACT_ONLY");
+});
+
+test("calendar ranked constraint policy suppresses lower-priority direct conflicts",()=>{
+  const s=scheduleCalendarNetwork({...base,activities:[{id:"A",duration:1,calendar_id:"FIVE"}],constraintPolicy:"PRIORITY_RANKED",constraints:[
+    {activity_id:"A",type:"START_ON_OR_AFTER",date:"2026-10-12",priority:100},
+    {activity_id:"A",type:"START_ON_OR_BEFORE",date:"2026-10-06",priority:10}
+  ]});
+  assert.equal(s.activities[0].start_date,"2026-10-12");
+  assert.equal(s.constraint_policy.suppressed_count,1);
+  assert.equal(s.constraints.find(c=>c.type==="START_ON_OR_BEFORE").applied,false);
+});
