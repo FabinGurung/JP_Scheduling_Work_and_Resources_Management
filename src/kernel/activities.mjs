@@ -37,7 +37,7 @@ export const ACTIVITY_TYPE_CONTRACTS = Object.freeze({
     duration_mode: "RESOURCE_CALENDAR_DEPENDENT",
     calendar_mode: "ASSIGNED_RESOURCE_CALENDARS",
     requires_resource_assignments: true,
-    native_schedule_support: "CONTRACT_ONLY"
+    native_schedule_support: "RESOURCE_ENGINE"
   })
 });
 
@@ -77,7 +77,15 @@ export function assertNativeSchedulingSupported(activity, schedulerName = "Nativ
     throw new Error(`${schedulerName} does not execute LEVEL_OF_EFFORT activity ${a.id} in v0.3; its start/finish span must be derived from surrounding logic boundaries by a dedicated LOE scheduler`);
   }
   if (a.activity_type === "RESOURCE_DEPENDENT") {
-    throw new Error(`${schedulerName} does not execute RESOURCE_DEPENDENT activity ${a.id} in v0.3; assigned-resource calendars must be resolved by the resource scheduling engine`);
+    throw new Error(`${schedulerName} does not execute RESOURCE_DEPENDENT activity ${a.id}; use the v0.4 resource scheduling engine so assigned resource/crew calendars and availability can be resolved explicitly`);
   }
   throw new Error(`${schedulerName} does not execute activity type ${a.activity_type} for ${a.id}`);
+}
+
+export function assertResourceEngineSchedulingSupported(activity) {
+  const a = activity?.native_schedule_support ? activity : normalizeActivity(activity);
+  if (a.activity_type !== "RESOURCE_DEPENDENT" || a.native_schedule_support !== "RESOURCE_ENGINE") {
+    throw new Error(`Resource scheduling engine requires RESOURCE_DEPENDENT activity ${a.id}`);
+  }
+  return a;
 }

@@ -134,7 +134,7 @@ test("v0.3 activity contract exposes resource-dependent semantics separately fro
 
 test("v0.3 shared-slot scheduler fails closed for contract-only LOE and resource-dependent activities",()=>{
   assert.throws(()=>scheduleNetwork({activities:[{id:"L",activity_type:"LEVEL_OF_EFFORT",duration:4}]}),/does not execute LEVEL_OF_EFFORT/i);
-  assert.throws(()=>scheduleNetwork({activities:[{id:"R",activity_type:"RESOURCE_DEPENDENT",duration:4}]}),/assigned-resource calendars/i);
+  assert.throws(()=>scheduleNetwork({activities:[{id:"R",activity_type:"RESOURCE_DEPENDENT",duration:4}]}),/resource scheduling engine/i);
 });
 
 test("v0.3 calendar-aware scheduler fails closed rather than substituting the activity calendar for resource-dependent work",()=>{
