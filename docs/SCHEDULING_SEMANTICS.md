@@ -42,8 +42,7 @@ backward pass, including SS/SF predecessors whose durations outlast a successor.
 Constraint evaluation reports the actual calculated point and signed variance.
 A tolerance of 1e-9 slots prevents floating-point noise from becoming a false
 constraint violation. This tolerance does not implement calendar resolution or
-P6 priority. Explicit `priority` and per-constraint `calendar_id` are unsupported
-and rejected rather than silently ignored.
+P6 priority. `STRICT_ALL` remains the default constraint policy. `PRIORITY_RANKED` accepts nonnegative integer `priority`; higher values resolve only direct conflicts among declared constraints on the same activity. Compatible lower-priority constraints remain active, lower-priority conflicting constraints remain visible as suppressed results, and equal-priority ambiguity fails closed. Per-constraint `calendar_id` remains unsupported.
 
 ## Data date and actuals
 
@@ -155,7 +154,7 @@ as **civil-day event distance**; it is not P6 work-period float.
 
 The six native constraint types use the same conflict policy as the shared-slot
 model. Calendar-aware constraints accept an integer event `slot` or ISO `date`.
-Per-constraint calendars and explicit priority are still rejected.
+Per-constraint calendars remain unsupported; constraint priority uses the same explicit policy as the shared-slot model.
 
 `rescheduleCalendarRemaining` keeps the data date in the same absolute event
 coordinate. Completed predecessors contribute actual finish for FS/FF and actual
@@ -166,6 +165,12 @@ started work evaluate the actual start; finish constraints govern remaining work
 Completed work retains actual-based constraint checks even when no remaining
 segment exists. Missing or contradictory actuals, missing remaining duration,
 unknown IDs, cycles and horizon overflow fail closed.
+
+## Constraint priority and time contract (SEQ11)
+
+`STRICT_ALL` applies every declared constraint. `PRIORITY_RANKED` considers higher integer priorities first only when declared constraints on the same activity are incompatible after conversion to start bounds. Relationship logic, required-finish targets, data-date rules and immutable actuals remain outside this ranking policy.
+
+The calendar-aware scheduler also preserves a validated intraday contract while continuing to execute at civil-day resolution. `projectTimeZone` and calendar `time_zone` values must be valid IANA names. Optional `working_periods` use non-overlapping `HH:MM` intervals and record nominal daily/weekly minutes. Overnight periods are not supported in this foundation. `timeResolution` remains `DAY`; an intraday request fails closed.
 
 ## Progress QA diagnostics (SEQ10)
 
@@ -198,8 +203,6 @@ and bound slots -2/0/3/6/8. Forward bounds and backward bounds are checked
 separately, matching the documented conflict policy. Its finite horizons are
 chosen to contain this matrix; this is not a proof for arbitrary networks.
 
-Still open: native execution of contract-only RESOURCE_DEPENDENT and LEVEL_OF_EFFORT activity types, advanced
-priority, working hours/time zones, suspended/intermittent work, retained-logic/progress-override mode selection, broader
-real-project QA and production editing.
+Still open: native execution of contract-only RESOURCE_DEPENDENT and LEVEL_OF_EFFORT activity types, minute/intraday execution of the Seq11 working-period contract, suspended/intermittent work, retained-logic/progress-override mode selection, broader real-project QA and production editing.
 Resource/productivity, baselines/progress, P6/MS Project exchange, IFC/4D and risk
 remain separate later milestones. Soak Pit stays IDENTITY_PENDING.
