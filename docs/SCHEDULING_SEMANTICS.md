@@ -189,6 +189,20 @@ Data-date diagnostics also report `SHOULD_HAVE_STARTED`, `SHOULD_HAVE_FINISHED`,
 
 The five upstream projects remain behavioral/interchange references. Seq10 is a kernel-native diagnostic contract and does not claim that IfcOpenShell/Ifc4D, OpenProject, ProjectLibre, TaskJuggler, or GanttProject use identical out-of-sequence terminology or calculation rules.
 
+## Resource and productivity foundation (SEQ12)
+
+The v0.4 foundation separates reusable resource capacity from consumable material quantity.
+
+- `LABOR` and `EQUIPMENT` are renewable resources with explicit `max_units` capacity and optional `calendar_id`.
+- `MATERIAL` is consumable and carries quantity-unit / optional inventory metadata rather than renewable capacity.
+- crews contain reusable labor/equipment members and require an explicit crew calendar. Crew expansion preserves `source_crew_id`; the crew calendar is a scheduling contract only at this boundary.
+- productivity duration is deterministic: quantity is divided by effective production per workday. `PER_WORKDAY` rates multiply by production units; `PER_HOUR` rates additionally require explicit `working_minutes_per_day`. The default schedule-facing duration rounds up to a whole workday while retaining the raw workday result.
+- productivity-derived activities retain the incoming duration as `original_duration` and mark `duration_source: PRODUCTIVITY_DERIVED`.
+- the resource histogram is an integer shared-slot diagnostic. Renewable rows expose demand units, capacity, utilization and overloads. Material rows expose per-slot consumption and cumulative consumption.
+- the pre-v0.4 `findResourceOverloads` signature remains available for regression compatibility.
+
+SEQ12 does not level resources, shift activities, enforce material inventory shortage dates, intersect multiple resource calendars, or natively execute RESOURCE_DEPENDENT activities. Those are later v0.4 scheduling boundaries.
+
 ## Verification and remaining limitations
 
 `npm test` covers all six native constraints across status states, immutable
@@ -204,5 +218,4 @@ separately, matching the documented conflict policy. Its finite horizons are
 chosen to contain this matrix; this is not a proof for arbitrary networks.
 
 Still open: native execution of contract-only RESOURCE_DEPENDENT and LEVEL_OF_EFFORT activity types, minute/intraday execution of the Seq11 working-period contract, suspended/intermittent work, retained-logic/progress-override mode selection, broader real-project QA and production editing.
-Resource/productivity, baselines/progress, P6/MS Project exchange, IFC/4D and risk
-remain separate later milestones. Soak Pit stays IDENTITY_PENDING.
+Resource/productivity foundation is active in v0.4; resource-driven placement/availability enforcement and leveling remain open. Baselines/progress, P6/MS Project exchange, IFC/4D and risk remain separate later milestones. Soak Pit stays IDENTITY_PENDING.
