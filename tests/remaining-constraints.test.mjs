@@ -166,8 +166,8 @@ test("typed milestones are atomic, zero-duration points in both baseline and rem
   }
 });
 
-test("unsupported activity, calendar and constraint priority semantics fail closed",()=>{
-  assert.throws(()=>normalizeActivity({id:"A",duration:1,activity_type:"LEVEL_OF_EFFORT"}),/Unsupported activity type/);
+test("contract-only activity execution, calendar and constraint priority semantics fail closed",()=>{
+  assert.throws(()=>scheduleNetwork({activities:[{id:"LOE",duration:1,activity_type:"LEVEL_OF_EFFORT"}]}),/does not execute LEVEL_OF_EFFORT/i);
   assert.throws(()=>scheduleNetwork({activities:[activity,{id:"B",duration:1,calendar_id:"OTHER"}]}),/Multiple activity calendars/);
   assert.throws(()=>scheduleNetwork({activities:[activity],constraints:[{activity_id:"A",type:"MUST_START_ON",slot:2,priority:1}]}),/priority/);
   assert.throws(()=>scheduleNetwork({activities:[activity,{id:"B",duration:1}],relationships:[{predecessor:"A",successor:"B",lag:1,lag_calendar_id:"C1"}]}),/lag calendars/);
