@@ -1,5 +1,5 @@
 import {scheduleNetwork} from "./cpm.mjs";
-import {normalizeConstraints,evaluateConstraintViolations} from "./constraints.mjs";
+import {resolveConstraintPolicy,evaluateConstraintViolations} from "./constraints.mjs";
 import {normalizeActivity} from "./activities.mjs";
 import {activityId,numeric} from "./validation.mjs";
 import {inspectProgress} from "./qa.mjs";
@@ -76,7 +76,7 @@ export function classifyStatus(activity,update={},dataDateSlot=0){
     suspend_slot:suspend,resume_slot:resume,suspended_at_data_date:hasSuspendResume&&resume>dataDateSlot,issues};
 }
 
-export function rescheduleRemaining({scheduledActivities,relationships=[],constraints=[],updates={},dataDateSlot=0,requiredFinishSlot=null}){
+export function rescheduleRemaining({scheduledActivities,relationships=[],constraints=[],updates={},dataDateSlot=0,requiredFinishSlot=null,constraintPolicy="STRICT_ALL"}){
   const dataDate=numeric(dataDateSlot,"dataDateSlot",{nonnegative:true});
   const requiredAbsolute=requiredFinishSlot==null?null:numeric(requiredFinishSlot,"requiredFinishSlot",{nonnegative:true});
   if(!Array.isArray(scheduledActivities)) throw new Error("scheduledActivities must be an array");
@@ -89,7 +89,9 @@ export function rescheduleRemaining({scheduledActivities,relationships=[],constr
     if(!updates[id]||typeof updates[id]!=="object"||Array.isArray(updates[id])) throw new Error(`Invalid status update for ${id}`);
   }
   const normalizedRelationships=relationships.map(r=>normalizeRelationship(r,ids));
-  const normalizedConstraints=normalizeConstraints({activities:sourceActivities,constraints});
+  const constraintResolution=resolveConstraintPolicy({activities:sourceActivities,constraints,policy:constraintPolicy});
+  const normalizedConstraints=constraintResolution.all;
+  const effectiveConstraints=constraintResolution.effective;
   // Validate the complete input graph, even when completed work drops out of the forecast.
   if(sourceActivities.length) scheduleNetwork({activities:sourceActivities,relationships:normalizedRelationships});
   const statusRows=sourceActivities.map(a=>({activity_id:idOf(a),...classifyStatus(a,updates[idOf(a)]??{},dataDate)}));
@@ -107,7 +109,7 @@ export function rescheduleRemaining({scheduledActivities,relationships=[],constr
       const st=byStatus.get(a.id),f=byForecast.get(a.id);
       return {...a,es:st.actual_start_slot??f?.forecast_start_slot,ef:st.actual_finish_slot??f?.forecast_finish_slot};
     });
-    const checks=evaluateConstraintViolations({scheduledActivities:points,constraints:normalizedConstraints}).map(c=>{
+    const checks=evaluateConstraintViolations({scheduledActivities:points,constraints,constraintPolicy}).map(c=>{
       const st=byStatus.get(c.activity_id);
       const isStart=c.type.startsWith("START")||c.type==="MUST_START_ON";
       const isActual=isStart?st.actual_start_slot!=null:st.actual_finish_slot!=null;
@@ -118,6 +120,7 @@ export function rescheduleRemaining({scheduledActivities,relationships=[],constr
     const progressQa=inspectProgress({scheduledActivities:sourceActivities,relationships:normalizedRelationships,status:statusRows,dataDateSlot:dataDate});
     return {data_date_slot:dataDate,status:statusRows,remaining_schedule:remainingSchedule,forecast,
       boundary_constraints:boundaryConstraints,translated_constraints:translatedConstraints,constraints:checks,progress_qa:progressQa,
+      constraint_policy:{mode:constraintResolution.policy,effective_count:constraintResolution.effective.length,suppressed_count:constraintResolution.suppressed.length,decisions:constraintResolution.decisions},
       project:{forecast_finish_slot:finish,required_finish_slot:requiredAbsolute,
         finish_variance:finish==null||requiredAbsolute==null?null:finish-requiredAbsolute}};
   }
@@ -166,13 +169,13 @@ export function rescheduleRemaining({scheduledActivities,relationships=[],constr
     for(const c of boundaryConstraints) remRels.push({predecessor:anchorId,successor:c.successor,type:"FS",lag:c.min_start_offset,synthetic:true,source:c.source});
   }
 
-  const translatedConstraints=normalizedConstraints.filter(c=>{
+  const translatedConstraints=effectiveConstraints.filter(c=>{
     const st=byStatus.get(c.activity_id);
     const isStart=c.type.startsWith("START")||c.type==="MUST_START_ON";
     return st.status!=="COMPLETED"&&!(st.status==="IN_PROGRESS"&&isStart);
   }).map(c=>({...c,original_slot:c.slot,slot:c.slot-dataDate,source:"DATA_DATE_TRANSLATION"}));
   const required=requiredAbsolute==null?null:requiredAbsolute-dataDate;
-  const rawSchedule=scheduleNetwork({activities:remActs,relationships:remRels,constraints:translatedConstraints,requiredFinish:required});
+  const rawSchedule=scheduleNetwork({activities:remActs,relationships:remRels,constraints:translatedConstraints,requiredFinish:required,constraintPolicy:"STRICT_ALL"});
   const visibleActivities=rawSchedule.activities.filter(a=>a.id!==anchorId);
   const remainingSchedule={...rawSchedule,time_origin_slot:dataDate,order:rawSchedule.order.filter(id=>id!==anchorId),activities:visibleActivities,
     relationships:remRels.filter(r=>r.predecessor!==anchorId&&r.successor!==anchorId)};

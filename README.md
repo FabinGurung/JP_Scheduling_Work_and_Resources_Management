@@ -49,8 +49,10 @@ CPM forward/backward pass, FS/SS/FF/SF + lag, negative float, total/free float, 
 - forecast QA findings: open ends, leads, duplicate relationships, negative float, constraint violations and missed starts
 - progress QA: out-of-sequence recorded actual events, unresolved predecessor-actual boundaries, data-date slippage and zero-remaining/no-finish contradictions
 - Engine Lab applies the same constraints to both baseline and remaining forecasts, with data-date and constraint controls
-- malformed actuals, numeric fields and unsupported priority semantics fail closed; the legacy shared-slot scheduler still rejects multiple activity calendars
-- working hours/time zones, native execution of contract-only resource-dependent/level-of-effort activity types, advanced priority rules, multi-window intermittent progress and broader real-project QA remain open
+- malformed actuals and numeric fields fail closed; the legacy shared-slot scheduler still rejects multiple activity calendars
+- constraint policy supports `STRICT_ALL` and deterministic `PRIORITY_RANKED`; priority never overrides relationships, required finish or immutable actuals
+- calendar contracts now preserve validated IANA time zones and weekday working periods, while native intraday execution remains fail-closed
+- native execution of contract-only resource-dependent/level-of-effort activity types, retained-logic/progress-override modes, multi-window intermittent progress and broader real-project QA remain open
 
 The original `scheduleNetwork` API remains a **shared working-slot model** for regression stability. SEQ5 adds a separate native calendar-aware day scheduler; neither path is a claim of P6 compatibility. See [Scheduling semantics](docs/SCHEDULING_SEMANTICS.md) for exact supported rules and limitations.
 
@@ -68,7 +70,7 @@ The separate `scheduleCalendarNetwork` / `rescheduleCalendarRemaining` path now 
 - data-date remaining-work scheduling with immutable actual starts/finishes and completed-predecessor boundaries
 - bounded-horizon, integer-working-day, fail-closed validation
 
-Calendar-aware total/free float is reported as **civil-day event distance**, not P6 work-period float. Working hours/time zones, suspended/intermittent work, native execution of contract-only resource-dependent/level-of-effort types, advanced priority, and P6/MS Project parity/exchange remain later work.
+Calendar-aware total/free float is reported as **civil-day event distance**, not P6 work-period float. SEQ11 adds time-zone/working-period contracts and constraint-priority policy, but native intraday scheduling, suspended/intermittent work, contract-only resource-dependent/level-of-effort execution, and P6/MS Project parity/exchange remain later work.
 
 The SEQ5 regression file contains 18 focused tests. `npm run verify:calendar` independently enumerates 3,888 bounded placements across calendar pairs, holidays, all four relationship types, signed lag and three non-explicit lag-calendar modes.
 
@@ -109,6 +111,26 @@ Remaining-work results now include a `progress_qa` diagnostic package without ch
 - Existing malformed/future actual validation remains fail-closed.
 
 These are diagnostic findings only. Seq10 does not introduce Primavera retained-logic/progress-override modes, rewrite actual dates, or certify a P6/DCMA schedule.
+
+## SEQ11 — constraint priority + working-hours/time-zone foundation
+
+The two native scheduling paths now expose an explicit constraint-policy contract:
+
+- `STRICT_ALL` remains the default and preserves prior behavior: every declared constraint is schedule-driving even when conflicts produce negative float or violations.
+- `PRIORITY_RANKED` accepts nonnegative integer `priority`; a higher number wins only when declared constraints on the same activity are directly incompatible.
+- Compatible lower-priority constraints remain active.
+- Equal-priority incompatible constraints fail closed instead of using input order as a hidden tie-breaker.
+- Priority does **not** override relationship logic, required-finish targets, data-date rules or immutable actuals.
+
+The calendar-aware path also validates a time contract without pretending that day scheduling has become minute scheduling:
+
+- project/calendar `time_zone` values are validated as IANA time-zone names.
+- optional weekday `working_periods` use non-overlapping `HH:MM` intervals and record nominal minutes/day and minutes/week.
+- overnight intervals are intentionally unsupported in the Seq11 foundation.
+- the scheduler still executes at `DAY` resolution; requesting intraday execution fails closed.
+- returned schedule metadata labels native intraday support as `CONTRACT_ONLY`.
+
+The same five upstream references remain the basis for interoperability and behavior research: IfcOpenShell/Ifc4D, OpenProject, ProjectLibre Desktop, TaskJuggler and GanttProject. Seq11 reimplements its own deterministic contract and copies no upstream scheduler code.
 
 ## Knowledge separation
 

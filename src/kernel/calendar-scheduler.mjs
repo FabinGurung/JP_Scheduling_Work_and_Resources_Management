@@ -1,6 +1,8 @@
 import {assertNativeSchedulingSupported,normalizeActivity} from "./activities.mjs";
 import {activityId,numeric} from "./validation.mjs";
 import {inspectProgress} from "./qa.mjs";
+import {normalizeConstraintPolicy,normalizeConstraintPriority,resolveNormalizedConstraintPolicy} from "./constraints.mjs";
+import {normalizeTimeZone,normalizeCalendarTimeContract,assertDayResolution} from "./time-contract.mjs";
 
 const DAY=86400000;
 const REL_TYPES=new Set(["FS","SS","FF","SF"]);
@@ -23,7 +25,9 @@ function integer(value,label,{nonnegative=false}={}){
 function diffDays(a,b){return Math.round((a.getTime()-b.getTime())/DAY);}
 function addDays(date,days){return new Date(date.getTime()+days*DAY);}
 
-export function createCalendarEngine({projectStart,horizonStart=projectStart,horizonEnd,calendars,projectCalendarId=null}){
+export function createCalendarEngine({projectStart,horizonStart=projectStart,horizonEnd,calendars,projectCalendarId=null,projectTimeZone="UTC",timeResolution="DAY"}){
+  const time_resolution=assertDayResolution(timeResolution);
+  const project_time_zone=normalizeTimeZone(projectTimeZone,"projectTimeZone");
   const origin=validateIso(projectStart,"projectStart");
   const first=validateIso(horizonStart,"horizonStart");
   const last=validateIso(horizonEnd,"horizonEnd");
@@ -41,7 +45,8 @@ export function createCalendarEngine({projectStart,horizonStart=projectStart,hor
     if(!Array.isArray(weekdays)||weekdays.length===0||weekdays.some(x=>!Number.isInteger(x)||x<0||x>6)) throw new Error(`Invalid working weekdays for calendar ${id}`);
     if(!Array.isArray(holidays)) throw new Error(`holidays must be an array for calendar ${id}`);
     for(const h of holidays) validateIso(h,`Holiday in ${id}`);
-    byId.set(id,{id,weekdays:new Set(weekdays),holidays:new Set(holidays)});
+    const time_contract=normalizeCalendarTimeContract(raw,project_time_zone,weekdays);
+    byId.set(id,{id,weekdays:new Set(weekdays),holidays:new Set(holidays),time_contract});
   }
   const projectId=projectCalendarId??list[0].id??list[0].calendar_id;
   if(!byId.has(projectId)) throw new Error(`Unknown project calendar: ${projectId}`);
@@ -99,7 +104,8 @@ export function createCalendarEngine({projectStart,horizonStart=projectStart,hor
     const d=integer(duration,"Activity duration",{nonnegative:true});
     return eventDate(d===0?finish:finish-1);
   }
-  return {origin,projectStart,projectCalendarId:projectId,calendarIds:[...byId.keys()],minDay,maxDay,minEvent,maxEvent,point,isWorking,placeForward,shiftEvent,eventDate,finishDate};
+  return {origin,projectStart,projectCalendarId:projectId,projectTimeZone:project_time_zone,timeResolution:time_resolution,calendarIds:[...byId.keys()],
+    calendarTimeContracts:Object.fromEntries([...byId].map(([id,c])=>[id,c.time_contract])),minDay,maxDay,minEvent,maxEvent,point,isWorking,placeForward,shiftEvent,eventDate,finishDate};
 }
 
 function normalizeActivities(activities,engine){
@@ -117,17 +123,19 @@ function normalizeActivities(activities,engine){
   return map;
 }
 
-function normalizeConstraints(activities,constraints,engine){
+function normalizeConstraints(activities,constraints,engine,constraintPolicy="STRICT_ALL"){
   if(!Array.isArray(constraints)) throw new Error("constraints must be an array");
+  const constraint_policy=normalizeConstraintPolicy(constraintPolicy);
   const ids=new Set(activities.keys()),out=[];
   for(const raw of constraints){
     const activity_id=raw.activity_id??raw.id,type=String(raw.type??"").toUpperCase();
     if(!ids.has(activity_id)) throw new Error(`Constraint references unknown activity: ${activity_id}`);
     if(!CONSTRAINT_TYPES.has(type)) throw new Error(`Unsupported constraint type: ${type}`);
-    if(raw.priority!=null||raw.calendar_id!=null) throw new Error("Constraint priority and per-constraint calendars are unsupported in the calendar-aware day model");
+    if(raw.calendar_id!=null) throw new Error("Per-constraint calendars are unsupported in the calendar-aware day model");
     const source=raw.slot??raw.date;
     const slot=engine.point(source,`Constraint point for ${activity_id}`);
-    out.push({...raw,activity_id,type,slot});
+    const priority=normalizeConstraintPriority(raw.priority,`Constraint priority for ${activity_id}`);
+    out.push({...raw,activity_id,type,slot,priority,constraint_policy,_constraint_index:out.length});
   }
   return out;
 }
@@ -183,9 +191,11 @@ function backwardConstraintSatisfied(c,p){
   if(c.type==="FINISH_ON_OR_BEFORE"||c.type==="MUST_FINISH_ON") return p.finish<=c.slot;
   return true;
 }
-export function evaluateCalendarConstraints({scheduledActivities,constraints=[],projectStart,horizonStart=projectStart,horizonEnd,calendars,projectCalendarId=null}){
-  const engine=createCalendarEngine({projectStart,horizonStart,horizonEnd,calendars,projectCalendarId});
-  const map=normalizeActivities(scheduledActivities,engine),normalized=normalizeConstraints(map,constraints,engine);
+export function evaluateCalendarConstraints({scheduledActivities,constraints=[],projectStart,horizonStart=projectStart,horizonEnd,calendars,projectCalendarId=null,constraintPolicy="STRICT_ALL",projectTimeZone="UTC",timeResolution="DAY"}){
+  const engine=createCalendarEngine({projectStart,horizonStart,horizonEnd,calendars,projectCalendarId,projectTimeZone,timeResolution});
+  const map=normalizeActivities(scheduledActivities,engine),normalized=normalizeConstraints(map,constraints,engine,constraintPolicy);
+  const resolution=resolveNormalizedConstraintPolicy({activities:[...map.values()],constraints:normalized,policy:constraintPolicy});
+  const applied=new Set(resolution.effective.map(c=>c._constraint_index)),suppressed=new Map(resolution.suppressed.map(c=>[c._constraint_index,c]));
   const points=new Map(scheduledActivities.map(a=>[activityId(a),{start:a.es??a.start,finish:a.ef??a.finish}]));
   return normalized.map(c=>{
     const p=points.get(c.activity_id);if(!p||!Number.isInteger(p.start)||!Number.isInteger(p.finish)) throw new Error(`Calculated calendar points missing for ${c.activity_id}`);
@@ -196,14 +206,18 @@ export function evaluateCalendarConstraints({scheduledActivities,constraints=[],
     else if(c.type==="FINISH_ON_OR_BEFORE"){actual=p.finish;ok=actual<=c.slot;}
     else if(c.type==="MUST_START_ON"){actual=p.start;ok=actual===c.slot;}
     else{actual=p.finish;ok=actual===c.slot;}
-    return {activity_id:c.activity_id,type:c.type,required_slot:c.slot,required_date:engine.eventDate(c.slot),calculated_slot:actual,calculated_date:engine.eventDate(actual),ok,variance:actual-c.slot};
+    const sup=suppressed.get(c._constraint_index);
+    return {activity_id:c.activity_id,type:c.type,required_slot:c.slot,required_date:engine.eventDate(c.slot),calculated_slot:actual,calculated_date:engine.eventDate(actual),ok,variance:actual-c.slot,
+      priority:c.priority??0,constraint_policy:resolution.policy,applied:applied.has(c._constraint_index),suppressed:!!sup,suppressed_reason:sup?.suppressed_reason??null};
   });
 }
 
-export function scheduleCalendarNetwork({activities,relationships=[],constraints=[],calendars,projectStart,horizonStart=projectStart,horizonEnd,projectCalendarId=null,requiredFinish=null,notBefore=0}){
-  const engine=createCalendarEngine({projectStart,horizonStart,horizonEnd,calendars,projectCalendarId});
-  const map=normalizeActivities(activities,engine),rels=normalizeRelationships(map,relationships,engine),normalizedConstraints=normalizeConstraints(map,constraints,engine);
-  const constraintsById=new Map([...map.keys()].map(id=>[id,[]]));for(const c of normalizedConstraints)constraintsById.get(c.activity_id).push(c);
+export function scheduleCalendarNetwork({activities,relationships=[],constraints=[],calendars,projectStart,horizonStart=projectStart,horizonEnd,projectCalendarId=null,requiredFinish=null,notBefore=0,constraintPolicy="STRICT_ALL",projectTimeZone="UTC",timeResolution="DAY"}){
+  const engine=createCalendarEngine({projectStart,horizonStart,horizonEnd,calendars,projectCalendarId,projectTimeZone,timeResolution});
+  const map=normalizeActivities(activities,engine),rels=normalizeRelationships(map,relationships,engine),normalizedConstraints=normalizeConstraints(map,constraints,engine,constraintPolicy);
+  const constraintResolution=resolveNormalizedConstraintPolicy({activities:[...map.values()],constraints:normalizedConstraints,policy:constraintPolicy});
+  const effectiveConstraints=constraintResolution.effective;
+  const constraintsById=new Map([...map.keys()].map(id=>[id,[]]));for(const c of effectiveConstraints)constraintsById.get(c.activity_id).push(c);
   const {incoming,outgoing,order}=topo(map,rels);
   const floor=Math.max(engine.point(notBefore,"notBefore"),engine.minEvent),early=new Map();
   for(const id of order){
@@ -245,8 +259,10 @@ export function scheduleCalendarNetwork({activities,relationships=[],constraints
     return {...a,es:e.start,ef:e.finish,ls:l.start,lf:l.finish,total_float:l.start-e.start,free_float:latestFree-e.start,critical:l.start-e.start<=0,
       start_date:engine.eventDate(e.start),finish_date:engine.finishDate(e.finish,a.duration),late_start_date:engine.eventDate(l.start),late_finish_date:engine.finishDate(l.finish,a.duration)};
   });
-  const checks=evaluateCalendarConstraints({scheduledActivities:rows,constraints:normalizedConstraints,projectStart,horizonStart,horizonEnd,calendars,projectCalendarId:engine.projectCalendarId});
+  const checks=evaluateCalendarConstraints({scheduledActivities:rows,constraints,projectStart,horizonStart,horizonEnd,calendars,projectCalendarId:engine.projectCalendarId,constraintPolicy,projectTimeZone:engine.projectTimeZone,timeResolution:engine.timeResolution});
   return {time_model:"CIVIL_DAY_EVENTS_WITH_ACTIVITY_WORKING_DAY_DURATION",time_origin_date:projectStart,order,relationships:rels,
+    time_contract:{project_time_zone:engine.projectTimeZone,time_resolution:engine.timeResolution,calendar_time_contracts:engine.calendarTimeContracts,native_intraday_support:"CONTRACT_ONLY"},
+    constraint_policy:{mode:constraintResolution.policy,effective_count:constraintResolution.effective.length,suppressed_count:constraintResolution.suppressed.length,decisions:constraintResolution.decisions},
     project:{early_finish:earlyFinish,early_finish_date:engine.eventDate(earlyFinish),required_finish:target,required_finish_date:engine.eventDate(target),finish_variance:earlyFinish-target},activities:rows,constraints:checks};
 }
 
@@ -287,12 +303,14 @@ function statusRowsFor(source,updates,dataDate,engine){
   });
 }
 
-export function rescheduleCalendarRemaining({scheduledActivities,relationships=[],constraints=[],updates={},dataDate,requiredFinish=null,calendars,projectStart,horizonStart=projectStart,horizonEnd,projectCalendarId=null}){
+export function rescheduleCalendarRemaining({scheduledActivities,relationships=[],constraints=[],updates={},dataDate,requiredFinish=null,calendars,projectStart,horizonStart=projectStart,horizonEnd,projectCalendarId=null,constraintPolicy="STRICT_ALL",projectTimeZone="UTC",timeResolution="DAY"}){
   if(!Array.isArray(scheduledActivities)) throw new Error("scheduledActivities must be an array");
-  const engine=createCalendarEngine({projectStart,horizonStart,horizonEnd,calendars,projectCalendarId});
+  const engine=createCalendarEngine({projectStart,horizonStart,horizonEnd,calendars,projectCalendarId,projectTimeZone,timeResolution});
   const dataDateSlot=engine.point(dataDate,"dataDate");if(dataDateSlot<0) throw new Error("dataDate must not precede projectStart");
   const sourceMap=normalizeActivities(scheduledActivities,engine),source=[...sourceMap.values()];
-  const rels=normalizeRelationships(sourceMap,relationships,engine),normConstraints=normalizeConstraints(sourceMap,constraints,engine);
+  const rels=normalizeRelationships(sourceMap,relationships,engine),normConstraints=normalizeConstraints(sourceMap,constraints,engine,constraintPolicy);
+  const constraintResolution=resolveNormalizedConstraintPolicy({activities:source,constraints:normConstraints,policy:constraintPolicy});
+  const effectiveConstraints=constraintResolution.effective;
   topo(sourceMap,rels);
   const statuses=statusRowsFor(source,updates,dataDateSlot,engine),byStatus=new Map(statuses.map(s=>[s.activity_id,s]));
   const incomplete=source.filter(a=>byStatus.get(a.id).status!=="COMPLETED");
@@ -300,7 +318,7 @@ export function rescheduleCalendarRemaining({scheduledActivities,relationships=[
   function finalize(schedule,boundaryConstraints){
     const byForecast=new Map((schedule?.activities??[]).map(a=>[a.id,a]));
     const points=source.map(a=>{const st=byStatus.get(a.id),f=byForecast.get(a.id);return {...a,es:st.actual_start_slot??f?.es,ef:st.actual_finish_slot??f?.ef};});
-    const checks=evaluateCalendarConstraints({scheduledActivities:points,constraints:normConstraints,projectStart,horizonStart,horizonEnd,calendars,projectCalendarId:engine.projectCalendarId}).map(c=>{
+    const checks=evaluateCalendarConstraints({scheduledActivities:points,constraints,projectStart,horizonStart,horizonEnd,calendars,projectCalendarId:engine.projectCalendarId,constraintPolicy,projectTimeZone:engine.projectTimeZone,timeResolution:engine.timeResolution}).map(c=>{
       const st=byStatus.get(c.activity_id),isStart=c.type.startsWith("START")||c.type==="MUST_START_ON";
       const actual=isStart?st.actual_start_slot:st.actual_finish_slot;
       return {...c,status:st.status,basis:(actual!=null?"ACTUAL_":"FORECAST_")+(isStart?"START":"FINISH")};
@@ -309,6 +327,8 @@ export function rescheduleCalendarRemaining({scheduledActivities,relationships=[
     const progressQa=inspectProgress({scheduledActivities:source,relationships:rels,status:statuses,dataDateSlot,
       shiftRelationshipPoint:(anchor,rel)=>engine.shiftEvent(anchor,rel.lag,rel.lag_calendar_id)});
     return {time_model:"CIVIL_DAY_EVENTS_WITH_ACTIVITY_WORKING_DAY_DURATION",data_date_slot:dataDateSlot,data_date:engine.eventDate(dataDateSlot),status:statuses,remaining_schedule:schedule,
+      time_contract:{project_time_zone:engine.projectTimeZone,time_resolution:engine.timeResolution,calendar_time_contracts:engine.calendarTimeContracts,native_intraday_support:"CONTRACT_ONLY"},
+      constraint_policy:{mode:constraintResolution.policy,effective_count:constraintResolution.effective.length,suppressed_count:constraintResolution.suppressed.length,decisions:constraintResolution.decisions},
       forecast:(schedule?.activities??[]).map(a=>({...a,forecast_start_slot:a.es,forecast_finish_slot:a.ef,forecast_late_start_slot:a.ls,forecast_late_finish_slot:a.lf})),boundary_constraints:boundaryConstraints,constraints:checks,progress_qa:progressQa,
       project:{forecast_finish_slot:forecastFinish,forecast_finish_date:forecastFinish==null?null:engine.eventDate(forecastFinish),required_finish_slot:required,required_finish_date:required==null?null:engine.eventDate(required),finish_variance:forecastFinish==null||required==null?null:forecastFinish-required}};
   }
@@ -341,7 +361,7 @@ export function rescheduleCalendarRemaining({scheduledActivities,relationships=[
       remRels.push(rel);
     }
   }
-  const applicable=normConstraints.filter(c=>{const st=byStatus.get(c.activity_id);const isStart=c.type.startsWith("START")||c.type==="MUST_START_ON";return st.status!=="COMPLETED"&&!(st.status==="IN_PROGRESS"&&isStart);});
-  const schedule=scheduleCalendarNetwork({activities:remActs,relationships:remRels,constraints:[...applicable,...generated],calendars,projectStart,horizonStart,horizonEnd,projectCalendarId:engine.projectCalendarId,requiredFinish:required,notBefore:dataDateSlot});
+  const applicable=effectiveConstraints.filter(c=>{const st=byStatus.get(c.activity_id);const isStart=c.type.startsWith("START")||c.type==="MUST_START_ON";return st.status!=="COMPLETED"&&!(st.status==="IN_PROGRESS"&&isStart);});
+  const schedule=scheduleCalendarNetwork({activities:remActs,relationships:remRels,constraints:[...applicable,...generated],calendars,projectStart,horizonStart,horizonEnd,projectCalendarId:engine.projectCalendarId,requiredFinish:required,notBefore:dataDateSlot,constraintPolicy:"STRICT_ALL",projectTimeZone:engine.projectTimeZone,timeResolution:engine.timeResolution});
   return finalize(schedule,boundaryConstraints);
 }

@@ -1,10 +1,10 @@
-import {normalizeConstraints,constraintStartBounds,evaluateConstraintViolations} from "./constraints.mjs";
+import {resolveConstraintPolicy,constraintStartBounds,evaluateConstraintViolations} from "./constraints.mjs";
 import {assertNativeSchedulingSupported,normalizeActivity} from "./activities.mjs";
 import {numeric} from "./validation.mjs";
 
 const REL_TYPES = new Set(["FS","SS","FF","SF"]);
 
-export function scheduleNetwork({activities, relationships = [], constraints = [], requiredFinish = null}) {
+export function scheduleNetwork({activities, relationships = [], constraints = [], requiredFinish = null, constraintPolicy = "STRICT_ALL"}) {
   if (!Array.isArray(activities) || activities.length === 0) throw new Error("activities must be a non-empty array");
   const map = new Map();
   for (const raw of activities) {
@@ -14,7 +14,8 @@ export function scheduleNetwork({activities, relationships = [], constraints = [
     map.set(id, a);
   }
   if(new Set([...map.values()].map(a=>a.calendar_id??"__DEFAULT__")).size>1) throw new Error("Multiple activity calendars are unsupported in the shared-slot scheduler");
-  const normalizedConstraints=normalizeConstraints({activities:[...map.values()],constraints});
+  const constraintResolution=resolveConstraintPolicy({activities:[...map.values()],constraints,policy:constraintPolicy});
+  const normalizedConstraints=constraintResolution.effective;
   const constraintsById=new Map([...map.keys()].map(id=>[id,[]]));
   for(const c of normalizedConstraints) constraintsById.get(c.activity_id).push(c);
 
@@ -85,11 +86,12 @@ export function scheduleNetwork({activities, relationships = [], constraints = [
     a.total_float=a.ls-a.es; a.free_float=ff; a.critical=a.total_float<=0;
   }
   const scheduledActivities=order.map(id=>({...calc.get(id)}));
-  const constraintResults=evaluateConstraintViolations({scheduledActivities,constraints:normalizedConstraints});
+  const constraintResults=evaluateConstraintViolations({scheduledActivities,constraints,constraintPolicy});
   return {
     order,
     project:{early_finish:earlyProjectFinish,required_finish:targetFinish,finish_variance:earlyProjectFinish-targetFinish},
     activities:scheduledActivities,
-    constraints:constraintResults
+    constraints:constraintResults,
+    constraint_policy:{mode:constraintResolution.policy,effective_count:constraintResolution.effective.length,suppressed_count:constraintResolution.suppressed.length,decisions:constraintResolution.decisions}
   };
 }
