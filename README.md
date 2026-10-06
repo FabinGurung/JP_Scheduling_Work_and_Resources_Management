@@ -47,9 +47,10 @@ CPM forward/backward pass, FS/SS/FF/SF + lag, negative float, total/free float, 
 - typed TASK / START_MILESTONE / FINISH_MILESTONE support; milestones must be zero-duration atomic points
 - all activities, including long SS/SF predecessors, respect the backward-pass project completion boundary
 - forecast QA findings: open ends, leads, duplicate relationships, negative float, constraint violations and missed starts
+- progress QA: out-of-sequence recorded actual events, unresolved predecessor-actual boundaries, data-date slippage and zero-remaining/no-finish contradictions
 - Engine Lab applies the same constraints to both baseline and remaining forecasts, with data-date and constraint controls
 - malformed actuals, numeric fields and unsupported priority semantics fail closed; the legacy shared-slot scheduler still rejects multiple activity calendars
-- working hours/time zones, native execution of contract-only resource-dependent/level-of-effort activity types, advanced priority rules, multi-window intermittent progress and deeper QA remain open
+- working hours/time zones, native execution of contract-only resource-dependent/level-of-effort activity types, advanced priority rules, multi-window intermittent progress and broader real-project QA remain open
 
 The original `scheduleNetwork` API remains a **shared working-slot model** for regression stability. SEQ5 adds a separate native calendar-aware day scheduler; neither path is a claim of P6 compatibility. See [Scheduling semantics](docs/SCHEDULING_SEMANTICS.md) for exact supported rules and limitations.
 
@@ -95,6 +96,19 @@ The canonical activity schema now recognizes `LEVEL_OF_EFFORT` and `RESOURCE_DEP
 - TASK and milestone behavior remain unchanged.
 
 The contract is intentionally informed by the same five upstream references already used by the kernel: IfcOpenShell/Ifc4D, OpenProject, ProjectLibre Desktop, TaskJuggler and GanttProject. Their behavior is used as compatibility/reference evidence; implementation code is not copied.
+
+## SEQ10 — progress QA diagnostics
+
+Remaining-work results now include a `progress_qa` diagnostic package without changing retained-logic scheduling behavior.
+
+- Recorded successor actuals are checked against the actual predecessor event required by FS / SS / FF / SF logic.
+- A proven actual-event violation is reported as `OUT_OF_SEQUENCE_PROGRESS`.
+- If the successor event is actual but the predecessor actual needed to prove the relationship is not yet recorded, the result is `ACTUAL_LOGIC_UNRESOLVED` information rather than a fabricated violation.
+- Calendar-aware QA evaluates relationship lag on the already-resolved lag calendar.
+- Data-date checks identify activities that should already have started/finished, in-progress work beyond its baseline finish, and zero remaining duration without an actual finish.
+- Existing malformed/future actual validation remains fail-closed.
+
+These are diagnostic findings only. Seq10 does not introduce Primavera retained-logic/progress-override modes, rewrite actual dates, or certify a P6/DCMA schedule.
 
 ## Knowledge separation
 

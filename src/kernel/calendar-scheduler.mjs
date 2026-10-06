@@ -1,5 +1,6 @@
 import {assertNativeSchedulingSupported,normalizeActivity} from "./activities.mjs";
 import {activityId,numeric} from "./validation.mjs";
+import {inspectProgress} from "./qa.mjs";
 
 const DAY=86400000;
 const REL_TYPES=new Set(["FS","SS","FF","SF"]);
@@ -305,8 +306,10 @@ export function rescheduleCalendarRemaining({scheduledActivities,relationships=[
       return {...c,status:st.status,basis:(actual!=null?"ACTUAL_":"FORECAST_")+(isStart?"START":"FINISH")};
     });
     const finishes=points.map(p=>p.ef).filter(Number.isInteger),forecastFinish=finishes.length?Math.max(...finishes):null;
+    const progressQa=inspectProgress({scheduledActivities:source,relationships:rels,status:statuses,dataDateSlot,
+      shiftRelationshipPoint:(anchor,rel)=>engine.shiftEvent(anchor,rel.lag,rel.lag_calendar_id)});
     return {time_model:"CIVIL_DAY_EVENTS_WITH_ACTIVITY_WORKING_DAY_DURATION",data_date_slot:dataDateSlot,data_date:engine.eventDate(dataDateSlot),status:statuses,remaining_schedule:schedule,
-      forecast:(schedule?.activities??[]).map(a=>({...a,forecast_start_slot:a.es,forecast_finish_slot:a.ef,forecast_late_start_slot:a.ls,forecast_late_finish_slot:a.lf})),boundary_constraints:boundaryConstraints,constraints:checks,
+      forecast:(schedule?.activities??[]).map(a=>({...a,forecast_start_slot:a.es,forecast_finish_slot:a.ef,forecast_late_start_slot:a.ls,forecast_late_finish_slot:a.lf})),boundary_constraints:boundaryConstraints,constraints:checks,progress_qa:progressQa,
       project:{forecast_finish_slot:forecastFinish,forecast_finish_date:forecastFinish==null?null:engine.eventDate(forecastFinish),required_finish_slot:required,required_finish_date:required==null?null:engine.eventDate(required),finish_variance:forecastFinish==null||required==null?null:forecastFinish-required}};
   }
   if(incomplete.length===0) return finalize(null,[]);

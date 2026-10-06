@@ -2,6 +2,7 @@ import {scheduleNetwork} from "./cpm.mjs";
 import {normalizeConstraints,evaluateConstraintViolations} from "./constraints.mjs";
 import {normalizeActivity} from "./activities.mjs";
 import {activityId,numeric} from "./validation.mjs";
+import {inspectProgress} from "./qa.mjs";
 
 const REL_TYPES=new Set(["FS","SS","FF","SF"]);
 const ANCHOR_BASE="__PCK_DATA_DATE_ANCHOR__";
@@ -114,8 +115,9 @@ export function rescheduleRemaining({scheduledActivities,relationships=[],constr
     });
     const finishes=points.map(a=>a.ef);
     const finish=finishes.length?Math.max(...finishes):null;
+    const progressQa=inspectProgress({scheduledActivities:sourceActivities,relationships:normalizedRelationships,status:statusRows,dataDateSlot:dataDate});
     return {data_date_slot:dataDate,status:statusRows,remaining_schedule:remainingSchedule,forecast,
-      boundary_constraints:boundaryConstraints,translated_constraints:translatedConstraints,constraints:checks,
+      boundary_constraints:boundaryConstraints,translated_constraints:translatedConstraints,constraints:checks,progress_qa:progressQa,
       project:{forecast_finish_slot:finish,required_finish_slot:requiredAbsolute,
         finish_variance:finish==null||requiredAbsolute==null?null:finish-requiredAbsolute}};
   }

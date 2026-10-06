@@ -167,6 +167,23 @@ Completed work retains actual-based constraint checks even when no remaining
 segment exists. Missing or contradictory actuals, missing remaining duration,
 unknown IDs, cycles and horizon overflow fail closed.
 
+## Progress QA diagnostics (SEQ10)
+
+The remaining-work APIs return a `progress_qa` object. It is diagnostic only: it does not rewrite actuals, change retained-logic behavior, or select a Primavera scheduling mode.
+
+For recorded actual relationship events, the kernel evaluates the same event inequalities used by the schedule model:
+
+- FS: successor actual start against predecessor actual finish + lag.
+- SS: successor actual start against predecessor actual start + lag.
+- FF: successor actual finish against predecessor actual finish + lag.
+- SF: successor actual finish against predecessor actual start + lag.
+
+When both actual event points exist and the successor event is earlier than the required point, the finding is `OUT_OF_SEQUENCE_PROGRESS`. When the successor event exists but the predecessor actual point needed to prove the rule is still missing, the kernel emits `ACTUAL_LOGIC_UNRESOLVED` information instead of guessing. In the calendar-aware path, lag is shifted on the relationship's resolved lag calendar.
+
+Data-date diagnostics also report `SHOULD_HAVE_STARTED`, `SHOULD_HAVE_FINISHED`, `IN_PROGRESS_PAST_PLANNED_FINISH`, and `ZERO_REMAINING_WITHOUT_ACTUAL_FINISH`. Malformed actuals, actuals after the data date, missing required remaining duration, contradictory actual order, and completed work with nonzero remaining duration remain fail-closed validation errors.
+
+The five upstream projects remain behavioral/interchange references. Seq10 is a kernel-native diagnostic contract and does not claim that IfcOpenShell/Ifc4D, OpenProject, ProjectLibre, TaskJuggler, or GanttProject use identical out-of-sequence terminology or calculation rules.
+
 ## Verification and remaining limitations
 
 `npm test` covers all six native constraints across status states, immutable
@@ -182,7 +199,7 @@ separately, matching the documented conflict policy. Its finite horizons are
 chosen to contain this matrix; this is not a proof for arbitrary networks.
 
 Still open: native execution of contract-only RESOURCE_DEPENDENT and LEVEL_OF_EFFORT activity types, advanced
-priority, working hours/time zones, suspended/intermittent work, broader
+priority, working hours/time zones, suspended/intermittent work, retained-logic/progress-override mode selection, broader
 real-project QA and production editing.
 Resource/productivity, baselines/progress, P6/MS Project exchange, IFC/4D and risk
 remain separate later milestones. Soak Pit stays IDENTITY_PENDING.

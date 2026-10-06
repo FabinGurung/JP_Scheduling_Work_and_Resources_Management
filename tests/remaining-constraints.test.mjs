@@ -219,3 +219,40 @@ test("suspend/resume progress validation fails closed",()=>{
   assert.throws(()=>rescheduleRemaining({...base,updates:{A:{actual_start_slot:0,remaining_duration:3,suspend_slot:4,resume_slot:3}}}),/RESUME_BEFORE_SUSPEND/);
   assert.throws(()=>rescheduleRemaining({...base,updates:{A:{suspend_slot:4,resume_slot:8}}}),/SUSPEND_RESUME_REQUIRES_IN_PROGRESS/);
 });
+
+
+test("progress QA exposes out-of-sequence FS actuals without rewriting retained-logic behavior",()=>{
+  const rels=[{predecessor:"A",successor:"B",type:"FS",lag:0}];
+  const baseline=scheduleNetwork({activities:[{id:"A",duration:3},{id:"B",duration:2}],relationships:rels});
+  const r=rescheduleRemaining({scheduledActivities:baseline.activities,relationships:rels,dataDateSlot:5,
+    updates:{A:{actual_start_slot:0,actual_finish_slot:4},B:{actual_start_slot:2,remaining_duration:1}}});
+  const finding=r.progress_qa.findings.find(x=>x.code==="OUT_OF_SEQUENCE_PROGRESS");
+  assert.ok(finding);
+  assert.equal(finding.activity_id,"B");
+  assert.equal(finding.actual_slot,2);
+  assert.equal(finding.required_slot,4);
+  assert.equal(r.forecast.find(x=>x.id==="B").forecast_start_slot,5);
+});
+
+test("progress QA distinguishes unresolved predecessor actuals from proven out-of-sequence progress",()=>{
+  const rels=[{predecessor:"A",successor:"B",type:"FS",lag:0}];
+  const baseline=scheduleNetwork({activities:[{id:"A",duration:4},{id:"B",duration:2}],relationships:rels});
+  const r=rescheduleRemaining({scheduledActivities:baseline.activities,relationships:rels,dataDateSlot:5,
+    updates:{A:{actual_start_slot:0,remaining_duration:2},B:{actual_start_slot:2,remaining_duration:1}}});
+  assert.equal(r.progress_qa.findings.some(x=>x.code==="OUT_OF_SEQUENCE_PROGRESS"),false);
+  const unresolved=r.progress_qa.findings.find(x=>x.code==="ACTUAL_LOGIC_UNRESOLVED");
+  assert.ok(unresolved);
+  assert.equal(unresolved.relationship.type,"FS");
+});
+
+test("progress QA reports data-date slippage and zero-remaining in-progress contradictions as diagnostics",()=>{
+  const baseline=scheduleNetwork({activities:[{id:"A",duration:2},{id:"B",duration:2}]});
+  const r=rescheduleRemaining({scheduledActivities:baseline.activities,dataDateSlot:5,
+    updates:{B:{actual_start_slot:0,remaining_duration:0}}});
+  const codes=new Set(r.progress_qa.findings.map(x=>x.code));
+  assert.equal(codes.has("SHOULD_HAVE_FINISHED"),true);
+  assert.equal(codes.has("IN_PROGRESS_PAST_PLANNED_FINISH"),true);
+  assert.equal(codes.has("ZERO_REMAINING_WITHOUT_ACTUAL_FINISH"),true);
+  assert.equal(r.progress_qa.counts.errors,0);
+  assert.ok(r.progress_qa.counts.warnings>=3);
+});

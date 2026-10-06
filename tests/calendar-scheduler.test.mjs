@@ -141,3 +141,22 @@ test("calendar suspend/resume validation fails closed",()=>{
   assert.throws(()=>rescheduleCalendarRemaining({...args,updates:{A:{actual_start_date:"2026-10-05",remaining_duration:2,suspend_date:"2026-10-09",resume_date:"2026-10-12"}}}),/SUSPEND_AFTER_DATA_DATE/);
   assert.throws(()=>rescheduleCalendarRemaining({...args,updates:{A:{actual_start_date:"2026-10-05",remaining_duration:2,suspend_date:"2026-10-07",resume_date:"2026-10-06"}}}),/RESUME_BEFORE_SUSPEND/);
 });
+
+
+test("calendar progress QA evaluates out-of-sequence actuals on the resolved lag calendar",()=>{
+  const relationships=[{predecessor:"A",successor:"B",type:"FS",lag:1,lag_calendar_mode:"PREDECESSOR"}];
+  const baseline=scheduleCalendarNetwork({...base,
+    activities:[{id:"A",duration:3,calendar_id:"FIVE"},{id:"B",duration:2,calendar_id:"SIX"}],
+    relationships});
+  const r=rescheduleCalendarRemaining({...base,scheduledActivities:baseline.activities,relationships:baseline.relationships,
+    dataDate:"2026-10-12",
+    updates:{
+      A:{actual_start_date:"2026-10-05",actual_finish_date:"2026-10-08"},
+      B:{actual_start_date:"2026-10-08",remaining_duration:1}
+    }});
+  const finding=r.progress_qa.findings.find(x=>x.code==="OUT_OF_SEQUENCE_PROGRESS");
+  assert.ok(finding);
+  assert.equal(finding.activity_id,"B");
+  assert.equal(finding.relationship.lag_calendar_id,"FIVE");
+  assert.ok(finding.required_slot>finding.actual_slot);
+});

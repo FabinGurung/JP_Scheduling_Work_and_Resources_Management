@@ -15,5 +15,6 @@ export function calculateExample(demo,{dataDateSlot=demo.project.data_date_slot?
   return {schedule,dated:scheduleToDates(schedule,dates),remaining,
     qa:inspectSchedule({schedule,relationships:demo.relationships}),
     remainingQa:inspectSchedule({schedule:remaining.remaining_schedule??{activities:[],constraints:[]},
-      relationships:remaining.remaining_schedule?.relationships??[],status:remaining.status,constraints:remaining.constraints})};
+      relationships:remaining.remaining_schedule?.relationships??[],status:remaining.status,constraints:remaining.constraints,
+      additionalFindings:remaining.progress_qa?.findings??[]})};
 }
