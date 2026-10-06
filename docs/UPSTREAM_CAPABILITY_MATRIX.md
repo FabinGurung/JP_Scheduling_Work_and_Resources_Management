@@ -10,12 +10,12 @@ These projects do not inherit Primavera P6 or Microsoft Project source code. The
 | Total / free float | Exchange/model target | Partial UI semantics | Yes | Criticalness/scheduling | Scheduling | **Implemented** |
 | Baselines / scenarios | IFC schedules | Baseline comparison | Yes | Unlimited scenarios | Baselines | Data model next |
 | Resource assignment | IFC resources | Assignees/work packages | Yes | Yes | Yes | **SEQ12 typed assignments + crew expansion + histogram loading** |
-| LOE / resource-dependent / effort semantics | IFC task/resource exchange target | Estimated-time + schedule metadata | Fixed work/units/duration + P6 resource-calendar distinction | Effort + allocation | Effort-driven work tracked separately | **SEQ9 canonical contract; LOE/RD native execution fail-closed** |
+| LOE / resource-dependent / effort semantics | IFC task/resource exchange target | Estimated-time + schedule metadata | Fixed work/units/duration + P6 resource-calendar distinction | Effort + allocation | Effort-driven work tracked separately | **SEQ13 RD resource-engine placement; LOE remains contract-only** |
 | Progress/status QA | IFC task-time/status exchange target | Work-package progress/time tracking | Task progress/actuals behavior reference | Status/risk reporting | Task progress behavior reference | **SEQ10 native progress diagnostics; no parity claim** |
 | Constraint conflict policy | Interchange target | Behavior reference | Behavior reference | Behavior reference | Behavior reference | **SEQ11 STRICT_ALL + PRIORITY_RANKED native policy** |
 | Working hours / time zones | Calendar/time exchange target | Calendar metadata reference | Calendar behavior reference | Working-time behavior reference | Calendar behavior reference | **SEQ11 validated contract; intraday execution fail-closed** |
 | Resource typing / crews / productivity | IFC resource exchange target | Assignee/work metadata | Resource/work behavior reference | Effort/allocation reference | Resource-load reference | **SEQ12 typed resources, crew contracts, productivity duration + histograms** |
-| Resource leveling | Interop target | Not core | Yes | Yes | Resource load | Later v0.4 boundary; not yet claimed |
+| Resource leveling | Interop target | Not core | Yes | Yes | Resource load | **Next v0.4 boundary; Seq13 explicitly does not claim leveling** |
 | Earned value | IFC cost + schedule bridge | Work tracking | Yes | Cost/accounting | Cost calc | **EV metrics implemented** |
 | P6 interoperability | **XER/XML via Ifc4D** | API/import path | Migration concepts | External exports | Not P6-focused | Ifc4D adapter target |
 | Microsoft Project interoperability | **MS Project XML via Ifc4D** | Sync/import patterns | Core compatibility goal | Export | **MPX/MPP/MSPDI** | Adapter contracts |
@@ -70,3 +70,12 @@ No upstream implementation code is copied into the kernel.
 The five upstream projects remain behavioral/interchange references. The kernel now has its own typed LABOR/EQUIPMENT/MATERIAL contract, crew expansion, productivity-duration calculation, and renewable/material histogram diagnostics. The first v0.4 boundary deliberately stops before resource-driven activity placement or leveling, so no upstream leveling parity is claimed.
 
 Kernel rule: preserve interoperability concepts, but keep the v0.4 implementation independently tested and do not copy GPL/CPAL scheduler code.
+
+
+## SEQ13 resource-dependent availability interpretation
+
+The five upstream projects remain behavioral/interchange references rather than copied scheduling engines. Seq13 advances only the kernel's own Resource Dependent path: assigned renewable-resource and crew calendars are intersected, fixed external reservations consume renewable capacity, and explicit material inventory plus dated receipts gate forecast work slots.
+
+This is deterministic single-activity placement against declared/frozen availability. It is intentionally not a resource-leveling heuristic: Seq13 does not reprioritize, resequence or optimize competing activities, and it does not claim Primavera/ProjectLibre/TaskJuggler/GanttProject parity.
+
+Kernel rule: preserve resource/calendar/interchange concepts while independently testing the implementation and copying no upstream scheduler code.
