@@ -203,6 +203,22 @@ The v0.4 foundation separates reusable resource capacity from consumable materia
 
 SEQ12 does not level resources, shift activities, enforce material inventory shortage dates, intersect multiple resource calendars, or natively execute RESOURCE_DEPENDENT activities. Those are later v0.4 scheduling boundaries.
 
+## Resource-dependent availability placement (SEQ13)
+
+SEQ13 connects the existing `RESOURCE_DEPENDENT` activity identity to a dedicated v0.4 resource-engine placement path without changing the ordinary CPM schedulers' fail-closed behavior.
+
+- `RESOURCE_DEPENDENT.native_schedule_support` is `RESOURCE_ENGINE`. The shared-slot and calendar-aware CPM schedulers still reject Resource Dependent execution and direct callers to the resource engine.
+- placement requires at least one assigned renewable LABOR or EQUIPMENT resource.
+- direct renewable assignments require a resource `calendar_id`; crew-sourced assignments contribute the crew's explicit calendar. When a resource calendar and crew calendar are both present, a forecast work slot must be working on every required calendar.
+- renewable demand is aggregated by resource. A candidate slot is unavailable when activity demand plus any fixed `resourceReservations` exceeds `max_units`.
+- reservations are fixed external load evidence. Seq13 does not move, reprioritize or optimize the reserved/other activities.
+- material assignments require explicit `inventory_quantity` truth. Each material assignment declares exactly one total `quantity` or `quantity_per_slot`.
+- optional dated/slot `materialReceipts` increase material available from that event onward. Work proceeds only when cumulative material available covers the next work-slot consumption.
+- insufficient calendar, renewable-capacity or material availability can create gaps in forecast work slots. If the declared horizon cannot supply the required working slots, placement fails closed.
+- returned placement records exact `work_slots`, required calendar IDs, renewable demand, material consumption, and `resource_leveling_applied: false`.
+
+This path is deterministic **single-activity placement against declared/frozen availability**. It is not multi-activity resource leveling, does not select activities by float/priority, and does not optimize or resequence a resource-constrained network. Those remain the next v0.4 boundary.
+
 ## Verification and remaining limitations
 
 `npm test` covers all six native constraints across status states, immutable
@@ -217,5 +233,5 @@ and bound slots -2/0/3/6/8. Forward bounds and backward bounds are checked
 separately, matching the documented conflict policy. Its finite horizons are
 chosen to contain this matrix; this is not a proof for arbitrary networks.
 
-Still open: native execution of contract-only RESOURCE_DEPENDENT and LEVEL_OF_EFFORT activity types, minute/intraday execution of the Seq11 working-period contract, suspended/intermittent work, retained-logic/progress-override mode selection, broader real-project QA and production editing.
-Resource/productivity foundation is active in v0.4; resource-driven placement/availability enforcement and leveling remain open. Baselines/progress, P6/MS Project exchange, IFC/4D and risk remain separate later milestones. Soak Pit stays IDENTITY_PENDING.
+Still open: LEVEL_OF_EFFORT native execution, multi-activity resource leveling/optimization, minute/intraday execution of the Seq11 working-period contract, suspended/intermittent actual-work semantics, retained-logic/progress-override mode selection, broader real-project QA and production editing. RESOURCE_DEPENDENT now has a dedicated Seq13 resource-engine placement path.
+Resource/productivity foundation and deterministic Resource Dependent placement/availability enforcement are active in v0.4; multi-activity resource leveling remains open. Baselines/progress, P6/MS Project exchange, IFC/4D and risk remain separate later milestones. Soak Pit stays IDENTITY_PENDING.
