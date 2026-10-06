@@ -33,14 +33,14 @@ Engine Lab
     ├── Safety
     └── field lessons</div><p>These task pages are directly shareable with engineers without exposing the scheduling-engine complexity.</p></div>
 </div>
-<div class="note">Current focus: <b>v0.4 Resource & Productivity Engine</b> — SEQ12 starts typed labor/equipment/material resources, explicit crew calendars, quantity-to-productivity duration derivation, and inspectable resource/material histograms. Resource-driven placement and leveling remain later v0.4 work.</div>
+<div class="note">Current focus: <b>v0.4 Resource & Productivity Engine</b> — SEQ13 adds deterministic Resource Dependent placement against intersected resource/crew calendars, fixed capacity reservations, and explicit material inventory/receipts. Multi-activity resource leveling remains the next bounded v0.4 phase.</div>
 <div class="card"><h3>Near-term execution order</h3><div class="tree">DONE · SEQ8  Suspend / resume remaining-work boundary
 DONE · SEQ9  Level-of-Effort + Resource Dependent activity contract
 DONE · SEQ10 Progress QA: out-of-sequence / actual-vs-data-date diagnostics
 DONE · SEQ11 Constraint priority + working-hours / time-zone foundation
 DONE · SEQ12 v0.4 resource/productivity foundation
-NEXT · v0.4 Resource-dependent placement + availability semantics
-→ v0.4 Resource leveling
+DONE · SEQ13 Resource-dependent placement + availability semantics
+NEXT · v0.4 Resource leveling
 → v0.5 Baseline & Progress Control
 → v0.6 P6 / Microsoft Project Interoperability
 → v0.7 Construction Knowledge Integration
@@ -50,7 +50,7 @@ NEXT · v0.4 Resource-dependent placement + availability semantics
 <div class="road" style="margin-top:14px">
 <div class="phase"><div class="ver">v0.2</div><div><h3>Kernel Foundation</h3><p>CPM, FS/SS/FF/SF + lag, float, criticality, EV, resource-overload detection and five upstream adapters.</p></div><span class="state done">FOUNDATION PASS</span></div>
 <div class="phase"><div class="ver">v0.3</div><div><h3>Professional Scheduling Core</h3><p>WBS validation/rollup, immutable actuals, native constraints, FS/SS/FF/SF remaining-work forecasts, typed milestones, basic schedule QA, SEQ5 day-resolution calendars/holidays/lag-calendar modes, SEQ8 paired suspend/resume boundaries, SEQ9 LOE/Resource Dependent type contracts, SEQ10 progress QA diagnostics, and SEQ11 constraint-priority plus working-hours/time-zone contracts. Native LOE/RD execution, minute/intraday scheduling, retained-logic/progress-override mode selection and multi-window intermittent progress remain open.</p></div><span class="state done">CORE PASS</span></div>
-<div class="phase"><div class="ver">v0.4</div><div><h3>Resource & Productivity Engine</h3><p>SEQ12 foundation: typed labor/equipment/material resources, explicit crew calendars, quantity-to-productivity duration derivation, renewable/material histograms and overload visibility. Resource-driven placement, availability enforcement and leveling remain open.</p></div><span class="state active">IN PROGRESS</span></div>
+<div class="phase"><div class="ver">v0.4</div><div><h3>Resource & Productivity Engine</h3><p>SEQ12 foundation plus SEQ13 Resource Dependent placement: typed resources/crews, productivity-derived durations, histograms, intersected resource/crew calendars, fixed renewable reservations, and explicit material inventory/receipt gating. Multi-activity resource leveling remains open.</p></div><span class="state active">IN PROGRESS</span></div>
 <div class="phase"><div class="ver">v0.5</div><div><h3>Baseline & Progress Control</h3><p>BL1/BL2, current-vs-baseline, variance, progress cycles, S-curves and stronger EV integration.</p></div><span class="state future">PLANNED</span></div>
 <div class="phase"><div class="ver">v0.6</div><div><h3>P6 / Microsoft Project Interoperability</h3><p>Ifc4D-backed P6 XER/XML and MS Project XML/MSPDI exchange with loss validation.</p></div><span class="state future">PLANNED</span></div>
 <div class="phase"><div class="ver">v0.7</div><div><h3>Construction Knowledge Integration</h3><p>Activity → work_id → ARC/WMS/ITP/QAQC/spec/code/resources while keeping the knowledge portal independently useful.</p></div><span class="state future">PLANNED</span></div>
