@@ -91,7 +91,7 @@ test("cycles, duplicate IDs and unknown assignments fail closed",()=>{
   assert.throws(()=>level({...shared,activities:[task("A"),task("B")],assignments:assignments("A","B"),
     relationships:[{predecessor:"A",successor:"B"},{predecessor:"B",successor:"A"}]}),/cyclic/i);
   assert.throws(()=>level({...shared,activities:[task("A"),task("A")],assignments:assignments("A")}),/duplicate activity/i);
-  assert.throws(()=>level({...shared,activities:[task("A")],assignments:assignments("UNKNOWN")}),/unknown activity/i);
+  assert.throws(()=>level({...shared,activities:[task("A")],assignments:assignments("A","UNKNOWN")}),/unknown activity/i);
 });
 test("actuals, constraints, mixed types, intraday and data-date progress are rejected",()=>{
   const fixture={...shared,activities:[task("A")],assignments:assignments("A")};
