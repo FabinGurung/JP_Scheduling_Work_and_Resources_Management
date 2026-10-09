@@ -235,3 +235,11 @@ chosen to contain this matrix; this is not a proof for arbitrary networks.
 
 Still open: LEVEL_OF_EFFORT native execution, multi-activity resource leveling/optimization, minute/intraday execution of the Seq11 working-period contract, suspended/intermittent actual-work semantics, retained-logic/progress-override mode selection, broader real-project QA and production editing. RESOURCE_DEPENDENT now has a dedicated Seq13 resource-engine placement path.
 Resource/productivity foundation and deterministic Resource Dependent placement/availability enforcement are active in v0.4; multi-activity resource leveling remains open. Baselines/progress, P6/MS Project exchange, IFC/4D and risk remain separate later milestones. Soak Pit stays IDENTITY_PENDING.
+
+## Seq14 — deterministic serial multi-activity resource leveling
+
+The separate levelResourceDependentNetwork(input) day-resolution engine applies one explicit policy: SERIAL_TOPOLOGICAL_ID. Stable activity IDs determine a tie-break among precedence-eligible unstarted RESOURCE_DEPENDENT activities. All four relationship types and signed day lags use the existing calendar engine. No global optimum is claimed.
+
+Fixed reservations and shared renewable demand occupy the same dated slots. Materials consume initial inventory and dated receipts through a cumulative cross-activity ledger: proposed earlier consumption cannot invalidate already committed later work. The algorithm can skip unavailable work days. Immutable actuals, date constraints, progressed work, intraday modes and non-resource-dependent activities explicitly fail closed.
+
+Each result records network_reference_start, leveling_delay_days, actual work_slots and per-slot renewable/material ledgers. resource_leveling_applied=true means only that the declared serial policy ran; the Seq13 placeResourceDependentActivity API still reports false.

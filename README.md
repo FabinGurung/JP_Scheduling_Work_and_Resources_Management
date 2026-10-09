@@ -167,3 +167,16 @@ This is deterministic single-activity resource-dependent placement against decla
 `activity_id` is a project schedule occurrence. `work_id` links that occurrence to reusable site knowledge such as ARC, WMS and ITP/QAQC.
 
 Construction knowledge is deliberately usable as a standalone engineer-facing site rather than forcing field engineers into the Project Controls UI.
+
+## SEQ14 — bounded multi-activity resource leveling (v0.4.2)
+
+The independent levelResourceDependentNetwork function in src/kernel/resource-leveler.mjs implements a deterministic serial topology/ID-priority schedule generation scheme for unstarted RESOURCE_DEPENDENT activities. Seq13 single-activity placement remains unchanged.
+
+- Accepts FS/SS/FF/SF precedence, signed working-day lags, explicit/project/predecessor/successor lag-calendar modes.
+- Stable lexical activity ID breaks ties between precedence-eligible candidates; this is not global optimization.
+- Allocates shared renewable LABOR/EQUIPMENT capacity against fixed reservations, intersecting resource and crew calendars.
+- Tracks shared material stock with dated receipts and safeguards previously allocated future consumption.
+- Reports slots, resource/material allocation ledgers, reference starts, leveling delays and conflict diagnostics.
+- Rejects date constraints, actual/progress/data-date updates, mixed activity types, and intraday scheduling until semantics are supported.
+
+This first bounded Seq14 boundary does not imply Primavera/ProjectLibre leveling parity or a globally optimized makespan. User-interface integration is separate. Run npm test; the 3,888-case calendar oracle is unchanged.
