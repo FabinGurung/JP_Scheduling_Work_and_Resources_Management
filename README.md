@@ -14,6 +14,7 @@ The branch name is historical. Milestones v0.3, v0.4 and later evolve **in place
 
 - `index.html` — P6-style Project Controls operations
 - `kernel-lab.html` — scheduling calculation / adapter engine lab
+- `planner.html` — interactive resource-leveled scheduling workspace backed by the v0.4.2 kernel
 - `roadmap.html` — one-page development roadmap
 - `knowledge/` — separate Construction Knowledge portal for engineers
 - `knowledge/shuttering.html` — direct share link for Shuttering / Formwork
@@ -180,3 +181,7 @@ The independent levelResourceDependentNetwork function in src/kernel/resource-le
 - Rejects date constraints, actual/progress/data-date updates, mixed activity types, and intraday scheduling until semantics are supported.
 
 This first bounded Seq14 boundary does not imply Primavera/ProjectLibre leveling parity or a globally optimized makespan. User-interface integration is separate. Run npm test; the 3,888-case calendar oracle is unchanged.
+
+## v0.4.3 — Browser scheduling workspace (Seq15)
+
+Open `planner.html` from GitHub Pages or the **Open Scheduler (F9)** link on the P6-style prototype. Edit activities, resources, assignments and FS/SS/FF/SF relationships. Press **Schedule** to run the existing `levelResourceDependentNetwork()` kernel; review allocated-day Gantt, calendar dates, resource utilization and resource-leveling delay diagnostics. Import/export versioned JSON or save a draft in browser localStorage (not cloud). Imported JSON can include fixed reservations, crew definitions and dated material receipts supported by the underlying engine. Only unstarted RESOURCE_DEPENDENT day-resolution work is supported. Actuals, constraints, mixed activity types, intraday modes and global makespan optimality remain outside scope and fail closed. Published static frontend has no database or Google Drive synchronization. The original landing demo remains synthetic.
