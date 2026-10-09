@@ -5,9 +5,9 @@
 :root{--bg:#f5f7fa;--p:#fff;--ink:#182230;--muted:#667085;--line:#dde3eb;--blue:#315fd4}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial;background:var(--bg);color:var(--ink)}header{background:#16202f;color:#fff}.bar{max-width:1180px;margin:auto;padding:16px;display:flex;gap:9px;align-items:center}.brand{font-weight:900}.sp{flex:1}.nav{color:#fff;text-decoration:none;border:1px solid #4b586b;border-radius:6px;padding:7px 9px;font-size:11px}.wrap{max-width:1180px;margin:auto;padding:20px}.hero{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:15px}.hero h1{margin:0 0 6px;font-size:27px}.hero p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}.search{width:100%;margin-top:13px;padding:12px 13px;border:1px solid var(--line);border-radius:9px;font-size:14px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px}.card h2{font-size:16px;margin:4px 0 6px}.card p{font-size:11px;color:var(--muted);line-height:1.5}.tag{display:inline-block;border-radius:999px;padding:4px 7px;font-size:9px;font-weight:900}.mapped{background:#eaf8f2;color:#087a55}.pending{background:#fff2dc;color:#a15c00}.id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:#475467}.open{display:inline-block;margin-top:9px;text-decoration:none;background:#315fd4;color:white;border-radius:7px;padding:7px 9px;font-size:11px;font-weight:800}.principle{margin-top:16px;border-left:4px solid #315fd4;background:#edf3ff;padding:11px;border-radius:7px;font-size:11px;line-height:1.55}
 @media(max-width:850px){.grid{grid-template-columns:1fr}}
-</style></head><body>
+</style><link rel="stylesheet" href="../assets/sky-theme.css"></head><body>
 <header><div class="bar"><div class="brand">Construction Knowledge</div><div class="sp"></div><a class="nav" href="../index.html">Project Controls</a><a class="nav" href="../kernel-lab.html">Engine Lab</a><a class="nav" href="../roadmap.html">Roadmap</a></div></header>
-<main class="wrap">
+<div class="sky-ribbon" aria-hidden="true"></div><section class="storm-hero storm-compact"><div class="storm-art" data-dragon-scene aria-hidden="true"></div><div class="storm-inner"><span class="storm-kicker">⚡ Construction execution knowledge</span><h2 class="storm-title">Methods for <em>the work that matters.</em></h2><p class="storm-lead">A separate, engineer-facing field reference, linked conceptually to scheduling. Research and QA guidance are not substitutes for approved project documents.</p></div></section><main class="wrap">
 <section class="hero"><h1>What do you want to do on site?</h1><p>Search a construction activity and open a practical engineer-facing page containing readiness resources, method sequence, hold points and field notes. This is intentionally separate from the scheduling engine.</p><input id="q" class="search" placeholder="Search shuttering, waterproofing, soak pit, tools, labor..."></section>
 <div id="grid" class="grid"></div>
 <div class="principle"><b>Knowledge rule:</b> practical field knowledge, governed QA templates, project-specific requirements and codal/design authority remain distinguishable. A useful site tip is not silently promoted into a mandatory engineering requirement.</div>
@@ -25,4 +25,4 @@ function render(){
  }).join("");
 }
 boot();
-</script></body></html>
+</script><script type="module" src="../assets/sky-dragon.mjs"></script></body></html>

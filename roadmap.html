@@ -5,9 +5,9 @@
 :root{--bg:#f4f6f9;--p:#fff;--ink:#182230;--muted:#667085;--line:#dfe4eb;--blue:#315fd4}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial;background:var(--bg);color:var(--ink)}header{background:#202733;color:#fff}.bar{max-width:1250px;margin:auto;padding:18px;display:flex;align-items:center;gap:10px}.brand{font-weight:900}.sp{flex:1}.nav{color:#fff;text-decoration:none;border:1px solid #4a5565;border-radius:6px;padding:7px 9px;font-size:11px}.wrap{max-width:1250px;margin:auto;padding:18px}.hero,.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}.hero h1{margin:0 0 6px;font-size:25px}.hero p,.card p{color:var(--muted);font-size:12px;line-height:1.6}.branch{display:inline-block;background:#edf2ff;color:#3452b5;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:800}.surface{display:grid;grid-template-columns:1fr 1fr;gap:12px}.road{display:grid;gap:10px}.phase{background:#fff;border:1px solid var(--line);border-radius:10px;padding:13px;display:grid;grid-template-columns:84px 1fr auto;gap:12px;align-items:start}.ver{font-weight:900;font-size:16px}.phase h3{margin:0 0 5px;font-size:13px}.phase p{margin:0;color:var(--muted);font-size:11px;line-height:1.5}.state{font-size:9px;font-weight:900;border-radius:999px;padding:5px 7px}.done{background:#eaf8f2;color:#087a55}.active{background:#fff2dc;color:#a15c00}.future{background:#eef2f6;color:#475467}.tree{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;background:#111827;color:#dbe4ef;border-radius:8px;padding:13px;white-space:pre-wrap}.note{border-left:4px solid var(--blue);background:#eef4ff;padding:11px;font-size:11px;line-height:1.5;border-radius:7px}
 @media(max-width:800px){.surface{grid-template-columns:1fr}.phase{grid-template-columns:68px 1fr}.phase .state{grid-column:2}}
-</style></head><body>
-<header><div class="bar"><div class="brand">Project Controls Kernel</div><div class="sp"></div><a class="nav" href="./index.html">Project Controls</a><a class="nav" href="./kernel-lab.html">Engine Lab</a><a class="nav" href="./knowledge/">Construction Knowledge</a></div></header>
-<main class="wrap">
+</style><link rel="stylesheet" href="./assets/sky-theme.css"></head><body>
+<header><div class="bar"><div class="brand">Project Controls Kernel</div><div class="sp"></div><a class="nav" href="./index.html">Project Controls</a><a class="nav" href="./planner.html">Live Scheduler</a><a class="nav" href="./kernel-lab.html">Engine Lab</a><a class="nav" href="./knowledge/">Construction Knowledge</a></div></header>
+<div class="sky-ribbon" aria-hidden="true"></div><section class="storm-hero storm-compact" aria-label="Skyforge roadmap theme"><div class="storm-art" data-dragon-scene aria-hidden="true"></div><div class="storm-inner"><span class="storm-kicker">⚡ Where we are going</span><h1 class="storm-title">From prototype to <em>site intelligence.</em></h1><p class="storm-lead">What the scheduling kernel does, what you can operate today, and what remains a future milestone.</p></div></section><main class="wrap">
 <div class="hero"><span class="branch">ONE WORKING BRANCH · kernel-v0.2-open-source-engines</span><h1>Development Roadmap</h1><p>Versions are milestones inside this same ChatGPT working branch. Older branches stay preserved; v0.3, v0.4 and later development continues here.</p></div>
 <div class="surface">
 <div class="card"><h3>Operational surface</h3><div class="tree">Project Controls
@@ -33,14 +33,16 @@ Engine Lab
     ├── Safety
     └── field lessons</div><p>These task pages are directly shareable with engineers without exposing the scheduling-engine complexity.</p></div>
 </div>
-<div class="note">Current focus: <b>v0.4 Resource & Productivity Engine</b> — SEQ13 adds deterministic Resource Dependent placement against intersected resource/crew calendars, fixed capacity reservations, and explicit material inventory/receipts. Multi-activity resource leveling remains the next bounded v0.4 phase.</div>
+<div class="note">Current focus: <b>v0.4.4 product clarity & light Skyforge theme</b>. SEQ14 implemented deterministic multi-activity serial resource leveling; SEQ15 connected it to an editable browser planner. More useful construction workflows, full project persistence and rigorous browser interaction QA remain open. The website remains a prototype, not a complete Primavera P6 replacement.</div>
 <div class="card"><h3>Near-term execution order</h3><div class="tree">DONE · SEQ8  Suspend / resume remaining-work boundary
 DONE · SEQ9  Level-of-Effort + Resource Dependent activity contract
 DONE · SEQ10 Progress QA: out-of-sequence / actual-vs-data-date diagnostics
 DONE · SEQ11 Constraint priority + working-hours / time-zone foundation
 DONE · SEQ12 v0.4 resource/productivity foundation
 DONE · SEQ13 Resource-dependent placement + availability semantics
-NEXT · v0.4 Resource leveling
+DONE · SEQ14 Multi-activity serial resource leveling
+DONE · SEQ15 Interactive browser scheduling workspace
+CURRENT · SEQ16 Light-sky UX + accurate product guidance
 → v0.5 Baseline & Progress Control
 → v0.6 P6 / Microsoft Project Interoperability
 → v0.7 Construction Knowledge Integration
@@ -50,11 +52,11 @@ NEXT · v0.4 Resource leveling
 <div class="road" style="margin-top:14px">
 <div class="phase"><div class="ver">v0.2</div><div><h3>Kernel Foundation</h3><p>CPM, FS/SS/FF/SF + lag, float, criticality, EV, resource-overload detection and five upstream adapters.</p></div><span class="state done">FOUNDATION PASS</span></div>
 <div class="phase"><div class="ver">v0.3</div><div><h3>Professional Scheduling Core</h3><p>WBS validation/rollup, immutable actuals, native constraints, FS/SS/FF/SF remaining-work forecasts, typed milestones, basic schedule QA, SEQ5 day-resolution calendars/holidays/lag-calendar modes, SEQ8 paired suspend/resume boundaries, SEQ9 LOE/Resource Dependent type contracts, SEQ10 progress QA diagnostics, and SEQ11 constraint-priority plus working-hours/time-zone contracts. Native LOE/RD execution, minute/intraday scheduling, retained-logic/progress-override mode selection and multi-window intermittent progress remain open.</p></div><span class="state done">CORE PASS</span></div>
-<div class="phase"><div class="ver">v0.4</div><div><h3>Resource & Productivity Engine</h3><p>SEQ12 foundation plus SEQ13 Resource Dependent placement: typed resources/crews, productivity-derived durations, histograms, intersected resource/crew calendars, fixed renewable reservations, and explicit material inventory/receipt gating. Multi-activity resource leveling remains open.</p></div><span class="state active">IN PROGRESS</span></div>
+<div class="phase"><div class="ver">v0.4</div><div><h3>Resource & Productivity Engine</h3><p>SEQ12 resource/productivity foundation, SEQ13 resource availability and material-receipt rules, SEQ14 deterministic serial multi-activity leveling, SEQ15 editable browser planner, SEQ16 site identity/roadmap. Actual/progress constraints in leveled networks, global optimization, saved collaborative projects and field control remain open.</p></div><span class="state active">ENGINE PASS · PRODUCT IN PROGRESS</span></div>
 <div class="phase"><div class="ver">v0.5</div><div><h3>Baseline & Progress Control</h3><p>BL1/BL2, current-vs-baseline, variance, progress cycles, S-curves and stronger EV integration.</p></div><span class="state future">PLANNED</span></div>
 <div class="phase"><div class="ver">v0.6</div><div><h3>P6 / Microsoft Project Interoperability</h3><p>Ifc4D-backed P6 XER/XML and MS Project XML/MSPDI exchange with loss validation.</p></div><span class="state future">PLANNED</span></div>
 <div class="phase"><div class="ver">v0.7</div><div><h3>Construction Knowledge Integration</h3><p>Activity → work_id → ARC/WMS/ITP/QAQC/spec/code/resources while keeping the knowledge portal independently useful.</p></div><span class="state future">PLANNED</span></div>
 <div class="phase"><div class="ver">v0.8</div><div><h3>4D / IFC</h3><p>IfcWorkPlan, IfcWorkSchedule, IfcTask, resources/costs and model-element ↔ activity links.</p></div><span class="state future">PLANNED</span></div>
 <div class="phase"><div class="ver">v0.9</div><div><h3>Schedule QA + Risk</h3><p>Open ends, lag/constraint/float checks, relationship density, three-point durations and Monte Carlo P50/P80.</p></div><span class="state future">PLANNED</span></div>
 <div class="phase"><div class="ver">v1.0</div><div><h3>Governed Live System</h3><p>Governed project/schedule/progress/work-catalogue sources, authenticated writes, provenance and A9-aligned release controls.</p></div><span class="state future">PLANNED</span></div>
-</div></main></body></html>
+</div></main><script type="module" src="./assets/sky-dragon.mjs"></script></body></html>

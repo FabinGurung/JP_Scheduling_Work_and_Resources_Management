@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Construction Project Controls — P6-style Demo</title>
+<title>Skyforge | Construction Scheduling & Project Controls</title>
 <style>
 :root{--bg:#eef1f5;--panel:#fff;--ink:#182230;--muted:#667085;--line:#d6dce5;--nav:#202733;--nav2:#2b3442;--blue:#3069d8;--blue2:#5c83e6;--green:#15936e;--red:#d04444;--amber:#d78b1f;--purple:#7157c7;--gray:#8b95a5;--sel:#eaf2ff}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--bg)}
@@ -25,14 +25,110 @@ table{border-collapse:collapse;width:100%;font-size:11px}.gridtable{min-width:86
 .footer{padding:7px 11px;font-size:9px;color:#667085;background:#f8fafc;border-top:1px solid var(--line)}
 @media(max-width:1050px){.workspace{grid-template-columns:1fr}.sidebar{display:none}.schedule-shell{grid-template-columns:1fr;height:auto}.gridpane,.gantt{height:420px}.info-grid{grid-template-columns:repeat(2,1fr)}.split,.knowledge-grid{grid-template-columns:1fr}}
 </style>
+<link rel="stylesheet" href="./assets/sky-theme.css">
 </head>
 <body>
 <div class="top">
   <div class="top1"><div class="brand">Construction Project Controls</div><div class="sep"></div><div><div class="project-name">DEMO-PROJECT-001 · Building Construction</div><div class="small">P6-style planning & control prototype · synthetic schedule</div></div><div class="spacer"></div><span class="badge b-amber">DEMO DATA</span></div>
   <div class="top2">
-    <a class="tool primary" href="./planner.html" style="text-decoration:none" title="Open functional resource-leveled browser scheduler">Open Scheduler (F9) ↗</a><a class="tool" href="./kernel-lab.html" style="text-decoration:none">Engine Lab</a><a class="tool" href="./roadmap.html" style="text-decoration:none">Roadmap</a><a class="tool" href="./knowledge/" style="text-decoration:none">Construction Knowledge ↗</a><button class="tool">Activities</button><button class="tool">WBS</button><button class="tool">Resources</button><button class="tool">Tracking</button><button class="tool">Layouts</button><button class="tool">Filters ▾</button><button class="tool">Group & Sort ▾</button><div class="spacer"></div><button class="tool">Baseline: BL1</button><button class="tool">Data Date: 02-Oct-2026</button>
+    <a class="tool primary" href="./planner.html" style="text-decoration:none">⚡ Open live scheduler</a>
+    <a class="tool" href="#why" style="text-decoration:none">What we're building</a>
+    <a class="tool" href="#workflow" style="text-decoration:none">How to use</a>
+    <a class="tool" href="#architecture" style="text-decoration:none">System &amp; inputs</a>
+    <a class="tool" href="#upstream" style="text-decoration:none">Open-source references</a>
+    <a class="tool" href="./kernel-lab.html" style="text-decoration:none">Engine Lab</a>
+    <a class="tool" href="./roadmap.html" style="text-decoration:none">Roadmap</a>
+    <a class="tool" href="./knowledge/" style="text-decoration:none">Field Knowledge</a>
+    <a class="tool" href="#demo" style="text-decoration:none">Original P6-style demo ↓</a>
   </div>
 </div>
+
+<div class="sky-ribbon" aria-hidden="true"></div>
+<div class="storm-explain">
+  <section class="storm-hero" aria-labelledby="mission-title">
+    <div data-dragon-scene class="storm-art" aria-hidden="true"></div>
+    <div class="storm-inner">
+      <span class="storm-kicker">⚡ Skyforge / Project Controls Kernel</span>
+      <h1 id="mission-title" class="storm-title">Bring order to <em>construction chaos.</em></h1>
+      <p class="storm-lead">Plan the sequence. Balance people, equipment and materials. See what moves when resources are limited. This is a developing construction scheduling tool—not just a Gantt picture or a generic project dashboard.</p>
+      <div class="storm-actions">
+        <a href="./planner.html" class="storm-btn gold">⚡ Launch interactive scheduler ↗</a>
+        <a href="#workflow" class="storm-btn">How it works ↓</a>
+        <a href="./roadmap.html" class="storm-btn">Feature roadmap ↗</a>
+        <button data-sky-toggle class="sky-pause" type="button" aria-pressed="false">Pause sky animation</button>
+      </div>
+      <p style="font-size:11px;color:#5b7487;margin-top:18px">Light-sky visual identity · looping SVG lightning dragon · optional motion · no external animation dependency.</p>
+    </div>
+  </section>
+  <nav class="storm-anchor-nav" aria-label="About this product">
+    <a href="#why">Why this exists</a><a href="#workflow">Try an example</a><a href="#architecture">What is built</a><a href="#inputs">What to input</a><a href="#upstream">Five source references</a><a href="#next">What is next</a>
+  </nav>
+  <h2 class="storm-section-title" id="why">A construction tool, built around site reality.</h2>
+  <p class="storm-section-sub">The goal is useful scheduling for working engineers and project managers—not pretending that a prototype is already a complete Primavera replacement.</p>
+  <div class="storm-grid">
+    <article class="storm-card"><span class="storm-number">01 / The problem</span><h3>Plans break when reality changes</h3><p>Crews are shared, materials arrive late, activities depend on prior work and each site runs to a different working calendar. A schedule should expose those constraints, not hide them.</p></article>
+    <article class="storm-card"><span class="storm-number">02 / The product</span><h3>A practical browser scheduler</h3><p>Enter work activities, assign labor and equipment, set dependencies and press Schedule. Review allocated work days, Gantt bars and resource delays.</p></article>
+    <article class="storm-card"><span class="storm-number">03 / The direction</span><h3>Your construction experience, encoded</h3><p>Future versions should connect quantities, work packages, productivity, actual site progress, baselines, reports and lessons learned—with traceable source data.</p></article>
+  </div>
+  <section class="storm-band" id="workflow">
+    <span class="storm-number">Start here / 3-minute walkthrough</span>
+    <h2>From activity list to resource-leveled plan</h2>
+    <div class="storm-grid" style="margin:12px 0">
+      <div class="storm-card"><span class="storm-number">Step 1</span><h3>Define your work</h3><p>Start with the synthetic excavation → PCC → reinforcement / formwork → footing RCC → waterproofing example. Change activity names, durations and dates.</p></div>
+      <div class="storm-card"><span class="storm-number">Step 2</span><h3>Assign constraints</h3><p>Set crew capacity, resource assignments, material inventory and FS/SS/FF/SF predecessor links. Shared capacity causes a scheduling trade-off.</p></div>
+      <div class="storm-card"><span class="storm-number">Step 3</span><h3>Press Schedule (F9)</h3><p>Inspect allocated Gantt days, finish events and delayed activities. Save a local draft or export versioned JSON as a portable record.</p></div>
+    </div>
+    <a class="storm-btn blue" href="./planner.html">Open the working planner ↗</a>
+    <p style="margin-bottom:0;font-size:12px">The original chart further down this page is a <strong>synthetic demonstration</strong>. The linked Live Scheduler is the editable workspace.</p>
+  </section>
+  <section class="storm-band" id="architecture">
+    <span class="storm-number">What exists today / v0.4.3</span>
+    <h2>One repository, four distinct tools</h2>
+    <div class="storm-grid" style="margin-bottom:0">
+      <div class="storm-card"><span class="storm-status">TESTED KERNEL</span><h3>1. Scheduling core</h3><p>Custom JavaScript algorithms for CPM and float, calendars, lagged dependency logic, selected constraints/progress calculations, and serial resource leveling. Capabilities differ by API path.</p></div>
+      <div class="storm-card"><span class="storm-status">INTERACTIVE PROTOTYPE</span><h3>2. Live Scheduler</h3><p>Editable unstarted resource-dependent activities, assignments, durations, capacity, and serial day-level scheduling. No server/database or automatic shared saving yet.</p></div>
+      <div class="storm-card"><span class="storm-status">EXPERIMENTAL</span><h3>3. Engine Lab</h3><p>A separate synthetic CPM/remaining-work testing surface with data-date controls, constraints, earned value, and adapter previews. It is not the same unified engine path as the planner.</p></div>
+      <div class="storm-card"><span class="storm-status">SHAREABLE REFERENCE</span><h3>4. Field knowledge</h3><p>Separate shuttering, waterproofing and research-gated soak-pit pages to connect scheduling concepts to work methods and QA—without confusing guidance with project authority.</p></div>
+      <div class="storm-card"><span class="storm-status next">NOT YET COMPLETE</span><h3>5. Baseline + progress</h3><p>Scheduled snapshots, daily site updates, variance analysis, lookahead plans, manpower and material reports are still planned as an integrated workflow.</p></div>
+      <div class="storm-card"><span class="storm-status next">NOT YET COMPLETE</span><h3>6. Real project system</h3><p>Authenticated multi-project database, roles, durable collaboration, spreadsheet/P6 interoperability and BIM/4D are separate future milestones.</p></div>
+    </div>
+  </section>
+  <section class="storm-band" id="inputs">
+    <span class="storm-number">Data contract / inputs</span><h2>What you need to build a reliable construction schedule</h2>
+    <dl class="storm-list">
+      <div><dt>Now / minimum</dt><dd>Project start and working days; activity IDs, descriptions, work-day durations; predecessor/successor logic; labor/equipment/material resources and assignments.</dd></div>
+      <div><dt>Now / availability</dt><dd>Capacity and stock, plus resource/crew calendars and material receipts or fixed reservations through supported engine JSON. All examples are synthetic.</dd></div>
+      <div><dt>Next / construction intelligence</dt><dd>WBS, BOQ quantities, work package IDs, measured productivity, site zones, subcontractors, material deliveries and constraints in the actual planning workflow.</dd></div>
+      <div><dt>Next / live control</dt><dd>Baseline dates, data date, actual start/finish, remaining duration, field progress, variance, delay causes, site photos, reports and audit lineage.</dd></div>
+    </dl>
+    <div class="storm-example"><strong>Practical example:</strong> Two crews both need the only available concrete mixer. Instead of scheduling both at once, the serial leveler moves the conflicting work into an available day and explains the delay. This is a deterministic rule, <em>not</em> a claim of optimal project duration.</div>
+  </section>
+  <section class="storm-band" id="upstream">
+    <span class="storm-number">Open-source architecture / verified repository references</span><h2>The five upstream ecosystems actually recorded in this repo</h2>
+    <p>The source code is currently a <strong>custom ES-module scheduling kernel</strong>. These five projects are recorded as references, adapters or future integration targets in <code>UPSTREAM_SOURCES.json</code>—their entire codebases have <strong>not</strong> been incorporated or bundled.</p>
+    <div class="storm-grid">
+      <div class="storm-card"><span class="storm-number">01 / BIM + scheduling</span><h3><a href="https://github.com/IfcOpenShell/IfcOpenShell" target="_blank" rel="noopener noreferrer">IfcOpenShell / Ifc4D ↗</a></h3><p>IFC task, schedule, cost and resource models; potential 4D and XML/XER interoperability.</p></div>
+      <div class="storm-card"><span class="storm-number">02 / Work management</span><h3><a href="https://github.com/opf/openproject" target="_blank" rel="noopener noreferrer">OpenProject ↗</a></h3><p>Project/work-package UX, collaboration, baselines and API patterns for later stages.</p></div>
+      <div class="storm-card"><span class="storm-number">03 / Desktop scheduling</span><h3><a href="https://sourceforge.net/projects/projectlibre/" target="_blank" rel="noopener noreferrer">ProjectLibre ↗</a></h3><p>CPM, resources, float, baselines and familiar desktop planner workflows.</p></div>
+      <div class="storm-card"><span class="storm-number">04 / Optimization research</span><h3><a href="https://github.com/taskjuggler/TaskJuggler" target="_blank" rel="noopener noreferrer">TaskJuggler ↗</a></h3><p>Resource-constrained planning, scheduling policies and scenario comparisons.</p></div>
+      <div class="storm-card"><span class="storm-number">05 / Interactive task planning</span><h3><a href="https://github.com/bardsoftware/ganttproject" target="_blank" rel="noopener noreferrer">GanttProject ↗</a></h3><p>Task hierarchy, dependency UX, resource loading and desktop Gantt usability.</p></div>
+    </div>
+    <p style="font-size:12px">Proprietary Primavera P6 / MS Project are feature and interoperability targets, not embedded dependencies. Upstream license obligations must be checked before copying any code. <a href="./THIRD_PARTY_NOTICES.md">Third-party notices</a>.</p>
+  </section>
+  <section class="storm-band" id="next">
+    <span class="storm-number">Execution order / reality check</span><h2>Make it understandable → useful → durable</h2>
+    <div class="storm-grid">
+      <div class="storm-card"><span class="storm-status">THIS MILESTONE</span><h3>01. Identity &amp; usability</h3><p>Sky/cloud/lightning-dragon design, accessible motion, clear navigation, honest capability boundaries and real construction walkthroughs.</p></div>
+      <div class="storm-card"><span class="storm-status next">UPCOMING</span><h3>02. Practical field planning</h3><p>Integrated WBS, productivity, crew scheduling, daily progress, baseline tracking, delay reporting, lookahead and printable schedules.</p></div>
+      <div class="storm-card"><span class="storm-status next">UPCOMING</span><h3>03. Durable project platform</h3><p>Authenticated database, version-controlled project changes, collaboration, spreadsheet/P6 import and export, and IFC/4D connections.</p></div>
+    </div>
+    <p><a href="./roadmap.html">View the detailed milestone roadmap ↗</a> · <a href="./kernel-lab.html">Explore the calculation engine ↗</a> · <a href="./knowledge/">Browse field knowledge ↗</a></p>
+  </section>
+  <h2 class="storm-section-title" id="demo">Explore the original P6-style demo</h2>
+  <p class="storm-section-sub">Synthetic read-only chart and construction-work references from the earlier prototype. For editing and scheduling, use the <a href="./planner.html">Live Scheduler</a>.</p>
+  <div class="storm-workspace-label"><span><b>DEMONSTRATION DATA</b> — schedule, baseline, costs and tracking displayed below are illustrative, not your real project records.</span><a href="./planner.html">Start a real editable plan →</a></div>
+</div>
+
 <div class="workspace">
   <aside class="sidebar"><div class="side-title">Project Controls</div>
     <div class="navitem active"><span class="dot"></span>Activities</div><div class="navitem"><span class="dot"></span>WBS</div><div class="navitem"><span class="dot"></span>Projects</div><div class="navitem"><span class="dot"></span>Resources</div><div class="navitem"><span class="dot"></span>Resource Usage</div><div class="navitem"><span class="dot"></span>Reports</div>
@@ -131,4 +227,5 @@ function money(v){return v==null?"—":"Rs "+Number(v).toLocaleString("en-IN",{m
 function showTab(id){document.querySelectorAll(".pane").forEach(x=>x.hidden=true);document.getElementById(id).hidden=false;document.querySelectorAll(".dt").forEach(x=>x.classList.toggle("active",x.dataset.tab===id))}
 boot().catch(e=>document.body.innerHTML="<pre style='padding:20px'>Demo load failed: "+esc(e.message)+"</pre>");
 </script>
+<script type="module" src="./assets/sky-dragon.mjs"></script>
 </body></html>

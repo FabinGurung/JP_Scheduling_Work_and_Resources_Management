@@ -1,4 +1,4 @@
-# Project Controls Kernel
+# Project Controls Kernel — Skyforge
 
 Open, testable project-controls kernel for construction planning and execution.
 
@@ -12,7 +12,7 @@ The branch name is historical. Milestones v0.3, v0.4 and later evolve **in place
 
 ## Product surfaces
 
-- `index.html` — P6-style Project Controls operations
+- `index.html` — light Skyforge product homepage with live links, capability explainer and preserved synthetic P6-style chart
 - `kernel-lab.html` — scheduling calculation / adapter engine lab
 - `planner.html` — interactive resource-leveled scheduling workspace backed by the v0.4.2 kernel
 - `roadmap.html` — one-page development roadmap
@@ -185,3 +185,7 @@ This first bounded Seq14 boundary does not imply Primavera/ProjectLibre leveling
 ## v0.4.3 — Browser scheduling workspace (Seq15)
 
 Open `planner.html` from GitHub Pages or the **Open Scheduler (F9)** link on the P6-style prototype. Edit activities, resources, assignments and FS/SS/FF/SF relationships. Press **Schedule** to run the existing `levelResourceDependentNetwork()` kernel; review allocated-day Gantt, calendar dates, resource utilization and resource-leveling delay diagnostics. Import/export versioned JSON or save a draft in browser localStorage (not cloud). Imported JSON can include fixed reservations, crew definitions and dated material receipts supported by the underlying engine. Only unstarted RESOURCE_DEPENDENT day-resolution work is supported. Actuals, constraints, mixed activity types, intraday modes and global makespan optimality remain outside scope and fail closed. Published static frontend has no database or Google Drive synchronization. The original landing demo remains synthetic.
+
+## Seq16 v0.4.4 — Skyforge theme and product clarity
+
+The website is light-first with white clouds, golden/orange lightning and a looping decorative SVG dragon; users can pause animations and reduced-motion media preferences are respected. The theme is lightweight local CSS/SVG, not a new scheduling engine. Homepage now explains the vision, working calculator/API boundaries, required construction planning inputs, a 3-step walkthrough, which features are still planned, and the **five upstreams actually registered** in `UPSTREAM_SOURCES.json`: IfcOpenShell/Ifc4D, OpenProject, ProjectLibre, TaskJuggler, GanttProject. They are references/adapters, **not incorporated runtime codebases**. Previous demonstration/Gantt, live scheduling, lab, roadmap and knowledge URLs remain. Roadmap corrected to show Seq14 leveling and Seq15 planner completed. See `docs/SKYFORGE_DESIGN_AND_PRODUCT_BLUEPRINT.md` for visual spec, product plan and QA checklist. No kernel scheduling semantics, persistence, real project records, or P6 parity has been changed or claimed. Independent browser/mobile visual QA is still a separate gate.
