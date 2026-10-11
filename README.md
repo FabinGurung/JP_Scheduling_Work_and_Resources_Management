@@ -1,4 +1,4 @@
-# Project Controls Kernel — Skyforge
+# Project Controls Kernel — Skyforge | Machine execution v0.5.0
 
 Open, testable project-controls kernel for construction planning and execution.
 
@@ -189,3 +189,9 @@ Open `planner.html` from GitHub Pages or the **Open Scheduler (F9)** link on the
 ## Seq16 v0.4.4 — Skyforge theme and product clarity
 
 The website is light-first with white clouds, golden/orange lightning and a looping decorative SVG dragon; users can pause animations and reduced-motion media preferences are respected. The theme is lightweight local CSS/SVG, not a new scheduling engine. Homepage now explains the vision, working calculator/API boundaries, required construction planning inputs, a 3-step walkthrough, which features are still planned, and the **five upstreams actually registered** in `UPSTREAM_SOURCES.json`: IfcOpenShell/Ifc4D, OpenProject, ProjectLibre, TaskJuggler, GanttProject. They are references/adapters, **not incorporated runtime codebases**. Previous demonstration/Gantt, live scheduling, lab, roadmap and knowledge URLs remain. Roadmap corrected to show Seq14 leveling and Seq15 planner completed. See `docs/SKYFORGE_DESIGN_AND_PRODUCT_BLUEPRINT.md` for visual spec, product plan and QA checklist. No kernel scheduling semantics, persistence, real project records, or P6 parity has been changed or claimed. Independent browser/mobile visual QA is still a separate gate.
+
+## v0.5.0 — AI conductor / GitHub machine execution
+
+The GitHub runner, not ChatGPT, is now responsible for calculating a **synthetic** example schedule from a pinned structured JSON request. Run `npm run machine:build`, `npm run machine:verify`, `npm run site:build`. Actions validates the same inputs and deterministic outputs and uploads signed-by-content SHA-256 provenance to the run artifact. GitHub Pages shows only an approved public-safe synthetic machine build under `/machine/`; the site builder now deploys a strict file allowlist rather than the entire repository. Five adapter payloads are emitted **as explicitly unverified previews**, not actual upstream integrations. Real building CAD geometry, actual site data, engineering design validation, external API credentials and project approvals remain out of scope for this scheduling repository.
+
+Read `docs/AI_MACHINE_EXECUTION_CONTRACT.md` for the proposed future authenticated project gateway, engineering source and approval boundaries, expected output packages, and the five-specific external acceptance tests. Independent browser QA and upstream tool execution are not certified by this change.

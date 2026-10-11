@@ -1,0 +1,181 @@
+{
+  "format": "PCK_MACHINE_REQUEST_V1",
+  "request_id": "DEMO_FOUNDATION",
+  "classification": "PUBLIC_SYNTHETIC",
+  "source_authority": "GITHUB_REVIEWED_FILE",
+  "approval": "NOT_ENGINEERING_APPROVED",
+  "planner": {
+    "format": "PCK_BROWSER_PLANNER_V1",
+    "project": {
+      "id": "DEMO-PCK-PLANNER",
+      "name": "Foundation construction - machine example",
+      "start": "2026-10-12",
+      "horizon_end": "2026-12-31"
+    },
+    "calendar": {
+      "working_weekdays": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "holidays": []
+    },
+    "activities": [
+      {
+        "id": "A010",
+        "name": "Excavation",
+        "duration": 3
+      },
+      {
+        "id": "A020",
+        "name": "Foundation PCC",
+        "duration": 2
+      },
+      {
+        "id": "A030",
+        "name": "Footing reinforcement",
+        "duration": 3
+      },
+      {
+        "id": "A040",
+        "name": "Footing formwork",
+        "duration": 2
+      },
+      {
+        "id": "A050",
+        "name": "RCC footings",
+        "duration": 2
+      },
+      {
+        "id": "A060",
+        "name": "Waterproofing",
+        "duration": 3
+      }
+    ],
+    "resources": [
+      {
+        "id": "CIVIL",
+        "name": "Civil crew",
+        "resource_type": "LABOR",
+        "max_units": 1,
+        "calendar_id": "CAL"
+      },
+      {
+        "id": "MIXER",
+        "name": "Concrete mixer",
+        "resource_type": "EQUIPMENT",
+        "max_units": 1,
+        "calendar_id": "CAL"
+      },
+      {
+        "id": "WP",
+        "name": "Waterproofing crew",
+        "resource_type": "LABOR",
+        "max_units": 1,
+        "calendar_id": "CAL"
+      },
+      {
+        "id": "CEMENT",
+        "name": "Cement supply - bags",
+        "resource_type": "MATERIAL",
+        "inventory_quantity": 85
+      }
+    ],
+    "assignments": [
+      {
+        "activity_id": "A010",
+        "resource_id": "CIVIL",
+        "units": 1
+      },
+      {
+        "activity_id": "A020",
+        "resource_id": "CIVIL",
+        "units": 1
+      },
+      {
+        "activity_id": "A020",
+        "resource_id": "MIXER",
+        "units": 1
+      },
+      {
+        "activity_id": "A030",
+        "resource_id": "CIVIL",
+        "units": 1
+      },
+      {
+        "activity_id": "A040",
+        "resource_id": "CIVIL",
+        "units": 1
+      },
+      {
+        "activity_id": "A050",
+        "resource_id": "CIVIL",
+        "units": 1
+      },
+      {
+        "activity_id": "A050",
+        "resource_id": "MIXER",
+        "units": 1
+      },
+      {
+        "activity_id": "A060",
+        "resource_id": "WP",
+        "units": 1
+      },
+      {
+        "activity_id": "A020",
+        "resource_id": "CEMENT",
+        "quantity": 20
+      },
+      {
+        "activity_id": "A050",
+        "resource_id": "CEMENT",
+        "quantity": 60
+      }
+    ],
+    "relationships": [
+      {
+        "predecessor": "A010",
+        "successor": "A020",
+        "type": "FS",
+        "lag": 0
+      },
+      {
+        "predecessor": "A020",
+        "successor": "A030",
+        "type": "FS",
+        "lag": 0
+      },
+      {
+        "predecessor": "A020",
+        "successor": "A040",
+        "type": "FS",
+        "lag": 0
+      },
+      {
+        "predecessor": "A030",
+        "successor": "A050",
+        "type": "FS",
+        "lag": 0
+      },
+      {
+        "predecessor": "A040",
+        "successor": "A050",
+        "type": "FS",
+        "lag": 0
+      },
+      {
+        "predecessor": "A050",
+        "successor": "A060",
+        "type": "FS",
+        "lag": 0
+      }
+    ],
+    "materialReceipts": [],
+    "resourceReservations": [],
+    "crews": []
+  }
+}

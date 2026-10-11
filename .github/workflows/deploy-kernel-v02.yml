@@ -30,6 +30,19 @@ jobs:
         run: npm test
       - name: Verify calendar scheduling oracle
         run: npm run verify:calendar
+      - name: Generate deterministic public synthetic schedule
+        run: npm run machine:build
+      - name: Verify regenerated output byte-for-byte
+        run: npm run machine:verify
+      - name: Build public-safe allowlisted site only
+        run: npm run site:build
+      - name: Verify output never exposes fixture or private records
+        run: |
+          test ! -e dist/machine/requests/demo-foundation.json
+          test ! -e dist/examples/kernel-network.json
+          test ! -e dist/README.md
+          test -s dist/machine/demo-foundation/plan.json
+          test -s dist/machine/demo-foundation/manifest.json
       - name: Validate upstream registry and fail-closed project data
         run: |
           python - <<'PY'
@@ -55,6 +68,6 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: "."
+          path: "dist"
       - id: deployment
         uses: actions/deploy-pages@v4

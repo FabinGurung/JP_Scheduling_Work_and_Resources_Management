@@ -1,0 +1,50 @@
+name: Machine planner - deterministic evidence build
+on:
+  push:
+    branches:
+      - kernel-v0.2-open-source-engines
+    paths:
+      - 'src/machine/**'
+      - 'machine/requests/**'
+      - 'scripts/machine-runner.mjs'
+      - 'tests/machine-execution.test.mjs'
+      - '.github/workflows/machine-build.yml'
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: "Reviewed public synthetic fixture only"
+        type: choice
+        required: true
+        options:
+          - demo-foundation
+permissions:
+  contents: read
+concurrency:
+  group: pck-machine-demo
+  cancel-in-progress: false
+jobs:
+  machine:
+    if: github.ref == 'refs/heads/kernel-v0.2-open-source-engines'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kernel-v0.2-open-source-engines
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Machine generates schedule and five bounded adapter previews
+        run: npm run machine:build
+      - name: Independent deterministic readback
+        run: npm run machine:verify
+      - name: Reject invalid inputs and unsupported claims
+        run: node --test tests/machine-execution.test.mjs
+      - name: Upload reproducible machine evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: pck-machine-synthetic-demo
+          path: generated/public/demo-foundation/
+          if-no-files-found: error
+          retention-days: 30

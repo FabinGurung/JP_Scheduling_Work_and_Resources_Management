@@ -1,11 +1,14 @@
 {
   "name": "project-controls-kernel",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "private": true,
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "verify:calendar": "node scripts/verify-calendar-oracle.mjs"
+    "verify:calendar": "node scripts/verify-calendar-oracle.mjs",
+    "machine:build": "node scripts/machine-runner.mjs --build",
+    "machine:verify": "node scripts/machine-runner.mjs --verify",
+    "site:build": "node scripts/build-public-site.mjs"
   },
   "engines": {
     "node": ">=20"
