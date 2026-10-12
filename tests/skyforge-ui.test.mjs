@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import {execFileSync} from "node:child_process";
 const read=path=>readFileSync(new URL("../"+path,import.meta.url),"utf8");
-const pages=["index.html","planner.html","kernel-lab.html","roadmap.html","knowledge/index.html","knowledge/task.html"];
+const pages=["advanced.html","planner.html","kernel-lab.html","roadmap.html","knowledge/index.html","knowledge/task.html"];
 test("shared light-sky theme is wired into all user-facing pages",()=>{
  const css=read("assets/sky-theme.css");
  assert.match(css,/sky-dragon-flight/);
@@ -25,10 +25,10 @@ test("dragon is decorative, repeating and user-pausable",()=>{
  assert.match(script,/data-sky-toggle/);
  assert.match(script,/aria-pressed/);
  assert.match(css,/35s.*infinite/);
- const home=read("index.html");
+ const home=read("advanced.html");
  assert.match(home,/data-sky-toggle/);
 });
-test("homepage describes the actual kernel, inputs, limitations and real upstreams",()=>{
+test("archived advanced dashboard describes kernel and all source references",()=>{
  const home=read("index.html");
  const json=JSON.parse(read("UPSTREAM_SOURCES.json"));
  assert.equal(json.sources.length,5);
@@ -58,3 +58,5 @@ test("roadmap no longer says multi-activity leveling is next",()=>{
 test("decorative animation script parses independently of DOM",()=>{
  execFileSync(process.execPath,["--check",new URL("../assets/sky-dragon.mjs",import.meta.url).pathname]);
 });
+
+test("field homepage is intentionally isolated from developer controls",()=>{const page=read("index.html"); assert.match(page,/Site Roadmap/);assert.match(page,/milestone-list/);assert.match(page,/phase-list/);assert.match(page,/NOT been supplied/);assert.match(page,/Planner \/ Admin/);});
