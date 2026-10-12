@@ -29,7 +29,7 @@ test("dragon is decorative, repeating and user-pausable",()=>{
  assert.match(home,/data-sky-toggle/);
 });
 test("archived advanced dashboard describes kernel and all source references",()=>{
- const home=read("index.html");
+ const home=read("advanced.html");
  const json=JSON.parse(read("UPSTREAM_SOURCES.json"));
  assert.equal(json.sources.length,5);
  for(const src of json.sources)assert.ok(home.includes(src.source),"Missing recorded upstream "+src.id);
