@@ -91,6 +91,7 @@ export function executeWbsSample(seed,dictionaryText,{seedSnapshotSha,dictionary
  });
  const scheduled=sorted.map(a=>({activity_id:a.id,wbs_code:a.wbs_code,name:a.name,
    type:a.activity_type==="FINISH_MILESTONE"?"Milestone":"Task",duration_days:a.duration,
+   predecessor_ids:seed.tasks.find(t=>t.task_id===a.id).predecessors.map(p=>p.id),
    early_start_slot:a.es,early_finish_exclusive_slot:a.ef,late_start_slot:a.ls,late_finish_exclusive_slot:a.lf,
    total_float_days:a.total_float,free_float_days:a.free_float,critical:a.critical}));
  const missingCodes=dict.detailed.filter(code=>!codes.has(code)).sort(sortIds);

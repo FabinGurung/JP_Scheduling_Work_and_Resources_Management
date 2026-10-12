@@ -1,3 +1,14 @@
+# Skyforge — Construction Site Roadmap
+
+**For field staff:** start at [Site Roadmap](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/). One mobile-friendly page displays all phases, major milestones, and the ordered activities required to reach them. Open a step to inspect its source-linked predecessors. Real site status/authorization is NOT supplied, so no progress is fabricated.
+
+**For planners and administrators:** use the "Planner / Admin" disclosure. The existing editable [resource scheduler](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/planner.html), [engine lab](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/kernel-lab.html), [machine evidence](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/machine/), and [archived original dashboard](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/advanced.html) remain accessible.
+
+**Source contract:** the public UI reads *only* the verified machine-generated JSON at `machine/wbs-sample/plan.json`, including explicit predecessor IDs from the reviewed synthetic source. Fail-closed validation checks classification, WBS rollups, activity identities, milestone identities, declared semantics, and FS feasibility. GitHub Actions recomputes native CPM with an independent oracle and emits a source/output SHA-256 manifest. No AI text counts as a certified construction fact.
+
+**Important:** The currently displayed 45-activity WBS is a **synthetic demonstration**, not a real construction site or progress record. Workday slots are relative; the source has no start date, resources, authority approval or verified site status. Future authenticated site progress ingestion must include evidence, approved roles, and revisioned audit trails before any "today"/"done"/"blocked"/"ready" claim.
+
+---
 # Project Controls Kernel — Skyforge | Machine execution v0.5.0
 
 Open, testable project-controls kernel for construction planning and execution.

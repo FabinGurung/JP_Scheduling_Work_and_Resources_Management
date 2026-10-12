@@ -1,231 +1,62 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Skyforge | Construction Scheduling & Project Controls</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10263e">
+<title>Site Roadmap | Skyforge Construction</title>
+<meta name="description" content="An easy-to-follow construction roadmap. See every phase, milestone and prerequisite step, supported by verified machine scheduling evidence.">
 <style>
-:root{--bg:#eef1f5;--panel:#fff;--ink:#182230;--muted:#667085;--line:#d6dce5;--nav:#202733;--nav2:#2b3442;--blue:#3069d8;--blue2:#5c83e6;--green:#15936e;--red:#d04444;--amber:#d78b1f;--purple:#7157c7;--gray:#8b95a5;--sel:#eaf2ff}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--bg)}
-button,select,input{font:inherit}
-.top{background:var(--nav);color:#fff;border-bottom:1px solid #111827}
-.top1{height:48px;display:flex;align-items:center;gap:16px;padding:0 14px}.brand{font-weight:800;font-size:14px;letter-spacing:.01em}.sep{height:22px;border-left:1px solid #4b5565}.project-name{font-size:13px;font-weight:700}.small{font-size:11px;color:#aeb7c4}
-.top2{height:42px;background:var(--nav2);display:flex;align-items:center;gap:7px;padding:0 12px;overflow:auto}.tool{border:1px solid #4a5565;background:#364152;color:#fff;border-radius:5px;padding:6px 9px;font-size:11px;white-space:nowrap}.tool.primary{background:#2f63c7;border-color:#4073d1}.tool.danger{color:#ffd4d4}.spacer{flex:1}
-.workspace{display:grid;grid-template-columns:195px 1fr;min-height:calc(100vh - 90px)}
-.sidebar{background:#f8fafc;border-right:1px solid var(--line);padding:10px 0}.side-title{padding:8px 13px;font-size:10px;font-weight:800;color:#667085;text-transform:uppercase;letter-spacing:.08em}.navitem{display:flex;align-items:center;gap:9px;padding:9px 13px;font-size:12px;color:#344054;cursor:pointer;border-left:3px solid transparent}.navitem.active{background:#eaf2ff;border-left-color:var(--blue);color:#1d4ed8;font-weight:700}.dot{width:8px;height:8px;border-radius:50%;background:#98a2b3}.navitem.active .dot{background:var(--blue)}
-.main{min-width:0;display:flex;flex-direction:column}
-.statusbar{background:#fff;border-bottom:1px solid var(--line);padding:8px 12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}.stat{display:flex;align-items:center;gap:6px;font-size:11px}.stat b{font-size:12px}.badge{padding:3px 6px;border-radius:999px;font-weight:800;font-size:9px}.b-green{background:#e7f7f1;color:#087a55}.b-red{background:#feeceb;color:#b42318}.b-amber{background:#fff4df;color:#a15c00}.b-blue{background:#eaf2ff;color:#2457b8}
-.schedule-shell{display:grid;grid-template-columns:minmax(660px,47%) 1fr;height:510px;background:#fff;border-bottom:1px solid var(--line)}
-.gridpane{overflow:auto;border-right:1px solid var(--line)}.gantt{overflow:auto;position:relative;background:#fff}
-table{border-collapse:collapse;width:100%;font-size:11px}.gridtable{min-width:860px}.gridtable th{position:sticky;top:0;z-index:3;background:#f3f5f8;border-bottom:1px solid var(--line);border-right:1px solid #e4e8ee;padding:7px 6px;text-align:left;font-weight:800;color:#475467}.gridtable td{height:28px;border-bottom:1px solid #edf0f4;border-right:1px solid #f0f2f5;padding:5px 6px;white-space:nowrap}.gridtable tr.sel td{background:var(--sel)}.gridtable tr:hover td{background:#f7faff}.id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#344054}.namecell{min-width:220px}.indent-1{padding-left:14px}.indent-2{padding-left:28px}.pct{font-variant-numeric:tabular-nums}.critical{color:var(--red);font-weight:800}.near{color:var(--amber);font-weight:800}
-.gantt-head{position:sticky;top:0;z-index:3;background:#f3f5f8;height:43px;border-bottom:1px solid var(--line);min-width:980px}.months{height:20px;display:flex;border-bottom:1px solid #e1e5eb}.month{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;border-right:1px solid #d8dde5}.days{height:23px;display:flex}.day{width:22px;flex:none;border-right:1px solid #e8ebef;text-align:center;padding-top:4px;font-size:9px;color:#667085}.weekend{background:#fafafa}
-.gantt-body{position:relative;min-width:980px}.grow{position:relative;height:28px;border-bottom:1px solid #edf0f4}.grow.sel{background:var(--sel)}.ggrid{position:absolute;inset:0;display:flex;pointer-events:none}.gcol{width:22px;flex:none;border-right:1px solid #f1f3f6}.gcol.weekend{background:#fafafa}.baseline{position:absolute;height:5px;top:6px;background:#aab2bf;border-radius:2px;opacity:.9}.bar{position:absolute;height:10px;top:13px;border-radius:2px;background:var(--blue);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}.bar.critical{background:var(--red)}.bar.near{background:var(--amber)}.bar.complete{background:var(--green)}.bar .prog{height:100%;background:rgba(0,0,0,.24);border-radius:2px 0 0 2px}.milestone{position:absolute;top:11px;width:12px;height:12px;transform:rotate(45deg);background:var(--purple)}.todayline{position:absolute;top:0;bottom:0;width:2px;background:#9e2b2b;z-index:2;pointer-events:none}.todaylabel{position:absolute;top:45px;transform:translateX(-50%);font-size:9px;background:#9e2b2b;color:#fff;padding:2px 4px;border-radius:3px;z-index:4}
-.details{background:#fff;min-height:290px}.detail-head{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}.detail-head h3{margin:0;font-size:13px}.detail-tabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);overflow:auto}.dt{border:0;background:transparent;padding:9px 10px;font-size:11px;font-weight:700;color:#667085;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer}.dt.active{color:#2457b8;border-bottom-color:#2f66d0}.detail-body{padding:12px;min-height:210px}
-.info-grid{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:10px}.field{border:1px solid #e4e7ec;border-radius:6px;padding:8px;background:#fafbfc}.field label{display:block;font-size:9px;color:#667085;text-transform:uppercase;font-weight:800;margin-bottom:3px}.field div{font-size:11px;font-weight:700}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{border:1px solid #e1e5eb;border-radius:8px;padding:10px;background:#fff}.card h4{margin:0 0 8px;font-size:11px}.relrow,.resrow,.costrow{display:grid;grid-template-columns:90px 1fr 90px 90px;gap:7px;border-bottom:1px solid #edf0f4;padding:6px 0;font-size:10px}.relrow:last-child,.resrow:last-child,.costrow:last-child{border-bottom:0}
-.knowledge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.kcard{border:1px solid #e0e5ec;border-radius:8px;padding:10px}.kcard h4{margin:0 0 7px;font-size:11px}.kcard ul{margin:0;padding-left:17px;font-size:10px;color:#475467;line-height:1.55}.notice{border-left:3px solid #d78b1f;background:#fff8eb;padding:9px;font-size:10px;line-height:1.45}.notice.good{border-left-color:#15936e;background:#edf9f5}
-.footer{padding:7px 11px;font-size:9px;color:#667085;background:#f8fafc;border-top:1px solid var(--line)}
-@media(max-width:1050px){.workspace{grid-template-columns:1fr}.sidebar{display:none}.schedule-shell{grid-template-columns:1fr;height:auto}.gridpane,.gantt{height:420px}.info-grid{grid-template-columns:repeat(2,1fr)}.split,.knowledge-grid{grid-template-columns:1fr}}
+:root{color-scheme:light;--ink:#17304b;--ink2:#354d66;--line:#d9e4ed;--muted:#536a7c;--white:#fff;--cloud:#f3f8fb;--gold:#ebaf3d;--blue:#176eab;--teal:#0a776c;--focus:#f1ae29}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--cloud)}
+button,a,summary{font:inherit}button{cursor:pointer}a{color:#155f96}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--focus);outline-offset:3px}button:disabled{cursor:not-allowed}
+.skip{position:absolute;top:-100px;left:10px;z-index:100;background:white;padding:9px}.skip:focus{top:10px}
+.header{background:#10263e;color:#f5faff;border-bottom:4px solid var(--gold)}.header-inner{max-width:1200px;margin:auto;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:14px 20px;flex-wrap:wrap}.brand{color:inherit;text-decoration:none;display:flex;gap:12px;align-items:center;font-size:15px;font-weight:850}.mark{width:43px;height:43px;display:grid;place-items:center;border:2px solid #b9dff1;border-radius:12px;font-size:23px;color:#f9d88d}.head-note{font-size:12px;color:#c9dce7}.advanced summary{list-style:none;border:1px solid #5f8099;border-radius:8px;padding:7px 12px;cursor:pointer;font-size:12px}.advanced summary::-webkit-details-marker{display:none}.advanced[open]{position:relative}.admin-menu{position:absolute;right:0;z-index:20;width:min(260px,85vw);padding:10px;background:#fff;border-radius:10px;box-shadow:0 10px 32px #10283f40;color:var(--ink)}.admin-menu a{display:block;text-decoration:none;padding:9px 8px;border-radius:5px;font-size:13px}.admin-menu a:hover{background:#eef6fa}
+main{max-width:1200px;margin:auto;padding:22px 20px 65px}
+.hero{background:linear-gradient(110deg,#194363 0%,#205979 62%,#426f81 100%);color:#fff;border-radius:18px;padding:31px 30px;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;right:-72px;top:-100px;width:325px;height:325px;border:1px solid #ffffff30;border-radius:50%;box-shadow:0 0 0 54px #ffffff08,0 0 0 108px #ffffff08;pointer-events:none}.eyebrow{font-size:12px;font-weight:850;letter-spacing:.11em;text-transform:uppercase;color:#c8e2ed}.hero h1{font-size:clamp(28px,4vw,44px);line-height:1.09;letter-spacing:-.035em;margin:9px 0 12px;max-width:720px}.hero p{max-width:750px;font-size:15px;color:#e3eff6;margin:0 0 15px}.pills{display:flex;gap:9px;flex-wrap:wrap}.pill{font-size:12px;border:1px solid #d7e7eb6a;border-radius:50px;padding:6px 11px;background:#ffffff10}.pill strong{color:#fff}
+.notice{margin:14px 0 24px;background:#fff8e7;border-left:5px solid #d79825;border-radius:8px;padding:13px 15px;font-size:13px;color:#5d481b}.notice strong{display:block}
+.section-heading{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px;margin-bottom:13px}.section-heading h2{font-size:clamp(20px,2vw,26px);letter-spacing:-.025em;margin:0}.section-heading p{margin:3px 0 0;font-size:13px;color:var(--muted)}.section-link{font-size:12px;font-weight:750}
+.howto{background:white;border:1px solid var(--line);border-radius:12px;padding:14px 17px;margin:18px 0 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}.howto strong{margin-right:12px}.howto span{font-size:13px;color:var(--ink2)}.howto .sep{color:#a1b6c3}
+.milestones{display:grid;grid-template-columns:repeat(auto-fit,minmax(143px,1fr));gap:9px;margin-bottom:27px}.milestone{border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:11px;background:#fff;text-align:left;padding:13px;min-height:113px;transition:border-color .1s,transform .1s}.milestone:hover{border-color:#7baac9;transform:translateY(-1px)}.milestone small{display:block;font-size:11px;color:var(--muted);margin-bottom:7px}.milestone b{font-size:13px;line-height:1.25;display:block}.milestone .day{display:block;color:#996116;font-size:12px;font-weight:750;margin-top:8px}.milestone em{display:block;font-size:10px;font-style:normal;color:#617386;margin-top:5px}
+.workspace{display:grid;grid-template-columns:290px minmax(0,1fr);gap:15px;align-items:start}.left,.right{background:#fff;border:1px solid var(--line);border-radius:15px;overflow:hidden}.pane-head{padding:17px 18px;border-bottom:1px solid var(--line)}.pane-head h3{margin:0 0 3px;font-size:16px}.pane-head p{font-size:12px;color:var(--muted);margin:0}.phase-list{padding:8px}.phase-button{display:flex;align-items:center;gap:11px;width:100%;padding:12px 10px;border:1px solid transparent;background:transparent;border-radius:9px;text-align:left;color:var(--ink)}.phase-button:hover{background:#f0f6fa}.phase-button[aria-pressed=true]{border-color:#94c4d6;background:#e7f5f9}.phase-n{font-size:11px;font-weight:850;color:#3f7894;min-width:32px}.phase-name{font-weight:700;font-size:13px;flex:1}.phase-count{font-size:11px;color:#64788a;white-space:nowrap}
+.phase-header{padding:21px 23px 16px;border-bottom:1px solid var(--line);background:linear-gradient(#fff,#fafdfd)}.phase-header .kicker{font-size:11px;color:#137e80;text-transform:uppercase;letter-spacing:.12em;font-weight:850}.phase-header h3{font-size:clamp(21px,2.5vw,29px);line-height:1.16;margin:5px 0 8px;letter-spacing:-.03em}.phase-header p{font-size:13px;color:var(--muted);margin:4px 0}.steps-head{padding:17px 22px 4px;font-weight:800}.step-list{padding:6px 14px 14px;display:grid;gap:10px}.step{border:1px solid #e1e8ef;border-radius:10px;background:#fff;overflow:hidden}.step summary{display:flex;align-items:center;gap:12px;padding:14px;list-style:none;cursor:pointer}.step summary::-webkit-details-marker{display:none}.step summary:hover{background:#f4f9fb}.step summary:after{content:"⌄";font-size:21px;color:#65879d}.step[open] summary:after{content:"⌃"}.step .number{width:30px;height:30px;background:#e6f3f8;border-radius:50%;display:grid;place-items:center;color:#165d7e;font-size:12px;font-weight:900;flex:0 0 auto}.step .title-wrap{flex:1;min-width:0}.step .title{display:block;font-weight:750;font-size:14px}.step .sub{display:block;font-size:11px;color:#65798b;margin-top:3px}.step .tag{font-size:11px;border-radius:15px;padding:3px 7px;background:#fff1d6;color:#855915;white-space:nowrap}.step-body{padding:6px 16px 16px 56px;border-top:1px solid #ebf0f4;font-size:13px;color:#3d5162}.step-body p{margin:8px 0}.step-body strong{color:#173a54}.no-data{padding:28px 20px;color:#53697a;font-size:14px}
+.bottom{margin:24px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:12px}.info{background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px 19px}.info h3{margin:0 0 8px;font-size:16px}.info p{color:#536a7c;font-size:13px;line-height:1.6;margin:5px 0}.info a{font-size:13px;font-weight:700}.foot{font-size:12px;color:#5b6f80;margin-top:27px}.foot a{margin-right:11px}
+@media(max-width:850px){.workspace{grid-template-columns:1fr}.phase-list{display:flex;overflow:auto;gap:6px;scroll-snap-type:x mandatory}.phase-button{min-width:168px;max-width:215px;flex:0 0 auto;align-items:start;flex-direction:column;gap:4px;scroll-snap-align:start}.phase-count{white-space:normal}.bottom{grid-template-columns:1fr}}
+@media(max-width:550px){main{padding:13px 11px 45px}.header-inner{padding:10px 12px}.head-note{display:none}.hero{padding:22px 17px}.hero:after{display:none}.howto{gap:6px}.milestones{grid-template-columns:repeat(2,minmax(0,1fr))}.step summary{gap:9px;padding:11px}.step-body{padding:8px 14px}.phase-header{padding:17px}.pills{gap:6px}.pill{font-size:11px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.milestone{transition:none}}
 </style>
-<link rel="stylesheet" href="./assets/sky-theme.css">
 </head>
 <body>
-<div class="top">
-  <div class="top1"><div class="brand">Construction Project Controls</div><div class="sep"></div><div><div class="project-name">DEMO-PROJECT-001 · Building Construction</div><div class="small">P6-style planning & control prototype · synthetic schedule</div></div><div class="spacer"></div><span class="badge b-amber">DEMO DATA</span></div>
-  <div class="top2">
-    <a class="tool primary" href="./planner.html" style="text-decoration:none">⚡ Open live scheduler</a>
-    <a class="tool" href="#why" style="text-decoration:none">What we're building</a>
-    <a class="tool" href="#workflow" style="text-decoration:none">How to use</a>
-    <a class="tool" href="#architecture" style="text-decoration:none">System &amp; inputs</a><a class="tool" href="./machine/" style="text-decoration:none">Machine Build Centre</a>
-    <a class="tool" href="#upstream" style="text-decoration:none">Open-source references</a>
-    <a class="tool" href="./kernel-lab.html" style="text-decoration:none">Engine Lab</a>
-    <a class="tool" href="./roadmap.html" style="text-decoration:none">Roadmap</a>
-    <a class="tool" href="./knowledge/" style="text-decoration:none">Field Knowledge</a>
-    <a class="tool" href="#demo" style="text-decoration:none">Original P6-style demo ↓</a>
-  </div>
+<a class="skip" href="#content">Skip to roadmap</a>
+<header class="header"><div class="header-inner">
+<a class="brand" href="./index.html"><span class="mark" aria-hidden="true">⌂</span><span>SKYFORGE<br><span class="head-note">Construction · Site roadmap</span></span></a>
+<div class="head-note">One project · one roadmap · every required step</div>
+<details class="advanced"><summary>Planner / Admin ▾</summary><nav class="admin-menu" aria-label="Advanced tools">
+<a href="./planner.html">Interactive resource planner</a><a href="./kernel-lab.html">Engineering scheduling lab</a><a href="./machine/">Machine executions & evidence</a><a href="./advanced.html">Original technical dashboard</a><a href="./roadmap.html">Development roadmap</a><a href="./knowledge/">Construction knowledge</a>
+</nav></details>
+</div></header>
+<main id="content">
+<section class="hero" aria-labelledby="title">
+<div class="eyebrow">Site roadmap · machine-calculated example</div>
+<h1 id="title">What needs to happen, and in what order?</h1>
+<p>Follow the entire construction lifecycle. Select a phase, review its steps and prerequisites, and understand the milestone it contributes to—without operating scheduling software.</p>
+<div class="pills"><span class="pill"><strong id="count-phases">10</strong> phases</span><span class="pill"><strong id="count-steps">45</strong> activities</span><span class="pill"><strong id="count-milestones">7</strong> milestones</span><span class="pill"><strong id="count-span">481</strong> planned workday slots</span></div>
+</section>
+<div class="notice" role="note"><strong>Demonstration template — not a live construction site.</strong> This roadmap is generated from synthetic WBS source files. Actual completion status, project start dates, responsible persons, site approvals and material readiness have NOT been supplied. Nothing shown below is a verified completed job.</div>
+<div class="howto"><strong>How to use</strong><span>1. See the full milestone roadmap</span><span class="sep" aria-hidden="true">→</span><span>2. Select a construction phase</span><span class="sep" aria-hidden="true">→</span><span>3. Open its step to see prerequisites</span></div>
+<section id="milestones" aria-labelledby="milestone-title">
+<div class="section-heading"><div><h2 id="milestone-title">Major milestones</h2><p>These are planned targets, not claimed achievements.</p></div></div>
+<div id="milestone-list" class="milestones" aria-live="polite"><div class="no-data">Loading verified machine data…</div></div>
+</section>
+<section id="roadmap" aria-labelledby="roadmap-title">
+<div class="section-heading"><div><h2 id="roadmap-title">Full construction roadmap</h2><p>Choose any phase to see the complete, ordered list of required activities.</p></div><span class="section-link">Planned logic only · Status not reported</span></div>
+<div class="workspace"><aside class="left" aria-label="Project phases"><div class="pane-head"><h3>All construction phases</h3><p>Select one to open its steps</p></div><div class="phase-list" id="phase-list"></div></aside>
+<section class="right" aria-labelledby="chosen-phase"><div class="phase-header"><div class="kicker" id="chosen-number">Phase</div><h3 id="chosen-phase">Loading roadmap</h3><p id="chosen-summary">Machine-verified construction steps appear here.</p></div><div class="steps-head" id="steps-head">Required steps</div><div id="step-list" class="step-list" aria-live="polite"><p class="no-data">Loading…</p></div></section>
+</div></section>
+<div class="bottom">
+<section class="info" aria-labelledby="progress-title"><h3 id="progress-title">What about actual site progress?</h3><p>No site-progress data has been connected to this demonstration. We cannot truthfully label jobs “done”, “late”, “in progress” or “ready to start” without dated observations, required approvals, and dependency evidence.</p><p>Once authenticated progress inputs are connected, this view can highlight only verified next actions and blocked work.</p></section>
+<section class="info" aria-labelledby="source-title"><h3 id="source-title">Where does this roadmap come from?</h3><p>The WBS and durations originate in two synthetic Google Drive source documents. GitHub Actions runs deterministic CPM, checks the results independently, records hashes, and publishes the verified output.</p><p><a href="./machine/wbs-sample/">View full schedule &amp; Gantt</a> · <a href="./machine/wbs-sample/manifest.json">Verify source and output evidence</a></p></section>
 </div>
-
-<div class="sky-ribbon" aria-hidden="true"></div>
-<div class="storm-explain">
-  <section class="storm-hero" aria-labelledby="mission-title">
-    <div data-dragon-scene class="storm-art" aria-hidden="true"></div>
-    <div class="storm-inner">
-      <span class="storm-kicker">⚡ Skyforge / Project Controls Kernel</span>
-      <h1 id="mission-title" class="storm-title">Bring order to <em>construction chaos.</em></h1>
-      <p class="storm-lead">Plan the sequence. Balance people, equipment and materials. See what moves when resources are limited. This is a developing construction scheduling tool—not just a Gantt picture or a generic project dashboard.</p>
-      <div class="storm-actions">
-        <a href="./planner.html" class="storm-btn gold">⚡ Launch interactive scheduler ↗</a><a href="./machine/" class="storm-btn blue">Run by GitHub machines ↗</a>
-        <a href="#workflow" class="storm-btn">How it works ↓</a>
-        <a href="./roadmap.html" class="storm-btn">Feature roadmap ↗</a>
-        <button data-sky-toggle class="sky-pause" type="button" aria-pressed="false">Pause sky animation</button>
-      </div>
-      <p style="font-size:11px;color:#5b7487;margin-top:18px">Light-sky visual identity · looping SVG lightning dragon · optional motion · no external animation dependency.</p>
-    </div>
-  </section>
-  <nav class="storm-anchor-nav" aria-label="About this product">
-    <a href="#why">Why this exists</a><a href="#workflow">Try an example</a><a href="#architecture">What is built</a><a href="#inputs">What to input</a><a href="#upstream">Five source references</a><a href="#next">What is next</a>
-  </nav>
-  <h2 class="storm-section-title" id="why">A construction tool, built around site reality.</h2>
-  <p class="storm-section-sub">The goal is useful scheduling for working engineers and project managers—not pretending that a prototype is already a complete Primavera replacement.</p>
-  <div class="storm-grid">
-    <article class="storm-card"><span class="storm-number">01 / The problem</span><h3>Plans break when reality changes</h3><p>Crews are shared, materials arrive late, activities depend on prior work and each site runs to a different working calendar. A schedule should expose those constraints, not hide them.</p></article>
-    <article class="storm-card"><span class="storm-number">02 / The product</span><h3>A practical browser scheduler</h3><p>Enter work activities, assign labor and equipment, set dependencies and press Schedule. Review allocated work days, Gantt bars and resource delays.</p></article>
-    <article class="storm-card"><span class="storm-number">03 / The direction</span><h3>Your construction experience, encoded</h3><p>Future versions should connect quantities, work packages, productivity, actual site progress, baselines, reports and lessons learned—with traceable source data.</p></article>
-  </div>
-  <section class="storm-band" id="workflow">
-    <span class="storm-number">Start here / 3-minute walkthrough</span>
-    <h2>From activity list to resource-leveled plan</h2>
-    <div class="storm-grid" style="margin:12px 0">
-      <div class="storm-card"><span class="storm-number">Step 1</span><h3>Define your work</h3><p>Start with the synthetic excavation → PCC → reinforcement / formwork → footing RCC → waterproofing example. Change activity names, durations and dates.</p></div>
-      <div class="storm-card"><span class="storm-number">Step 2</span><h3>Assign constraints</h3><p>Set crew capacity, resource assignments, material inventory and FS/SS/FF/SF predecessor links. Shared capacity causes a scheduling trade-off.</p></div>
-      <div class="storm-card"><span class="storm-number">Step 3</span><h3>Press Schedule (F9)</h3><p>Inspect allocated Gantt days, finish events and delayed activities. Save a local draft or export versioned JSON as a portable record.</p></div>
-    </div>
-    <a class="storm-btn blue" href="./planner.html">Open the working planner ↗</a>
-    <p style="margin-bottom:0;font-size:12px">The original chart further down this page is a <strong>synthetic demonstration</strong>. The linked Live Scheduler is the editable workspace.</p>
-  </section>
-  <section class="storm-band" id="architecture">
-    <span class="storm-number">What exists today / v0.4.3</span>
-    <h2>One repository, four distinct tools</h2>
-    <div class="storm-grid" style="margin-bottom:0">
-      <div class="storm-card"><span class="storm-status">TESTED KERNEL</span><h3>1. Scheduling core</h3><p>Custom JavaScript algorithms for CPM and float, calendars, lagged dependency logic, selected constraints/progress calculations, and serial resource leveling. Capabilities differ by API path.</p></div>
-      <div class="storm-card"><span class="storm-status">INTERACTIVE PROTOTYPE</span><h3>2. Live Scheduler</h3><p>Editable unstarted resource-dependent activities, assignments, durations, capacity, and serial day-level scheduling. No server/database or automatic shared saving yet.</p></div>
-      <div class="storm-card"><span class="storm-status">EXPERIMENTAL</span><h3>3. Engine Lab</h3><p>A separate synthetic CPM/remaining-work testing surface with data-date controls, constraints, earned value, and adapter previews. It is not the same unified engine path as the planner.</p></div>
-      <div class="storm-card"><span class="storm-status">SHAREABLE REFERENCE</span><h3>4. Field knowledge</h3><p>Separate shuttering, waterproofing and research-gated soak-pit pages to connect scheduling concepts to work methods and QA—without confusing guidance with project authority.</p></div>
-      <div class="storm-card"><span class="storm-status next">NOT YET COMPLETE</span><h3>5. Baseline + progress</h3><p>Scheduled snapshots, daily site updates, variance analysis, lookahead plans, manpower and material reports are still planned as an integrated workflow.</p></div>
-      <div class="storm-card"><span class="storm-status next">NOT YET COMPLETE</span><h3>6. Real project system</h3><p>Authenticated multi-project database, roles, durable collaboration, spreadsheet/P6 interoperability and BIM/4D are separate future milestones.</p></div>
-    </div>
-  </section>
-  <section class="storm-band" id="inputs">
-    <span class="storm-number">Data contract / inputs</span><h2>What you need to build a reliable construction schedule</h2>
-    <dl class="storm-list">
-      <div><dt>Now / minimum</dt><dd>Project start and working days; activity IDs, descriptions, work-day durations; predecessor/successor logic; labor/equipment/material resources and assignments.</dd></div>
-      <div><dt>Now / availability</dt><dd>Capacity and stock, plus resource/crew calendars and material receipts or fixed reservations through supported engine JSON. All examples are synthetic.</dd></div>
-      <div><dt>Next / construction intelligence</dt><dd>WBS, BOQ quantities, work package IDs, measured productivity, site zones, subcontractors, material deliveries and constraints in the actual planning workflow.</dd></div>
-      <div><dt>Next / live control</dt><dd>Baseline dates, data date, actual start/finish, remaining duration, field progress, variance, delay causes, site photos, reports and audit lineage.</dd></div>
-    </dl>
-    <div class="storm-example"><strong>Practical example:</strong> Two crews both need the only available concrete mixer. Instead of scheduling both at once, the serial leveler moves the conflicting work into an available day and explains the delay. This is a deterministic rule, <em>not</em> a claim of optimal project duration.</div>
-  </section>
-  <section class="storm-band" id="upstream">
-    <span class="storm-number">Open-source architecture / verified repository references</span><h2>The five upstream ecosystems actually recorded in this repo</h2>
-    <p>The source code is currently a <strong>custom ES-module scheduling kernel</strong>. These five projects are recorded as references, adapters or future integration targets in <code>UPSTREAM_SOURCES.json</code>—their entire codebases have <strong>not</strong> been incorporated or bundled.</p>
-    <div class="storm-grid">
-      <div class="storm-card"><span class="storm-number">01 / BIM + scheduling</span><h3><a href="https://github.com/IfcOpenShell/IfcOpenShell" target="_blank" rel="noopener noreferrer">IfcOpenShell / Ifc4D ↗</a></h3><p>IFC task, schedule, cost and resource models; potential 4D and XML/XER interoperability.</p></div>
-      <div class="storm-card"><span class="storm-number">02 / Work management</span><h3><a href="https://github.com/opf/openproject" target="_blank" rel="noopener noreferrer">OpenProject ↗</a></h3><p>Project/work-package UX, collaboration, baselines and API patterns for later stages.</p></div>
-      <div class="storm-card"><span class="storm-number">03 / Desktop scheduling</span><h3><a href="https://sourceforge.net/projects/projectlibre/" target="_blank" rel="noopener noreferrer">ProjectLibre ↗</a></h3><p>CPM, resources, float, baselines and familiar desktop planner workflows.</p></div>
-      <div class="storm-card"><span class="storm-number">04 / Optimization research</span><h3><a href="https://github.com/taskjuggler/TaskJuggler" target="_blank" rel="noopener noreferrer">TaskJuggler ↗</a></h3><p>Resource-constrained planning, scheduling policies and scenario comparisons.</p></div>
-      <div class="storm-card"><span class="storm-number">05 / Interactive task planning</span><h3><a href="https://github.com/bardsoftware/ganttproject" target="_blank" rel="noopener noreferrer">GanttProject ↗</a></h3><p>Task hierarchy, dependency UX, resource loading and desktop Gantt usability.</p></div>
-    </div>
-    <p style="font-size:12px">Proprietary Primavera P6 / MS Project are feature and interoperability targets, not embedded dependencies. Upstream license obligations must be checked before copying any code. <a href="./THIRD_PARTY_NOTICES.md">Third-party notices</a>.</p>
-  </section>
-  <section class="storm-band" id="next">
-    <span class="storm-number">Execution order / reality check</span><h2>Make it understandable → useful → durable</h2>
-    <div class="storm-grid">
-      <div class="storm-card"><span class="storm-status">THIS MILESTONE</span><h3>01. Identity &amp; usability</h3><p>Sky/cloud/lightning-dragon design, accessible motion, clear navigation, honest capability boundaries and real construction walkthroughs.</p></div>
-      <div class="storm-card"><span class="storm-status next">UPCOMING</span><h3>02. Practical field planning</h3><p>Integrated WBS, productivity, crew scheduling, daily progress, baseline tracking, delay reporting, lookahead and printable schedules.</p></div>
-      <div class="storm-card"><span class="storm-status next">UPCOMING</span><h3>03. Durable project platform</h3><p>Authenticated database, version-controlled project changes, collaboration, spreadsheet/P6 import and export, and IFC/4D connections.</p></div>
-    </div>
-    <p><a href="./roadmap.html">View the detailed milestone roadmap ↗</a> · <a href="./kernel-lab.html">Explore the calculation engine ↗</a> · <a href="./knowledge/">Browse field knowledge ↗</a></p>
-  </section>
-  <h2 class="storm-section-title" id="demo">Explore the original P6-style demo</h2>
-  <p class="storm-section-sub">Synthetic read-only chart and construction-work references from the earlier prototype. For editing and scheduling, use the <a href="./planner.html">Live Scheduler</a>.</p>
-  <div class="storm-workspace-label"><span><b>DEMONSTRATION DATA</b> — schedule, baseline, costs and tracking displayed below are illustrative, not your real project records.</span><a href="./planner.html">Start a real editable plan →</a></div>
-</div>
-
-<div class="workspace">
-  <aside class="sidebar"><div class="side-title">Project Controls</div>
-    <div class="navitem active"><span class="dot"></span>Activities</div><div class="navitem"><span class="dot"></span>WBS</div><div class="navitem"><span class="dot"></span>Projects</div><div class="navitem"><span class="dot"></span>Resources</div><div class="navitem"><span class="dot"></span>Resource Usage</div><div class="navitem"><span class="dot"></span>Reports</div>
-    <div class="side-title">Knowledge</div><a class="navitem" href="./knowledge/" style="text-decoration:none"><span class="dot"></span>Construction Knowledge</a><a class="navitem" href="./roadmap.html" style="text-decoration:none"><span class="dot"></span>Roadmap</a><div class="navitem"><span class="dot"></span>OpenBIM / P6</div>
-  </aside>
-  <main class="main">
-    <div class="statusbar" id="statusbar"></div>
-    <section class="schedule-shell">
-      <div class="gridpane"><table class="gridtable"><thead><tr><th style="width:92px">Activity ID</th><th class="namecell">Activity Name</th><th style="width:56px">OD</th><th style="width:80px">Start</th><th style="width:80px">Finish</th><th style="width:58px">TF</th><th style="width:64px">% Comp</th></tr></thead><tbody id="activityRows"></tbody></table></div>
-      <div class="gantt" id="gantt"><div class="gantt-head"><div class="months" id="months"></div><div class="days" id="days"></div></div><div class="gantt-body" id="ganttBody"></div></div>
-    </section>
-    <section class="details">
-      <div class="detail-head"><h3 id="detailTitle">Activity Details</h3><span id="detailWork" class="badge b-blue"></span><div class="spacer"></div><span id="detailState" class="badge b-green"></span></div>
-      <div class="detail-tabs">
-        <button class="dt active" data-tab="general">General</button><button class="dt" data-tab="status">Status</button><button class="dt" data-tab="relationships">Relationships</button><button class="dt" data-tab="resources">Resources</button><button class="dt" data-tab="costs">Costs / EV</button><button class="dt" data-tab="codes">Codes</button><button class="dt" data-tab="documents">Documents</button><button class="dt" data-tab="knowledge">Knowledge (ARC/WMS/ITP)</button>
-      </div>
-      <div class="detail-body">
-        <div id="general" class="pane"></div><div id="status" class="pane" hidden></div><div id="relationships" class="pane" hidden></div><div id="resources" class="pane" hidden></div><div id="costs" class="pane" hidden></div><div id="codes" class="pane" hidden></div><div id="documents" class="pane" hidden></div><div id="knowledge" class="pane" hidden></div>
-      </div>
-    </section>
-    <div class="footer">Branch prototype only · Project-Controls-Kernel/main untouched · Schedule/project values are synthetic examples and are not project truth.</div>
-  </main>
-</div>
-<script>
-const DAY=86400000; let DB,KDB,selected;
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
-const fmt=d=>new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"2-digit"});
-const daysBetween=(a,b)=>Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/DAY);
-const addDays=(a,n)=>{let d=new Date(a+"T00:00:00");d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
-async function boot(){
- [DB,KDB]=await Promise.all([fetch("./project-controls-demo.json").then(r=>r.json()),fetch("./construction-knowledge.json").then(r=>r.json())]);
- renderStatus(); renderTimeline(); renderActivities(); selectActivity(DB.default_activity_id);
- document.querySelectorAll(".dt").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
-}
-function renderStatus(){
- const a=DB.activities,crit=a.filter(x=>x.total_float<=0).length,near=a.filter(x=>x.total_float>0&&x.total_float<=3).length,neg=a.filter(x=>x.total_float<0).length;
- const avg=Math.round(a.reduce((s,x)=>s+x.percent_complete,0)/a.length);
- document.getElementById("statusbar").innerHTML=[
- ["Data Date",fmt(DB.project.data_date),"b-blue"],["Planned Finish",fmt(DB.project.planned_finish),""],["Forecast Finish",fmt(DB.project.forecast_finish),DB.project.finish_variance_days>0?"b-red":"b-green"],["Finish Variance",(DB.project.finish_variance_days>0?"+":"")+DB.project.finish_variance_days+" d",DB.project.finish_variance_days>0?"b-red":"b-green"],["Critical",crit,"b-red"],["Near Critical",near,"b-amber"],["Negative Float",neg,neg?"b-red":"b-green"],["Average Complete",avg+"%","b-green"]
- ].map(x=>`<div class="stat"><span>${esc(x[0])}</span><span class="badge ${x[2]}">${esc(x[1])}</span></div>`).join("");
-}
-function renderTimeline(){
- const start=DB.project.timeline_start,end=DB.project.timeline_end,total=daysBetween(start,end)+1;
- const dayBox=document.getElementById("days"),monthBox=document.getElementById("months");
- let dh="", months=[], cur=null;
- for(let i=0;i<total;i++){let ds=addDays(start,i),d=new Date(ds+"T00:00:00"),wk=d.getDay()===0||d.getDay()===6;dh+=`<div class="day ${wk?"weekend":""}">${d.getDate()}</div>`;let key=d.getFullYear()+"-"+d.getMonth();if(!cur||cur.key!==key){cur={key,label:d.toLocaleDateString("en-US",{month:"short",year:"numeric"}),count:1};months.push(cur)}else cur.count++;}
- dayBox.innerHTML=dh;monthBox.innerHTML=months.map(m=>`<div class="month" style="width:${m.count*22}px">${m.label}</div>`).join("");
-}
-function renderActivities(){
- document.getElementById("activityRows").innerHTML=DB.activities.map(a=>`<tr id="r-${a.activity_id}" onclick="selectActivity('${a.activity_id}')"><td class="id">${esc(a.activity_id)}</td><td class="namecell indent-${a.level}">${a.milestone?"◆ ":""}${esc(a.name)}</td><td>${a.original_duration}d</td><td>${fmt(a.start)}</td><td>${fmt(a.finish)}</td><td class="${a.total_float<=0?"critical":a.total_float<=3?"near":""}">${a.total_float}d</td><td class="pct">${a.percent_complete}%</td></tr>`).join("");
- renderGantt();
-}
-function renderGantt(){
- const start=DB.project.timeline_start,total=daysBetween(start,DB.project.timeline_end)+1,b=document.getElementById("ganttBody"); let html="";
- const cols=Array.from({length:total},(_,i)=>{let d=new Date(addDays(start,i)+"T00:00:00"),w=d.getDay()===0||d.getDay()===6;return `<div class="gcol ${w?"weekend":""}"></div>`}).join("");
- for(const a of DB.activities){let left=daysBetween(start,a.start)*22,width=Math.max(6,(daysBetween(a.start,a.finish)+1)*22),bl=daysBetween(start,a.baseline_start)*22,bw=Math.max(6,(daysBetween(a.baseline_start,a.baseline_finish)+1)*22),cls=a.percent_complete===100?"complete":a.total_float<=0?"critical":a.total_float<=3?"near":"";
- html+=`<div class="grow" id="g-${a.activity_id}" onclick="selectActivity('${a.activity_id}')"><div class="ggrid">${cols}</div><div class="baseline" style="left:${bl}px;width:${bw}px"></div>${a.milestone?`<div class="milestone" style="left:${left}px"></div>`:`<div class="bar ${cls}" style="left:${left}px;width:${width}px"><div class="prog" style="width:${a.percent_complete}%"></div></div>`}</div>`;
- }
- const dd=daysBetween(start,DB.project.data_date)*22+11;html+=`<div class="todayline" style="left:${dd}px"></div><div class="todaylabel" style="left:${dd}px">DATA DATE</div>`;b.innerHTML=html;
-}
-function selectActivity(id){
- selected=DB.activities.find(x=>x.activity_id===id); document.querySelectorAll(".gridtable tr").forEach(x=>x.classList.remove("sel"));document.querySelectorAll(".grow").forEach(x=>x.classList.remove("sel"));document.getElementById("r-"+id)?.classList.add("sel");document.getElementById("g-"+id)?.classList.add("sel");
- document.getElementById("detailTitle").textContent=selected.activity_id+" · "+selected.name;document.getElementById("detailWork").textContent=selected.work_id||"No work_id binding";document.getElementById("detailState").textContent=selected.percent_complete===100?"COMPLETE":selected.status;
- renderDetails();
-}
-function field(label,val){return `<div class="field"><label>${esc(label)}</label><div>${esc(val)}</div></div>`}
-function renderDetails(){
- const a=selected;
- document.getElementById("general").innerHTML=`<div class="info-grid">${[
- ["WBS",a.wbs_id],["Activity Type",a.type],["Calendar",a.calendar],["Responsible",a.responsible],
- ["Original Duration",a.original_duration+" days"],["Start",fmt(a.start)],["Finish",fmt(a.finish)],["Total Float",a.total_float+" days"],
- ["Constraint",a.constraint||"None"],["Work ID",a.work_id||"Not mapped"],["Baseline Start",fmt(a.baseline_start)],["Baseline Finish",fmt(a.baseline_finish)]
- ].map(x=>field(x[0],x[1])).join("")}</div>`;
- document.getElementById("status").innerHTML=`<div class="info-grid">${[
- ["Physical % Complete",a.percent_complete+"%"],["Status",a.status],["Actual Start",a.actual_start?fmt(a.actual_start):"—"],["Actual Finish",a.actual_finish?fmt(a.actual_finish):"—"],
- ["Remaining Duration",a.remaining_duration+" days"],["Start Variance",a.start_variance+" days"],["Finish Variance",a.finish_variance+" days"],["Performance %",a.performance_percent+"%"]
- ].map(x=>field(x[0],x[1])).join("")}</div>`;
- const preds=DB.relationships.filter(r=>r.successor===a.activity_id),succs=DB.relationships.filter(r=>r.predecessor===a.activity_id);
- document.getElementById("relationships").innerHTML=`<div class="split"><div class="card"><h4>Predecessors</h4>${rels(preds,true)}</div><div class="card"><h4>Successors</h4>${rels(succs,false)}</div></div>`;
- const rs=DB.resource_assignments.filter(r=>r.activity_id===a.activity_id);document.getElementById("resources").innerHTML=`<div class="card"><h4>Resource Assignments</h4>${rs.length?rs.map(r=>`<div class="resrow"><b>${esc(r.resource_id)}</b><span>${esc(r.resource_name)}</span><span>${esc(r.units)}</span><span>${esc(r.role)}</span></div>`).join(""):"<div class='small'>No demo resource assignment.</div>"}</div>`;
- document.getElementById("costs").innerHTML=`<div class="info-grid">${[["BAC",money(a.bac)],["PV",money(a.pv)],["EV",money(a.ev)],["AC",money(a.ac)],["SPI",ratio(a.ev,a.pv)],["CPI",ratio(a.ev,a.ac)],["EAC",a.ac?money(a.bac/(a.ev/a.ac)):"—"],["Cost Status",a.ac&&a.ev<a.ac?"Over EV":"Within demo threshold"]].map(x=>field(x[0],x[1])).join("")}</div><div class="notice" style="margin-top:10px">Earned-value figures are synthetic demonstration data, not company/project financial truth.</div>`;
- document.getElementById("codes").innerHTML=`<div class="info-grid">${Object.entries(a.codes).map(([k,v])=>field(k,v)).join("")}</div>`;
- document.getElementById("documents").innerHTML=`<div class="card"><h4>Linked Documents / Evidence</h4>${a.documents.map(x=>`<div class="line"><b>${esc(x.type)}</b><span>→</span><span>${esc(x.name)} · ${esc(x.state)}</span></div>`).join("")}</div>`;
- renderKnowledge();
-}
-function rels(rows,pred){return rows.length?rows.map(r=>{let id=pred?r.predecessor:r.successor,n=DB.activities.find(x=>x.activity_id===id)?.name||"";return `<div class="relrow"><b>${id}</b><span>${esc(n)}</span><span>${r.type}</span><span>Lag ${r.lag}d</span></div>`}).join(""):"<div class='small'>None</div>"}
-function renderKnowledge(){
- const a=selected,w=KDB.works.find(w=>w.work_id&&w.work_id===a.work_id);
- if(!w){document.getElementById("knowledge").innerHTML=`<div class="notice">No governed reusable knowledge record is bound to this demo activity. The activity remains schedulable, but ARC/WMS/ITP content must not be invented.</div>`;return}
- const arc=Object.entries(w.arc).slice(0,3).map(([k,v])=>`<div class="kcard"><h4>ARC · ${esc(k)}</h4><ul>${v.slice(0,5).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`).join("");
- const wms=`<div class="kcard"><h4>WMS</h4><ul>${w.wms.slice(0,5).map(x=>`<li><b>${esc(x.title)}</b> — ${esc(x.state)}</li>`).join("")}</ul></div>`;
- const itp=`<div class="kcard"><h4>ITP / QAQC</h4><ul>${w.itp.map(x=>`<li><b>${esc(x.point)}</b> — ${esc(x.class)}</li>`).join("")}</ul></div>`;
- document.getElementById("knowledge").innerHTML=`<div class="notice good">Selected project activity → <b>${esc(a.work_id)}</b> → reusable construction knowledge. Schedule occurrence and knowledge remain separate identities.</div><div class="knowledge-grid" style="margin-top:10px">${arc}${wms}${itp}</div>`;
-}
-function money(v){return v==null?"—":"Rs "+Number(v).toLocaleString("en-IN",{maximumFractionDigits:0})} function ratio(a,b){return b?Number(a/b).toFixed(2):"—"}
-function showTab(id){document.querySelectorAll(".pane").forEach(x=>x.hidden=true);document.getElementById(id).hidden=false;document.querySelectorAll(".dt").forEach(x=>x.classList.toggle("active",x.dataset.tab===id))}
-boot().catch(e=>document.body.innerHTML="<pre style='padding:20px'>Demo load failed: "+esc(e.message)+"</pre>");
-</script>
-<script type="module" src="./assets/sky-dragon.mjs"></script>
+<p class="foot">Skyforge Field Roadmap v0.6 · No invented site facts · Planned steps are not field authorizations. <a href="./planner.html">Planner tools</a><a href="./machine/">Machine evidence</a><a href="./advanced.html">Technical dashboard</a></p>
+</main>
+<script type="module" src="./src/presentation/site-roadmap.mjs"></script>
 </body></html>

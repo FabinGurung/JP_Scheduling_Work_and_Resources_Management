@@ -16,7 +16,7 @@ async function modules(relative){
   else throw Error("Disallowed public executable path: "+child);
  }
 }
-const approved=["index.html","planner.html","kernel-lab.html","roadmap.html","project-controls-demo.json",
+const approved=["index.html","advanced.html","planner.html","kernel-lab.html","roadmap.html","project-controls-demo.json",
  "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs",
  "knowledge/index.html","knowledge/task.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html"];
 for(const f of approved)await cp(f);
