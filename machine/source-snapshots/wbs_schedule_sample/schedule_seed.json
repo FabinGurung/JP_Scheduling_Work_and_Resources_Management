@@ -1,0 +1,383 @@
+{
+  "project_metadata": {
+    "project_name": "Standard Building Lifecycle Template",
+    "version": "1.0",
+    "description": "Synthetic P6-style schedule for GitHub Actions execution and SHA-256 hashing",
+    "scheduling_engine_instructions": "Calculate Critical Path (CPM) using standard Finish-to-Start (FS) dependencies."
+  },
+  "tasks": [
+    {
+      "task_id": "T1010",
+      "wbs_code": "1000",
+      "name": "Initial Client Consultation & Requirements Gathering",
+      "duration_days": 5,
+      "type": "Task",
+      "predecessors": []
+    },
+    {
+      "task_id": "T1020",
+      "wbs_code": "1000",
+      "name": "Site Feasibility Study & Surveying",
+      "duration_days": 10,
+      "type": "Task",
+      "predecessors": [{"id": "T1010", "type": "FS"}]
+    },
+    {
+      "task_id": "T1030",
+      "wbs_code": "1000",
+      "name": "Budget Estimation & Project Charter Approval",
+      "duration_days": 7,
+      "type": "Task",
+      "predecessors": [{"id": "T1020", "type": "FS"}]
+    },
+    {
+      "task_id": "M1040",
+      "wbs_code": "1000",
+      "name": "Milestone: Project Kickoff",
+      "duration_days": 0,
+      "type": "Milestone",
+      "predecessors": [{"id": "T1030", "type": "FS"}]
+    },
+    {
+      "task_id": "T2010",
+      "wbs_code": "2000",
+      "name": "Conceptual Design & Client Review",
+      "duration_days": 14,
+      "type": "Task",
+      "predecessors": [{"id": "M1040", "type": "FS"}]
+    },
+    {
+      "task_id": "T2020",
+      "wbs_code": "2000",
+      "name": "Schematic Design (SD) Development",
+      "duration_days": 21,
+      "type": "Task",
+      "predecessors": [{"id": "T2010", "type": "FS"}]
+    },
+    {
+      "task_id": "T2030",
+      "wbs_code": "2000",
+      "name": "Design Development (DD) & Structural Engineering",
+      "duration_days": 30,
+      "type": "Task",
+      "predecessors": [{"id": "T2020", "type": "FS"}]
+    },
+    {
+      "task_id": "T2040",
+      "wbs_code": "2000",
+      "name": "MEP System Engineering Design",
+      "duration_days": 25,
+      "type": "Task",
+      "predecessors": [{"id": "T2020", "type": "FS"}]
+    },
+    {
+      "task_id": "T2050",
+      "wbs_code": "2000",
+      "name": "Construction Documents (CD) Finalization",
+      "duration_days": 20,
+      "type": "Task",
+      "predecessors": [
+        {"id": "T2030", "type": "FS"},
+        {"id": "T2040", "type": "FS"}
+      ]
+    },
+    {
+      "task_id": "M2060",
+      "wbs_code": "2000",
+      "name": "Milestone: Design Freeze & Drawings Baseline",
+      "duration_days": 0,
+      "type": "Milestone",
+      "predecessors": [{"id": "T2050", "type": "FS"}]
+    },
+    {
+      "task_id": "T3010",
+      "wbs_code": "3000",
+      "name": "Environmental & Zoning Clearances",
+      "duration_days": 30,
+      "type": "Task",
+      "predecessors": [{"id": "T2030", "type": "FS"}]
+    },
+    {
+      "task_id": "T3020",
+      "wbs_code": "3000",
+      "name": "Submit Legalized Drawings for Governmental Review",
+      "duration_days": 2,
+      "type": "Task",
+      "predecessors": [{"id": "M2060", "type": "FS"}]
+    },
+    {
+      "task_id": "T3030",
+      "wbs_code": "3000",
+      "name": "Address Regulatory Revisions & Resubmit",
+      "duration_days": 14,
+      "type": "Task",
+      "predecessors": [{"id": "T3020", "type": "FS"}]
+    },
+    {
+      "task_id": "T3040",
+      "wbs_code": "3000",
+      "name": "Obtain Building & Utility Permits",
+      "duration_days": 45,
+      "type": "Task",
+      "predecessors": [
+        {"id": "T3010", "type": "FS"},
+        {"id": "T3030", "type": "FS"}
+      ]
+    },
+    {
+      "task_id": "M3050",
+      "wbs_code": "3000",
+      "name": "Milestone: Permits Secured",
+      "duration_days": 0,
+      "type": "Milestone",
+      "predecessors": [{"id": "T3040", "type": "FS"}]
+    },
+    {
+      "task_id": "T4010",
+      "wbs_code": "4000",
+      "name": "Contractor Mobilization & Temporary Facilities Setup",
+      "duration_days": 10,
+      "type": "Task",
+      "predecessors": [{"id": "M3050", "type": "FS"}]
+    },
+    {
+      "task_id": "T4020",
+      "wbs_code": "4000",
+      "name": "Site Clearing, Grubbing & Demolition",
+      "duration_days": 7,
+      "type": "Task",
+      "predecessors": [{"id": "T4010", "type": "FS"}]
+    },
+    {
+      "task_id": "T4030",
+      "wbs_code": "4000",
+      "name": "Establish Site Survey Control & Set Out Building Grid",
+      "duration_days": 4,
+      "type": "Task",
+      "predecessors": [{"id": "T4020", "type": "FS"}]
+    },
+    {
+      "task_id": "T5010",
+      "wbs_code": "5000",
+      "name": "Bulk Excavation & Earthwork",
+      "duration_days": 14,
+      "type": "Task",
+      "predecessors": [{"id": "T4030", "type": "FS"}]
+    },
+    {
+      "task_id": "T5030",
+      "wbs_code": "5000",
+      "name": "Formwork, Rebar, and Pour Footings / Pile Caps",
+      "duration_days": 20,
+      "type": "Task",
+      "predecessors": [{"id": "T5010", "type": "FS"}]
+    },
+    {
+      "task_id": "T5040",
+      "wbs_code": "5000",
+      "name": "Below-Grade Waterproofing & Drainage",
+      "duration_days": 7,
+      "type": "Task",
+      "predecessors": [{"id": "T5030", "type": "FS"}]
+    },
+    {
+      "task_id": "T5050",
+      "wbs_code": "5000",
+      "name": "Pour Slab-on-Grade (SOG)",
+      "duration_days": 10,
+      "type": "Task",
+      "predecessors": [{"id": "T5040", "type": "FS"}]
+    },
+    {
+      "task_id": "M5060",
+      "wbs_code": "5000",
+      "name": "Milestone: Substructure Complete",
+      "duration_days": 0,
+      "type": "Milestone",
+      "predecessors": [{"id": "T5050", "type": "FS"}]
+    },
+    {
+      "task_id": "T6010",
+      "wbs_code": "6000",
+      "name": "Erect Columns & Shear Walls",
+      "duration_days": 25,
+      "type": "Task",
+      "predecessors": [{"id": "M5060", "type": "FS"}]
+    },
+    {
+      "task_id": "T6020",
+      "wbs_code": "6000",
+      "name": "Form, Reinforce, and Pour Suspended Slabs",
+      "duration_days": 30,
+      "type": "Task",
+      "predecessors": [{"id": "T6010", "type": "FS"}]
+    },
+    {
+      "task_id": "T6030",
+      "wbs_code": "6000",
+      "name": "Roof Structural Framing",
+      "duration_days": 15,
+      "type": "Task",
+      "predecessors": [{"id": "T6020", "type": "FS"}]
+    },
+    {
+      "task_id": "M6040",
+      "wbs_code": "6000",
+      "name": "Milestone: Superstructure Complete (Topping Out)",
+      "duration_days": 0,
+      "type": "Milestone",
+      "predecessors": [{"id": "T6030", "type": "FS"}]
+    },
+    {
+      "task_id": "T7010",
+      "wbs_code": "7000",
+      "name": "Exterior Masonry / Facade Framing",
+      "duration_days": 21,
+      "type": "Task",
+      "predecessors": [{"id": "M6040", "type": "FS"}]
+    },
+    {
+      "task_id": "T7020",
+      "wbs_code": "7000",
+      "name": "Roof Waterproofing & Covering",
+      "duration_days": 14,
+      "type": "Task",
+      "predecessors": [{"id": "M6040", "type": "FS"}]
+    },
+    {
+      "task_id": "T7030",
+      "wbs_code": "7000",
+      "name": "Install Windows, Glazing & Exterior Doors",
+      "duration_days": 18,
+      "type": "Task",
+      "predecessors": [
+        {"id": "T7010", "type": "FS"},
+        {"id": "T7020", "type": "FS"}
+      ]
+    },
+    {
+      "task_id": "M7040",
+      "wbs_code": "7000",
+      "name": "Milestone: Building Dried-In (Weather-tight)",
+      "duration_days": 0,
+      "type": "Milestone",
+      "predecessors": [{"id": "T7030", "type": "FS"}]
+    },
+    {
+      "task_id": "T8010",
+      "wbs_code": "8000",
+      "name": "HVAC Ductwork & Equipment Rough-in",
+      "duration_days": 25,
+      "type": "Task",
+      "predecessors": [{"id": "M7040", "type": "FS"}]
+    },
+    {
+      "task_id": "T8020",
+      "wbs_code": "8000",
+      "name": "Plumbing Water & Waste Lines Rough-in",
+      "duration_days": 20,
+      "type": "Task",
+      "predecessors": [{"id": "M7040", "type": "FS"}]
+    },
+    {
+      "task_id": "T8030",
+      "wbs_code": "8000",
+      "name": "Electrical Conduit & Wiring Rough-in",
+      "duration_days": 25,
+      "type": "Task",
+      "predecessors": [{"id": "M7040", "type": "FS"}]
+    },
+    {
+      "task_id": "T8040",
+      "wbs_code": "8000",
+      "name": "MEP Rough-in Inspections",
+      "duration_days": 5,
+      "type": "Task",
+      "predecessors": [
+        {"id": "T8010", "type": "FS"},
+        {"id": "T8020", "type": "FS"},
+        {"id": "T8030", "type": "FS"}
+      ]
+    },
+    {
+      "task_id": "T9010",
+      "wbs_code": "9000",
+      "name": "Insulation & Drywall Installation",
+      "duration_days": 21,
+      "type": "Task",
+      "predecessors": [{"id": "T8040", "type": "FS"}]
+    },
+    {
+      "task_id": "T9020",
+      "wbs_code": "9000",
+      "name": "Taping, Mudding & Primary Painting",
+      "duration_days": 15,
+      "type": "Task",
+      "predecessors": [{"id": "T9010", "type": "FS"}]
+    },
+    {
+      "task_id": "T9030",
+      "wbs_code": "9000",
+      "name": "Hard Flooring & Tile Installation",
+      "duration_days": 14,
+      "type": "Task",
+      "predecessors": [{"id": "T9020", "type": "FS"}]
+    },
+    {
+      "task_id": "T9040",
+      "wbs_code": "9000",
+      "name": "MEP Trim (Fixtures, Switches, Registers)",
+      "duration_days": 10,
+      "type": "Task",
+      "predecessors": [{"id": "T9030", "type": "FS"}]
+    },
+    {
+      "task_id": "T9060",
+      "wbs_code": "9000",
+      "name": "Final Coat Painting & Soft Flooring",
+      "duration_days": 10,
+      "type": "Task",
+      "predecessors": [{"id": "T9040", "type": "FS"}]
+    },
+    {
+      "task_id": "T10010",
+      "wbs_code": "10000",
+      "name": "MEP Systems Testing & Commissioning",
+      "duration_days": 14,
+      "type": "Task",
+      "predecessors": [{"id": "T9060", "type": "FS"}]
+    },
+    {
+      "task_id": "T10020",
+      "wbs_code": "10000",
+      "name": "Final Governmental Inspections & Occupancy Certificate",
+      "duration_days": 10,
+      "type": "Task",
+      "predecessors": [{"id": "T10010", "type": "FS"}]
+    },
+    {
+      "task_id": "T10030",
+      "wbs_code": "10000",
+      "name": "Snagging / Punch List Walkthrough with Client",
+      "duration_days": 5,
+      "type": "Task",
+      "predecessors": [{"id": "T10020", "type": "FS"}]
+    },
+    {
+      "task_id": "T10040",
+      "wbs_code": "10000",
+      "name": "Final Deep Cleaning of Site",
+      "duration_days": 3,
+      "type": "Task",
+      "predecessors": [{"id": "T10030", "type": "FS"}]
+    },
+    {
+      "task_id": "M10050",
+      "wbs_code": "10000",
+      "name": "Milestone: Substantial Completion & Key Submission",
+      "duration_days": 0,
+      "type": "Milestone",
+      "predecessors": [{"id": "T10040", "type": "FS"}]
+    }
+  ]
+}

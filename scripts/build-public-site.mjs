@@ -34,5 +34,28 @@ for(const f of machine){
  const dst=join(out,"machine/demo-foundation",f);
  await mkdir(dirname(dst),{recursive:true});await copyFile(src,dst);
 }
+// WBS source snapshots are reviewed synthetic Git blobs and remain OUTSIDE the
+// Pages distribution. Only the machine-built result, checked by manifest, ships.
+const wbssrc=await readFile(join(root,"machine/source-snapshots/wbs_schedule_sample/schedule_seed.json"),"utf8");
+const wbsdict=await readFile(join(root,"machine/source-snapshots/wbs_schedule_sample/wbs_dictionary.md"),"utf8");
+const wbsBlob=x=>createHash("sha1").update("blob "+Buffer.byteLength(x)+"\0").update(x).digest("hex");
+if(wbsBlob(wbssrc)!=="40f2d8e35bf1fd71c5acb84a64272115cacadb99"||
+   wbsBlob(wbsdict)!=="ff1e3126efe8811be9bc398054aec601efaf7482")
+ throw Error("Unreviewed WBS source snapshot; refusing public build");
+const wbsManifest=JSON.parse(await readFile(join(root,"generated/public/wbs-sample/manifest.json"),"utf8"));
+if(wbsManifest.classification!=="PUBLIC_SYNTHETIC"||wbsManifest.engineering_approved!==false||
+   wbsManifest.calendar_dates_generated!==false||wbsManifest.validated_task_count!==45||
+   wbsManifest.source_snapshot_git_blobs.schedule_seed!=="40f2d8e35bf1fd71c5acb84a64272115cacadb99"||
+   wbsManifest.source_snapshot_git_blobs.wbs_dictionary!=="ff1e3126efe8811be9bc398054aec601efaf7482")
+ throw Error("Unverified WBS source, classification, activity count or engineering status");
+const wbsFiles=["index.html","plan.json","activities.csv","gantt.svg","manifest.json"];
+for(const file of wbsFiles){
+ const contents=await readFile(join(root,"generated/public/wbs-sample",file));
+ if(file!=="manifest.json"&&wbsManifest.output_sha256[file]!==createHash("sha256").update(contents).digest("hex"))
+  throw Error("WBS published output sha256 mismatch "+file);
+ const dst=join(out,"machine/wbs-sample",file);
+ await mkdir(dirname(dst),{recursive:true});
+ await copyFile(join(root,"generated/public/wbs-sample",file),dst);
+}
 await cp("machine/index.html");
 console.log("Public Pages allowlist PASS: no repository-wide upload, no private engineering files");
