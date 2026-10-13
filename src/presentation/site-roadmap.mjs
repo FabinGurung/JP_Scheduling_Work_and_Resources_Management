@@ -1,3 +1,4 @@
+import {newFieldReport,evaluateFieldStatus} from "../field/progress.mjs";
 // Field-facing progressive disclosure; no authority to edit or assert progress.
 // All displayed project facts come exclusively from machine/wbs-sample/plan.json.
 export function validateFieldPlan(plan){
@@ -43,10 +44,18 @@ function fieldUI(plan){
  const {ids}=validateFieldPlan(plan);
  const $=id=>document.getElementById(id);
  let selection=plan.phases[0]?.wbs_code;
+ const localReports=[];
  $("count-phases").textContent=plan.phases.length;
  $("count-steps").textContent=plan.task_count;
  $("count-milestones").textContent=plan.milestone_count;
  $("count-span").textContent=plan.duration_workday_slots;
+ const first=evaluateFieldStatus(plan).first_plan_candidate;
+ const candidate=document.getElementById("next-planned");
+ if(first){
+  candidate.replaceChildren(el("strong","","First planned step"),el("span","",first.activity_id+" · "+first.name),
+    el("span","","Site readiness has not been verified"));
+ }else candidate.replaceChildren(el("strong","","First step needs input"));
+
  function choose(code,{scroll=false}={}){
   selection=code;
   renderPhases();renderSteps();
@@ -62,7 +71,7 @@ function fieldUI(plan){
    b.append(el("small","",String(i+1)+" of "+plan.milestones.length));
    b.append(el("b","",m.name.replace(/^Milestone:\s*/,"")));
    b.append(el("span","day","Target slot "+m.early_start_slot));
-   b.append(el("em","","Status: not reported"));
+   b.append(el("em","",localReports.some(r=>r.activity_id===m.activity_id)?"Reported locally · unverified":"Status: not verified"));
    b.addEventListener("click",()=>choose(m.wbs_code,{scroll:true}));
    list.append(b);
   }
@@ -109,10 +118,67 @@ function fieldUI(plan){
    const p3=el("p");p3.append(el("strong","","Site evidence: "));
    p3.append(document.createTextNode("Not provided. Do not infer actual completion or authorization from this schedule."));
    body.append(p3);
+   const pendingCount=localReports.filter(r=>r.activity_id===a.activity_id).length;
+   const status=el("p");status.append(el("strong","","Progress verification: "));
+   status.append(document.createTextNode(pendingCount?"Pending review ("+pendingCount+" local report"+(pendingCount===1?"":"s")+")":"Not reported/verified"));
+   body.append(status);
+   if(a.type==="Task"){
+    const report=el("button","step-report","Report an observation");
+    report.type="button";
+    report.addEventListener("click",()=>{
+      $("field-activity").value=a.activity_id;
+      $("field-report").scrollIntoView({block:"start",behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+      $("field-observation").focus();
+    });
+    body.append(report);
+   }
    if(a.critical){const p4=el("p");p4.append(el("strong","","Scheduling note: "));p4.append(document.createTextNode("Zero float in this source network; a delay here can affect planned completion."));body.append(p4);}
    wrapper.append(body);list.append(wrapper);
   }
  }
+ 
+ function reportForm(){
+  const select=$("field-activity");
+  select.replaceChildren(el("option","","Select an activity"));
+  select.firstElementChild.value="";
+  for(const a of plan.activities.filter(a=>a.type==="Task")){
+   const opt=el("option","",a.activity_id+" · "+a.name);
+   opt.value=a.activity_id;select.append(opt);
+  }
+  // Local wall-clock input. Convert to the UTC observation instant on export.
+  const now=new Date(),local=new Date(now.getTime()-now.getTimezoneOffset()*60000);
+  $("field-observed").value=local.toISOString().slice(0,16);
+  const form=$("field-form");
+  form.addEventListener("submit",event=>{
+   event.preventDefault();
+   const status=$("field-status");
+   try{
+    if(!form.reportValidity())return;
+    if(!window.crypto?.randomUUID)throw Error("Secure-browser random report IDs unavailable");
+    const report=newFieldReport(plan,{
+     uuid:window.crypto.randomUUID(),
+     activity_id:select.value,observation:$("field-observation").value,
+     observed_at:new Date($("field-observed").value).toISOString(),
+     reporter_display_name:$("field-reporter").value,field_note:$("field-note").value,
+     evidence_kind:$("field-kind").value,evidence_url:$("field-evidence-url").value,
+     evidence_description:$("field-evidence-description").value
+    });
+    const blob=new Blob([JSON.stringify(report,null,2)+"\n"],{type:"application/json"});
+    const url=URL.createObjectURL(blob),link=document.createElement("a");
+    link.href=url;link.download=report.report_id+"__PENDING_REVIEW.json";
+    document.body.append(link);link.click();link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    localReports.push(report);
+    const appraisal=evaluateFieldStatus(plan,localReports);
+    $("field-queue").textContent="Reports prepared locally: "+appraisal.pending_observation_count+
+      " · Verified completions: "+appraisal.verified_complete_count+
+      " · Upload the JSON and linked evidence to authorized Drive for review.";
+    status.textContent="Unverified report exported. It is NOT uploaded, approved, or marked complete. Upload it to Drive pending reports.";
+    renderSteps();renderMilestones();
+   }catch(e){status.textContent="Report not exported: "+e.message;}
+  });
+ }
+ reportForm();
  renderMilestones();choose(selection);
 }
 async function boot(){

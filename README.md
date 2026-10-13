@@ -1,3 +1,11 @@
+## v0.7.0 — on-page field observation, evidence and review handoff
+
+The public field roadmap is still one page, now with a "Report work from site" evidence-entry form. Every report includes a site observation, timestamp, activity FK, human-reported name and an HTTPS evidence reference, but it is **always unverified**. A local JSON download is uploaded manually through an authorized Drive account to the registered intake folder; there is no public POST gateway, server-side authentication or automatic completion. The current WBS is a synthetic demonstration, not a named real site.
+
+[Field intake specification](docs/FIELD_PROGRESS_INTAKE_V1.md) · [Authorized Drive intake](https://drive.google.com/drive/folders/1NZKE-1-QwHSmxK_HwuJNc97_QmQSkvQN) · [First milestone roadmap](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/).
+
+---
+
 # Skyforge — Construction Site Roadmap
 
 **For field staff:** start at [Site Roadmap](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/). One mobile-friendly page displays all phases, major milestones, and the ordered activities required to reach them. Open a step to inspect its source-linked predecessors. Real site status/authorization is NOT supplied, so no progress is fabricated.
