@@ -23,6 +23,7 @@ main{max-width:1200px;margin:auto;padding:22px 20px 65px}
 @media(max-width:850px){.workspace{grid-template-columns:1fr}.phase-list{display:flex;overflow:auto;gap:6px;scroll-snap-type:x mandatory}.phase-button{min-width:168px;max-width:215px;flex:0 0 auto;align-items:start;flex-direction:column;gap:4px;scroll-snap-align:start}.phase-count{white-space:normal}.bottom{grid-template-columns:1fr}}
 @media(max-width:550px){main{padding:13px 11px 45px}.header-inner{padding:10px 12px}.head-note{display:none}.hero{padding:22px 17px}.hero:after{display:none}.howto{gap:6px}.milestones{grid-template-columns:repeat(2,minmax(0,1fr))}.step summary{gap:9px;padding:11px}.step-body{padding:8px 14px}.phase-header{padding:17px}.pills{gap:6px}.pill{font-size:11px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.milestone{transition:none}}
+.field-intake{background:#fff;border:1px solid var(--line);border-radius:15px;padding:20px 22px;margin:23px 0}.field-intake h2{margin:0 0 6px;font-size:23px}.field-intake p{color:var(--muted);font-size:13px}.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.field-grid label{font-size:12px;font-weight:800;display:flex;flex-direction:column;gap:5px;color:var(--ink2)}.field-grid input,.field-grid select,.field-grid textarea{width:100%;padding:11px;border:1px solid #adbfcb;border-radius:8px;min-height:42px;font:inherit;background:#fff;color:var(--ink)}.field-grid textarea{min-height:84px;resize:vertical}.field-grid .full{grid-column:1/-1}.primary-action{border:0;background:#145d84;color:#fff;padding:13px 18px;border-radius:9px;font-weight:800;cursor:pointer}.actions-row{display:flex;flex-wrap:wrap;gap:13px;align-items:center;margin:14px 0 0}.field-status{margin-top:10px;color:#2e647b;font-weight:750;font-size:13px}.queue{font-size:13px;color:var(--muted);margin:10px 0 4px}.qa-prompt{border-top:1px solid var(--line);padding-top:12px;margin-top:15px}.step-report{background:#e6f3f9;border:1px solid #a3cee2;border-radius:7px;color:#155675;font-size:12px;font-weight:800;padding:8px 11px}.step-report:hover{background:#d8effa}@media(max-width:550px){.field-grid{grid-template-columns:1fr}.field-intake{padding:16px}}
 </style>
 </head>
 <body>
@@ -53,11 +54,32 @@ main{max-width:1200px;margin:auto;padding:22px 20px 65px}
 <div class="workspace"><aside class="left" aria-label="Project phases"><div class="pane-head"><h3>All construction phases</h3><p>Select one to open its steps</p></div><div class="phase-list" id="phase-list"></div></aside>
 <section class="right" aria-labelledby="chosen-phase"><div class="phase-header"><div class="kicker" id="chosen-number">Phase</div><h3 id="chosen-phase">Loading roadmap</h3><p id="chosen-summary">Machine-verified construction steps appear here.</p></div><div class="steps-head" id="steps-head">Required steps</div><div id="step-list" class="step-list" aria-live="polite"><p class="no-data">Loading…</p></div></section>
 </div></section>
+<section class="field-intake" id="field-report" aria-labelledby="field-report-title">
+<h2 id="field-report-title">Report work from site</h2>
+<p><strong>Evidence first.</strong> Select the activity, describe what was observed, and attach a link to a photo, daily log or inspection. Download the report JSON and upload it through your authorized Google Drive account for review. This browser cannot approve or submit reports to Drive automatically.</p>
+<form id="field-form">
+<div class="field-grid">
+<label>Activity<select id="field-activity" required><option value="">Choose activity</option></select></label>
+<label>What did you observe?<select id="field-observation" required><option value="WORK_STARTED">Work started</option><option value="WORK_REPORTED_COMPLETE">Work reported complete</option><option value="WORK_BLOCKED">Work blocked</option><option value="NEEDS_CLARIFICATION">Needs clarification</option></select></label>
+<label>Reported by (unverified name)<input id="field-reporter" maxlength="120" required autocomplete="name" placeholder="Name of reporter"></label>
+<label>Observation date and time<input id="field-observed" type="datetime-local" required></label>
+<label>Evidence type<select id="field-kind"><option value="PHOTO">Site photo</option><option value="DAILY_LOG">Daily work log</option><option value="INSPECTION">Inspection record</option><option value="OTHER">Other document</option></select></label>
+<label>Evidence description<input id="field-evidence-description" maxlength="180" placeholder="What does the evidence show?" required></label>
+<label class="full">Evidence URL (HTTPS, access-controlled)<input id="field-evidence-url" type="url" inputmode="url" required placeholder="https://drive.google.com/file/d/..."></label>
+<label class="full">Site observation<textarea id="field-note" maxlength="1000" required placeholder="Location, quantity observed, reason for delay or next verification required"></textarea></label>
+</div>
+<div class="actions-row"><button class="primary-action" type="submit">Download field report JSON</button><a href="https://drive.google.com/drive/folders/1z6s5wqMjuSWACO-C7866wyOFD5wfy6Uo" target="_blank" rel="noopener noreferrer">Open authorized Drive intake ↗</a></div>
+<div id="field-status" class="field-status" role="status" aria-live="polite">No local reports prepared. The plan has no verified site progress.</div>
+</form>
+<div id="field-queue" class="queue">Local unverified reports: 0</div>
+<div class="qa-prompt"><p><strong>Required review sequence:</strong> upload evidence → upload report JSON to pending folder → authorized reviewer checks the source and prerequisites → review decision with identity and readback → only then can an authenticated project-status projection be updated. Public Pages never holds the private evidence or makes authorization decisions.</p>
+<p><strong>Scope:</strong> the current WBS is a <em>synthetic template</em>. These reports are demonstrations only, not valid updates for a named real construction project. Real projects require a separately approved project WBS and authenticated status integration.</p></div>
+</section>
 <div class="bottom">
-<section class="info" aria-labelledby="progress-title"><h3 id="progress-title">What about actual site progress?</h3><p>No site-progress data has been connected to this demonstration. We cannot truthfully label jobs “done”, “late”, “in progress” or “ready to start” without dated observations, required approvals, and dependency evidence.</p><p>Once authenticated progress inputs are connected, this view can highlight only verified next actions and blocked work.</p></section>
+<section class="info" aria-labelledby="progress-title"><h3 id="progress-title">What about actual site progress?</h3><p>Field observation intake is now available on this page, but no approved live project-progress data is connected. We cannot truthfully label jobs “done”, “late”, “in progress” or “ready to start” without dated observations, required approvals, and dependency evidence.</p><p>Once authenticated progress inputs are connected, this view can highlight only verified next actions and blocked work.</p></section>
 <section class="info" aria-labelledby="source-title"><h3 id="source-title">Where does this roadmap come from?</h3><p>The WBS and durations originate in two synthetic Google Drive source documents. GitHub Actions runs deterministic CPM, checks the results independently, records hashes, and publishes the verified output.</p><p><a href="./machine/wbs-sample/">View full schedule &amp; Gantt</a> · <a href="./machine/wbs-sample/manifest.json">Verify source and output evidence</a></p></section>
 </div>
-<p class="foot">Skyforge Field Roadmap v0.6 · No invented site facts · Planned steps are not field authorizations. <a href="./planner.html">Planner tools</a><a href="./machine/">Machine evidence</a><a href="./advanced.html">Technical dashboard</a></p>
+<p class="foot">Skyforge Field Roadmap v0.7 · No invented site facts · Planned steps are not field authorizations. <a href="./planner.html">Planner tools</a><a href="./machine/">Machine evidence</a><a href="./advanced.html">Technical dashboard</a></p>
 </main>
 <script type="module" src="./src/presentation/site-roadmap.mjs"></script>
 </body></html>
