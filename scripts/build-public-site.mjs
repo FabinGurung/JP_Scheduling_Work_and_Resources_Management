@@ -57,5 +57,19 @@ for(const file of wbsFiles){
  await mkdir(dirname(dst),{recursive:true});
  await copyFile(join(root,"generated/public/wbs-sample",file),dst);
 }
+// Only bounded, public-safe, machine-verified pilot planning projection.
+const pilotConfig=await readFile(join(root,"machine/project-mappings/narayani-v0.1.json"),"utf8");
+if(wbsBlob(pilotConfig)!=="572380334e6c262159059728fee70f610126fb14")throw Error("Unreviewed Narayani public mapping source");
+const pilotManifest=JSON.parse(await readFile(join(root,"generated/public/narayani-pilot/manifest.json"),"utf8"));
+if(pilotManifest.classification!=="PUBLIC_SAFE_DERIVED_PLANNING_ONLY"||pilotManifest.approval_status!=="WBS_ADOPTION_NOT_APPROVED"||pilotManifest.mapping_config_git_blob!=="572380334e6c262159059728fee70f610126fb14"||pilotManifest.private_source_identifiers_published!==false)throw Error("Project adoption/visibility guard failed");
+const pilotJson=await readFile(join(root,"generated/public/narayani-pilot/map.json"));
+const proj=JSON.parse(pilotJson);
+if(proj.format!=="PCK_PROJECT_WBS_ADOPTION_V1"||proj.project.project_id!=="PRJ-000007"||proj.activities.length!==45||proj.hold_points.length!==5||proj.project.schedule_baseline_approved!==false||proj.project.verified_progress!==false||proj.quality.field_reporting_available!==false)throw Error("Unsafe Narayani public projection");
+if(pilotManifest.output_sha256["map.json"]!==createHash("sha256").update(pilotJson).digest("hex"))throw Error("Pilot map SHA-256 mismatch");
+await cp("projects/narayani/index.html");
+for(const f of ["map.json","manifest.json"]){
+ const dst=join(out,"projects/narayani",f);await mkdir(dirname(dst),{recursive:true});
+ await copyFile(join(root,"generated/public/narayani-pilot",f),dst);
+}
 await cp("machine/index.html");
 console.log("Public Pages allowlist PASS: no repository-wide upload, no private engineering files");

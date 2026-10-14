@@ -1,3 +1,13 @@
+## v0.8.0 — Narayani Parajuli governed P6-style WBS pilot
+
+The [Narayani field roadmap](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/narayani/) is a public-safe, read-only **project-mapping pilot**. It reuses the pinned master Primavera P6-style WBS, with 45 activities, 49 FS relations, 7 milestones and 10 phases. Dictionary-only items 5020/9050 remain unresolved, not invented.
+
+Mapping reference: `machine/project-mappings/narayani-v0.1.json`. Five source-derived, unapproved hold/review points cover the RCC/masonry interface, plumbing coordination before tie-beam closure, permit-stage conflict, underground tank code hold (outside master template), and project-specific drawing/block split. The machine mapping is deterministic and source-pinned; test it with `npm run pilot:build && npm run pilot:verify`.
+
+**Do not use the synthetic master durations or critical path as Narayani's adopted baseline.** No real site task, permit, milestone, readiness, actual start/finish or engineering approval is confirmed. The public project page does not publish private Drive file IDs, contacts, drawings or photographs. Private authorizing evidence remains in the user's controlled Narayani Drive project. Evidence ingestion and role-separated approval for this project are a separate unimplemented workstream.
+
+---
+
 ## v0.7.0 — on-page field observation, evidence and review handoff
 
 The public field roadmap is still one page, now with a "Report work from site" evidence-entry form. Every report includes a site observation, timestamp, activity FK, human-reported name and an HTTPS evidence reference, but it is **always unverified**. A local JSON download is uploaded manually through an authorized Drive account to the registered intake folder; there is no public POST gateway, server-side authentication or automatic completion. The current WBS is a synthetic demonstration, not a named real site.

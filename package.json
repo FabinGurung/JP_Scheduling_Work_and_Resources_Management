@@ -1,6 +1,6 @@
 {
   "name": "project-controls-kernel",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,7 +10,9 @@
     "machine:verify": "node scripts/machine-runner.mjs --verify",
     "site:build": "node scripts/build-public-site.mjs",
     "wbs:build": "node scripts/run-wbs-sample.mjs --build",
-    "wbs:verify": "node scripts/run-wbs-sample.mjs --verify"
+    "wbs:verify": "node scripts/run-wbs-sample.mjs --verify",
+    "pilot:build": "node scripts/run-narayani-pilot.mjs --build",
+    "pilot:verify": "node scripts/run-narayani-pilot.mjs --verify"
   },
   "engines": {
     "node": ">=20"

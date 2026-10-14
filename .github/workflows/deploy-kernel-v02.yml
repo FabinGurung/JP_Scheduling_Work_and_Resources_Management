@@ -38,6 +38,10 @@ jobs:
         run: npm run wbs:build
       - name: Recalculate WBS independently and verify all output digests
         run: npm run wbs:verify
+      - name: Build source-pinned Narayani pilot WBS overlay
+        run: npm run pilot:build
+      - name: Verify source-pinned Narayani mapping byte-for-byte
+        run: npm run pilot:verify
       - name: Build public-safe allowlisted site only
         run: npm run site:build
       - name: Verify output never exposes fixture or private records
@@ -50,6 +54,10 @@ jobs:
           test -s dist/machine/wbs-sample/plan.json
           test -s dist/machine/wbs-sample/gantt.svg
           test -s dist/machine/wbs-sample/manifest.json
+          test -s dist/projects/narayani/index.html
+          test -s dist/projects/narayani/map.json
+          test -s dist/projects/narayani/manifest.json
+          test ! -e dist/machine/project-mappings/narayani-v0.1.json
           test ! -e dist/machine/source-snapshots/wbs_schedule_sample/schedule_seed.json
       - name: Validate upstream registry and fail-closed project data
         run: |

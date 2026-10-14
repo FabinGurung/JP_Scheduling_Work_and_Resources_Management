@@ -1,0 +1,115 @@
+{
+  "format": "PCK_NARAYANI_MAPPING_CONFIG_V1",
+  "classification": "PUBLIC_SAFE_DERIVED_PLANNING_ONLY",
+  "project": {
+    "project_id": "PRJ-000007",
+    "project_code": "FBL-006",
+    "public_label": "Narayani Parajuli — Pilot",
+    "context": "A mixed residential/commercial project with existing and proposed construction areas. Master WBS applicability is not yet approved.",
+    "status": "PROJECT_SCHEDULE_NOT_BASELINED",
+    "current_site_progress": "NOT_VERIFIED"
+  },
+  "phase_mapping": {
+    "1000": "REQUIRES_PROJECT_RECONCILIATION",
+    "2000": "DRAWING_SOURCES_PRESENT_NOT_APPROVED_BASELINE",
+    "3000": "PERMIT_STATUS_CONFLICT_NEEDS_RECONCILIATION",
+    "4000": "SITE_ACTUALS_NOT_ADMITTED",
+    "5000": "SITE_INTERFACE_HOLD_POINTS",
+    "6000": "SCOPE_REVIEW_REQUIRED",
+    "7000": "SCOPE_REVIEW_REQUIRED",
+    "8000": "PLUMBING_EARLY_INTERFACE_RESEQUENCE_REQUIRED",
+    "9000": "SCOPE_REVIEW_REQUIRED",
+    "10000": "FUTURE_MILESTONES_UNVERIFIED"
+  },
+  "holds": [
+    {
+      "id": "NAR-HOLD-001",
+      "title": "Verify masonry-to-column interface",
+      "wbs_code": "5000",
+      "activity_ids": [
+        "T5030",
+        "M5060"
+      ],
+      "classification": "ENGINEER_FIELD_VERIFICATION",
+      "reason": "September field note reports a difference from the original instruction; exact geometry and disposition require site/drawing verification.",
+      "action": "Responsible engineer to verify observed versus intended interface and record approved disposition before affected work is accepted.",
+      "source_categories": [
+        "GOVERNED_FIELD_NOTE_2026_09_20"
+      ],
+      "authority": "UNRESOLVED_HOLD"
+    },
+    {
+      "id": "NAR-HOLD-002",
+      "title": "Survey plumbing before tie-beam closure",
+      "wbs_code": "5000",
+      "activity_ids": [
+        "T5030",
+        "T8020"
+      ],
+      "classification": "EARLY_MEP_COORDINATION",
+      "reason": "September field instruction specifies pipe/sleeve checks while masonry access remains available; two exact locations and technical details are not defined.",
+      "action": "Plumber and responsible engineer confirm locations, pipe purpose, diameter, elevation and structural conflict checks before any penetration or closure.",
+      "source_categories": [
+        "GOVERNED_FIELD_INSTRUCTION_2026_09_16"
+      ],
+      "authority": "EXECUTION_UNVERIFIED"
+    },
+    {
+      "id": "NAR-HOLD-003",
+      "title": "Reconcile permits and construction-phase records",
+      "wbs_code": "3000",
+      "activity_ids": [
+        "T3040",
+        "M3050"
+      ],
+      "classification": "SOURCE_STAGE_RECONCILIATION",
+      "reason": "Project index records an approval-stage label, while a later September field note describes construction; neither source proves permit clearance.",
+      "action": "Verify approvals, current project stage and effective permit documents with authorized project records.",
+      "source_categories": [
+        "PROJECT_FILE_INDEX",
+        "GOVERNED_FIELD_NOTE_2026_09_20"
+      ],
+      "authority": "PERMIT_STATUS_UNVERIFIED"
+    },
+    {
+      "id": "NAR-HOLD-004",
+      "title": "Underground-water-tank engineering/code hold",
+      "wbs_code": "5000",
+      "activity_ids": [],
+      "classification": "OUTSIDE_MASTER_TASK_SCOPE",
+      "reason": "The project-specific underground tank package has an unresolved engineering/code audit hold and is not separately represented in the 45-task master seed.",
+      "action": "Resolve the independent engineering hold and approve its separate work package before any release; do not infer it is covered by foundation/waterproofing tasks.",
+      "source_categories": [
+        "NARAYANI_CURRENT_CHECKPOINT"
+      ],
+      "authority": "ENGINEERING_NOT_APPROVED"
+    },
+    {
+      "id": "NAR-HOLD-005",
+      "title": "Approve project-specific building/WBS scope split",
+      "wbs_code": "2000",
+      "activity_ids": [
+        "T2050",
+        "M2060"
+      ],
+      "classification": "SCOPE_MAPPING_REVIEW",
+      "reason": "The site has existing and proposed work areas. The generic one-project WBS cannot be silently treated as an approved block-by-block schedule.",
+      "action": "Match each work package to the approved design revision, building/block and responsible discipline before creating a project baseline.",
+      "source_categories": [
+        "PROJECT_FILE_INDEX",
+        "REVISED_DRAWING_SET_METADATA"
+      ],
+      "authority": "WBS_ADOPTION_NOT_APPROVED"
+    }
+  ],
+  "quality_contract": {
+    "report_status": "UNVERIFIED_NOT_COMPLETED",
+    "approved_task_count": 0,
+    "verified_milestones": 0,
+    "date_baseline": "NOT_PROVIDED",
+    "durations": "MASTER_SYNTHETIC_ONLY",
+    "resource_quantities": "NOT_CONNECTED",
+    "public_source_links": false,
+    "auto_approve": false
+  }
+}
