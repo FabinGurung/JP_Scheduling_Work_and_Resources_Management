@@ -1,3 +1,13 @@
+## v0.9.0 — Narayani Drive-to-WBS source reconciliation
+
+The [Narayani single-page roadmap](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/narayani/) now contains a **public-safe evidence summary** derived from a controlled, read-only 15-Oct-2026 Google Drive reconciliation: 34 dated site diary event records, 4 readiness records, 14 source status DONE (not approved task completions), 4 limited subwork observations mapped to T5030/T4030, and 30 site-specific/unresolved records. No schedule completion, permit, engineer signoff or approved baseline is fabricated.
+
+The detailed per-event source PKs, notes, and source links remain in private Narayani Drive reconciliation register and **are not committed to GitHub**. GitHub contains only the reviewed aggregate JSON at `machine/project-mappings/narayani-progress-public-v0.1.json`. CI pins that exact blob, validates zero approvals and SHA-256 output and copies only a sanitized projection under `projects/narayani/progress.json`. Build: `npm run pilot:build && npm run progress:build && npm run progress:verify && npm run site:build`.
+
+The reusable private source adapter (`npm run progress:private-reconcile -- PRIVATE_EXPORT.json`) accepts authenticated structured Google Sheets row exports and produces machine-reconcilable **private** audit/candidate outputs under `generated/private/narayani`; it never publishes those outputs or accesses Drive directly. **Live auto-refresh is NOT enabled**: deployment needs separate authenticated Drive credentials/permissions, source reconciliation and an explicit reviewer-controlled publication gate; GitHub Actions cannot access private Drive on its own. Do not commit private exports, credentials, PKs, photos or source documents. Use the status and action checks, not a false 'ready to start' signal.
+
+---
+
 ## v0.8.0 — Narayani Parajuli governed P6-style WBS pilot
 
 The [Narayani field roadmap](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/narayani/) is a public-safe, read-only **project-mapping pilot**. It reuses the pinned master Primavera P6-style WBS, with 45 activities, 49 FS relations, 7 milestones and 10 phases. Dictionary-only items 5020/9050 remain unresolved, not invented.

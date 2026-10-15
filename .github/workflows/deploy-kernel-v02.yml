@@ -42,6 +42,10 @@ jobs:
         run: npm run pilot:build
       - name: Verify source-pinned Narayani mapping byte-for-byte
         run: npm run pilot:verify
+      - name: Build governed Narayani field evidence projection
+        run: npm run progress:build
+      - name: Verify field evidence projection exact readback and privacy guard
+        run: npm run progress:verify
       - name: Build public-safe allowlisted site only
         run: npm run site:build
       - name: Verify output never exposes fixture or private records
@@ -56,6 +60,10 @@ jobs:
           test -s dist/machine/wbs-sample/manifest.json
           test -s dist/projects/narayani/index.html
           test -s dist/projects/narayani/map.json
+          test -s dist/projects/narayani/progress.json
+          test -s dist/projects/narayani/progress-manifest.json
+          test ! -e dist/machine/project-mappings/narayani-progress-public-v0.1.json
+          test ! -e dist/generated/private/narayani/audit.json
           test -s dist/projects/narayani/manifest.json
           test ! -e dist/machine/project-mappings/narayani-v0.1.json
           test ! -e dist/machine/source-snapshots/wbs_schedule_sample/schedule_seed.json

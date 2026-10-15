@@ -1,0 +1,45 @@
+{
+  "format": "PCK_NARAYANI_PROGRESS_SOURCE_SUMMARY_V1",
+  "classification": "PUBLIC_SAFE_COUNTS_ONLY",
+  "project_id": "PRJ-000007",
+  "project_code": "FBL-006",
+  "reconciliation_date": "2026-10-15",
+  "last_readiness_date": "2026-10-09",
+  "last_progress_date": "2026-10-06",
+  "refresh_mode": "GOVERNED_ONE_TIME_READBACK_NOT_AUTOMATIC",
+  "private_source": "CANONICAL_DRIVE_PRIVATE_NO_SOURCE_IDS_EXPORTED",
+  "source_rollup": {
+    "progress_rows": 34,
+    "unique_progress_events": 34,
+    "readiness_rows": 4,
+    "progress_status_counts": {
+      "DONE": 14,
+      "NEEDS_INPUT": 8,
+      "NOTE": 9,
+      "PLAN": 2,
+      "NOT_STARTED": 1
+    },
+    "readiness_status_counts": {
+      "NEEDS_INPUT": 4
+    }
+  },
+  "task_subactivities": [
+    {
+      "activity_id": "T5030",
+      "reported_evidence_count": 3,
+      "status": "PARTIAL_WORK_REPORTED_UNVERIFIED"
+    },
+    {
+      "activity_id": "T4030",
+      "reported_evidence_count": 1,
+      "status": "PARTIAL_WORK_REPORTED_UNVERIFIED"
+    }
+  ],
+  "other_records_pending_scope_or_review": 30,
+  "unresolved_engineering_or_quality_holds": true,
+  "observed_complete_activities": 0,
+  "approved_complete_activities": 0,
+  "verified_milestones": 0,
+  "baseline_approved": false,
+  "source_classification": "PARTIAL_FIELD_REPORTS_NOT_FULL_ACTIVITY_ACCEPTANCE"
+}

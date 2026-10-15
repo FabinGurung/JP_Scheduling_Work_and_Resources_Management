@@ -71,5 +71,31 @@ for(const f of ["map.json","manifest.json"]){
  const dst=join(out,"projects/narayani",f);await mkdir(dirname(dst),{recursive:true});
  await copyFile(join(root,"generated/public/narayani-pilot",f),dst);
 }
+// Source-pinned, sanitized, one-time Narayani progress snapshot only. No
+// private Google Drive event IDs, photos, field notes or source spreadsheet are
+// ever admitted to the GitHub Pages allowlist.
+const progressSource=await readFile(join(root,"machine/project-mappings/narayani-progress-public-v0.1.json"),"utf8");
+if(wbsBlob(progressSource)!=="84eaa91483bad21554c2c16868bcc63054ce03a3")throw Error("Unreviewed Narayani progress summary");
+const progressManifest=JSON.parse(await readFile(join(root,"generated/public/narayani-progress/manifest.json"),"utf8"));
+if(progressManifest.format!=="PCK_NARAYANI_PROGRESS_EVIDENCE_MANIFEST_V1"||
+ progressManifest.classification!=="PUBLIC_SAFE_COUNTS_ONLY"||
+ progressManifest.private_source_rows_included!==false||
+ progressManifest.live_connector_active!==false||
+ progressManifest.field_authorization!=="NO_APPROVAL")throw Error("Invalid progress publication contract");
+const progressData=await readFile(join(root,"generated/public/narayani-progress/progress.json"));
+const progress=JSON.parse(progressData);
+if(progress.format!=="PCK_NARAYANI_PROGRESS_PROJECTION_V1"||
+ progress.classification!=="PUBLIC_SAFE_COUNTS_ONLY"||
+ progress.project_id!=="PRJ-000007"||
+ progress.completed_wbs_activities!==0||
+ progress.plan_baseline_approved!==false||
+ progress.auto_refresh_enabled!==false||
+ progressManifest.output_sha256["progress.json"]!==createHash("sha256").update(progressData).digest("hex"))
+ throw Error("Unapproved project progress or SHA mismatch");
+for(const f of ["progress.json","progress-manifest.json"]){
+ const src=join(root,"generated/public/narayani-progress",f==="progress-manifest.json"?"manifest.json":f);
+ const dst=join(out,"projects/narayani",f);await mkdir(dirname(dst),{recursive:true});
+ await copyFile(src,dst);
+}
 await cp("machine/index.html");
 console.log("Public Pages allowlist PASS: no repository-wide upload, no private engineering files");

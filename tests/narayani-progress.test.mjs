@@ -1,0 +1,67 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+import {buildPublicProgress,reconcilePrivateDriveExport,classifyPrivateDiaryRow,validatePublicProgress} from "../src/machine/narayani-progress.mjs";
+const read=x=>readFileSync(new URL("../"+x,import.meta.url),"utf8");
+const pub=JSON.parse(read("machine/project-mappings/narayani-progress-public-v0.1.json"));
+const original=JSON.parse(read("machine/project-mappings/narayani-v0.1.json"));
+const stub={activities:Array.from({length:45},(_,i)=>({activity_id:i===0?"T5030":i===1?"T4030":"S"+String(i).padStart(4,"0")}))};
+const produce=()=>buildPublicProgress(pub,stub);
+test("live source rollup counts are consistent and no completed master claims",()=>{
+ const {output:p,manifest}=produce();
+ assert.equal(p.evidence_inventory.progress_rows,34);
+ assert.equal(p.evidence_inventory.readiness_rows,4);
+ assert.equal(p.evidence_inventory.source_done_reports,14);
+ assert.equal(p.unassigned_or_local_scope_records,30);
+ assert.equal(p.task_evidence.reduce((n,x)=>n+x.reported_subwork_entries,0),4);
+ assert.equal(p.completed_wbs_activities,0);
+ assert.equal(p.verified_milestones,0);
+ assert.equal(p.plan_baseline_approved,false);
+ assert.equal(p.auto_refresh_enabled,false);
+ assert.equal(validatePublicProgress(p,stub),true);
+ assert.equal(manifest.private_source_rows_included,false);
+ assert.equal(manifest.live_connector_active,false);
+});
+test("source and output cannot claim site completion or autonomous refresh",()=>{
+ const f=structuredClone(pub);f.approved_complete_activities=1;
+ assert.throws(()=>buildPublicProgress(f,stub),/unsafe completion/);
+ const g=structuredClone(pub);g.refresh_mode="LIVE";
+ assert.throws(()=>buildPublicProgress(g,stub),/refresh/);
+ const h=structuredClone(pub);h.source_rollup.progress_status_counts.DONE=20;
+ assert.throws(()=>buildPublicProgress(h,stub),/histogram/);
+ const j=produce().output;j.task_evidence[0].ready_for_next_work=true;
+ assert.throws(()=>validatePublicProgress(j,stub),/invalid task-level clearance/);
+});
+test("private input adapter requires scoped project, unique PK and conservative mapped subwork",()=>{
+ const foot=["08-Sep-2026","15 Narayani Parajuli","DONE","Footing concreting — F1, F2", "Two foundations","20260908|PRJ-000007|PROGRESS|01","PRJ-000007","PRIVATE_DRIVE_ID"];
+ const row2=["01-Oct-2026","15 Narayani Parajuli","DONE","Layout for column alignment","Reported aligned","20261001|PRJ-000007|PROGRESS|02","PRJ-000007","PRIVATE_DRIVE_ID"];
+ const read=Array.from({length:23},()=>null);read[0]="2026-10-09";read[13]="NEEDS_INPUT";read[19]="PRJ-000007";
+ assert.equal(classifyPrivateDiaryRow(foot),"T5030_SUBACTIVITY_ONLY");
+ assert.equal(classifyPrivateDiaryRow(row2),"T4030_LAYOUT_SUBACTIVITY_ONLY");
+ const input={format:"PCK_PRIVATE_NARAYANI_DRIVE_EXPORT_V1",project_id:"PRJ-000007",daily_progress_rows:[foot,row2],daily_readiness_rows:[read]};
+ const a=reconcilePrivateDriveExport(input);
+ assert.equal(a.public_aggregate.linked_reported_task_subactivities,2);
+ assert.equal(a.public_aggregate.category_counts.T5030_SUBACTIVITY_ONLY,1);
+ assert.equal(a.private_audit.length,2);
+ assert.throws(()=>reconcilePrivateDriveExport({...input,daily_progress_rows:[foot,foot]}),/duplicated/);
+ assert.throws(()=>reconcilePrivateDriveExport({...input,project_id:"PRJ-OTHER"}),/private input format/);
+});
+test("no raw Drive source rows are committed to public artifact",()=>{
+ const pubText=read("machine/project-mappings/narayani-progress-public-v0.1.json");
+ assert.doesNotMatch(pubText,/\\|PRJ-000007\\|PROGRESS/);
+ assert.doesNotMatch(pubText,/SLACK:/);
+ assert.doesNotMatch(pubText,/drive\.google\.com/);
+ assert.doesNotMatch(pubText,/footing concr(e|et)/i);
+ assert.equal(original.format,"PCK_NARAYANI_MAPPING_CONFIG_V1");
+ assert.equal(produce().manifest.output_sha256["progress.json"].length,64);
+});
+test("field page has a meaningful evidence view that fails closed",()=>{
+ const html=read("projects/narayani/index.html");
+ const js=read("src/presentation/narayani-progress.mjs");
+ assert.match(html,/id="site-evidence"/);
+ assert.match(html,/id="progress-check-list"/);
+ assert.match(html,/src\/presentation\/narayani-progress.mjs/);
+ assert.match(js,/progress\.json/);
+ assert.match(js,/auto_refresh_enabled/);
+ assert.doesNotMatch(js,/method\s*:\s*["']POST/);
+});
