@@ -11,9 +11,9 @@ const BUCKETS=new Set(["T5030_SUBACTIVITY_ONLY","T4030_LAYOUT_SUBACTIVITY_ONLY",
 export function classifyPrivateDiaryRow(r){
  if(!Array.isArray(r)||r.length<8||r[6]!=="PRJ-000007"||typeof r[5]!=="string"||!/^20\d{6}\|PRJ-000007\|PROGRESS\|\d\d$/.test(r[5]))fail("row project/PK");
  if(!EXPECTED.includes(r[2])||typeof r[3]!=="string"||typeof r[4]!=="string"||typeof r[7]!=="string")fail("row status/work/provenance");
- const w=r[3].toLowerCase(),pk=r[5];
- if(["20260908|PRJ-000007|PROGRESS|01","20260909|PRJ-000007|PROGRESS|01","20260910|PRJ-000007|PROGRESS|01"].includes(pk)&&w.startsWith("footing concreting"))return "T5030_SUBACTIVITY_ONLY";
- if(pk==="20261001|PRJ-000007|PROGRESS|02"&&w.includes("layout for column alignment"))return "T4030_LAYOUT_SUBACTIVITY_ONLY";
+ const w=r[3].toLowerCase();
+ if(r[2]==="DONE"&&w.startsWith("footing concreting"))return "T5030_SUBACTIVITY_ONLY";
+ if(r[2]==="DONE"&&w.includes("layout for column alignment"))return "T4030_LAYOUT_SUBACTIVITY_ONLY";
  if(w.includes("masonry / column interface"))return "ENGINEERING_HOLD_001";
  if(w.includes("post-soling"))return "FOUNDATION_QUALITY_HOLD";
  if(w.includes("opc total"))return "FOOTING_QUANTITY_CONFLICT";

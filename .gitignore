@@ -1,0 +1,8 @@
+# Never accidentally publish or commit authenticated site-evidence exports.
+generated/private/
+private-exports/
+*.private-export.json
+*.source-private.json
+.env
+.env.*
+!*.env.example

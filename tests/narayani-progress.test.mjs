@@ -49,6 +49,8 @@ test("private input adapter requires scoped project, unique PK and conservative 
 test("no raw Drive source rows are committed to public artifact",()=>{
  const pubText=read("machine/project-mappings/narayani-progress-public-v0.1.json");
  assert.equal(pubText.includes("|PRJ-000007|PROGRESS|"),false);
+ assert.equal(read("src/machine/narayani-progress.mjs").includes("20260908|PRJ-000007"),false);
+ assert.equal(read(".gitignore").includes("generated/private/"),true);
  assert.doesNotMatch(pubText,/SLACK:/);
  assert.doesNotMatch(pubText,/drive\.google\.com/);
  assert.doesNotMatch(pubText,/footing concr(e|et)/i);
