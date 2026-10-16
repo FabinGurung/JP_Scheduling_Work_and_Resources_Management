@@ -1,0 +1,21 @@
+name: Narayani Drive refresh scheduler (default branch bootstrap)
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+# Only this small scheduler lives on default main. All Skyforge implementation,
+# tests, and Pages deployment remain on kernel-v0.2-open-source-engines.
+permissions:
+  contents: read
+  id-token: write
+  pages: write
+
+jobs:
+  narayani-authorized-refresh:
+    if: ${{ vars.NARAYANI_SYNC_ENABLED == 'true' }}
+    uses: FabinGurung/JP_Scheduling_Work_and_Resources_Management/.github/workflows/narayani-drive-sync.yml@kernel-v0.2-open-source-engines
+    secrets:
+      NARAYANI_WIF_PROVIDER: ${{ secrets.NARAYANI_WIF_PROVIDER }}
+      NARAYANI_SERVICE_ACCOUNT: ${{ secrets.NARAYANI_SERVICE_ACCOUNT }}
+      NARAYANI_DRIVE_SHEET_ID: ${{ secrets.NARAYANI_DRIVE_SHEET_ID }}
