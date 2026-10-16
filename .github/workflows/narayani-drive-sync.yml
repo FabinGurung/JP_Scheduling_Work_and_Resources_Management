@@ -1,0 +1,86 @@
+name: Narayani authenticated Drive-to-WBS refresh
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  pages: write
+
+concurrency:
+  group: jp-scheduling-production-pages
+  cancel-in-progress: true
+
+jobs:
+  authenticated-refresh:
+    if: ${{ vars.NARAYANI_SYNC_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: kernel-v0.2-open-source-engines
+          persist-credentials: false
+      - name: Enforce trusted canonical kernel branch
+        run: |
+          test "$(git branch --show-current)" = "kernel-v0.2-open-source-engines"
+          test ! -e generated/private/narayani/audit.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate connector secret configuration without printing secrets
+        env:
+          WIF: ${{ secrets.NARAYANI_WIF_PROVIDER }}
+          SERVICE_ACCOUNT: ${{ secrets.NARAYANI_SERVICE_ACCOUNT }}
+          SHEET_ID: ${{ secrets.NARAYANI_DRIVE_SHEET_ID }}
+        run: |
+          if [ -z "$WIF" ] || [ -z "$SERVICE_ACCOUNT" ] || [ -z "$SHEET_ID" ]; then
+            echo "::error::Narayani read-only WIF credentials and Drive Sheet ID must be configured."
+            exit 1
+          fi
+      - name: Unit tests and calendar scheduling oracle
+        run: |
+          npm test
+          npm run verify:calendar
+      - name: Build source-pinned synthetic machine and WBS evidence
+        run: |
+          npm run machine:build
+          npm run machine:verify
+          npm run wbs:build
+          npm run wbs:verify
+          npm run pilot:build
+          npm run pilot:verify
+          npm run progress:build
+          npm run progress:verify
+      - id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.NARAYANI_WIF_PROVIDER }}
+          service_account: ${{ secrets.NARAYANI_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/spreadsheets.readonly
+          create_credentials_file: false
+      - name: Read authorized Narayani Sheets and produce public-safe projection
+        env:
+          GOOGLE_OAUTH_ACCESS_TOKEN: ${{ steps.google-auth.outputs.access_token }}
+          NARAYANI_DRIVE_SPREADSHEET_ID: ${{ secrets.NARAYANI_DRIVE_SHEET_ID }}
+          NARAYANI_AUTHENTICATED_SYNC: 'true'
+        run: node scripts/run-narayani-live-sync.mjs
+      - name: Build Pages from sanitized aggregates only
+        env:
+          NARAYANI_AUTHENTICATED_SYNC: 'true'
+        run: npm run site:build
+      - name: Enforce privacy and zero unauthorized work release
+        run: |
+          test -s dist/projects/narayani/progress.json
+          test -s dist/projects/narayani/progress-manifest.json
+          test ! -e dist/generated/private/narayani/audit.json
+          test ! -e dist/machine/project-mappings/narayani-progress-public-v0.1.json
+          test ! -e dist/machine/source-snapshots/wbs_schedule_sample/schedule_seed.json
+          node -e 'const fs=require("fs");const p=JSON.parse(fs.readFileSync("dist/projects/narayani/progress.json"));if(!p.auto_refresh_enabled||p.completed_wbs_activities!==0||p.verified_milestones!==0||p.source_evidence_is_site_approval!==false)process.exit(1)'
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - uses: actions/deploy-pages@v4

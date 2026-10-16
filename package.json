@@ -1,6 +1,6 @@
 {
   "name": "project-controls-kernel",
-  "version": "0.9.0",
+  "version": "1.0.0-rc.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,7 +15,8 @@
     "pilot:verify": "node scripts/run-narayani-pilot.mjs --verify",
     "progress:build": "node scripts/run-narayani-progress.mjs --build",
     "progress:verify": "node scripts/run-narayani-progress.mjs --verify",
-    "progress:private-reconcile": "node scripts/reconcile-private-drive-export.mjs"
+    "progress:private-reconcile": "node scripts/reconcile-private-drive-export.mjs",
+    "sync:narayani:live": "node scripts/run-narayani-live-sync.mjs"
   },
   "engines": {
     "node": ">=20"

@@ -1,3 +1,11 @@
+## v1.0 (staged) — authenticated, read-only Narayani progress synchronization
+
+v1.0 adds a tested *gated* Google Sheets reader using GitHub OIDC → Google Workload Identity Federation → a dedicated read-only Google service account. It dynamically aggregates source-scoped Narayani progress and readiness rows, maps known P6 subwork conservatively, enforces unique event IDs/date bounds/minimum source counts and publishes a sanitized SHA-256-audited `progress.json`. Detailed source rows and identities never enter GitHub Pages.
+
+**Not active by deployment alone:** The WIF provider, service account Viewer sharing, repository Actions secrets and `NARAYANI_SYNC_ENABLED=true` variable require one-time configuration; the default-branch scheduler is gated. The existing one-time v0.9 snapshot remains served until a successful authenticated run. No full P6 activity or structural hold can be automatically approved. [Activation and security SOP](docs/NARAYANI_AUTHENTICATED_SYNC_V1.md).
+
+---
+
 ## v0.9.0 — Narayani Drive-to-WBS source reconciliation
 
 The [Narayani single-page roadmap](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/narayani/) now contains a **public-safe evidence summary** derived from a controlled, read-only 15-Oct-2026 Google Drive reconciliation: 34 dated site diary event records, 4 readiness records, 14 source status DONE (not approved task completions), 4 limited subwork observations mapped to T5030/T4030, and 30 site-specific/unresolved records. No schedule completion, permit, engineer signoff or approved baseline is fabricated.

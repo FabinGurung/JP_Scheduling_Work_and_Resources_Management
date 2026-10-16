@@ -77,11 +77,16 @@ for(const f of ["map.json","manifest.json"]){
 const progressSource=await readFile(join(root,"machine/project-mappings/narayani-progress-public-v0.1.json"),"utf8");
 if(wbsBlob(progressSource)!=="84eaa91483bad21554c2c16868bcc63054ce03a3")throw Error("Unreviewed Narayani progress summary");
 const progressManifest=JSON.parse(await readFile(join(root,"generated/public/narayani-progress/manifest.json"),"utf8"));
+const isLive=process.env.NARAYANI_AUTHENTICATED_SYNC==="true";
 if(progressManifest.format!=="PCK_NARAYANI_PROGRESS_EVIDENCE_MANIFEST_V1"||
  progressManifest.classification!=="PUBLIC_SAFE_COUNTS_ONLY"||
  progressManifest.private_source_rows_included!==false||
- progressManifest.live_connector_active!==false||
- progressManifest.field_authorization!=="NO_APPROVAL")throw Error("Invalid progress publication contract");
+ progressManifest.live_connector_active!==isLive||
+ progressManifest.field_authorization!=="NO_APPROVAL"||
+ (isLive&&(progressManifest.auth_method!=="GITHUB_OIDC_WIF_SERVICE_ACCOUNT_READ_ONLY"||
+   progressManifest.no_private_source_identifiers_in_output!==true||
+   !/^[a-f0-9]{64}$/.test(progressManifest.source_digest_sha256))))
+ throw Error("Invalid progress publication contract");
 const progressData=await readFile(join(root,"generated/public/narayani-progress/progress.json"));
 const progress=JSON.parse(progressData);
 if(progress.format!=="PCK_NARAYANI_PROGRESS_PROJECTION_V1"||
@@ -89,8 +94,14 @@ if(progress.format!=="PCK_NARAYANI_PROGRESS_PROJECTION_V1"||
  progress.project_id!=="PRJ-000007"||
  progress.completed_wbs_activities!==0||
  progress.plan_baseline_approved!==false||
- progress.auto_refresh_enabled!==false||
- progressManifest.output_sha256["progress.json"]!==createHash("sha256").update(progressData).digest("hex"))
+ progress.auto_refresh_enabled!==isLive||
+ (isLive&&(progress.refresh_mode!=="AUTHENTICATED_GITHUB_ACTIONS_DRIVE_READ_ONLY"||
+  progress.evidence_inventory.progress_rows<34||
+  progress.evidence_inventory.readiness_rows<4||
+  progress.task_evidence.some(x=>x.approved_work_complete||x.verified_activity_complete||x.ready_for_next_work)))||
+ progressManifest.output_sha256["progress.json"]!==createHash("sha256").update(progressData).digest("hex")||
+ progressData.toString("utf8").includes("|PRJ-000007|PROGRESS|")||
+ progressData.toString("utf8").includes("SLACK:")||progressData.toString("utf8").includes("drive.google.com"))
  throw Error("Unapproved project progress or SHA mismatch");
 for(const f of ["progress.json","progress-manifest.json"]){
  const src=join(root,"generated/public/narayani-progress",f==="progress-manifest.json"?"manifest.json":f);

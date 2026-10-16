@@ -46,7 +46,26 @@ jobs:
         run: npm run progress:build
       - name: Verify field evidence projection exact readback and privacy guard
         run: npm run progress:verify
+      - name: Authenticate Google WIF only when Narayani sync is enabled
+        if: ${{ vars.NARAYANI_SYNC_ENABLED == 'true' }}
+        id: narayani-google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.NARAYANI_WIF_PROVIDER }}
+          service_account: ${{ secrets.NARAYANI_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/spreadsheets.readonly
+          create_credentials_file: false
+      - name: Reconcile latest authorized Narayani Drive evidence
+        if: ${{ vars.NARAYANI_SYNC_ENABLED == 'true' }}
+        env:
+          GOOGLE_OAUTH_ACCESS_TOKEN: ${{ steps.narayani-google-auth.outputs.access_token }}
+          NARAYANI_DRIVE_SPREADSHEET_ID: ${{ secrets.NARAYANI_DRIVE_SHEET_ID }}
+          NARAYANI_AUTHENTICATED_SYNC: 'true'
+        run: node scripts/run-narayani-live-sync.mjs
       - name: Build public-safe allowlisted site only
+        env:
+          NARAYANI_AUTHENTICATED_SYNC: ${{ vars.NARAYANI_SYNC_ENABLED }}
         run: npm run site:build
       - name: Verify output never exposes fixture or private records
         run: |
