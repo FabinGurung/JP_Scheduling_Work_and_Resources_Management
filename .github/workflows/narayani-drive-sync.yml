@@ -1,6 +1,13 @@
 name: Narayani authenticated Drive-to-WBS refresh
 on:
   workflow_call:
+    secrets:
+      NARAYANI_WIF_PROVIDER:
+        required: false
+      NARAYANI_SERVICE_ACCOUNT:
+        required: false
+      NARAYANI_DRIVE_SHEET_ID:
+        required: false
   workflow_dispatch:
 
 permissions:
