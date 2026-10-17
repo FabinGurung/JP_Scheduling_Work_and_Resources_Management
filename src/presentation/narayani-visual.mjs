@@ -42,7 +42,8 @@ function workday(slot){
  return iso(d)
 }
 function schedule(a){return {start:workday(a.master_start_slot),finish:workday(a.master_finish_exclusive_slot)}}
-function status(a){return a.hold_ids.length?"held":a.reported_subwork_count?"reported":"unverified"}
+function status(a){return a.hold_ids.length||a.mcq_report_state==="BLOCKED"?"held":
+ (a.reported_subwork_count||a.mcq_report_state&&a.mcq_report_state!=="NOT_STARTED")?"reported":"unverified"}
 function setupPicker(){const pick=$("phase-picker");for(const p of model.phases){const o=el("option",p.title);o.value=p.id;pick.append(o)}}
 function coordMap(){
  const maximum=Math.max(...model.activities.map(a=>a.master_finish_exclusive_slot),1);
@@ -140,11 +141,12 @@ function renderDrawer(){
   d.append(holds);
  }
  deps.append(d);
- $("activity-mcq").replaceChildren(el("h3","Activity progress MCQ"),mcqRow("Choose the reported activity state","ACTIVITY",model.activity_options));
+ $("activity-mcq").replaceChildren(el("h3","Activity progress MCQ"), mcqRow("Choose the reported activity state","ACTIVITY",model.activity_options,model.activity_options.find(x=>x.state===a.mcq_report_state)?.code||"A"));
  const checks=$("checklist");checks.replaceChildren(el("h3","Detailed checklist · "+a.checklist.length+" prompts"));
  checks.append(el("p","Answer the relevant question one at a time. Completion answers are reports pending separate acceptance."));
  for(const c of a.checklist){
-  const wrap=mcqRow(c.id+" · "+c.title,c.id,model.checklist_options);
+  const wrap=mcqRow(c.id+" · "+c.title,c.id,model.checklist_options,
+   model.checklist_options.find(x=>x.state===c.status)?.code||"A");
   wrap.insertBefore(el("small",c.guidance),wrap.children[1]);checks.append(wrap);
  }
  $("copy-status").textContent="";
@@ -235,7 +237,7 @@ async function main(){
   if(!r.ok)throw Error("Canonical project model unavailable");
   model=await r.json();
   if(model.format!=="PCK_CONSTRUCTION_VIEW_MODEL_V1"||model.project?.baseline_approved!==false||model.activities?.length!==45||
-     model.links?.length!==49||model.channel?.response_contract!=="PCK_MCQ_V1"||model.activities.some(a=>a.checklist.length!==9))throw Error("Invalid or unapproved project model");
+     model.links?.length!==49||model.channel?.response_contract!=="PCK_MCQ_V1"||model.mcq_summary?.authority!=="REPORTED_ONLY"||model.activities.some(a=>a.checklist.length!==9))throw Error("Invalid or unapproved project model");
   anchor=model.planning_scenario.start_date;
   $("count-nodes").textContent=model.activities.length;$("count-links").textContent=model.links.length;
   $("count-checks").textContent=model.activities.reduce((n,a)=>n+a.checklist.length,0);

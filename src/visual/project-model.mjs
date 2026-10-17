@@ -25,8 +25,14 @@ export function scenarioDate(date,startSlot,workingWeekdays=[1,2,3,4,5,6]){
  while(n<startSlot){dateObject.setUTCDate(dateObject.getUTCDate()+1);if(workingWeekdays.includes(dateObject.getUTCDay()))n++;}
  return dateObject.toISOString().slice(0,10);
 }
-export function compileVisualModel(pilot,progress,cfg){
+export function compileVisualModel(pilot,progress,cfg,reported={
+ format:"PCK_PUBLIC_MCQ_STATE_V1",classification:"PUBLIC_SAFE_REPORTED_STATES_ONLY",
+ project_id:"PRJ-000007",authority:"REPORTED_ONLY_NOT_ENGINEERING_APPROVED",version:0,entries:[]
+}){
  validateChecklistConfig(cfg);
+ if(reported?.format!=="PCK_PUBLIC_MCQ_STATE_V1"||reported.classification!=="PUBLIC_SAFE_REPORTED_STATES_ONLY"||
+  reported.project_id!=="PRJ-000007"||reported.authority!=="REPORTED_ONLY_NOT_ENGINEERING_APPROVED"||
+  !Number.isSafeInteger(reported.version)||reported.version<0||!Array.isArray(reported.entries)||reported.entries.length>405+45)fail("MCQ sanitized state authority");
  if(pilot?.format!=="PCK_PROJECT_WBS_ADOPTION_V1"||pilot.classification!=="PUBLIC_SAFE_DERIVED_PLANNING_ONLY"||pilot.project?.project_id!=="PRJ-000007"||pilot.activities?.length!==45||pilot.milestones?.length!==7||pilot.phases?.length!==10||pilot.project.schedule_baseline_approved!==false)fail("master WBS reference");
  if(progress?.format!=="PCK_NARAYANI_PROGRESS_PROJECTION_V1"||progress.classification!=="PUBLIC_SAFE_COUNTS_ONLY"||progress.project_id!=="PRJ-000007"||progress.completed_wbs_activities!==0||progress.verified_milestones!==0||progress.plan_baseline_approved!==false)fail("field progress authority");
  const phases=pilot.phases.map((p,i)=>({id:p.wbs_code,title:p.name,index:i+1,review_state:p.phase_review}));
@@ -49,8 +55,25 @@ export function compileVisualModel(pilot,progress,cfg){
     reported_subwork_count:report?.reported_subwork_entries??0,
     hold_ids:[...a.hold_ids],checklist,critical_in_master:!!a.master_critical};
  });
- if(activities.reduce((n,a)=>n+a.predecessor_ids.length,0)!==49||activities.some(a=>a.predecessor_ids.some(id=>!ids.has(id))))fail("invalid dependency network");
- if(activities.some(a=>a.checklist.length!==9||a.checklist.some(q=>!safe(q.title)||q.status!=="NOT_REPORTED")))fail("invalid checklists");
+ const seenMcq=new Set();
+ for(const e of reported.entries){
+  const keys=Object.keys(e).sort().join(",");
+  if(keys!=="activity_id,check_id,reported_day,state"||!iso(e.reported_day)||!safe(e.activity_id)||!safe(e.check_id)||!safe(e.state))fail("MCQ event projection extra fields");
+  const a=activities.find(x=>x.id===e.activity_id);if(!a)fail("orphan MCQ activity");
+  const key=e.activity_id+"|"+e.check_id;
+  if(seenMcq.has(key))fail("duplicate public MCQ state key");
+  seenMcq.add(key);
+  if(e.check_id==="ACTIVITY"){
+   if(!cfg.activity_response_options.some(x=>x.state===e.state))fail("unsupported activity MCQ state");
+   a.mcq_report_state=e.state;
+  }else{
+   const check=a.checklist.find(x=>x.id===e.check_id);
+   if(!check||!cfg.checklist_response_options.some(x=>x.state===e.state))fail("unsupported checklist MCQ state");
+   check.status=e.state;
+  }
+ }
+  if(activities.reduce((n,a)=>n+a.predecessor_ids.length,0)!==49||activities.some(a=>a.predecessor_ids.some(id=>!ids.has(id))))fail("invalid dependency network");
+ if(activities.some(a=>a.checklist.length!==9||a.checklist.some(q=>!safe(q.title)||!["NOT_REPORTED","NOT_DONE","IN_PROGRESS","REPORTED_DONE","BLOCKED","NOT_APPLICABLE_REQUESTED"].includes(q.status))))fail("invalid checklists");
  const links=activities.flatMap(a=>a.predecessor_ids.map(x=>({from:x,to:a.id,kind:"FS_MASTER_TEMPLATE",actual_release:false})));
  const result={
   format:MODEL_FORMAT,classification:"PUBLIC_SAFE_PLANNING_SCENARIO",
@@ -58,7 +81,8 @@ export function compileVisualModel(pilot,progress,cfg){
    statutory_clearance_verified:false,source_status:"STAGED_TEMPLATE_WITH_GOVERNED_PROGRESS_AGGREGATE"},
   planning_scenario:{start_date:cfg.default_scenario_start,timezone:cfg.timezone,working_weekdays:cfg.working_weekdays,
    horizon_months:3,label:cfg.scenario_label,approved_dates:false},
-  channel:{name:cfg.slack_channel_label,response_contract:"PCK_MCQ_V1",ingestion_state:"MANUAL_CHATGPT_RECONCILIATION_PENDING"},
+  channel:{name:cfg.slack_channel_label,response_contract:"PCK_MCQ_V1",ingestion_state:"GOVERNED_PRIVATE_LEDGER_RECONCILIATION_PENDING"},
+  mcq_summary:{reconciled_reported_answers:reported.entries.length,public_state_revision:reported.version,authority:"REPORTED_ONLY"},
   activity_options:cfg.activity_response_options,checklist_options:cfg.checklist_response_options,
   phases,activities,links,milestones:pilot.milestones.map(x=>({id:x.activity_id,phase_id:x.wbs_code,name:x.name,verified_complete:false})),
   hold_points:pilot.hold_points.map(x=>({id:x.id,title:x.title,authority:x.authority,linked_activity_ids:x.activity_ids})),
@@ -72,7 +96,7 @@ export function compileVisualModel(pilot,progress,cfg){
  return {model:result,files:{"project-model.json":content},manifest:{
   format:"PCK_VISUAL_PROJECT_MANIFEST_V1",model_format:MODEL_FORMAT,classification:result.classification,
   checks:{"activities":45,"links":49,"checklist_items":405,"milestones":7},
-  source_digests_sha256:{config:hash(stringify(cfg)),pilot:hash(stringify(pilot)),progress:hash(stringify(progress))},
+  source_digests_sha256:{config:hash(stringify(cfg)),pilot:hash(stringify(pilot)),progress:hash(stringify(progress)),mcq_state:hash(stringify(reported))},
   outputs_sha256:{"project-model.json":hash(content)},site_approval:false,private_input_included:false
  }};
 }
@@ -82,6 +106,9 @@ export function validateVisualModel(m){
  const ids=new Set(m.activities.map(a=>a.id));
  if(ids.size!==45||m.links.some(l=>!ids.has(l.from)||!ids.has(l.to)||l.actual_release!==false))fail("invalid dependency");
  if(m.activities.some(a=>a.checklist?.length!==9||a.status!=="UNVERIFIED"||a.approval_state!=="NO_APPROVED_ACTIVITY_COMPLETION"||!iso(a.scenario_start)||!iso(a.scenario_finish)))fail("status/calendar invariant");
+ if(m.mcq_summary?.authority!=="REPORTED_ONLY"||!Number.isInteger(m.mcq_summary.reconciled_reported_answers)||
+  m.activities.some(a=>a.checklist.some(c=>!["NOT_REPORTED","NOT_DONE","IN_PROGRESS","REPORTED_DONE","BLOCKED","NOT_APPLICABLE_REQUESTED"].includes(c.status)))||
+  m.activities.some(a=>a.mcq_report_state&&!["NOT_STARTED","IN_PROGRESS","REPORTED_COMPLETE","BLOCKED","NEEDS_CLARIFICATION"].includes(a.mcq_report_state)))fail("unauthorized MCQ state promotion");
  if(m.channel?.response_contract!=="PCK_MCQ_V1"||m.evidence_summary?.approved_complete_activities!==0)fail("MCQ authority");
  return true;
 }

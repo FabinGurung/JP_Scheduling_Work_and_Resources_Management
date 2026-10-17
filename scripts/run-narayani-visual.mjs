@@ -9,7 +9,9 @@ const shaGit=x=>createHash("sha1").update("blob "+Buffer.byteLength(x)+"\0").upd
 if(shaGit(cfgRaw)!=="3bdfed18678f183c47d20b6d3c3c1c6f9bc1d21f")throw Error("New checklist template revision must be reviewed");
 const pilot=JSON.parse(await read("generated/public/narayani-pilot/map.json"));
 const progress=JSON.parse(await read("generated/public/narayani-progress/progress.json"));
-const compiled=compileVisualModel(pilot,progress,JSON.parse(cfgRaw));
+const reportedRaw=await read("machine/project-mappings/narayani-mcq-public-state.json");
+const reported=JSON.parse(reportedRaw);
+const compiled=compileVisualModel(pilot,progress,JSON.parse(cfgRaw),reported);
 const files={...compiled.files,"visual-manifest.json":JSON.stringify(compiled.manifest,null,2)+"\n"};
 if(process.argv.includes("--build")){
  await mkdir(out,{recursive:true});

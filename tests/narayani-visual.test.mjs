@@ -20,7 +20,7 @@ test("one canonical projected model powers 45 WBS nodes, 49 edges, 405 MCQ check
  assert.equal(model.phases.length,10);
  assert.equal(model.project.baseline_approved,false);
  assert.equal(model.planning_scenario.approved_dates,false);
- assert.equal(model.channel.ingestion_state,"MANUAL_CHATGPT_RECONCILIATION_PENDING");
+ assert.equal(model.channel.ingestion_state,"GOVERNED_PRIVATE_LEDGER_RECONCILIATION_PENDING");
  assert.equal(manifest.checks.checklist_items,405);
  assert.equal(manifest.private_input_included,false);
  assert.equal(validateVisualModel(model),true);
@@ -54,6 +54,23 @@ test("unapproved project progress and malformed template fail closed",()=>{
  assert.throws(()=>compileVisualModel(pilot,progress,bad),/calendar\/checklist contract/);
  const changed=structuredClone(progress);changed.completed_wbs_activities=1;
  assert.throws(()=>compileVisualModel(pilot,changed,cfg),/field progress authority/);
+});
+test("sanitized MCQ answers illuminate only reported visual state, never engineering approval",()=>{
+ const a=pilot.activities[0].activity_id;
+ const record={format:"PCK_PUBLIC_MCQ_STATE_V1",classification:"PUBLIC_SAFE_REPORTED_STATES_ONLY",
+ project_id:"PRJ-000007",authority:"REPORTED_ONLY_NOT_ENGINEERING_APPROVED",version:1,
+ entries:[{activity_id:a,check_id:"ACTIVITY",reported_day:"2026-10-17",state:"REPORTED_COMPLETE"},
+ {activity_id:a,check_id:a+"-C01",reported_day:"2026-10-17",state:"REPORTED_DONE"}]};
+ const result=compileVisualModel(pilot,progress,cfg,record).model;
+ assert.equal(result.activities[0].mcq_report_state,"REPORTED_COMPLETE");
+ assert.equal(result.activities[0].checklist[0].status,"REPORTED_DONE");
+ assert.equal(result.activities[0].approval_state,"NO_APPROVED_ACTIVITY_COMPLETION");
+ assert.equal(result.project.baseline_approved,false);
+ assert.equal(result.mcq_summary.reconciled_reported_answers,2);
+ const bad=structuredClone(record);bad.entries[1].private_message_link="https://slack.com/private";
+ assert.throws(()=>compileVisualModel(pilot,progress,cfg,bad),/extra fields/);
+ const dup=structuredClone(record);dup.entries.push({...dup.entries[0]});
+ assert.throws(()=>compileVisualModel(pilot,progress,cfg,dup),/duplicate public MCQ/);
 });
 test("single-file browser experience renders graph, Gantt, calendar, MCQ from project-model",()=>{
  const page=read("projects/narayani/visual.html");

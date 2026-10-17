@@ -1,0 +1,8 @@
+{
+  "format": "PCK_PUBLIC_MCQ_STATE_V1",
+  "classification": "PUBLIC_SAFE_REPORTED_STATES_ONLY",
+  "project_id": "PRJ-000007",
+  "authority": "REPORTED_ONLY_NOT_ENGINEERING_APPROVED",
+  "version": 0,
+  "entries": []
+}
