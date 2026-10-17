@@ -108,5 +108,32 @@ for(const f of ["progress.json","progress-manifest.json"]){
  const dst=join(out,"projects/narayani",f);await mkdir(dirname(dst),{recursive:true});
  await copyFile(src,dst);
 }
+// One public-safe JSON is the sole canonical projection for constellation,
+// animated Gantt, calendar and the MCQ checklist drawer.
+const visualConfig=await readFile(join(root,"machine/project-mappings/narayani-checklist-config-v0.1.json"),"utf8");
+if(wbsBlob(visualConfig)!=="3bdfed18678f183c47d20b6d3c3c1c6f9bc1d21f")
+ throw Error("Checklist config unreviewed; publication halted");
+const visualManifest=JSON.parse(await readFile(join(root,"generated/public/narayani-visual/visual-manifest.json"),"utf8"));
+const modelBytes=await readFile(join(root,"generated/public/narayani-visual/project-model.json"));
+const visualModel=JSON.parse(modelBytes);
+if(visualManifest.format!=="PCK_VISUAL_PROJECT_MANIFEST_V1"||
+ visualManifest.classification!=="PUBLIC_SAFE_PLANNING_SCENARIO"||
+ visualManifest.private_input_included!==false||visualManifest.site_approval!==false||
+ visualManifest.outputs_sha256["project-model.json"]!==createHash("sha256").update(modelBytes).digest("hex")||
+ visualModel.format!=="PCK_CONSTRUCTION_VIEW_MODEL_V1"||
+ visualModel.project?.baseline_approved!==false||
+ visualModel.planning_scenario?.approved_dates!==false||
+ visualModel.activities?.length!==45||visualModel.links?.length!==49||
+ visualModel.activities.reduce((n,a)=>n+a.checklist.length,0)!==405||
+ visualModel.activities.some(a=>a.approval_state!=="NO_APPROVED_ACTIVITY_COMPLETION")||
+ modelBytes.toString("utf8").includes("|PRJ-000007|PROGRESS|")||
+ modelBytes.toString("utf8").includes("drive.google.com")||
+ modelBytes.toString("utf8").includes("C0CA3HYNP89"))
+ throw Error("Canonical visual model safety or source signature failed");
+await cp("projects/narayani/visual.html");
+for(const file of ["project-model.json","visual-manifest.json"]){
+ const dst=join(out,"projects/narayani",file);await mkdir(dirname(dst),{recursive:true});
+ await copyFile(join(root,"generated/public/narayani-visual",file),dst);
+}
 await cp("machine/index.html");
 console.log("Public Pages allowlist PASS: no repository-wide upload, no private engineering files");

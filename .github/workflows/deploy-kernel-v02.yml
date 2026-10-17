@@ -63,6 +63,10 @@ jobs:
           NARAYANI_DRIVE_SPREADSHEET_ID: ${{ secrets.NARAYANI_DRIVE_SHEET_ID }}
           NARAYANI_AUTHENTICATED_SYNC: 'true'
         run: node scripts/run-narayani-live-sync.mjs
+      - name: Generate canonical visual project JSON for constellation and calendar
+        run: npm run visual:build
+      - name: Verify deterministic 45-node model and 405 MCQ checklists
+        run: npm run visual:verify
       - name: Build public-safe allowlisted site only
         env:
           NARAYANI_AUTHENTICATED_SYNC: ${{ vars.NARAYANI_SYNC_ENABLED }}
@@ -80,6 +84,10 @@ jobs:
           test -s dist/projects/narayani/index.html
           test -s dist/projects/narayani/map.json
           test -s dist/projects/narayani/progress.json
+          test -s dist/projects/narayani/visual.html
+          test -s dist/projects/narayani/project-model.json
+          test -s dist/projects/narayani/visual-manifest.json
+          test ! -e dist/machine/project-mappings/narayani-checklist-config-v0.1.json
           test -s dist/projects/narayani/progress-manifest.json
           test ! -e dist/machine/project-mappings/narayani-progress-public-v0.1.json
           test ! -e dist/generated/private/narayani/audit.json

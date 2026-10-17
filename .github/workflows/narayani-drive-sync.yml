@@ -74,6 +74,10 @@ jobs:
           NARAYANI_DRIVE_SPREADSHEET_ID: ${{ secrets.NARAYANI_DRIVE_SHEET_ID }}
           NARAYANI_AUTHENTICATED_SYNC: 'true'
         run: node scripts/run-narayani-live-sync.mjs
+      - name: Build canonical visual graph, Gantt and calendar from latest progress aggregate
+        run: npm run visual:build
+      - name: Verify visual state and source readback
+        run: npm run visual:verify
       - name: Build Pages from sanitized aggregates only
         env:
           NARAYANI_AUTHENTICATED_SYNC: 'true'
@@ -81,6 +85,8 @@ jobs:
       - name: Enforce privacy and zero unauthorized work release
         run: |
           test -s dist/projects/narayani/progress.json
+          test -s dist/projects/narayani/project-model.json
+          test -s dist/projects/narayani/visual.html
           test -s dist/projects/narayani/progress-manifest.json
           test ! -e dist/generated/private/narayani/audit.json
           test ! -e dist/machine/project-mappings/narayani-progress-public-v0.1.json

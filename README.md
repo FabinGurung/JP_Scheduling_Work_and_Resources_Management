@@ -1,3 +1,13 @@
+## v1.1 visual preview — graph-first field engineering workflow
+
+[Launch Narayani Constellation](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/narayani/visual.html): one `project-model.json` supports an animated SVG activity graph (45 activities and 49 dependencies), Gantt, rolling three-month calendar, seven milestones, and 405 activity-level checklist prompts (nine per activity). The calendar uses an **illustrative** six-day week starting 2026-10-19; it is NOT the approved construction schedule. Editing the scenario date in the browser never alters authority.
+
+The field engineer copies the provided `P=PRJ-000007 | A=T5030 | C=T5030-C01 | Q=B` multiple-choice response into a dedicated **private Slack channel** `#site-progress-mcq`. This initial release provides the structured message contract and parser, **not** an unattended Slack-to-GitHub progress writer. ChatGPT may reconcile replies using available Slack tools upon explicit execution, with evidence and validation; reported work never becomes an engineering signoff automatically. The original v1.0 OIDC Drive sync remains unactivated.
+
+Raw hierarchy + checklists come from pinned, reviewed project mapping inputs and the visual config. A deterministic CI build produces ONE allowlisted `project-model.json` with a SHA-256 manifest. The private event ledger, when introduced, should be append-only JSONL in governed private Drive or normalized SQLite on a private server; never write sensitive Slack messages into public GitHub Pages.
+
+---
+
 ## v1.0 (staged) — authenticated, read-only Narayani progress synchronization
 
 v1.0 adds a tested *gated* Google Sheets reader using GitHub OIDC → Google Workload Identity Federation → a dedicated read-only Google service account. It dynamically aggregates source-scoped Narayani progress and readiness rows, maps known P6 subwork conservatively, enforces unique event IDs/date bounds/minimum source counts and publishes a sanitized SHA-256-audited `progress.json`. Detailed source rows and identities never enter GitHub Pages.

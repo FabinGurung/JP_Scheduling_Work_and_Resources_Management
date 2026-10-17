@@ -1,0 +1,188 @@
+{
+  "format": "PCK_VISUAL_CHECKLIST_CONFIG_V1",
+  "classification": "PUBLIC_SAFE_TEMPLATE_NOT_SITE_INSTRUCTIONS",
+  "project_id": "PRJ-000007",
+  "default_scenario_start": "2026-10-19",
+  "timezone": "Asia/Kathmandu",
+  "working_weekdays": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "horizon_months": 3,
+  "scenario_label": "Illustrative 6-day workweek only; original P6 template durations, not approved site dates",
+  "slack_channel_label": "#site-progress-mcq",
+  "activity_response_options": [
+    {
+      "code": "A",
+      "state": "NOT_STARTED",
+      "label": "Not started"
+    },
+    {
+      "code": "B",
+      "state": "IN_PROGRESS",
+      "label": "In progress"
+    },
+    {
+      "code": "C",
+      "state": "REPORTED_COMPLETE",
+      "label": "Reported complete (unverified)"
+    },
+    {
+      "code": "D",
+      "state": "BLOCKED",
+      "label": "Blocked / hold"
+    },
+    {
+      "code": "E",
+      "state": "NEEDS_CLARIFICATION",
+      "label": "Need clarification"
+    }
+  ],
+  "checklist_response_options": [
+    {
+      "code": "A",
+      "state": "NOT_DONE",
+      "label": "Not yet done"
+    },
+    {
+      "code": "B",
+      "state": "IN_PROGRESS",
+      "label": "Being done"
+    },
+    {
+      "code": "C",
+      "state": "REPORTED_DONE",
+      "label": "Reported done (not QA acceptance)"
+    },
+    {
+      "code": "D",
+      "state": "BLOCKED",
+      "label": "Blocked"
+    },
+    {
+      "code": "E",
+      "state": "NOT_APPLICABLE_REQUESTED",
+      "label": "Request N/A review"
+    }
+  ],
+  "core_checks": [
+    {
+      "suffix": "01",
+      "title": "Check current approved scope and drawing revision",
+      "type": "PRECONDITION",
+      "help": "Record approved drawing/scope reference and any unresolved changes."
+    },
+    {
+      "suffix": "02",
+      "title": "Confirm predecessor work and outstanding holds",
+      "type": "PRECONDITION",
+      "help": "Verify necessary prior inspection, access and engineering release."
+    },
+    {
+      "suffix": "03",
+      "title": "Brief responsible crew and confirm work method",
+      "type": "PREPARATION",
+      "help": "Record supervisor, team, work area, work method and safe access."
+    },
+    {
+      "suffix": "04",
+      "title": "Confirm materials, tools and equipment are available",
+      "type": "PREPARATION",
+      "help": "Check actual quantities and equipment against approved plan."
+    },
+    {
+      "suffix": "05",
+      "title": "Report activity-specific field execution and quantities",
+      "type": "EXECUTION",
+      "help": "Enter observed location, grid, quantities and supporting reference."
+    },
+    {
+      "suffix": "06",
+      "title": "Complete quality/safety checks and evidence references",
+      "type": "QA_PENDING",
+      "help": "Site-report completion alone cannot certify acceptance or safety."
+    },
+    {
+      "suffix": "07",
+      "title": "Record handoff, defects and authorized disposition",
+      "type": "HANDOFF",
+      "help": "Handover requires the appropriate responsible person's acceptance."
+    }
+  ],
+  "per_phase_checks": {
+    "1000": {
+      "title": "Planning and roles",
+      "checks": [
+        "Confirm responsible site and management contacts",
+        "Confirm project-specific construction milestones and records register"
+      ]
+    },
+    "2000": {
+      "title": "Design and drawings",
+      "checks": [
+        "Identify effective drawing revision and interfaces",
+        "Record consultant clarification and revisions required"
+      ]
+    },
+    "3000": {
+      "title": "Regulatory controls",
+      "checks": [
+        "Verify statutory submissions and actual permit document",
+        "Track authority review, conditions and approved status"
+      ]
+    },
+    "4000": {
+      "title": "Site readiness",
+      "checks": [
+        "Confirm site limits, benchmark and setting-out evidence",
+        "Check excavation boundaries, access, utilities and safety readiness"
+      ]
+    },
+    "5000": {
+      "title": "Substructure",
+      "checks": [
+        "Identify footing or foundation grid and inspection requirements",
+        "Record concrete/rebar/formwork evidence and engineering hold clearance"
+      ]
+    },
+    "6000": {
+      "title": "Superstructure",
+      "checks": [
+        "Identify level, member and structural drawing reference",
+        "Record reinforcement/formwork checks before authorized pour"
+      ]
+    },
+    "7000": {
+      "title": "Envelope",
+      "checks": [
+        "Locate elevation and weatherproofing interface",
+        "Track mock-up, substrate acceptance and water ingress checks"
+      ]
+    },
+    "8000": {
+      "title": "MEP",
+      "checks": [
+        "Identify service route and structural clashes",
+        "Confirm required pre-closure inspections, tests and as-built evidence"
+      ]
+    },
+    "9000": {
+      "title": "Interior fit-out",
+      "checks": [
+        "Verify room/finish schedules and preceding wet-work",
+        "Track setting-out, substrate conditions and finish quality"
+      ]
+    },
+    "10000": {
+      "title": "Commissioning and handover",
+      "checks": [
+        "Collect test certificates, punch list and closeout references",
+        "Confirm training, handover documents and signed acceptance"
+      ]
+    }
+  }
+}
