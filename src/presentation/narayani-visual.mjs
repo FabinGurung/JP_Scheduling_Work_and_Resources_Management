@@ -7,7 +7,7 @@ let model=null,selected=null,activeTab="constellation",phaseFilter="ALL",term=""
 let viewport={x:0,y:0,w:1600,h:840};
 let previewSlot=-1,playTimer=null,previewMax=80;
 function computePreviewMax(){
- const end=iso(addMonths(anchor,3));
+ const end=iso(plusMonthsExact(anchor,3));
  let n=0;while(n<110&&workday(n)<end)n++;
  previewMax=Math.min(n,110);
  $("timeline-position").max=String(previewMax);
@@ -36,6 +36,22 @@ const clean=x=>String(x).replace(/^Milestone:\s*/,"");
 function utc(x){return new Date(x+"T00:00:00Z")}
 function addMonths(x,n){const d=utc(x);d.setUTCDate(1);d.setUTCMonth(d.getUTCMonth()+n);return d}
 function iso(d){return d.toISOString().slice(0,10)}
+function plusMonthsExact(date,n){
+ const d=utc(date);const t=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+n,1));
+ t.setUTCDate(Math.min(d.getUTCDate(),new Date(Date.UTC(t.getUTCFullYear(),t.getUTCMonth()+1,0)).getUTCDate()));
+ return t;
+}
+function visibleDayLabels(items){
+ if(items.length===0)return [];
+ if(items.length<=2)return items.map(a=>a.calendar_label);
+ const phases=new Set(items.map(a=>a.phase_id));
+ if(phases.size===1){
+  const phase=model.phases.find(p=>p.id===items[0].phase_id);
+  const short=phase?.title?.replace(/^\d{4,5}\s*[—–-]?\s*/,"").replace(/\s*&\s*/g," + ").replace(/\s+(?:and|works)\s+/gi," ").trim()||"Phase";
+  return [short,items.length+" related activities"];
+ }
+ return [items[0].calendar_label,"+"+(items.length-1)+" additional activities"];
+}
 function workday(slot){
  const d=utc(anchor);while(d.getUTCDay()===0)d.setUTCDate(d.getUTCDate()+1);
  let i=0;while(i<slot){d.setUTCDate(d.getUTCDate()+1);if(d.getUTCDay()!==0)i++}
@@ -180,9 +196,9 @@ function renderCalendar(){
  const out=$("calendar-months");out.replaceChildren();
  // Four calendar-page blocks cover an actual rolling 3-month interval, including
  // the partial beginning and ending months, anchored at the scenario start.
- const boundary=addMonths(anchor,3),start=addMonths(anchor,monthOffset),end=addMonths(iso(start),3);
+ const start=plusMonthsExact(anchor,monthOffset),end=plusMonthsExact(iso(start),model.planning_scenario.horizon_months),boundary=end;
  for(let k=0;k<4;k++){
-  const mo=new Date(start);mo.setUTCMonth(start.getUTCMonth()+k);
+  const mo=addMonths(iso(start),k);
   const y=mo.getUTCFullYear(),m=mo.getUTCMonth(),numDays=new Date(Date.UTC(y,m+1,0)).getUTCDate();
   const card=el("section",undefined,"month");
   card.append(el("h3",mo.toLocaleDateString("en-US",{timeZone:"UTC",month:"long",year:"numeric"})));
@@ -191,12 +207,23 @@ function renderCalendar(){
   for(let blank=0;blank<mo.getUTCDay();blank++)grid.append(el("div","","weekday"));
   for(let date=1;date<=numDays;date++){
    const day=iso(new Date(Date.UTC(y,m,date)));
-   const inWindow=day>=iso(start)&&day<iso(end)&&day>=anchor || monthOffset!==0&&day>=iso(start)&&day<iso(end);
+   const inWindow=day>=iso(start)&&day<iso(end);
    const work=model.activities.filter(a=>activeOnDay(a,day));
    const b=el("button",undefined,"day"+(!inWindow?" inactive":"")+(day===anchor?" current":""));
-   b.type="button";b.disabled=!inWindow;b.append(el("span",String(date)));
-   const n=el("span",work.length+" work","count");if(work.some(a=>a.hold_ids.length))n.classList.add("red");b.append(n);
-   b.title=day+" · "+work.length+" template activities";b.addEventListener("click",()=>showDay(day,work));grid.append(b);
+   b.type="button";b.disabled=!inWindow;
+   b.append(el("span",String(date),"day-number"));
+   const labels=visibleDayLabels(work);
+   const box=el("span",undefined,"day-work");
+   for(const title of labels){
+    const label=el("span",title,"day-label");
+    if(work.some(a=>a.hold_ids.length))label.classList.add("held");
+    if(work.some(a=>a.mcq_report_state==="REPORTED_COMPLETE"||a.mcq_report_state==="IN_PROGRESS"))label.classList.add("reported");
+    box.append(label);
+   }
+   if(work.length===0&&inWindow)box.append(el("span","No task","day-empty"));
+   b.append(box);
+   b.title=day+(work.length?"\n"+work.map(a=>a.id+" — "+a.title).join("\n"):" — no template tasks");
+   b.addEventListener("click",()=>showDay(day,work));grid.append(b);
   }
   card.append(grid);out.append(card);
  }
@@ -204,7 +231,13 @@ function renderCalendar(){
 }
 function showDay(day,items){
  const box=$("day-readout");box.replaceChildren(el("strong",day+" — "+items.length+" possible activities in synthetic scenario. "));
- for(const a of items){const b=el("button",a.id+" · "+clean(a.title),"btn");b.style.margin="4px";b.addEventListener("click",()=>choose(a.id));box.append(b)}
+ for(const a of items){
+  const reported=a.mcq_report_state?" [reported: "+a.mcq_report_state.replaceAll("_"," ").toLowerCase()+"]":"";
+  const blocked=a.hold_ids.length?" [hold]":"";
+  const b=el("button",a.id+" · "+clean(a.title)+reported+blocked,"btn");
+  b.title="Phase "+a.phase_id+" · Full original WBS activity · "+schedule(a).start+" → "+schedule(a).finish;
+  b.style.margin="4px";b.addEventListener("click",()=>choose(a.id));box.append(b)
+ }
  if(items.length===0)box.append(el("span","No master activity occupies this date."));
 }
 function tab(to){

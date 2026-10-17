@@ -3,6 +3,13 @@
   "classification": "PUBLIC_SAFE_REPORTED_STATES_ONLY",
   "project_id": "PRJ-000007",
   "authority": "REPORTED_ONLY_NOT_ENGINEERING_APPROVED",
-  "version": 0,
-  "entries": []
+  "version": 2,
+  "entries": [
+    {
+      "activity_id": "T1010",
+      "check_id": "ACTIVITY",
+      "reported_day": "2026-10-18",
+      "state": "REPORTED_COMPLETE"
+    }
+  ]
 }

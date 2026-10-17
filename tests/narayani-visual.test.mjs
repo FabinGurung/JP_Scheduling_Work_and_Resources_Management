@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {compileVisualModel,validateVisualModel,scenarioDate,parseMcqReply} from "../src/visual/project-model.mjs";
+import {compileVisualModel,validateVisualModel,scenarioDate,horizonEndExclusive,parseMcqReply} from "../src/visual/project-model.mjs";
 import {buildNarayaniPilot} from "../src/machine/narayani-pilot.mjs";
 import {buildPublicProgress} from "../src/machine/narayani-progress.mjs";
 const read=p=>readFileSync(new URL("../"+p,import.meta.url),"utf8");
@@ -29,6 +29,12 @@ test("one canonical projected model powers 45 WBS nodes, 49 edges, 405 MCQ check
 test("three-month calendar uses hypothetical work slots and six-day scenario",()=>{
  const {model}=compile();
  assert.equal(model.planning_scenario.horizon_months,3);
+ assert.equal(horizonEndExclusive("2026-10-19",3),"2027-01-19");
+ assert.equal(horizonEndExclusive("2027-01-31",1),"2027-02-28");
+ assert.equal(model.planning_scenario.end_exclusive,"2027-01-19");
+ assert.equal(model.activities[0].calendar_label,"Client consultation");
+ assert.equal(model.activities.find(x=>x.id==="T5030").calendar_label,"Footing RCC");
+ assert.ok(model.activities.every(x=>typeof x.calendar_label==="string"&&x.calendar_label.length>3));
  assert.equal(scenarioDate("2026-10-18",0),"2026-10-19"); // Sunday
  assert.equal(scenarioDate("2026-10-19",6),"2026-10-26"); // Skip Sunday
  assert.equal(model.activities.find(x=>x.master_start_slot===0).scenario_start,"2026-10-19");
@@ -72,6 +78,18 @@ test("sanitized MCQ answers illuminate only reported visual state, never enginee
  const dup=structuredClone(record);dup.entries.push({...dup.entries[0]});
  assert.throws(()=>compileVisualModel(pilot,progress,cfg,dup),/duplicate public MCQ/);
 });
+test("user latest T1010 answer C supersedes earlier B in public reported state, never as approval",()=>{
+ const state=JSON.parse(read("machine/project-mappings/narayani-mcq-public-state.json"));
+ assert.equal(state.version,2);
+ assert.deepEqual(state.entries,[{activity_id:"T1010",check_id:"ACTIVITY",reported_day:"2026-10-18",state:"REPORTED_COMPLETE"}]);
+ const {model}=compileVisualModel(pilot,progress,cfg,state);
+ const a=model.activities.find(x=>x.id==="T1010");
+ assert.equal(a.mcq_report_state,"REPORTED_COMPLETE");
+ assert.equal(a.approval_state,"NO_APPROVED_ACTIVITY_COMPLETION");
+ assert.equal(model.evidence_summary.approved_complete_activities,0);
+ assert.equal(model.mcq_summary.authority,"REPORTED_ONLY");
+ assert.doesNotMatch(JSON.stringify(model),/C0CA3HYNP89|1792261186|U0BQDRXK96E|slack.com/);
+});
 test("single-file browser experience renders graph, Gantt, calendar, MCQ from project-model",()=>{
  const page=read("projects/narayani/visual.html");
  const ui=read("src/presentation/narayani-visual.mjs");
@@ -86,6 +104,10 @@ test("single-file browser experience renders graph, Gantt, calendar, MCQ from pr
  assert.match(ui,/function playPreview/);
  assert.match(ui,/previewSlot/);
  assert.match(ui,/gantt-playhead/);
+ assert.match(ui,/visibleDayLabels/);
+ assert.match(ui,/day-label/);
+ assert.match(ui,/plusMonthsExact/);
+ assert.doesNotMatch(ui,/work.length\+" work"/);
  assert.doesNotMatch(ui,/fetch\("\.\/map\.json"/);
  assert.doesNotMatch(ui,/fetch\("\.\/progress\.json"/);
  assert.doesNotMatch(page,/drive\.google\.com|slack\.com\/archives\//);

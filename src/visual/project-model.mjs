@@ -5,6 +5,62 @@ const hash=x=>createHash("sha256").update(x).digest("hex");
 const stringify=x=>JSON.stringify(x,null,2)+"\n";
 const safe=x=>typeof x==="string"&&x.length>0&&x.length<=250&&!/[<>]/.test(x);
 const iso=x=>typeof x==="string"&&/^\d{4}-\d\d-\d\d$/.test(x)&&!Number.isNaN(Date.parse(x+"T00:00:00Z"));
+// Editorially shortened labels are traceable to each original master WBS activity.
+// The complete original name remains in title, Gantt, day detail and node drawer.
+const CALENDAR_LABELS={
+  "T1010": "Client consultation",
+  "T1020": "Site survey",
+  "T1030": "Budget + charter",
+  "M1040": "Project kickoff",
+  "T2010": "Concept design",
+  "T2020": "Schematic design",
+  "T2030": "Structural design",
+  "T2040": "MEP design",
+  "T2050": "Construction drawings",
+  "M2060": "Design freeze",
+  "T3010": "Zoning clearance",
+  "T3020": "Drawing submission",
+  "T3030": "Permit revisions",
+  "T3040": "Building permits",
+  "M3050": "Permits milestone",
+  "T4010": "Site mobilization",
+  "T4020": "Site clearing",
+  "T4030": "Building set-out",
+  "T5010": "Excavation",
+  "T5030": "Footing RCC",
+  "T5040": "Below-grade waterproofing",
+  "T5050": "Ground slab",
+  "M5060": "Substructure milestone",
+  "T6010": "Columns + walls",
+  "T6020": "Suspended slabs",
+  "T6030": "Roof framing",
+  "M6040": "Superstructure milestone",
+  "T7010": "Facade masonry",
+  "T7020": "Roof waterproofing",
+  "T7030": "Windows + doors",
+  "M7040": "Weather-tight milestone",
+  "T8010": "HVAC rough-in",
+  "T8020": "Plumbing rough-in",
+  "T8030": "Electrical rough-in",
+  "T8040": "MEP inspection",
+  "T9010": "Insulation + drywall",
+  "T9020": "Plaster + first paint",
+  "T9030": "Flooring + tiles",
+  "T9040": "MEP fixtures",
+  "T9060": "Final painting",
+  "T10010": "MEP commissioning",
+  "T10020": "Final inspections",
+  "T10030": "Client snag list",
+  "T10040": "Final cleaning",
+  "M10050": "Final handover"
+};
+export function horizonEndExclusive(day,months){
+ if(!iso(day)||!Number.isSafeInteger(months)||months<1||months>12)fail("calendar horizon");
+ const d=new Date(day+"T00:00:00Z"),target=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+months,1));
+ const dayOfMonth=Math.min(d.getUTCDate(),new Date(Date.UTC(target.getUTCFullYear(),target.getUTCMonth()+1,0)).getUTCDate());
+ target.setUTCDate(dayOfMonth);
+ return target.toISOString().slice(0,10);
+}
 export function validateChecklistConfig(c){
  if(c?.format!=="PCK_VISUAL_CHECKLIST_CONFIG_V1"||c.classification!=="PUBLIC_SAFE_TEMPLATE_NOT_SITE_INSTRUCTIONS"||c.project_id!=="PRJ-000007")fail("config identity");
  if(!iso(c.default_scenario_start)||c.timezone!=="Asia/Kathmandu"||c.horizon_months!==3)fail("scenario contract");
@@ -39,14 +95,15 @@ export function compileVisualModel(pilot,progress,cfg,reported={
  const phaseids=new Set(phases.map(x=>x.id));
  const ids=new Set(pilot.activities.map(x=>x.activity_id));
  if(ids.size!==45||pilot.activities.some(x=>!phaseids.has(x.wbs_code)))fail("orphan activity");
- const activities=pilot.activities.map(a=>{
+ if(Object.keys(CALENDAR_LABELS).length!==45||pilot.activities.some(a=>!CALENDAR_LABELS[a.activity_id]))fail("calendar label coverage does not match master WBS");
+  const activities=pilot.activities.map(a=>{
    const p=cfg.per_phase_checks[a.wbs_code];if(!p)fail("unmapped phase checklist");
    const checklist=[
     ...cfg.core_checks.map(c=>({id:a.activity_id+"-C"+c.suffix,title:c.title,category:c.type,guidance:c.help,status:"NOT_REPORTED",evidence_required:true})),
     ...p.checks.map((title,i)=>({id:a.activity_id+"-P"+(i+1),title,category:"PHASE_SPECIFIC",guidance:"Use the effective project instructions and responsible person's review.",status:"NOT_REPORTED",evidence_required:true}))
    ];
    const report=progress.task_evidence.find(x=>x.activity_id===a.activity_id);
-   return {id:a.activity_id,phase_id:a.wbs_code,title:a.name,type:a.type,
+   return {id:a.activity_id,phase_id:a.wbs_code,title:a.name,calendar_label:CALENDAR_LABELS[a.activity_id],type:a.type,
     predecessor_ids:[...a.predecessor_ids],master_start_slot:a.master_early_start_slot,
     master_finish_exclusive_slot:a.master_finish_exclusive_slot,master_work_slots:a.planned_workday_slots,
     scenario_start:scenarioDate(cfg.default_scenario_start,a.master_early_start_slot,cfg.working_weekdays),
@@ -79,7 +136,7 @@ export function compileVisualModel(pilot,progress,cfg,reported={
   format:MODEL_FORMAT,classification:"PUBLIC_SAFE_PLANNING_SCENARIO",
   project:{id:"PRJ-000007",code:"FBL-006",title:"Narayani Parajuli",baseline_approved:false,
    statutory_clearance_verified:false,source_status:"STAGED_TEMPLATE_WITH_GOVERNED_PROGRESS_AGGREGATE"},
-  planning_scenario:{start_date:cfg.default_scenario_start,timezone:cfg.timezone,working_weekdays:cfg.working_weekdays,
+  planning_scenario:{start_date:cfg.default_scenario_start,end_exclusive:horizonEndExclusive(cfg.default_scenario_start,cfg.horizon_months),timezone:cfg.timezone,working_weekdays:cfg.working_weekdays,
    horizon_months:3,label:cfg.scenario_label,approved_dates:false},
   channel:{name:cfg.slack_channel_label,response_contract:"PCK_MCQ_V1",ingestion_state:"GOVERNED_PRIVATE_LEDGER_RECONCILIATION_PENDING"},
   mcq_summary:{reconciled_reported_answers:reported.entries.length,public_state_revision:reported.version,authority:"REPORTED_ONLY"},
@@ -105,6 +162,8 @@ export function validateVisualModel(m){
  if(m.activities?.length!==45||m.links?.length!==49||m.phases?.length!==10||m.milestones?.length!==7)fail("graph structure");
  const ids=new Set(m.activities.map(a=>a.id));
  if(ids.size!==45||m.links.some(l=>!ids.has(l.from)||!ids.has(l.to)||l.actual_release!==false))fail("invalid dependency");
+ if(m.planning_scenario.end_exclusive!==horizonEndExclusive(m.planning_scenario.start_date,m.planning_scenario.horizon_months)||
+  m.activities.some(a=>!safe(a.calendar_label)||a.calendar_label.length>32))fail("calendar summary mismatch");
  if(m.activities.some(a=>a.checklist?.length!==9||a.status!=="UNVERIFIED"||a.approval_state!=="NO_APPROVED_ACTIVITY_COMPLETION"||!iso(a.scenario_start)||!iso(a.scenario_finish)))fail("status/calendar invariant");
  if(m.mcq_summary?.authority!=="REPORTED_ONLY"||!Number.isInteger(m.mcq_summary.reconciled_reported_answers)||
   m.activities.some(a=>a.checklist.some(c=>!["NOT_REPORTED","NOT_DONE","IN_PROGRESS","REPORTED_DONE","BLOCKED","NOT_APPLICABLE_REQUESTED"].includes(c.status)))||
