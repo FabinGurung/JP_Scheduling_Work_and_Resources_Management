@@ -5,6 +5,32 @@ const el=(tag,text,className)=>{const n=document.createElement(tag);if(text!==un
 const svg=(tag,attributes={},text)=>{const n=document.createElementNS(SVG_NS,tag);for(const [key,v] of Object.entries(attributes))n.setAttribute(key,String(v));if(text!==undefined)n.textContent=text;return n};
 let model=null,selected=null,activeTab="constellation",phaseFilter="ALL",term="",monthOffset=0,anchor="2026-10-19",drag=null;
 let viewport={x:0,y:0,w:1600,h:840};
+let previewSlot=-1,playTimer=null,previewMax=80;
+function computePreviewMax(){
+ const end=iso(addMonths(anchor,3));
+ let n=0;while(n<110&&workday(n)<end)n++;
+ previewMax=Math.min(n,110);
+ $("timeline-position").max=String(previewMax);
+}
+function pausePreview(){if(playTimer!==null){clearInterval(playTimer);playTimer=null;}}
+function updatePreview(){
+ $("timeline-position").value=String(Math.max(0,previewSlot));
+ $("timeline-readout").textContent=previewSlot<0?"Preview paused — no real progress implied":"Simulation "+workday(previewSlot)+" · synthetic sequence only";
+ if(activeTab==="constellation")renderGraph();
+ if(activeTab==="gantt"){
+  const max=Math.max(...model.activities.map(a=>a.master_finish_exclusive_slot))+1;
+  for(const p of document.querySelectorAll(".gantt-playhead")){p.hidden=previewSlot<0;p.style.left=100*Math.max(0,previewSlot)/max+"%";}
+ }
+}
+function playPreview(){
+ pausePreview();
+ if(previewSlot<0||previewSlot>=previewMax)previewSlot=0;
+ updatePreview();
+ playTimer=setInterval(()=>{
+  if(previewSlot>=previewMax){pausePreview();return}
+  previewSlot++;updatePreview();
+ },120);
+}
 const byId=()=>new Map(model.activities.map(a=>[a.id,a]));
 const clean=x=>String(x).replace(/^Milestone:\s*/,"");
 function utc(x){return new Date(x+"T00:00:00Z")}
@@ -47,13 +73,15 @@ function renderGraph(){
   const a=coords.get(link.from),b=coords.get(link.to),relevance=selected&&(link.to===selected||focus.has(link.to)&&focus.has(link.from));
   const start=a.x+12,end=b.x-12,dx=Math.max(22,(end-start)/2);
   const path=svg("path",{d:"M"+start+" "+a.y+" C"+(start+dx)+" "+a.y+" "+(end-dx)+" "+b.y+" "+end+" "+b.y,
-   class:"graph-link"+(relevance?" related":"")+(by.get(link.to).hold_ids.length?" hold":"")});
+   class:"graph-link"+(relevance?" related":"")+(by.get(link.to).hold_ids.length?" hold":"")+
+   (previewSlot>=0&&by.get(link.from).master_start_slot<=previewSlot&&by.get(link.to).master_start_slot<=previewSlot?" preview-active":"")});
   graph.append(path);
  }
  for(const a of model.activities){
   const n=coords.get(a.id),dim=(phaseFilter!=="ALL"&&phaseFilter!==a.phase_id)||term&&!((a.title+" "+a.id).toLowerCase().includes(term));
   const cls="graph-node "+status(a)+(a.type==="Milestone"?" milestone":"")+
-   (a.id===selected?" selected":focus.has(a.id)?" related":"");
+   (a.id===selected?" selected":focus.has(a.id)?" related":"")+
+   (previewSlot>=a.master_start_slot&&(a.type==="Milestone"?previewSlot===a.master_start_slot:previewSlot<a.master_finish_exclusive_slot)?" preview-active":"");
   const g=svg("g",{class:cls,transform:"translate("+n.x+" "+n.y+")",tabindex:"0",role:"button","aria-label":a.id+" "+a.title,opacity:dim?.17:1});
   g.append(svg("circle",{class:"outer",r:a.type==="Milestone"?17:13}));
   g.append(svg("circle",{class:"dot",r:a.type==="Milestone"?6:4}));
@@ -137,7 +165,10 @@ function renderGantt(){
   bar.type="button";bar.title=a.id+" · "+a.title+" · "+schedule(a).start+" to "+schedule(a).finish;
   bar.style.left=(100*a.master_start_slot/range)+"%";bar.style.width=Math.max(0.35,100*Math.max(0.5,a.master_work_slots)/range)+"%";
   bar.setAttribute("aria-label",a.id+" "+a.title);bar.addEventListener("click",()=>choose(a.id));
-  track.append(bar);row.append(track);body.append(row);
+  track.append(bar);
+  const cursor=el("span",undefined,"gantt-playhead");cursor.style.left=(100*Math.max(0,previewSlot)/range)+"%";
+  cursor.hidden=previewSlot<0;track.append(cursor);
+  row.append(track);body.append(row);
  }
 }
 function activeOnDay(a,day){
@@ -182,8 +213,12 @@ function tab(to){
 }
 function hook(){
  for(const b of document.querySelectorAll("[data-view]"))b.addEventListener("click",()=>tab(b.dataset.view));
- $("scenario-start").value=anchor;
- $("scenario-start").addEventListener("change",e=>{if(!/^\d{4}-\d\d-\d\d$/.test(e.target.value))return;anchor=e.target.value;monthOffset=0;renderDrawer();if(activeTab==="gantt")renderGantt();if(activeTab==="calendar")renderCalendar()});
+ computePreviewMax();
+ $("timeline-play").addEventListener("click",playPreview);
+ $("timeline-pause").addEventListener("click",pausePreview);
+ $("timeline-position").addEventListener("input",e=>{pausePreview();previewSlot=Number(e.target.value);updatePreview()});
+  $("scenario-start").value=anchor;
+ $("scenario-start").addEventListener("change",e=>{if(!/^\d{4}-\d\d-\d\d$/.test(e.target.value))return;anchor=e.target.value;monthOffset=0;pausePreview();previewSlot=-1;computePreviewMax();updatePreview();renderDrawer();if(activeTab==="gantt")renderGantt();if(activeTab==="calendar")renderCalendar()});
  $("zoom-in").addEventListener("click",()=>changeZoom(.78));$("zoom-out").addEventListener("click",()=>changeZoom(1.3));
  $("reset-view").addEventListener("click",()=>{viewport={x:0,y:0,w:1600,h:840};setViewport()});
  $("phase-picker").addEventListener("change",e=>{phaseFilter=e.target.value;renderGraph()});

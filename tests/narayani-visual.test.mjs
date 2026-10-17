@@ -64,6 +64,11 @@ test("single-file browser experience renders graph, Gantt, calendar, MCQ from pr
  assert.match(page,/id="checklist"/);
  assert.match(ui,/fetch\("\.\/project-model\.json"/);
  assert.match(ui,/copyAnswer/);
+ assert.match(page,/id="timeline-play"/);
+ assert.match(page,/id="timeline-position"/);
+ assert.match(ui,/function playPreview/);
+ assert.match(ui,/previewSlot/);
+ assert.match(ui,/gantt-playhead/);
  assert.doesNotMatch(ui,/fetch\("\.\/map\.json"/);
  assert.doesNotMatch(ui,/fetch\("\.\/progress\.json"/);
  assert.doesNotMatch(page,/drive\.google\.com|slack\.com\/archives\//);
