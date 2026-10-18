@@ -80,5 +80,5 @@ test("shared Skyforge galaxy navigation is a single reusable source injected int
  assert.match(build,/SKYFORGE SHARED SHELL PASS/);
  assert.match(build,/more\/legacy-home\.html/);
  const visual=read("src/presentation/narayani-visual.mjs");
- for(const link of ['requested==="calendar"','requested==="gantt"','requested==="checklist"'])assert.ok(visual.includes(link),"Missing deep link "+link);
+ for(const link of ['["gantt","calendar","universe"].includes(requested)','requested==="checklist"','["constellation","universe","gantt","calendar"].includes(target)'])assert.ok(visual.includes(link),"Missing view routing "+link);
 });
