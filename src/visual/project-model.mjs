@@ -5,6 +5,27 @@ const hash=x=>createHash("sha256").update(x).digest("hex");
 const stringify=x=>JSON.stringify(x,null,2)+"\n";
 const safe=x=>typeof x==="string"&&x.length>0&&x.length<=250&&!/[<>]/.test(x);
 const iso=x=>typeof x==="string"&&/^\d{4}-\d\d-\d\d$/.test(x)&&!Number.isNaN(Date.parse(x+"T00:00:00Z"));
+// Field preparation categories are hints, never approved document revisions.
+const PREPARE_LEAD_WORKDAYS=2;
+const PREPARE_BY_PHASE={
+"1000":["Controlled scope and decision register","Scope and meeting records","Planning tools"],
+"2000":["Architectural, structural and MEP registers","Design revisions and clash records","Design coordination tools"],
+"3000":["Permit and authority-approved documents","Permit conditions register","Document verification tools"],
+"4000":["Architectural layout and survey control","Grid, benchmark and utility information","Calibrated survey equipment"],
+"5000":["Foundation structure and buried-service coordination","Approved BOQ rebar, formwork and concrete checks","Reinforcement and concrete inspection tools"],
+"6000":["Structural frame and temporary works drawings","Member-specific approved material schedules","Access, supports and formwork tools"],
+"7000":["Elevation, opening and waterproofing details","Approved envelope product and mock-up materials","Weatherproof testing and access tools"],
+"8000":["MEP route and coordinated service drawings","Approved pipe, wire and fixture schedule","Isolation and service test tools"],
+"9000":["Room finish and MEP closure schedules","Approved finish and substrate products","Surface preparation and finishing tools"],
+"10000":["Commissioning tests, as-builts and handover register","Test certificates, manuals and warranties","Commissioning test equipment"]
+};
+const NARAYANI_DOCUMENT_FAMILIES={
+"T5030":"Indexed Narayani structural foundation set; verify CF1/C4 and grid revision",
+"T4030":"Indexed Narayani architectural/structural sets; verify effective survey grid",
+"T8020":"Plumbing route and structural crossing details; actual locations unresolved",
+"T3040":"Statutory permit and authority-approved drawings not verified",
+"T2050":"Indexed Narayani architectural/structural sets; verify existing/proposed block issue"
+};
 // Editorially shortened labels are traceable to each original master WBS activity.
 // The complete original name remains in title, Gantt, day detail and node drawer.
 const CALENDAR_LABELS={
@@ -108,6 +129,12 @@ export function compileVisualModel(pilot,progress,cfg,reported={
     ...cfg.core_checks.map(c=>({id:a.activity_id+"-C"+c.suffix,title:c.title,category:c.type,guidance:c.help,status:"NOT_REPORTED",evidence_required:true})),
     ...p.checks.map((title,i)=>({id:a.activity_id+"-P"+(i+1),title,category:"PHASE_SPECIFIC",guidance:"Use the effective project instructions and responsible person's review.",status:"NOT_REPORTED",evidence_required:true}))
    ];
+   const prep=PREPARE_BY_PHASE[a.wbs_code];if(!prep||prep.length!==3)fail("preparation family");
+   const preparation={document_family:NARAYANI_DOCUMENT_FAMILIES[a.activity_id]||prep[0],
+    crew:brief.leads,materials:prep[1],equipment:prep[2],stop_point:brief.inspect,
+    lead_workdays:PREPARE_LEAD_WORKDAYS,source_register:"PRIVATE_PROJECT_FILE_INDEX",
+    effective_revision:"NOT_VERIFIED",material_quantities:"NOT_VERIFIED",
+    resource_booking:false,engineering_release:false};
    const report=progress.task_evidence.find(x=>x.activity_id===a.activity_id);
    return {id:a.activity_id,phase_id:a.wbs_code,title:a.name,calendar_label:CALENDAR_LABELS[a.activity_id],type:a.type,
     predecessor_ids:[...a.predecessor_ids],master_start_slot:a.master_early_start_slot,
@@ -116,7 +143,7 @@ export function compileVisualModel(pilot,progress,cfg,reported={
     scenario_finish:scenarioDate(cfg.default_scenario_start,a.master_finish_exclusive_slot,cfg.working_weekdays),
     status:"UNVERIFIED",approval_state:"NO_APPROVED_ACTIVITY_COMPLETION",
     reported_subwork_count:report?.reported_subwork_entries??0,
-    hold_ids:[...a.hold_ids],checklist,field_brief:{...brief,basis:cfg.activity_briefs?.[a.activity_id]?"NARAYANI_HOLD_AWARE_DRAFT":"GENERAL_PHASE_TEMPLATE",authority:"GUIDANCE_ONLY_NOT_ENGINEERING_RELEASE"},critical_in_master:!!a.master_critical};
+    hold_ids:[...a.hold_ids],checklist,field_brief:{...brief,basis:cfg.activity_briefs?.[a.activity_id]?"NARAYANI_HOLD_AWARE_DRAFT":"GENERAL_PHASE_TEMPLATE",authority:"GUIDANCE_ONLY_NOT_ENGINEERING_RELEASE"},preparation,critical_in_master:!!a.master_critical};
  });
  const seenMcq=new Set();
  for(const e of reported.entries){
@@ -177,6 +204,11 @@ export function validateVisualModel(m){
  if(m.activities.some(a=>!a.field_brief||a.field_brief.authority!=="GUIDANCE_ONLY_NOT_ENGINEERING_RELEASE"||
   !["NARAYANI_HOLD_AWARE_DRAFT","GENERAL_PHASE_TEMPLATE"].includes(a.field_brief.basis)||
   ["goal","leads","prepare","execute","inspect","evidence"].some(k=>!safe(a.field_brief[k]))))fail("field brief authority/content");
+ if(m.activities.some(a=>!a.preparation||a.preparation.lead_workdays!==2||
+  a.preparation.source_register!=="PRIVATE_PROJECT_FILE_INDEX"||
+  a.preparation.effective_revision!=="NOT_VERIFIED"||a.preparation.material_quantities!=="NOT_VERIFIED"||
+  a.preparation.resource_booking!==false||a.preparation.engineering_release!==false||
+  ["document_family","crew","materials","equipment","stop_point"].some(k=>!safe(a.preparation[k]))))fail("preparation approval boundary");
  if(m.channel?.response_contract!=="PCK_MCQ_V1"||m.evidence_summary?.approved_complete_activities!==0)fail("MCQ authority");
  return true;
 }
