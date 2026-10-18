@@ -47,6 +47,8 @@ function visibleDayLabels(items){
  if(items.length<=2)return items.map(a=>a.calendar_label);
  return [items[0].calendar_label,items[1].calendar_label,"+"+(items.length-2)+" more work"];
 }
+function preparationDay(a){return workday(Math.max(0,a.master_start_slot-a.preparation.lead_workdays))}
+function preparingOnDay(a,day){return a.master_start_slot>0&&preparationDay(a)===day}
 function workday(slot){
  const d=utc(anchor);while(d.getUTCDay()===0)d.setUTCDate(d.getUTCDate()+1);
  let i=0;while(i<slot){d.setUTCDate(d.getUTCDate()+1);if(d.getUTCDay()!==0)i++}
@@ -178,6 +180,17 @@ function renderDrawer(){
   }
   checks.append(guide);
  }
+ if(a.preparation){
+  const p=a.preparation,packet=el("details",undefined,"question-group prepare-packet");
+  packet.append(el("summary","2-day preparation · drawings, crew and materials"));
+  packet.append(el("p","Illustrative only: effective drawings, quantities and work release are not verified."));
+  for(const [key,label] of [["document_family","Drawing / source family"],["crew","Crew and supervision"],["materials","Materials to verify"],["equipment","Equipment to verify"],["stop_point","Inspection / stop point"]]){
+   const section=el("section",undefined,"brief-step");
+   section.append(el("h4",label),el("p",p[key]));packet.append(section);
+  }
+  packet.append(el("p","Verify controlled revisions through the private Narayani Project File Index. No private drawing files are displayed."));
+  checks.append(packet);
+ }
  const categories=[
   ["Before starting",["PRECONDITION"]],
   ["Prepare the crew",["PREPARATION"]],
@@ -202,13 +215,14 @@ function renderDrawer(){
 function choose(id){selected=id;renderDrawer();renderGraph();threeSession?.select(id);if(activeTab==="gantt")renderGantt()}
 function renderGantt(){
  const body=$("gantt-scroll");body.replaceChildren();
+ const related=selected?relatedIds(selected):new Set();
  const max=Math.max(...model.activities.map(a=>a.master_finish_exclusive_slot))+1,range=Math.max(max,1);
  const axis=el("div",undefined,"gantt-row gantt-axis");axis.append(el("div","Activity / phase","gantt-label"));
  const ticks=el("div",undefined,"gantt-track");
  for(let n=0;n<13;n++){const left=n/12*100;const txt=el("span",workday(Math.floor(range*n/12)));txt.style.cssText="position:absolute;left:"+left+"%;font-size:10px;color:#aec7e5;top:6px;transform:translateX(-50%)";ticks.append(txt)}
  axis.append(ticks);body.append(axis);
  for(const a of model.activities){
-  const row=el("div",undefined,"gantt-row"+(a.id===selected?" active":""));
+  const row=el("div",undefined,"gantt-row"+(a.id===selected?" active":"")+(selected&&a.id!==selected&&related.has(a.id)?" related":""));
   const label=el("div",a.id+" · "+clean(a.title),"gantt-label");label.title=a.title;label.addEventListener("click",()=>choose(a.id));row.append(label);
   const track=el("div",undefined,"gantt-track");
   const bar=el("button","", "gantt-bar "+(status(a)==="held"?"hold":status(a)==="reported"?"reported":""));
@@ -216,6 +230,14 @@ function renderGantt(){
   bar.style.left=(100*a.master_start_slot/range)+"%";bar.style.width=Math.max(0.35,100*Math.max(0.5,a.master_work_slots)/range)+"%";
   bar.setAttribute("aria-label",a.id+" "+a.title);bar.addEventListener("click",()=>choose(a.id));
   track.append(bar);
+  if(a.type!=="Milestone"&&a.master_start_slot>0){
+   const lead=Math.max(0,a.master_start_slot-a.preparation.lead_workdays);
+   const cue=el("button","", "gantt-prep");cue.type="button";
+   cue.title="Prepare "+a.calendar_label+" · "+a.preparation.document_family+" · hypothetical scenario";
+   cue.setAttribute("aria-label","Prepare "+a.calendar_label);
+   cue.style.left=100*lead/range+"%";cue.style.width=Math.max(.35,100*(a.master_start_slot-lead)/range)+"%";
+   cue.addEventListener("click",()=>choose(a.id));track.append(cue);
+  }
   const cursor=el("span",undefined,"gantt-playhead");cursor.style.left=(100*Math.max(0,previewSlot)/range)+"%";
   cursor.hidden=previewSlot<0;track.append(cursor);
   row.append(track);body.append(row);
