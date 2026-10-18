@@ -6,7 +6,7 @@ const root=resolve(new URL("..",import.meta.url).pathname),out=join(root,"genera
 const read=p=>readFile(join(root,p),"utf8");
 const cfgRaw=await read("machine/project-mappings/narayani-checklist-config-v0.1.json");
 const shaGit=x=>createHash("sha1").update("blob "+Buffer.byteLength(x)+"\0").update(x).digest("hex");
-if(shaGit(cfgRaw)!=="3bdfed18678f183c47d20b6d3c3c1c6f9bc1d21f")throw Error("New checklist template revision must be reviewed");
+if(shaGit(cfgRaw)!=="0e7b8e881118cf557f845aabc16d387649f12b5c")throw Error("New checklist template revision must be reviewed");
 const pilot=JSON.parse(await read("generated/public/narayani-pilot/map.json"));
 const progress=JSON.parse(await read("generated/public/narayani-progress/progress.json"));
 const reportedRaw=await read("machine/project-mappings/narayani-mcq-public-state.json");

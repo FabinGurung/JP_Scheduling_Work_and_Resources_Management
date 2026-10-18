@@ -175,6 +175,16 @@ function renderDrawer(){
  $("activity-mcq").replaceChildren(el("h3","Activity progress MCQ"), mcqRow("Choose the reported activity state","ACTIVITY",model.activity_options,model.activity_options.find(x=>x.state===a.mcq_report_state)?.code||"A"));
  const checks=$("checklist");checks.replaceChildren(el("h3","Work checklist · "+a.checklist.length+" checks"));
  checks.append(el("p","Expand only the work stage you need. MCQ reports remain unverified until accepted by a responsible authority."));
+ if(a.field_brief){
+  const brief=a.field_brief,guide=el("details",undefined,"question-group field-brief");
+  guide.append(el("summary",(brief.basis==="NARAYANI_HOLD_AWARE_DRAFT"?"Project hold-aware field guide":"Phase preparation field guide")+" · expand"));
+  guide.append(el("p","Draft learning guidance only — not an approved method statement, inspection release or schedule commitment."));
+  for(const [key,label] of [["goal","Purpose"],["leads","Who coordinates"],["prepare","Before starting"],["execute","Execution sequence"],["inspect","Inspection and stop points"],["evidence","Evidence to capture"]]){
+   const section=el("section",undefined,"brief-step");
+   section.append(el("h4",label),el("p",brief[key]));guide.append(section);
+  }
+  checks.append(guide);
+ }
  const categories=[
   ["Before starting",["PRECONDITION"]],
   ["Prepare the crew",["PREPARATION"]],

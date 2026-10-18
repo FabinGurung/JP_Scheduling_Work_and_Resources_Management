@@ -1,3 +1,11 @@
+## v1.2.0 — field engineer learning briefs (18 October 2026)
+
+Every one of the 45 WBS nodes now projects an optional six-part field preparation brief from the same canonical public-safe model used by the constellation, Gantt, calendar, and 405 MCQ checklist items. Ten generic phase briefs cover the full WBS, and five Narayani hold-aware drafts identify relevant preparation and engineering limitations for T5030, T8020, T4030, T3040, and T2050. Expand the field guide in the selected node's checklist drawer; the main interface remains compact. Guidance is educational, never an approved method statement, permit, inspection release, completion, or baseline. No source dimensions, private notes or provider credentials are published.
+
+The edited configuration remains pinned to its exact git blob in the build runner; tests enforce coverage, authority separation and privacy. The existing optional abstract Three.js universe and 2D fallback remain intact.
+
+---
+
 ## v1.2 visual progression — optional Three.js universe and field-workflow debt reduction
 
 Skyforge's **2D constellation is still the offline-safe default**. The Narayani visual command center now includes an optional **3D Universe** tab, loaded only when selected, using pinned Three.js v0.180.0 from a CDN. It renders the same 45 WBS activity IDs and 49 dependency edges as the canonical public-safe `project-model.json`, supports orbit/zoom/star selection, and synchronizes activity selection and the hypothetical timeline with the checklist and other views. Missing WebGL, CDN errors or a lost rendering context revert to 2D with a visible notice.

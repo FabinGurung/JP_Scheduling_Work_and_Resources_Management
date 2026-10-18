@@ -112,3 +112,25 @@ test("single-file browser experience renders graph, Gantt, calendar, MCQ from pr
  assert.doesNotMatch(ui,/fetch\("\.\/progress\.json"/);
  assert.doesNotMatch(page,/drive\.google\.com|slack\.com\/archives\//);
 });
+
+test("all WBS nodes include optional field learning briefs without promoting field reports to approval",()=>{
+ const {model}=compile();
+ assert.equal(Object.keys(cfg.per_phase_briefs).length,10);
+ assert.equal(model.activities.length,45);
+ assert.equal(model.activities.filter(a=>a.field_brief.basis==="NARAYANI_HOLD_AWARE_DRAFT").length,5);
+ assert.ok(model.activities.every(a=>a.field_brief.authority==="GUIDANCE_ONLY_NOT_ENGINEERING_RELEASE"));
+ assert.ok(model.activities.every(a=>["goal","leads","prepare","execute","inspect","evidence"].every(k=>a.field_brief[k]?.length>0)));
+ const f=model.activities.find(a=>a.id==="T5030");
+ assert.ok(f.hold_ids.length>0);
+ assert.match(f.field_brief.inspect,/plumbing-before-closure/);
+ assert.equal(f.approval_state,"NO_APPROVED_ACTIVITY_COMPLETION");
+ assert.match(model.activities.find(a=>a.id==="T8020").field_brief.prepare,/two unresolved locations/);
+ assert.match(model.activities.find(a=>a.id==="T3040").field_brief.inspect,/not yet verified/);
+ assert.equal(model.activities.find(a=>a.id==="T7010").field_brief.basis,"GENERAL_PHASE_TEMPLATE");
+ const ui=read("src/presentation/narayani-visual.mjs");
+ assert.match(ui,/Phase preparation field guide/);
+ assert.match(ui,/Project hold-aware field guide/);
+ assert.match(ui,/Evidence to capture/);
+ const invalid=structuredClone(cfg);invalid.activity_briefs.T5030.inspect="<script>";
+ assert.throws(()=>compileVisualModel(pilot,progress,invalid),/invalid field brief/);
+});

@@ -67,6 +67,10 @@ export function validateChecklistConfig(c){
  if(c.working_weekdays?.join(",")!=="1,2,3,4,5,6"||c.core_checks?.length!==7||Object.keys(c.per_phase_checks||{}).length!==10)fail("working calendar/checklist contract");
  for(const [p,q] of Object.entries(c.per_phase_checks)){if(!/^\d{4,5}$/.test(p)||q.checks?.length!==2||!q.checks.every(safe))fail("phase step template");}
  for(const a of c.core_checks)if(!safe(a.title)||!safe(a.help)||!safe(a.suffix)||!safe(a.type))fail("core check");
+ const fields=["goal","leads","prepare","execute","inspect","evidence"];
+ if(Object.keys(c.per_phase_briefs||{}).length!==10)fail("phase field brief coverage");
+ for(const [id,brief] of [...Object.entries(c.per_phase_briefs),...Object.entries(c.activity_briefs||{})])
+  if(!brief||Object.keys(brief).sort().join(",")!==[...fields].sort().join(",")||fields.some(k=>!safe(brief[k])))fail("invalid field brief "+id);
  for(const key of ["activity_response_options","checklist_response_options"]){
   if(c[key]?.length!==5||c[key].map(x=>x.code).join("")!=="ABCDE"||c[key].some(x=>!safe(x.label)||!safe(x.state)))fail("MCQ contract");
  }
@@ -96,8 +100,10 @@ export function compileVisualModel(pilot,progress,cfg,reported={
  const ids=new Set(pilot.activities.map(x=>x.activity_id));
  if(ids.size!==45||pilot.activities.some(x=>!phaseids.has(x.wbs_code)))fail("orphan activity");
  if(Object.keys(CALENDAR_LABELS).length!==45||pilot.activities.some(a=>!CALENDAR_LABELS[a.activity_id]))fail("calendar label coverage does not match master WBS");
-  const activities=pilot.activities.map(a=>{
+  for(const id of Object.keys(cfg.activity_briefs||{}))if(!ids.has(id))fail("orphan activity field brief");
+ const activities=pilot.activities.map(a=>{
    const p=cfg.per_phase_checks[a.wbs_code];if(!p)fail("unmapped phase checklist");
+   const brief=cfg.activity_briefs?.[a.activity_id]||cfg.per_phase_briefs[a.wbs_code];if(!brief)fail("unmapped field brief");
    const checklist=[
     ...cfg.core_checks.map(c=>({id:a.activity_id+"-C"+c.suffix,title:c.title,category:c.type,guidance:c.help,status:"NOT_REPORTED",evidence_required:true})),
     ...p.checks.map((title,i)=>({id:a.activity_id+"-P"+(i+1),title,category:"PHASE_SPECIFIC",guidance:"Use the effective project instructions and responsible person's review.",status:"NOT_REPORTED",evidence_required:true}))
@@ -110,7 +116,7 @@ export function compileVisualModel(pilot,progress,cfg,reported={
     scenario_finish:scenarioDate(cfg.default_scenario_start,a.master_finish_exclusive_slot,cfg.working_weekdays),
     status:"UNVERIFIED",approval_state:"NO_APPROVED_ACTIVITY_COMPLETION",
     reported_subwork_count:report?.reported_subwork_entries??0,
-    hold_ids:[...a.hold_ids],checklist,critical_in_master:!!a.master_critical};
+    hold_ids:[...a.hold_ids],checklist,field_brief:{...brief,basis:cfg.activity_briefs?.[a.activity_id]?"NARAYANI_HOLD_AWARE_DRAFT":"GENERAL_PHASE_TEMPLATE",authority:"GUIDANCE_ONLY_NOT_ENGINEERING_RELEASE"},critical_in_master:!!a.master_critical};
  });
  const seenMcq=new Set();
  for(const e of reported.entries){
@@ -168,6 +174,9 @@ export function validateVisualModel(m){
  if(m.mcq_summary?.authority!=="REPORTED_ONLY"||!Number.isInteger(m.mcq_summary.reconciled_reported_answers)||
   m.activities.some(a=>a.checklist.some(c=>!["NOT_REPORTED","NOT_DONE","IN_PROGRESS","REPORTED_DONE","BLOCKED","NOT_APPLICABLE_REQUESTED"].includes(c.status)))||
   m.activities.some(a=>a.mcq_report_state&&!["NOT_STARTED","IN_PROGRESS","REPORTED_COMPLETE","BLOCKED","NEEDS_CLARIFICATION"].includes(a.mcq_report_state)))fail("unauthorized MCQ state promotion");
+ if(m.activities.some(a=>!a.field_brief||a.field_brief.authority!=="GUIDANCE_ONLY_NOT_ENGINEERING_RELEASE"||
+  !["NARAYANI_HOLD_AWARE_DRAFT","GENERAL_PHASE_TEMPLATE"].includes(a.field_brief.basis)||
+  ["goal","leads","prepare","execute","inspect","evidence"].some(k=>!safe(a.field_brief[k]))))fail("field brief authority/content");
  if(m.channel?.response_contract!=="PCK_MCQ_V1"||m.evidence_summary?.approved_complete_activities!==0)fail("MCQ authority");
  return true;
 }

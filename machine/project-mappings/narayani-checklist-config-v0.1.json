@@ -184,5 +184,129 @@
         "Confirm training, handover documents and signed acceptance"
       ]
     }
+  },
+  "per_phase_briefs": {
+    "1000": {
+      "goal": "Define work scope and responsibilities before scheduling construction.",
+      "leads": "Project manager, site engineer, discipline leads.",
+      "prepare": "Confirm project identity and the current document register.",
+      "execute": "Record dependencies, deliverables, decisions and unresolved issues.",
+      "inspect": "Planning records are not an authorization to start physical work.",
+      "evidence": "Dated scope references, decisions, responsible persons and open items."
+    },
+    "2000": {
+      "goal": "Coordinate an effective reviewed design revision for the work.",
+      "leads": "Architect, structural and MEP designers; document controller.",
+      "prepare": "Identify level, block, drawing sheet, revision and interfaces.",
+      "execute": "Review discipline clashes and submit clarifications through the approved channel.",
+      "inspect": "Draft or superseded drawings cannot authorize construction.",
+      "evidence": "Drawing revisions, review log and authorized issue status."
+    },
+    "3000": {
+      "goal": "Verify applicable statutory permission and its actual scope.",
+      "leads": "Project manager, permit controller and relevant authority.",
+      "prepare": "Locate current applications, conditions and controlled submissions.",
+      "execute": "Record actual replies, revisions and outstanding conditions.",
+      "inspect": "A construction-phase label or MCQ answer does not prove a permit.",
+      "evidence": "Issuing authority, approval ID, date, conditions and drawing revision."
+    },
+    "4000": {
+      "goal": "Prepare access, benchmarks, grids and verified work boundaries.",
+      "leads": "Site engineer, surveyor, supervisor and safety lead.",
+      "prepare": "Confirm survey datum, utilities, site limits and approved plan.",
+      "execute": "Check offsets, levels, alignment and field access before execution.",
+      "inspect": "Do not excavate or set out from assumed dimensions.",
+      "evidence": "Benchmark and grid records, dated photos and discrepancy disposition."
+    },
+    "5000": {
+      "goal": "Control below-ground work and interfaces before they are concealed.",
+      "leads": "Site engineer, structural engineer, foreman, service coordinator.",
+      "prepare": "Identify grid, approved member detail, base condition and inspection holds.",
+      "execute": "Stage reinforcement, formwork, services and approved sequence before closure.",
+      "inspect": "Concrete, backfill and closure need relevant inspections and hold release.",
+      "evidence": "Grid-tagged photos, material/test records and engineer dispositions."
+    },
+    "6000": {
+      "goal": "Sequence structural frame members by approved level and stage.",
+      "leads": "Structural engineer, site supervisor, formwork and rebar crews.",
+      "prepare": "Confirm members, drawings, stability and prior inspection records.",
+      "execute": "Coordinate setting out, reinforcement, formwork and embeds before placing.",
+      "inspect": "Structural QA and temporary stability need responsible review.",
+      "evidence": "Member/grid records, pre-pour checks and concrete tests."
+    },
+    "7000": {
+      "goal": "Protect exterior envelope continuity and weatherproof interfaces.",
+      "leads": "Site engineer, envelope contractor, design and QA leads.",
+      "prepare": "Confirm elevation, drainage, substrate and approved material system.",
+      "execute": "Coordinate openings, weatherproofing, interfaces and mock-ups.",
+      "inspect": "Check water ingress and concealed interface acceptance.",
+      "evidence": "Elevation photos, test results, products and defect closeout."
+    },
+    "8000": {
+      "goal": "Coordinate service routes and tests before concealment.",
+      "leads": "MEP coordinator, trade supervisor, structural engineer for penetrations.",
+      "prepare": "Identify approved routes, equipment and member restrictions.",
+      "execute": "Arrange sleeves, access and tests without uncontrolled structural alteration.",
+      "inspect": "Unreviewed member drilling or cutting must not proceed.",
+      "evidence": "As-built route references, test sheets and clash disposition."
+    },
+    "9000": {
+      "goal": "Start finishes only after substrates and preceding trades are ready.",
+      "leads": "Site engineer, finishing and QA supervisors, MEP coordinator.",
+      "prepare": "Verify room schedule, levels, moisture condition and mock-up.",
+      "execute": "Sequence finishes while protecting adjacent work and access.",
+      "inspect": "Inspect workmanship against the effective approved specification.",
+      "evidence": "Room IDs, batch records, photos and snag closeout."
+    },
+    "10000": {
+      "goal": "Collect tested results and accountable handover documents.",
+      "leads": "Project manager, commissioning lead, engineers, client representative.",
+      "prepare": "Gather test plan, certificates, record drawings and defects.",
+      "execute": "Commission approved systems and track defects through closeout.",
+      "inspect": "MCQ reports do not constitute signed handover acceptance.",
+      "evidence": "Test certificates, warranties, training record and signed handover."
+    }
+  },
+  "activity_briefs": {
+    "T5030": {
+      "goal": "Footing RCC is a grid-level work package; past footing reports are partial observations, not whole-activity completion.",
+      "leads": "Site engineer, structural engineer, concrete/rebar foremen and plumbing coordinator.",
+      "prepare": "Check footing/grid identity, foundation revision, CF1/C4, shear-key, substrate and all current holds.",
+      "execute": "Arrange reinforcement cover, formwork, clean base and sleeves; request pre-pour inspection before any authorized placing.",
+      "inspect": "Masonry-column interfaces, foundation detailing and plumbing-before-closure holds need responsible engineer disposition.",
+      "evidence": "Dated grid, drawing revision, pre-pour photos, concrete tests, signed inspection and quantity reconciliation."
+    },
+    "T8020": {
+      "goal": "Map plumbing routes before closure without assuming that reported coordination means installed pipework.",
+      "leads": "Plumbing supervisor, site engineer and structural engineer at member crossings.",
+      "prepare": "Confirm two unresolved locations, pipe purposes, diameters, levels and structural interfaces.",
+      "execute": "Survey accessible routes and coordinate sleeves before tie-beam closure; no unauthorized drilling.",
+      "inspect": "Plumbing and structural clash disposition remains unverified until documented.",
+      "evidence": "Route sketch, grid/location, photos, inspection outcome and test record."
+    },
+    "T4030": {
+      "goal": "Check building setting-out against controlled geometry in existing and proposed areas.",
+      "leads": "Surveyor, site engineer and design lead for discrepancies.",
+      "prepare": "Find effective block, benchmark, grid datum and drawing revision.",
+      "execute": "Cross-check control points, alignments and levels before transferring set-out.",
+      "inspect": "Assumed dimensions and unsettled CF1/C4 details are not acceptable field releases.",
+      "evidence": "Dated set-out sketch, grid readings, revisions and disposition."
+    },
+    "T3040": {
+      "goal": "Verify the statutory permit actually issued for the relevant work package.",
+      "leads": "Authorized project/permit controller and issuing authority.",
+      "prepare": "Find current permit document, conditions and approved drawing revision.",
+      "execute": "Reconcile missing documents and conditions through the formal channel.",
+      "inspect": "The project operates in Construction stage but building permit clearance is not yet verified.",
+      "evidence": "Permit number, issuing authority, issue date, scope and drawing reference."
+    },
+    "T2050": {
+      "goal": "Maintain effective construction drawing packages for existing versus proposed building scopes.",
+      "leads": "Architect, structural and MEP consultants; document controller.",
+      "prepare": "Identify the block, discipline, drawing revision and conflict log.",
+      "execute": "Resolve coordinated interfaces and release status before transmitting site documents.",
+      "inspect": "The generic master WBS is not an approved block-by-block drawing release.",
+      "evidence": "Discipline drawing register, revision history and authorized issue record."
+    }
   }
 }
