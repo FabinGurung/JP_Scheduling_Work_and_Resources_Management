@@ -1,3 +1,15 @@
+## Skyforge v1.4 — Governed drawing crosswalk and mobile field lookup (18 October 2026)
+
+The existing private Narayani Project File Index (Google Drive) now contains an additional `Skyforge_WBS_Drawing_Crosswalk` tab, keyed by `PRJ-000007` and all 45 canonical WBS activity IDs. It has 101 **candidate** source references across indexed architectural and structural drawing files and the code report; no indexed source has been certified as a live approved issue solely because of this mapping. The mapping is based on WBS discipline/category, **not page- or sheet-level drawing content review**. Statutory permit, dedicated MEP release, issue register, G05/G06/G07/G08 engineering holds and baseline signoff remain unresolved. The existing Files, Project and RunLog sheets remain source authorities; no copies were made.
+
+**Site-engineer workflow:** On the public Narayani constellation/Gantt/calendar page, select an activity → expand the preparation packet → choose **Copy private drawing lookup key**. In the private Project File Index, open the `Skyforge_WBS_Drawing_Crosswalk` tab and find the activity ID. Inspect candidate PDFs/DWGs only through authorized private Drive access, confirm the current effective revision and responsible engineer's documented decision before work release. The public UI copies only an activity lookup key and **does not embed a Google Drive spreadsheet/file ID or private URL**.
+
+**Mobile layout:** Selected date readout is above the multi-month scrolling grid; scrolling hint, touch-sized view tabs, readable labels and selected node/day focus are added. These are responsive source-code changes validated by static/CI tests; independent physical-device/browser checks are still required.
+
+The public `project-model.json` remains a public-safe synthetic scenario, not construction authorization. Its 45 WBS nodes, 49 FS edges, 405 MCQ questions, seven milestones, required human engineering gate releases and opt-in Three.js constellation remain unchanged. Private crosswalk revisions are *not* live-synchronized to GitHub Pages and must not be misrepresented as such.
+
+---
+
 ## Skyforge v1.3 — drawing readiness and preparation lookahead (18 October 2026)
 
 The **same canonical 45-node project-model.json** now includes a preparation packet per WBS activity: required drawing/document family, responsible crew, materials and equipment to verify, and the engineering stop point. Five activity-specific Narayani hints are backed by source-category knowledge from the private project file index; indexed drawings are NOT verified issued-for-construction revisions. No private Drive IDs or documents are published.
