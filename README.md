@@ -1,3 +1,13 @@
+## Skyforge v1.3 — drawing readiness and preparation lookahead (18 October 2026)
+
+The **same canonical 45-node project-model.json** now includes a preparation packet per WBS activity: required drawing/document family, responsible crew, materials and equipment to verify, and the engineering stop point. Five activity-specific Narayani hints are backed by source-category knowledge from the private project file index; indexed drawings are NOT verified issued-for-construction revisions. No private Drive IDs or documents are published.
+
+The Gantt adds narrow teal **two-working-day scenario preparation bars** before planned synthetic work and highlights the selected activity's related predecessor chain. The three-month calendar keeps up to two named overlapping works visible and adds clickable prep cues, leading to the same node's field learning and MCQ checklist. These dates do NOT constitute Narayani's approved programme or authorize procurement, crew booking, concrete pour, statutory permission or structural release.
+
+All 405 MCQ checklist IDs, 49 dependencies, seven milestones, optional Three.js 3D constellation, approved-state safety boundaries and archived pages remain unchanged. The registered source drawings and private ledger remain governed in Google Drive.
+
+---
+
 ## v1.2.0 — field engineer learning briefs (18 October 2026)
 
 Every one of the 45 WBS nodes now projects an optional six-part field preparation brief from the same canonical public-safe model used by the constellation, Gantt, calendar, and 405 MCQ checklist items. Ten generic phase briefs cover the full WBS, and five Narayani hold-aware drafts identify relevant preparation and engineering limitations for T5030, T8020, T4030, T3040, and T2050. Expand the field guide in the selected node's checklist drawer; the main interface remains compact. Guidance is educational, never an approved method statement, permit, inspection release, completion, or baseline. No source dimensions, private notes or provider credentials are published.
