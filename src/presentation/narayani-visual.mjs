@@ -44,15 +44,8 @@ function plusMonthsExact(date,n){
  return t;
 }
 function visibleDayLabels(items){
- if(items.length===0)return [];
  if(items.length<=2)return items.map(a=>a.calendar_label);
- const phases=new Set(items.map(a=>a.phase_id));
- if(phases.size===1){
-  const phase=model.phases.find(p=>p.id===items[0].phase_id);
-  const short=phase?.title?.replace(/^\d{4,5}\s*[—–-]?\s*/,"").replace(/\s*&\s*/g," + ").replace(/\s+(?:and|works)\s+/gi," ").trim()||"Phase";
-  return [short,items.length+" related activities"];
- }
- return [items[0].calendar_label,"+"+(items.length-1)+" additional activities"];
+ return [items[0].calendar_label,items[1].calendar_label,"+"+(items.length-2)+" more work"];
 }
 function workday(slot){
  const d=utc(anchor);while(d.getUTCDay()===0)d.setUTCDate(d.getUTCDate()+1);
