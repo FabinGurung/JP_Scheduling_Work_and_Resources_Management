@@ -111,7 +111,7 @@ for(const f of ["progress.json","progress-manifest.json"]){
 // One public-safe JSON is the sole canonical projection for constellation,
 // animated Gantt, calendar and the MCQ checklist drawer.
 const visualConfig=await readFile(join(root,"machine/project-mappings/narayani-checklist-config-v0.1.json"),"utf8");
-if(wbsBlob(visualConfig)!=="3bdfed18678f183c47d20b6d3c3c1c6f9bc1d21f")
+if(wbsBlob(visualConfig)!=="0e7b8e881118cf557f845aabc16d387649f12b5c")
  throw Error("Checklist config unreviewed; publication halted");
 const visualManifest=JSON.parse(await readFile(join(root,"generated/public/narayani-visual/visual-manifest.json"),"utf8"));
 const modelBytes=await readFile(join(root,"generated/public/narayani-visual/project-model.json"));
