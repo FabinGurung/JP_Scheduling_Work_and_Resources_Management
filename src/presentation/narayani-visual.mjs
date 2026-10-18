@@ -263,6 +263,7 @@ function renderCalendar(){
    const day=iso(new Date(Date.UTC(y,m,date)));
    const inWindow=day>=iso(start)&&day<iso(end);
    const work=model.activities.filter(a=>activeOnDay(a,day));
+   const prepare=model.activities.filter(a=>preparingOnDay(a,day));
    const b=el("button",undefined,"day"+(!inWindow?" inactive":"")+(day===anchor?" current":""));
    b.type="button";b.disabled=!inWindow;
    b.append(el("span",String(date),"day-number"));
@@ -274,17 +275,19 @@ function renderCalendar(){
     if(work.some(a=>a.mcq_report_state==="REPORTED_COMPLETE"||a.mcq_report_state==="IN_PROGRESS"))label.classList.add("reported");
     box.append(label);
    }
-   if(work.length===0&&inWindow)box.append(el("span","No task","day-empty"));
+   if(prepare.length&&inWindow)box.append(el("span","Prep: "+prepare[0].calendar_label+(prepare.length>1?" +"+(prepare.length-1):""),"day-prep"));
+   if(work.length===0&&prepare.length===0&&inWindow)box.append(el("span","No task","day-empty"));
    b.append(box);
-   b.title=day+(work.length?"\n"+work.map(a=>a.id+" — "+a.title).join("\n"):" — no template tasks");
-   b.addEventListener("click",()=>showDay(day,work));grid.append(b);
+   b.title=day+(work.length?"\nWork: "+work.map(a=>a.id+" — "+a.title).join("\n"):"")+(prepare.length?"\nPrepare: "+prepare.map(a=>a.id+" — "+a.title).join("\n"):"");
+   b.addEventListener("click",()=>showDay(day,work,prepare));grid.append(b);
   }
   card.append(grid);out.append(card);
  }
  if(monthOffset===0)$("day-readout").textContent="Planning scenario window "+anchor+" through "+iso(boundary)+"; choose a date. All dates derive from master time slots, not Narayani's approved schedule.";
 }
-function showDay(day,items){
- const box=$("day-readout");box.replaceChildren(el("strong",day+" — "+items.length+" possible activities in synthetic scenario. "));
+function showDay(day,items,prepare=[]){
+ const box=$("day-readout");box.replaceChildren(el("strong",day+" · "+items.length+" template works · "+prepare.length+" prep cues. "));
+ box.append(el("p","Synthetic scenario only: dates and preparation cues are not approved work, crew or purchasing orders."));
  for(const a of items){
   const reported=a.mcq_report_state?" [reported: "+a.mcq_report_state.replaceAll("_"," ").toLowerCase()+"]":"";
   const blocked=a.hold_ids.length?" [hold]":"";
@@ -292,7 +295,14 @@ function showDay(day,items){
   b.title="Phase "+a.phase_id+" · Full original WBS activity · "+schedule(a).start+" → "+schedule(a).finish;
   b.style.margin="4px";b.addEventListener("click",()=>choose(a.id));box.append(b)
  }
- if(items.length===0)box.append(el("span","No master activity occupies this date."));
+ if(prepare.length){
+  box.append(el("h3","Prepare for upcoming work"));
+  for(const a of prepare){
+   const b=el("button","Prep · "+a.id+" · "+a.calendar_label+" · "+a.preparation.document_family,"btn prep-action");
+   b.type="button";b.addEventListener("click",()=>choose(a.id));box.append(b);
+  }
+ }
+ if(items.length===0&&prepare.length===0)box.append(el("span","No work or prep cue on this scenario date."));
 }
 async function openUniverse(){
  if(threeOpening||threeSession)return;
