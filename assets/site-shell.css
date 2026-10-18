@@ -1,0 +1,36 @@
+/* Skyforge site shell v1 — shared across every allowlisted HTML page. */
+:root{--sf-night:#0b1930;--sf-deep:#0b253c;--sf-accent:#6ee2eb;--sf-amber:#f6ba62;--sf-ink:#173149}
+body.sf-shelled{padding-top:0;margin:0}
+body.sf-shelled:not([data-sf-surface="visual"]):not([data-sf-surface="home"]){background:linear-gradient(138deg,#eff6fc,#dceaf5 55%,#e6f6fc) fixed!important;color:#173149}
+body.sf-shelled[data-sf-surface="visual"],body.sf-shelled[data-sf-surface="home"]{background:#071525!important;color:#e9f5ff!important}
+.sf-global{background:linear-gradient(104deg,#0b1a2d,#112f47 60%,#123a4f);color:#e5f8ff;position:sticky;top:0;z-index:300;border-bottom:1px solid #3c7490;box-shadow:0 8px 28px #091f3840}
+.sf-global *{box-sizing:border-box}
+.sf-global .sf-inner{max-width:1740px;padding:10px 18px;margin:auto;display:flex;align-items:center;gap:12px;justify-content:space-between}
+.sf-global a{color:#d7edf9!important;text-decoration:none!important}
+.sf-global .sf-mark{font-size:14px;font-weight:900;letter-spacing:.14em;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.sf-global .sf-mark-symbol{color:#8df1f4;font-size:22px;text-shadow:0 0 13px #6fe4ee7a;animation:sf-rotate 18s ease-in-out infinite}
+.sf-global .sf-hint{color:#9ebfd3;font-size:10px;letter-spacing:.05em}
+.sf-global .sf-menu{display:flex;align-items:center;gap:4px;flex-wrap:nowrap;min-width:0}
+.sf-global .sf-menu>a{border-radius:8px;padding:8px 11px;white-space:nowrap;font-size:12px;font-weight:700}
+.sf-global .sf-menu>a:hover,.sf-global .sf-menu>a[aria-current="page"]{background:#264a64;color:#a7f7ff!important}
+.sf-global .sf-more{position:relative}
+.sf-global summary{list-style:none;cursor:pointer;border:1px solid #48738d;border-radius:9px;padding:8px 12px;color:#ecf6fe;font-size:12px;font-weight:850;background:#24445c;white-space:nowrap}
+.sf-global summary::-webkit-details-marker{display:none}
+.sf-global summary:hover,.sf-global .sf-more[open]>summary{background:#305c75}
+.sf-global .sf-dropdown{position:absolute;right:0;top:calc(100% + 9px);z-index:400;width:min(370px,92vw);padding:13px;border:1px solid #49798e;border-radius:12px;background:#10263b;box-shadow:0 22px 48px #0009;display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.sf-global .sf-dropdown-heading{grid-column:1/-1;color:#8de9ed;font-size:10px;letter-spacing:.13em;font-weight:850;text-transform:uppercase;margin:4px 0}
+.sf-global .sf-dropdown a{font-size:12px;border-radius:8px;padding:10px 9px;line-height:1.35;border:1px solid transparent;color:#c5e2ef!important;white-space:normal}
+.sf-global .sf-dropdown a:hover{background:#1c4057;border-color:#438098;color:#e7fdff!important}
+.sf-global .sf-divider{grid-column:1/-1;height:1px;background:#335269;margin:5px 0}
+.sf-global .sf-visibility{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.sf-global a:focus-visible,.sf-global summary:focus-visible{outline:2px solid #fbd17b;outline-offset:2px}
+body.sf-shelled>header:not(.sf-global){display:none!important}
+body.sf-shelled .nav[aria-label="Primary navigation"]{display:none!important}
+body.sf-shelled[data-sf-surface="visual"] .shell>.top{display:none!important}
+body.sf-shelled[data-sf-surface="home"] main{max-width:1220px}
+body.sf-shelled:not([data-sf-surface="visual"]):not([data-sf-surface="home"]) .hero{border:1px solid #4f829e;border-radius:18px}
+body.sf-shelled:not([data-sf-surface="visual"]):not([data-sf-surface="home"]) main{scroll-margin-top:75px}
+@keyframes sf-rotate{50%{filter:drop-shadow(0 0 8px #8afff4);transform:rotate(18deg)}}
+@media(max-width:800px){.sf-global .sf-inner{padding:7px 10px;gap:6px}.sf-global .sf-mark{font-size:12px}.sf-global .sf-hint{display:none}.sf-global .sf-menu{overflow-x:auto;scrollbar-width:none}.sf-global .sf-menu>a{font-size:11px;padding:8px 7px}.sf-global summary{padding:8px;font-size:11px}.sf-global .sf-dropdown{position:fixed;left:3vw;right:3vw;width:94vw;top:59px;max-height:75vh;overflow:auto}.sf-global .sf-mark-symbol{font-size:17px}}
+@media(max-width:510px){.sf-global .sf-menu>a{font-size:10px;padding:7px 5px}.sf-global .sf-mark{letter-spacing:0}.sf-global .sf-dropdown{top:51px}}
+@media(prefers-reduced-motion:reduce){.sf-global .sf-mark-symbol{animation:none}}

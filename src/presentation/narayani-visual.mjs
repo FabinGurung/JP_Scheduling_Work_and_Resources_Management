@@ -241,7 +241,9 @@ function showDay(day,items){
  if(items.length===0)box.append(el("span","No master activity occupies this date."));
 }
 function tab(to){
+ if(!["constellation","gantt","calendar"].includes(to))return;
  activeTab=to;
+ if(location.hash!=="#"+to)history.replaceState(null,"","#"+to);
  for(const b of document.querySelectorAll("[data-view]"))b.setAttribute("aria-selected",String(b.dataset.view===to));
  for(const x of ["constellation","gantt","calendar"])$(x).hidden=x!==to;
  if(to==="gantt")renderGantt();if(to==="calendar")renderCalendar();if(to==="constellation")renderGraph();
@@ -276,6 +278,17 @@ async function main(){
   $("count-checks").textContent=model.activities.reduce((n,a)=>n+a.checklist.length,0);
   $("count-miles").textContent=model.milestones.length;
   setupPicker();hook();selected=model.activities[0].id;renderDrawer();renderGraph();
+  const requested=location.hash.slice(1);
+  if(requested==="gantt"||requested==="calendar")tab(requested);
+  else if(requested==="checklist"){
+   tab("constellation");history.replaceState(null,"","#checklist");
+   document.querySelector(".drawer")?.scrollIntoView({block:"start",behavior:"auto"});
+  }else tab("constellation");
+  addEventListener("hashchange",()=>{
+   const target=location.hash.slice(1);
+   if(["constellation","gantt","calendar"].includes(target)&&target!==activeTab)tab(target);
+   if(target==="checklist")document.querySelector(".drawer")?.scrollIntoView({block:"start"});
+  });
  }catch(e){$("selected-title").textContent="Model verification failed";$("selected-details").textContent=String(e.message||e);}
 }
 main();

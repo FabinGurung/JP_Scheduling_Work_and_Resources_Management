@@ -1,4 +1,4 @@
-import {mkdir,copyFile,readdir,readFile,rm} from "node:fs/promises";
+import {mkdir,copyFile,readdir,readFile,writeFile,rm} from "node:fs/promises";
 import {createHash} from "node:crypto";
 import {join,resolve,dirname} from "node:path";
 const root=resolve(new URL("..",import.meta.url).pathname),out=join(root,"dist");
@@ -17,7 +17,7 @@ async function modules(relative){
  }
 }
 const approved=["index.html","advanced.html","planner.html","kernel-lab.html","roadmap.html","project-controls-demo.json",
- "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs",
+ "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","more/legacy-home.html",
  "knowledge/index.html","knowledge/task.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html"];
 for(const f of approved)await cp(f);
 await modules("src");
@@ -136,4 +136,38 @@ for(const file of ["project-model.json","visual-manifest.json"]){
  await copyFile(join(root,"generated/public/narayani-visual",file),dst);
 }
 await cp("machine/index.html");
+// One shared futuristic navigation/theme on every PUBLIC, allowlisted page.
+// Machine outputs and old dashboards remain intact, available only through More.
+const skinned=[];
+async function styleAllowlistedPages(dir=""){
+ const full=join(out,dir);
+ for(const entry of await readdir(full,{withFileTypes:true})){
+  const relative=join(dir,entry.name);
+  if(entry.isDirectory()){await styleAllowlistedPages(relative);continue;}
+  if(!entry.isFile()||!entry.name.endsWith(".html"))continue;
+  const absolute=join(out,relative);
+  let markup=await readFile(absolute,"utf8");
+  if(/http-equiv=["']refresh/i.test(markup))continue; // No unnecessary UI on redirects.
+  const depth=relative.split("/").length-1;
+  const prefix=/<base\s+href=/i.test(markup)?"./":"../".repeat(depth)||"./";
+  if(!markup.includes("site-shell.css")){
+   const link='<link rel="stylesheet" href="'+prefix+'assets/site-shell.css" data-skyforge-shell="1">';
+   if(!/<\/head>/i.test(markup))throw Error("Missing head closure: "+relative);
+   markup=markup.replace(/<\/head>/i,link+"</head>");
+  }
+  if(!markup.includes("site-shell.mjs")){
+   const js='<script type="module" src="'+prefix+'assets/site-shell.mjs"></script>';
+   if(!/<\/body>/i.test(markup))throw Error("Missing body closure: "+relative);
+   markup=markup.replace(/<\/body>/i,js+"</body>");
+  }
+  await writeFile(absolute,markup);
+  skinned.push(relative);
+ }
+}
+await styleAllowlistedPages();
+const essential=["index.html","projects/narayani/visual.html","projects/narayani/index.html",
+"advanced.html","planner.html","kernel-lab.html","roadmap.html","machine/index.html",
+"machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","more/legacy-home.html"];
+if(essential.some(p=>!skinned.includes(p)))throw Error("Site shell incomplete: "+essential.filter(p=>!skinned.includes(p)));
+console.log("SKYFORGE SHARED SHELL PASS:",skinned.length,"public pages unified; legacy pages preserved under More.");
 console.log("Public Pages allowlist PASS: no repository-wide upload, no private engineering files");

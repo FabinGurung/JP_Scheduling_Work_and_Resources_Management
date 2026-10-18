@@ -1,14 +1,5 @@
-name: Machine planner - deterministic evidence build
+name: Tools · Machine Evidence (manual)
 on:
-  push:
-    branches:
-      - kernel-v0.2-open-source-engines
-    paths:
-      - 'src/machine/**'
-      - 'machine/requests/**'
-      - 'scripts/machine-runner.mjs'
-      - 'tests/machine-execution.test.mjs'
-      - '.github/workflows/machine-build.yml'
   workflow_dispatch:
     inputs:
       scenario:

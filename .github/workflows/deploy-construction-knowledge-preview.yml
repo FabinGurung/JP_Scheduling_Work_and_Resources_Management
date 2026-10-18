@@ -1,4 +1,4 @@
-name: Validate construction-knowledge historical branch
+name: Archive · Knowledge Checks
 
 on:
   push:

@@ -47,7 +47,7 @@ test("authenticated reviewer binding and source readback are mandatory, not self
  assert.deepEqual(validateReviewDecision(d,r,{authenticatedReviewerId:"VERIFIED_PRIVATE_ACCOUNT",sourceReadbackVerified:true}),{decision:"ACCEPT",report_id:r.report_id,reviewer_verified:true});
 });
 test("single field page has evidence-capture and separate authenticated Drive upload, no public write gateway",()=>{
- const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
+ const html=readFileSync(new URL("../more/legacy-home.html",import.meta.url),"utf8");
  const ui=readFileSync(new URL("../src/presentation/site-roadmap.mjs",import.meta.url),"utf8");
  assert.match(html,/id="field-form"/);
  assert.match(html,/id="field-evidence-url"/);

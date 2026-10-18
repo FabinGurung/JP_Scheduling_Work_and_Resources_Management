@@ -59,4 +59,26 @@ test("decorative animation script parses independently of DOM",()=>{
  execFileSync(process.execPath,["--check",new URL("../assets/sky-dragon.mjs",import.meta.url).pathname]);
 });
 
-test("field homepage is intentionally isolated from developer controls",()=>{const page=read("index.html"); assert.match(page,/Site Roadmap/);assert.match(page,/milestone-list/);assert.match(page,/phase-list/);assert.match(page,/NOT been supplied/);assert.match(page,/Planner \/ Admin/);});
+test("site-engineer homepage is concise; complete historic field roadmap is still retained under More",()=>{
+ const home=read("index.html"),legacy=read("more/legacy-home.html");
+ assert.match(home,/Mission Control|Construction Mission Control/);
+ assert.match(home,/projects\/narayani\/visual\.html#constellation/);
+ assert.match(home,/projects\/narayani\/visual\.html#calendar/);
+ assert.match(home,/site-shell\.css/);
+ assert.doesNotMatch(home,/id="milestone-list"|id="field-form"|kernel-lab\.html/);
+ for(const marker of ["milestone-list","phase-list","field-form","Planner / Admin","site-roadmap.mjs"])assert.ok(legacy.includes(marker),"Missing archived "+marker);
+ assert.match(legacy,/<base href="\.\.\/"/);
+});
+
+test("shared Skyforge galaxy navigation is a single reusable source injected into all allowlisted pages",()=>{
+ const shell=read("assets/site-shell.mjs"),css=read("assets/site-shell.css"),build=read("scripts/build-public-site.mjs");
+ for(const label of ["Project","Constellation","Gantt","Calendar","Checklist","More ▾"])assert.ok(shell.includes(label),"Missing link "+label);
+ for(const page of ["legacy-home.html","planner.html","kernel-lab.html","machine/index.html","advanced.html","roadmap.html","knowledge/index.html"])assert.ok(shell.includes(page),"Missing More entry "+page);
+ assert.match(css,/sf-global/);
+ assert.match(css,/prefers-reduced-motion/);
+ assert.match(build,/styleAllowlistedPages/);
+ assert.match(build,/SKYFORGE SHARED SHELL PASS/);
+ assert.match(build,/more\/legacy-home\.html/);
+ const visual=read("src/presentation/narayani-visual.mjs");
+ for(const link of ['requested==="calendar"','requested==="gantt"','requested==="checklist"'])assert.ok(visual.includes(link),"Missing deep link "+link);
+});

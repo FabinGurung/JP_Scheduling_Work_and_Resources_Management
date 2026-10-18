@@ -1,3 +1,13 @@
+## Skyforge site engineer homepage and More (October 2026)
+
+The primary GitHub Pages homepage is now deliberately **compact**: one launch point into the Narayani constellation, Gantt, three-month calendar and checklist, all backed by one reviewed `project-model.json`. The shared navy/teal Skyforge header/theme is injected into every allowlisted HTML page, including engineering/knowledge archives, through `scripts/build-public-site.mjs`. The More menu preserves the original field homepage at `more/legacy-home.html`, the classic detailed Narayani WBS, technical planner, engineering lab, machine evidence, developer roadmap, and historic technical dashboard—no source records, calculations, or workflows are deleted.
+
+The public site keeps all engineering approvals and planning dates unapproved unless their authority is verified. Site engineers should not use the archived manual field-report form as the official structured MCQ channel.
+
+**Actions:** only the full Pages deployment is triggered for every canonical branch push. The synthetic machine evidence builder remains available **manually**, eliminating duplicate automatic machine CI while retaining every validation inside full deployment; historical knowledge validation remains restricted to its historical branch. The independently gated authenticated Drive sync remains disabled until provisioned.
+
+---
+
 ## v1.1 visual preview — graph-first field engineering workflow
 
 [Launch Narayani Constellation](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/narayani/visual.html): one `project-model.json` supports an animated SVG activity graph (45 activities and 49 dependencies), Gantt, rolling three-month calendar, seven milestones, and 405 activity-level checklist prompts (nine per activity). The calendar uses an **illustrative** six-day week starting 2026-10-19; it is NOT the approved construction schedule. Editing the scenario date in the browser never alters authority.

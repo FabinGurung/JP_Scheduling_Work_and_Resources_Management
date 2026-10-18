@@ -1,4 +1,4 @@
-name: Build and deploy JP Scheduling Work and Resource Management
+name: Site · Validate and Deploy
 on:
   push:
     branches:
@@ -26,7 +26,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-      - name: Run kernel unit tests
+      - name: Run all safety, UI and kernel tests
         run: npm test
       - name: Verify calendar scheduling oracle
         run: npm run verify:calendar

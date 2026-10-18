@@ -1,4 +1,4 @@
-name: Narayani authenticated Drive-to-WBS refresh
+name: Ops · Drive Sync (gated)
 on:
   workflow_call:
     secrets:

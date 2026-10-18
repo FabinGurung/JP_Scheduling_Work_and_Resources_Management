@@ -7,8 +7,8 @@ const seed=JSON.parse(readFileSync(new URL("../machine/source-snapshots/wbs_sche
 const dictionary=readFileSync(new URL("../machine/source-snapshots/wbs_schedule_sample/wbs_dictionary.md",import.meta.url),"utf8");
 const make=()=>executeWbsSample(seed,dictionary,{seedSnapshotSha:"40f2d8e35bf1fd71c5acb84a64272115cacadb99",dictionarySnapshotSha:"ff1e3126efe8811be9bc398054aec601efaf7482"}).plan;
 const clone=x=>JSON.parse(JSON.stringify(x));
-test("field homepage is deliberately simple and technical UI preserved behind advanced",()=>{
- const page=readFileSync(new URL("../index.html",import.meta.url),"utf8");
+test("archived field roadmap keeps all original engineer resources without showing them on the new homepage",()=>{
+ const page=readFileSync(new URL("../more/legacy-home.html",import.meta.url),"utf8");
  assert.match(page,/<h2 id="milestone-title">Major milestones<\/h2>/);
  assert.match(page,/<h2 id="roadmap-title">Full construction roadmap<\/h2>/);
  assert.match(page,/Planner \/ Admin/);
