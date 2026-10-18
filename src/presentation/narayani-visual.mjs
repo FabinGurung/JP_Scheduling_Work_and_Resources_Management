@@ -142,6 +142,22 @@ async function copyAnswer(id,check,answer){
   $("copy-status").textContent="Copied. Paste into private #site-progress-mcq. This is a reported event, not engineering signoff.";
  }catch{$("copy-status").textContent="Copy manually: "+reply}
 }
+async function copyDrawingLookup(activity){
+ // Public website never includes Drive IDs, source URLs or user credentials.
+ // The engineer searches the governed PRIVATE crosswalk by WBS activity ID.
+ const value="PRJ-000007 | ACTIVITY="+activity.id+" | REGISTER=Skyforge_WBS_Drawing_Crosswalk | ISSUE=VERIFY_WITH_DOCUMENT_CONTROLLER";
+ try{
+  if(!navigator.clipboard?.writeText)throw Error("Clipboard is unavailable");
+  await navigator.clipboard.writeText(value);
+  $("copy-status").textContent="Drawing lookup key copied. Search the private Narayani Project File Index crosswalk. Source references are candidates, not construction approvals.";
+ }catch{$("copy-status").textContent="Copy lookup manually: "+value}
+}
+function onSmallScreen(){return window.matchMedia?.("(max-width: 990px)")?.matches??false}
+function focusFieldPanel(){
+ if(!onSmallScreen())return;
+ const target=$("selected-title");
+ if(target?.scrollIntoView)target.scrollIntoView({block:"start",behavior:"smooth"});
+}
 function renderDrawer(){
  const a=byId().get(selected);if(!a)return;
  $("selected-title").textContent=clean(a.title);
@@ -188,7 +204,10 @@ function renderDrawer(){
    const section=el("section",undefined,"brief-step");
    section.append(el("h4",label),el("p",p[key]));packet.append(section);
   }
-  packet.append(el("p","Verify controlled revisions through the private Narayani Project File Index. No private drawing files are displayed."));
+  packet.append(el("p","PRIVATE CROSSWALK: Narayani Project File Index → Skyforge_WBS_Drawing_Crosswalk → find "+a.id+". Linked source files are indexed candidates only, NOT approved construction drawings."));
+  const lookup=el("button","Copy private drawing lookup key · "+a.id,"btn lookup-key");lookup.type="button";
+  lookup.addEventListener("click",()=>copyDrawingLookup(a));packet.append(lookup);
+  packet.append(el("p","The public website does not expose private Drive links or signoffs."));
   checks.append(packet);
  }
  const categories=[
@@ -212,7 +231,7 @@ function renderDrawer(){
  }
   $("copy-status").textContent="";
 }
-function choose(id){selected=id;renderDrawer();renderGraph();threeSession?.select(id);if(activeTab==="gantt")renderGantt()}
+function choose(id){selected=id;renderDrawer();renderGraph();threeSession?.select(id);if(activeTab==="gantt")renderGantt();focusFieldPanel()}
 function renderGantt(){
  const body=$("gantt-scroll");body.replaceChildren();
  const related=selected?relatedIds(selected):new Set();
@@ -279,6 +298,7 @@ function renderCalendar(){
    if(work.length===0&&prepare.length===0&&inWindow)box.append(el("span","No task","day-empty"));
    b.append(box);
    b.title=day+(work.length?"\nWork: "+work.map(a=>a.id+" — "+a.title).join("\n"):"")+(prepare.length?"\nPrepare: "+prepare.map(a=>a.id+" — "+a.title).join("\n"):"");
+   b.setAttribute("aria-label",day+" · "+work.length+" scenario activities · "+prepare.length+" preparation cues");
    b.addEventListener("click",()=>showDay(day,work,prepare));grid.append(b);
   }
   card.append(grid);out.append(card);
@@ -303,6 +323,7 @@ function showDay(day,items,prepare=[]){
   }
  }
  if(items.length===0&&prepare.length===0)box.append(el("span","No work or prep cue on this scenario date."));
+ if(onSmallScreen()&&box.scrollIntoView)box.scrollIntoView({behavior:"smooth",block:"start"});
 }
 async function openUniverse(){
  if(threeOpening||threeSession)return;
