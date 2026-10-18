@@ -1,3 +1,15 @@
+## v1.2 visual progression — optional Three.js universe and field-workflow debt reduction
+
+Skyforge's **2D constellation is still the offline-safe default**. The Narayani visual command center now includes an optional **3D Universe** tab, loaded only when selected, using pinned Three.js v0.180.0 from a CDN. It renders the same 45 WBS activity IDs and 49 dependency edges as the canonical public-safe `project-model.json`, supports orbit/zoom/star selection, and synchronizes activity selection and the hypothetical timeline with the checklist and other views. Missing WebGL, CDN errors or a lost rendering context revert to 2D with a visible notice.
+
+Work steps are compacted into four expandable work-stage sections: Before starting, Prepare the crew, Execute the work, Inspect & hand over. The Gantt now reads both bounded site-diary observations and structured **reported-only MCQ state**, fixing discrepancies such as T1010 reported complete showing as unreported in Gantt. The selected activity also lists its possible successors without falsely authorizing their release.
+
+The shared site shell's root detection now uses the exact repository root, not every nested directory ending in `/`. This fixes project-index URL styling. Every prior WBS document, old page and engineering tool remains in GitHub and under **More**; no source data or MCQ event history was deleted.
+
+**Remaining gates:** The optional 3D constellation is an abstract dependency visualization, **not** surveyed BIM/IFC, not a construction animation with actual geometry. Activity checklists remain generic nine-item templates; actual method statements, ITP, drawing-grid locations, engineering signoffs and an approved dated baseline require project adoption. GitHub Pages cannot authorize engineering clearance. The automated Slack event reconciliation and Google WIF sync must not be called fully operational without a verified real authenticated read/write and publication cycle.
+
+---
+
 ## Skyforge site engineer homepage and More (October 2026)
 
 The primary GitHub Pages homepage is now deliberately **compact**: one launch point into the Narayani constellation, Gantt, three-month calendar and checklist, all backed by one reviewed `project-model.json`. The shared navy/teal Skyforge header/theme is injected into every allowlisted HTML page, including engineering/knowledge archives, through `scripts/build-public-site.mjs`. The More menu preserves the original field homepage at `more/legacy-home.html`, the classic detailed Narayani WBS, technical planner, engineering lab, machine evidence, developer roadmap, and historic technical dashboard—no source records, calculations, or workflows are deleted.

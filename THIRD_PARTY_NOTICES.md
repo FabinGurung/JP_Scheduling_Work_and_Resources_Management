@@ -11,3 +11,5 @@ This repository studies or interoperates with several open-source project-contro
 Primavera P6 and Microsoft Project are proprietary products and are referenced solely as interoperability/behavior targets.
 
 Before vendoring, linking, distributing, or externally deploying any third-party code, verify the exact component license and obligations for that use.
+
+- Three.js — https://threejs.org/ — MIT License, pinned version 0.180.0. The optional Skyforge 3D constellation dynamically loads the ESM build from `https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js` only when a user opens the 3D tab. No Three.js source is vendored into the repository. Three.js is not used for engineering verification or IFC representation.

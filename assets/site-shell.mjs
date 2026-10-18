@@ -6,7 +6,7 @@ function createShell(){
  if(document.querySelector(".sf-global"))return;
  const path=location.pathname;
  const visual=path.endsWith("/projects/narayani/visual.html");
- const home=path.endsWith("/")||path.endsWith("/index.html")&&!path.includes("/knowledge/")&&!path.includes("/machine/")&&!path.includes("/projects/");
+ const home=path===base.pathname||path===base.pathname+"index.html"; // Exact site root only: nested project directory URLs are NOT the home surface.
  document.body.classList.add("sf-shelled");
  document.body.dataset.sfSurface=visual?"visual":home?"home":"legacy";
  const header=document.createElement("header");header.className="sf-global";header.setAttribute("aria-label","Skyforge primary navigation");

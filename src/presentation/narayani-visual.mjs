@@ -5,6 +5,7 @@ const el=(tag,text,className)=>{const n=document.createElement(tag);if(text!==un
 const svg=(tag,attributes={},text)=>{const n=document.createElementNS(SVG_NS,tag);for(const [key,v] of Object.entries(attributes))n.setAttribute(key,String(v));if(text!==undefined)n.textContent=text;return n};
 let model=null,selected=null,activeTab="constellation",phaseFilter="ALL",term="",monthOffset=0,anchor="2026-10-19",drag=null;
 let viewport={x:0,y:0,w:1600,h:840};
+let threeSession=null,threeOpening=false;
 let previewSlot=-1,playTimer=null,previewMax=80;
 function computePreviewMax(){
  const end=iso(plusMonthsExact(anchor,3));
@@ -17,6 +18,7 @@ function updatePreview(){
  $("timeline-position").value=String(Math.max(0,previewSlot));
  $("timeline-readout").textContent=previewSlot<0?"Preview paused — no real progress implied":"Simulation "+workday(previewSlot)+" · synthetic sequence only";
  if(activeTab==="constellation")renderGraph();
+ if(activeTab==="universe")threeSession?.preview(previewSlot);
  if(activeTab==="gantt"){
   const max=Math.max(...model.activities.map(a=>a.master_finish_exclusive_slot))+1;
   for(const p of document.querySelectorAll(".gantt-playhead")){p.hidden=previewSlot<0;p.style.left=100*Math.max(0,previewSlot)/max+"%";}
@@ -75,6 +77,8 @@ function coordMap(){
 function relatedIds(id){
  const ids=new Set([id]),pred=new Map(model.activities.map(a=>[a.id,a.predecessor_ids]));
  const queue=[id];while(queue.length){const n=queue.shift();for(const p of pred.get(n)||[])if(!ids.has(p)){ids.add(p);queue.push(p)}}
+ // Neighboring future branches should glow as possible PLAN, not unlocked work.
+ for(const a of model.activities)if(a.predecessor_ids.includes(id))ids.add(a.id);
  return ids;
 }
 function setViewport(){const g=$("graph");g.setAttribute("viewBox",[viewport.x,viewport.y,viewport.w,viewport.h].join(" "))}
@@ -156,18 +160,43 @@ function renderDrawer(){
   for(const h of model.hold_points.filter(h=>a.hold_ids.includes(h.id)))holds.append(el("li",h.id+" · "+h.title));
   d.append(holds);
  }
+ const successors=model.activities.filter(x=>x.predecessor_ids.includes(a.id));
+ if(successors.length){
+  const nextTitle=el("h3","What this work feeds into");
+  const nextList=el("ul");
+  for(const next of successors){
+   const li=el("li"),b=el("button",next.id+" · "+next.calendar_label,"btn");
+   b.title=next.title+" — not authorized to start";
+   b.addEventListener("click",()=>choose(next.id));li.append(b);nextList.append(li);
+  }
+  d.append(nextTitle,nextList,el("p","Potential next WBS steps only. A reported-complete answer does not release a successor."));
+ }
  deps.append(d);
  $("activity-mcq").replaceChildren(el("h3","Activity progress MCQ"), mcqRow("Choose the reported activity state","ACTIVITY",model.activity_options,model.activity_options.find(x=>x.state===a.mcq_report_state)?.code||"A"));
- const checks=$("checklist");checks.replaceChildren(el("h3","Detailed checklist · "+a.checklist.length+" prompts"));
- checks.append(el("p","Answer the relevant question one at a time. Completion answers are reports pending separate acceptance."));
- for(const c of a.checklist){
-  const wrap=mcqRow(c.id+" · "+c.title,c.id,model.checklist_options,
-   model.checklist_options.find(x=>x.state===c.status)?.code||"A");
-  wrap.insertBefore(el("small",c.guidance),wrap.children[1]);checks.append(wrap);
+ const checks=$("checklist");checks.replaceChildren(el("h3","Work checklist · "+a.checklist.length+" checks"));
+ checks.append(el("p","Expand only the work stage you need. MCQ reports remain unverified until accepted by a responsible authority."));
+ const categories=[
+  ["Before starting",["PRECONDITION"]],
+  ["Prepare the crew",["PREPARATION"]],
+  ["Execute the work",["EXECUTION","PHASE_SPECIFIC"]],
+  ["Inspect & hand over",["QA_PENDING","HANDOFF"]]
+ ];
+ for(let i=0;i<categories.length;i++){
+  const [name,kinds]=categories[i],matching=a.checklist.filter(q=>kinds.includes(q.category));
+  if(!matching.length)continue;
+  const group=el("details",undefined,"question-group");
+  const summary=el("summary",name+" · "+matching.length+" checks");group.append(summary);
+  if(i===0)group.open=true;
+  for(const c of matching){
+   const wrap=mcqRow(c.id+" · "+c.title,c.id,model.checklist_options,
+    model.checklist_options.find(x=>x.state===c.status)?.code||"A");
+   wrap.insertBefore(el("small",c.guidance),wrap.children[1]);group.append(wrap);
+  }
+  checks.append(group);
  }
- $("copy-status").textContent="";
+  $("copy-status").textContent="";
 }
-function choose(id){selected=id;renderDrawer();renderGraph();if(activeTab==="gantt")renderGantt()}
+function choose(id){selected=id;renderDrawer();renderGraph();threeSession?.select(id);if(activeTab==="gantt")renderGantt()}
 function renderGantt(){
  const body=$("gantt-scroll");body.replaceChildren();
  const max=Math.max(...model.activities.map(a=>a.master_finish_exclusive_slot))+1,range=Math.max(max,1);
@@ -179,7 +208,7 @@ function renderGantt(){
   const row=el("div",undefined,"gantt-row"+(a.id===selected?" active":""));
   const label=el("div",a.id+" · "+clean(a.title),"gantt-label");label.title=a.title;label.addEventListener("click",()=>choose(a.id));row.append(label);
   const track=el("div",undefined,"gantt-track");
-  const bar=el("button","", "gantt-bar "+(a.hold_ids.length?"hold":a.reported_subwork_count?"reported":""));
+  const bar=el("button","", "gantt-bar "+(status(a)==="held"?"hold":status(a)==="reported"?"reported":""));
   bar.type="button";bar.title=a.id+" · "+a.title+" · "+schedule(a).start+" to "+schedule(a).finish;
   bar.style.left=(100*a.master_start_slot/range)+"%";bar.style.width=Math.max(0.35,100*Math.max(0.5,a.master_work_slots)/range)+"%";
   bar.setAttribute("aria-label",a.id+" "+a.title);bar.addEventListener("click",()=>choose(a.id));
@@ -240,12 +269,41 @@ function showDay(day,items){
  }
  if(items.length===0)box.append(el("span","No master activity occupies this date."));
 }
+async function openUniverse(){
+ if(threeOpening||threeSession)return;
+ threeOpening=true;
+ const message=$("three-status");
+ message.textContent="Starting optional Three.js renderer…";
+ try{
+  const {mountConstellation3D}=await import("./narayani-three.mjs");
+  // Three.js is downloaded ONLY on explicit 3D selection. No 3D dependency
+  // can break the default 2D, Gantt, calendar, or checklist experience.
+  if(activeTab!=="universe"){threeOpening=false;return}
+  const session=await mountConstellation3D({
+   host:$("three-scene"),model,selected,
+   onSelect:id=>choose(id),
+   onUnavailable:message=>{$("copy-status").textContent=message;tab("constellation")}
+  });
+  if(activeTab!=="universe"){session.dispose();return}
+  threeSession=session;
+  session.preview(previewSlot);
+  message.textContent="45 real WBS identities · 49 master dependencies · drag to orbit · scroll to zoom · reported ≠ approved. This is NOT a building model.";
+ }catch(err){
+  message.textContent="3D unavailable ("+(err?.message||"renderer error")+"). 2D is still available.";
+  $("copy-status").textContent="Optional 3D view unavailable; 2D graph, checklist, calendar and Gantt remain operational.";
+  tab("constellation");
+ }finally{threeOpening=false;}
+}
 function tab(to){
- if(!["constellation","gantt","calendar"].includes(to))return;
+ if(!["constellation","universe","gantt","calendar"].includes(to))return;
+ if(activeTab==="universe"&&to!=="universe"&&threeSession){
+  threeSession.dispose();threeSession=null;
+ }
  activeTab=to;
  if(location.hash!=="#"+to)history.replaceState(null,"","#"+to);
  for(const b of document.querySelectorAll("[data-view]"))b.setAttribute("aria-selected",String(b.dataset.view===to));
- for(const x of ["constellation","gantt","calendar"])$(x).hidden=x!==to;
+ for(const x of ["constellation","universe","gantt","calendar"])$(x).hidden=x!==to;
+ if(to==="universe")void openUniverse();
  if(to==="gantt")renderGantt();if(to==="calendar")renderCalendar();if(to==="constellation")renderGraph();
 }
 function hook(){
@@ -256,6 +314,8 @@ function hook(){
  $("timeline-position").addEventListener("input",e=>{pausePreview();previewSlot=Number(e.target.value);updatePreview()});
   $("scenario-start").value=anchor;
  $("scenario-start").addEventListener("change",e=>{if(!/^\d{4}-\d\d-\d\d$/.test(e.target.value))return;anchor=e.target.value;monthOffset=0;pausePreview();previewSlot=-1;computePreviewMax();updatePreview();renderDrawer();if(activeTab==="gantt")renderGantt();if(activeTab==="calendar")renderCalendar()});
+ $("reset-3d").addEventListener("click",()=>threeSession?.reset());
+ $("back-2d").addEventListener("click",()=>tab("constellation"));
  $("zoom-in").addEventListener("click",()=>changeZoom(.78));$("zoom-out").addEventListener("click",()=>changeZoom(1.3));
  $("reset-view").addEventListener("click",()=>{viewport={x:0,y:0,w:1600,h:840};setViewport()});
  $("phase-picker").addEventListener("change",e=>{phaseFilter=e.target.value;renderGraph()});
@@ -279,14 +339,14 @@ async function main(){
   $("count-miles").textContent=model.milestones.length;
   setupPicker();hook();selected=model.activities[0].id;renderDrawer();renderGraph();
   const requested=location.hash.slice(1);
-  if(requested==="gantt"||requested==="calendar")tab(requested);
+  if(["gantt","calendar","universe"].includes(requested))tab(requested);
   else if(requested==="checklist"){
    tab("constellation");history.replaceState(null,"","#checklist");
    document.querySelector(".drawer")?.scrollIntoView({block:"start",behavior:"auto"});
   }else tab("constellation");
   addEventListener("hashchange",()=>{
    const target=location.hash.slice(1);
-   if(["constellation","gantt","calendar"].includes(target)&&target!==activeTab)tab(target);
+   if(["constellation","universe","gantt","calendar"].includes(target)&&target!==activeTab)tab(target);
    if(target==="checklist")document.querySelector(".drawer")?.scrollIntoView({block:"start"});
   });
  }catch(e){$("selected-title").textContent="Model verification failed";$("selected-details").textContent=String(e.message||e);}
