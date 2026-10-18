@@ -151,3 +151,24 @@ test("all WBS activities derive hold-aware drawing and preparation needs without
  const failed=structuredClone(model);failed.activities[0].preparation.engineering_release=true;
  assert.throws(()=>validateVisualModel(failed),/preparation approval boundary/);
 });
+
+test("field engineers can use private drawing crosswalk lookup without leaking private source IDs",()=>{
+ const {model}=compile();
+ assert.equal(model.activities.length,45);
+ assert.ok(model.activities.every(a=>a.preparation.source_register==="PRIVATE_PROJECT_FILE_INDEX"));
+ const js=read("src/presentation/narayani-visual.mjs"),html=read("projects/narayani/visual.html");
+ assert.match(js,/function copyDrawingLookup/);
+ assert.match(js,/Skyforge_WBS_Drawing_Crosswalk/);
+ assert.match(js,/ACTIVITY=/);
+ assert.match(js,/ISSUE=VERIFY_WITH_DOCUMENT_CONTROLLER/);
+ assert.match(js,/Copy private drawing lookup key/);
+ assert.match(js,/function focusFieldPanel/);
+ assert.match(js,/onSmallScreen/);
+ assert.match(js,/box\.scrollIntoView/);
+ assert.match(html,/class="mobile-scroll-hint"/);
+ assert.match(html,/id="day-readout" role="region"/);
+ assert.match(html,/@media\(max-width:680px\)/);
+ assert.ok(html.indexOf('id="day-readout"')<html.indexOf('id="calendar-months"'),"selected day readout should appear before the long month grid");
+ assert.doesNotMatch(js,/docs\.google\.com\/spreadsheets\/d\/|drive\.google\.com\/file\/d\//);
+ assert.doesNotMatch(html,/docs\.google\.com\/spreadsheets\/d\/|drive\.google\.com\/file\/d\//);
+});
