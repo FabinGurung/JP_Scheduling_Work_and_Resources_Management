@@ -134,3 +134,20 @@ test("all WBS nodes include optional field learning briefs without promoting fie
  const invalid=structuredClone(cfg);invalid.activity_briefs.T5030.inspect="<script>";
  assert.throws(()=>compileVisualModel(pilot,progress,invalid),/invalid field brief/);
 });
+
+test("all WBS activities derive hold-aware drawing and preparation needs without authority promotion",()=>{
+ const {model}=compile();
+ assert.equal(model.activities.length,45);
+ assert.ok(model.activities.every(a=>a.preparation?.lead_workdays===2));
+ assert.ok(model.activities.every(a=>a.preparation?.source_register==="PRIVATE_PROJECT_FILE_INDEX"));
+ assert.ok(model.activities.every(a=>a.preparation?.effective_revision==="NOT_VERIFIED"&&a.preparation.material_quantities==="NOT_VERIFIED"));
+ assert.ok(model.activities.every(a=>a.preparation?.engineering_release===false&&a.preparation.resource_booking===false));
+ assert.match(model.activities.find(a=>a.id==="T5030").preparation.document_family,/CF1\/C4/);
+ assert.match(model.activities.find(a=>a.id==="T3040").preparation.document_family,/permit/);
+ assert.ok(model.activities.every(a=>["document_family","crew","materials","equipment","stop_point"].every(k=>a.preparation[k]?.length>0)));
+ assert.doesNotMatch(JSON.stringify(model),/19AyrQbMaZ4ze59ixqKMlMlR0UZ|1zwmKrfwW9IN5ourLGFdfleJOCi7dcH2_|docs.google.com\/|drive.google.com\//);
+ const ui=read("src/presentation/narayani-visual.mjs");
+ for(const token of ["preparationDay","preparingOnDay","gantt-prep","day-prep","Prepare for upcoming work","2-day preparation"])assert.ok(ui.includes(token),token);
+ const failed=structuredClone(model);failed.activities[0].preparation.engineering_release=true;
+ assert.throws(()=>validateVisualModel(failed),/preparation approval boundary/);
+});
