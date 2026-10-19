@@ -134,7 +134,7 @@ function pageKey(){
 function mountContextGuide(profile){
  if(!profile||["home","narayani-visual","how"].includes(profile.id))return;
  if(document.querySelector(".sf-page-guide"))return;
- const primary=document.querySelector("main, .wrap, .shell, .workspace");
+ const primary=document.querySelector("main")||document.querySelector(".workspace")||document.querySelector(".wrap")||document.querySelector(".shell");
  if(!primary)return;
  const guide=document.createElement("section");
  guide.className="sf-page-guide";guide.setAttribute("aria-label","Workspace orientation and source boundaries");
