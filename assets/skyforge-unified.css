@@ -228,3 +228,26 @@ body.sf-shelled .sf-page-guide+.workspace{margin-top:7px}
  html{scroll-behavior:auto}
  .sf-page-guide:before{animation:none!important}
 }
+
+/* Remove inherited padding from old generic header rules on the shared masthead. */
+body.sf-shelled>header.sf-global{
+ padding:0!important;margin:0!important;top:0!important;position:sticky!important;
+ z-index:300!important;border-bottom:1px solid #d7e8eb!important
+}
+body.sf-shelled>header.sf-global .sf-inner{min-height:54px}
+body.sf-shelled .sky-ribbon{height:3px;background:linear-gradient(90deg,#79c6bf,#c7dfdf 48%,#d6b27c)}
+body.sf-shelled .storm-band{background:#eaf7f5!important;border-color:#d3e6e4!important;color:#2d5667!important}
+body.sf-shelled .storm-card{background:#fff!important;border-color:#d6e5eb!important;color:#2f5064!important;box-shadow:var(--sf-shadow)}
+body.sf-shelled .storm-section-title,body.sf-shelled .storm-card h3{color:#245265!important}
+body.sf-shelled .storm-status{border-color:#d7e4e9;color:#416677}
+body.sf-shelled .storm-grid{gap:13px}
+body.sf-shelled .storm-btn:not(.gold){background:#137b80!important;border-color:#137b80!important;color:#fff!important}
+body.sf-shelled .storm-btn.gold{background:#fff5e7!important;border:1px solid #e7cf9e!important;color:#8a601f!important}
+body.sf-shelled :is(table, .gridtable){border-color:#dbe7ed}
+body.sf-shelled th{color:#2a5a6d}
+body.sf-shelled .sf-page-guide{clear:both}
+@media(max-width:640px){
+ body.sf-shelled>header.sf-global .sf-inner{min-height:46px}
+ body.sf-shelled .storm-grid{grid-template-columns:1fr}
+ body.sf-shelled .storm-band{padding:12px}
+}
