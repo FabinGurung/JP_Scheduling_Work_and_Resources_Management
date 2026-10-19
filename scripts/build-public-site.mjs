@@ -159,8 +159,8 @@ async function styleAllowlistedPages(dir=""){
   // Non-redirect pages only; dynamic project data and engineering JSON are untouched.
   if(!markup.includes("skyforge-unified.css")){
    const unified='<link rel="stylesheet" href="'+prefix+'assets/skyforge-unified.css" data-skyforge-unified="1">';
-   if(!/<\\/head>/i.test(markup))throw Error("Missing head closure for canonical skin: "+relative);
-   markup=markup.replace(/<\\/head>/i,unified+"</head>");
+   if(!/<\/head>/i.test(markup))throw Error("Missing head closure for canonical skin: "+relative);
+   markup=markup.replace(/<\/head>/i,unified+"</head>");
   }
   if(!markup.includes("site-shell.mjs")){
    const js='<script type="module" src="'+prefix+'assets/site-shell.mjs"></script>';
