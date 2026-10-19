@@ -1,0 +1,230 @@
+/* SKYFORGE ARC 07 · Canonical white/teal design for every PUBLIC HTML page.
+   Loaded AFTER all page-era styles by the allowlisted Pages builder.
+   Style-only: zero changes to scheduling kernels, project JSON or private records. */
+:root{
+ color-scheme:light;
+ --sf-canvas:#f5f8fb;--sf-paper:#ffffff;--sf-ink:#203b4f;
+ --sf-muted:#597487;--sf-border:#d7e6ec;--sf-teal:#147e83;
+ --sf-teal-deep:#12676b;--sf-soft:#eaf7f5;--sf-gold:#b37b26;
+ --sf-hold:#af4f47;--sf-shadow:0 9px 26px rgba(32,69,89,.055);
+ --sf-radius:16px;
+}
+html{color-scheme:light;background:var(--sf-canvas);scroll-padding-top:116px}
+body.sf-shelled,body.sf-shelled[data-sf-surface]{
+ --bg:#f5f8fb;--surface:#fff;--surface2:#edf7f7;--stroke:#d7e6ec;
+ --text:#203b4f;--muted:#597487;--blue:#147e83;--teal:#188b80;
+ --nav:#fff;--nav2:#f0f8f9;--line:#d7e6ec;--ink:#203b4f;
+ --p:#fff;--panel:#fff;--card:#fff;--sel:#eaf7f5;--cloud:#f5f8fb;
+ --sky:#f5f8fb;--light:#203b4f;--dim:#597487;--cyan:#147e83;
+ --sky-paper:#fff;--sky-ink:#203b4f;--sky-blue:#147e83;
+ background:linear-gradient(156deg,#f5f8fb 0%,#fbfdfd 48%,#f1f8f6 100%) fixed!important;
+ color:var(--sf-ink)!important;
+ color-scheme:light;
+}
+body.sf-shelled *{scroll-margin-top:116px}
+body.sf-shelled a:not(.sf-mark){text-underline-offset:3px}
+body.sf-shelled :is(button,input,select,textarea,a,summary):focus-visible{
+ outline:3px solid #ad7726!important;outline-offset:2px!important
+}
+body.sf-shelled :is(input,select,textarea):not([type=checkbox]):not([type=radio]):not([type=range]){
+ color:#1e3e51;background:#fff;border-color:#bdd5e0;color-scheme:light;max-width:100%
+}
+body.sf-shelled input::placeholder{color:#778c98}
+body.sf-shelled :is(.panel,.card,.k,.kcard,.metric,.view-card,.box,.pane,.tool,.info,.state,.note):not(.sf-global):not(.storm-art){
+ box-shadow:var(--sf-shadow);border-color:var(--sf-border)
+}
+body.sf-shelled :is(.panel,.card,.k,.kcard,.metric,.view-card,.box,.pane,.tool):not(.sf-global):not(.storm-art){
+ background-color:var(--sf-paper);color:var(--sf-ink)
+}
+body.sf-shelled :is(h1,h2,h3,h4){text-wrap:balance}
+body.sf-shelled :is(.hero,.storm-hero):not(.sf-global){
+ background:radial-gradient(circle at 82% 18%,rgba(174,228,215,.30),transparent 40%),
+ linear-gradient(125deg,#fff 4%,#f0f9fa 100%)!important;
+ color:var(--sf-ink)!important;border:1px solid #d4e6ea!important;
+ box-shadow:0 16px 38px rgba(35,90,102,.065)
+}
+body.sf-shelled .storm-hero .storm-lead,body.sf-shelled .storm-explain,
+body.sf-shelled .hero p{color:#4d6d7e}
+body.sf-shelled .storm-title{color:#1f4255}
+body.sf-shelled :is(.storm-art,.storm-dragon,.storm-cloud){display:none!important}
+body.sf-shelled .storm-hero{min-height:0!important}
+body.sf-shelled .storm-inner{min-height:0!important}
+body.sf-shelled .storm-compact{min-height:0!important}
+body.sf-shelled .sf-global{
+ background:rgba(255,255,255,.985)!important;color:#1d3d50!important;
+ border-bottom:1px solid #d7e8eb;box-shadow:0 4px 17px #1b455c10
+}
+body.sf-shelled .sf-global .sf-menu>a[aria-current=page]{color:#106b70!important;background:#e1f4ef}
+body.sf-shelled .sf-global .sf-dropdown{background:#fff;border:1px solid #cfdfe6}
+body.sf-shelled :is(.storm-btn,.action.primary,.primary):not(.sf-pip-roamer){
+ border-color:#0f777b;background:#137b80;color:white
+}
+/* Harmonize legacy internal headers without touching .sf-global.
+   Header selectors are scoped to known internal wrappers, never data tables. */
+body.sf-shelled[data-sf-page="planner"]>header,
+body.sf-shelled[data-sf-page="knowledge"]>header,
+body.sf-shelled[data-sf-page="task"]>header,
+body.sf-shelled[data-sf-page="roadmap"]>header,
+body.sf-shelled[data-sf-page="kernel"]>header,
+body.sf-shelled[data-sf-page="narayani-index"]>header{
+ background:#fff!important;color:#244456!important;border-bottom:1px solid #d8e8ed!important;
+ box-shadow:0 4px 12px #29546b0a
+}
+body.sf-shelled[data-sf-page="planner"]>header :is(.brand,.nav,a,.sub),
+body.sf-shelled[data-sf-page="knowledge"]>header :is(.brand,.nav,a,.sub),
+body.sf-shelled[data-sf-page="task"]>header :is(.brand,.nav,a,.sub),
+body.sf-shelled[data-sf-page="roadmap"]>header :is(.brand,.nav,a,.sub),
+body.sf-shelled[data-sf-page="kernel"]>header :is(.brand,.nav,a,.sub),
+body.sf-shelled[data-sf-page="narayani-index"]>header :is(.brand,.nav,a,span){
+ color:#285467!important
+}
+body.sf-shelled[data-sf-page="advanced"] .top,
+body.sf-shelled[data-sf-page="advanced"] .top1,
+body.sf-shelled[data-sf-page="advanced"] .top2{
+ background:#fff!important;color:#244456!important;border-color:#d5e5ec!important
+}
+body.sf-shelled[data-sf-page="advanced"] .top :is(.brand,.project-name,.navitem,.small){
+ color:#2c5369!important
+}
+body.sf-shelled[data-sf-page="advanced"] .top :is(.active,[aria-selected=true]){
+ background:#e2f5f1!important;color:#116d70!important
+}
+body.sf-shelled[data-sf-page="advanced"] .sidebar{
+ background:#f7fbfc!important;color:#2c5066;border-color:#d7e6ed
+}
+body.sf-shelled[data-sf-page="advanced"] .workspace{background:#f5f9fa!important}
+body.sf-shelled[data-sf-page="advanced"] .gridtable tr.sel td{background:#e6f5f3}
+body.sf-shelled[data-sf-page="narayani-index"] .hero h1,
+body.sf-shelled[data-sf-page="narayani-index"] .hero .kicker{
+ color:#174d60!important
+}
+body.sf-shelled[data-sf-page="narayani-index"] .hero p{color:#446b7c!important}
+/* Planner used white text and navy panels in its original CSS. */
+body.sf-shelled[data-sf-page="planner"]{--text:#1e394a;--surface:#fff;--surface2:#f1f7f8;--stroke:#d4e5ec}
+body.sf-shelled[data-sf-page="planner"] .panel-head,
+body.sf-shelled[data-sf-page="planner"] .panel-content,
+body.sf-shelled[data-sf-page="planner"] .panel{
+ background:#fff!important;color:#29495e!important
+}
+body.sf-shelled[data-sf-page="planner"] .panel-head :is(h2,small),
+body.sf-shelled[data-sf-page="planner"] .metric,
+body.sf-shelled[data-sf-page="planner"] .hint,
+body.sf-shelled[data-sf-page="planner"] .subtle{color:#386176!important}
+body.sf-shelled[data-sf-page="planner"] .task-track{
+ background:repeating-linear-gradient(90deg,#f4f9fa,#f4f9fa 15px,#e6eef1 16px);
+ border-color:#d2e1e9
+}
+body.sf-shelled[data-sf-page="planner"] .task-name{color:#31566b}
+body.sf-shelled[data-sf-page="planner"] .task-row:nth-child(even){background:#f7fbfc}
+body.sf-shelled[data-sf-page="planner"] .bar:not(.sf-journey__bar){background:#2b9295}
+body.sf-shelled[data-sf-page="planner"] .bar.delayed{background:#c88b36}
+body.sf-shelled[data-sf-page="planner"] .kpis .metric{
+ background:#fff!important;color:#22445a!important;border-color:#d7e6eb
+}
+/* Graph and gantt preserve their semantic colors; only empty canvas gets a blueprint grid. */
+body.sf-shelled[data-sf-page="narayani-visual"] #graph{
+ background-color:#f7fbfc;
+ background-image:linear-gradient(#74b7bf0d 1px,transparent 1px),linear-gradient(90deg,#74b7bf0d 1px,transparent 1px),
+ radial-gradient(ellipse at 65% 25%,#e9f6f4,transparent 58%);
+ background-size:34px 34px,34px 34px,100% 100%
+}
+body.sf-shelled[data-sf-page="narayani-visual"] .panel{border-radius:var(--sf-radius)}
+body.sf-shelled[data-sf-page="narayani-visual"] :is(.gantt-track,.month,#day-readout){border-color:#d5e4e9}
+body.sf-shelled[data-sf-page="narayani-visual"] .graph-mobile-guide{color:#37647a}
+/* Familiar pale white shared technical workbenches; no hardcoded results are painted as approved. */
+body.sf-shelled[data-sf-page="kernel"] .k,
+body.sf-shelled[data-sf-page="kernel"] .panel{background:#fff!important}
+body.sf-shelled[data-sf-page="kernel"] .sub{color:#567183!important}
+body.sf-shelled[data-sf-page="kernel"] .ph{background:#ecf7f6;color:#24556a}
+body.sf-shelled[data-sf-page="roadmap"] .branch{color:#156b72;background:#e6f5f3}
+body.sf-shelled[data-sf-page="roadmap"] .phase{background:#fff}
+body.sf-shelled[data-sf-page="knowledge"] .card,
+body.sf-shelled[data-sf-page="task"] .card,
+body.sf-shelled[data-sf-page="roadmap"] .card{background:#fff!important;border-radius:var(--sf-radius)}
+body.sf-shelled[data-sf-page="machine"] .wrap{max-width:1330px}
+body.sf-shelled[data-sf-page="machine"] .grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,265px),1fr))}
+body.sf-shelled[data-sf-page="machine"] .panel{min-height:172px}
+body.sf-shelled[data-sf-page="how"] main{max-width:1330px}
+body.sf-shelled[data-sf-page="legacy"] .header{background:#f7fbfc;color:#24495d;border-color:#d8e7ec}
+body.sf-shelled[data-sf-page="legacy"] .header .brand,
+body.sf-shelled[data-sf-page="legacy"] .header a{color:#24566b!important}
+body.sf-shelled[data-sf-page="legacy"] .workspace{background:transparent}
+/* Helpful, restrained metadata/navigation strip, generated once on contextual pages.
+   Unlike empty decoration, each item offers a grounded capability or read rule. */
+.sf-page-guide{
+ position:relative;isolation:isolate;overflow:hidden;display:grid;
+ grid-template-columns:minmax(180px,1.05fr) repeat(2,minmax(170px,1fr));
+ gap:13px;align-items:stretch;margin:17px 0 23px;max-width:100%;
+ background:#f0f7f8;border:1px solid #d4e7e9;
+ border-radius:var(--sf-radius);padding:12px;
+}
+.sf-page-guide:before{content:"";pointer-events:none;position:absolute;inset:0;
+ background:radial-gradient(circle at 84% 10%,#80c4ba1a,transparent 32%);
+ background-image:radial-gradient(circle,#83bcc121 1px,transparent 1px);
+ background-size:21px 21px;z-index:-1}
+.sf-page-guide__item{background:#fff;min-width:0;padding:13px 15px;
+ border-radius:12px;border:1px solid #d7e6ea;box-shadow:0 5px 15px #29556909}
+.sf-page-guide__eyebrow{font-size:10px;letter-spacing:.12em;color:#127e83;text-transform:uppercase;font-weight:900}
+.sf-page-guide__item strong{display:block;font-size:14px;line-height:1.4;color:#23495e;margin:5px 0}
+.sf-page-guide__item p{font-size:12px;line-height:1.55;margin:4px 0;color:#557184}
+.sf-page-guide__item a{display:inline-block;font-size:12px;font-weight:800;margin-top:6px;color:#126e76!important}
+.sf-page-guide__item--lead{background:linear-gradient(125deg,#fff,#e4f5f1)}
+.sf-page-guide__item--lead:before{content:"◇  ──  ◇  ──  ◇";display:block;color:#4baca9;
+ letter-spacing:4px;font-size:11px;white-space:nowrap;overflow:hidden}
+body.sf-shelled .sf-page-guide :is(a,button):focus-visible{outline:3px solid #ba862b!important}
+/* Empty readiness/technical panels show subdued drawings, never fake content. */
+body.sf-shelled :is(.empty,.no-data):empty{
+ min-height:104px;background:
+ linear-gradient(135deg,transparent 43%,#bfdedd25 43%,#bfdedd25 45%,transparent 45%),
+ linear-gradient(#f9fcfd,#f1f8f9);border:1px dashed #b7d9de;border-radius:12px
+}
+body.sf-shelled .sf-page-guide+.workspace{margin-top:7px}
+@media(min-width:1500px){
+ body.sf-shelled[data-sf-page="planner"] main,
+ body.sf-shelled[data-sf-page="kernel"] main,
+ body.sf-shelled[data-sf-page="advanced"] .workspace{max-width:1680px;margin-left:auto;margin-right:auto}
+ body.sf-shelled[data-sf-page="roadmap"] .wrap,
+ body.sf-shelled[data-sf-page="knowledge"] .wrap,
+ body.sf-shelled[data-sf-page="task"] .wrap{max-width:1420px}
+}
+@media(max-width:900px){
+ .sf-page-guide{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sf-page-guide__item--lead{grid-column:1/-1}
+ body.sf-shelled[data-sf-page="advanced"] .workspace{overflow-x:auto}
+ body.sf-shelled[data-sf-page="planner"] .kpis,
+ body.sf-shelled[data-sf-page="kernel"] .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+ html{scroll-padding-top:146px}
+ body.sf-shelled *{scroll-margin-top:146px}
+ .sf-page-guide{grid-template-columns:1fr;padding:9px;gap:8px;margin:12px 0 17px}
+ .sf-page-guide__item--lead{grid-column:auto}
+ .sf-page-guide__item{padding:11px 12px}
+ .sf-page-guide__item p{font-size:12px}
+ body.sf-shelled :is(main,.wrap,.shell){max-width:100%;min-width:0}
+ body.sf-shelled[data-sf-page="planner"] main,
+ body.sf-shelled[data-sf-page="kernel"] main,
+ body.sf-shelled[data-sf-page="roadmap"] .wrap,
+ body.sf-shelled[data-sf-page="knowledge"] .wrap,
+ body.sf-shelled[data-sf-page="task"] .wrap,
+ body.sf-shelled[data-sf-page="narayani-index"] main,
+ body.sf-shelled[data-sf-page="machine"] .wrap{padding-left:12px!important;padding-right:12px!important}
+ body.sf-shelled[data-sf-page="planner"] .kpis,
+ body.sf-shelled[data-sf-page="kernel"] .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body.sf-shelled[data-sf-page="advanced"] .top1,
+ body.sf-shelled[data-sf-page="advanced"] .top2{height:auto;min-height:45px;flex-wrap:wrap;gap:7px}
+ body.sf-shelled[data-sf-page="advanced"] .workspace{overflow-x:auto}
+ body.sf-shelled[data-sf-page="roadmap"] .bar,
+ body.sf-shelled[data-sf-page="knowledge"] .bar,
+ body.sf-shelled[data-sf-page="task"] .bar{flex-wrap:wrap;gap:6px}
+ body.sf-shelled[data-sf-page="planner"] :is(.table-scroll,.timeline-scroll),
+ body.sf-shelled[data-sf-page="kernel"] .panel{overflow-x:auto}
+ body.sf-shelled[data-sf-page="machine"] .panel{min-height:0}
+ body.sf-shelled[data-sf-page="how"] .grid{grid-template-columns:1fr}
+ body.sf-shelled[data-sf-page="narayani-index"] .layout{display:block}
+ body.sf-shelled[data-sf-page="narayani-visual"] .workspace{max-width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ .sf-page-guide:before{animation:none!important}
+}
