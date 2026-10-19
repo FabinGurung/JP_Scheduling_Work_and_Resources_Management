@@ -11,49 +11,73 @@ function createPipRoam(pip,header,reduced){
  hint.className="sf-pip-hint";hint.textContent="You can pet Pip!";
  pip.append(hint);pip.classList.add("sf-pip-roamer");
  pip.setAttribute("role","button");pip.tabIndex=0;
- const positions=[[.06,.19],[.85,.27],[.87,.67],[.08,.78],[.48,.89],[.86,.49],[.04,.54],[.56,.26]];
+ // A serpentine, short-segment zigzag visits upper, middle and lower visible page.
+ // Waypoints are fractions of SAFE viewport space (below the navigation).
+ // Each normal segment moves at approximately 16 CSS pixels per second.
+ const SLOW_PIP_PIXELS_PER_SECOND=16;
+ const positions=[
+  [.05,.12],[.23,.22],[.41,.12],[.59,.23],[.77,.13],[.90,.25],
+  [.75,.37],[.57,.28],[.39,.39],[.21,.29],[.06,.43],
+  [.23,.55],[.41,.44],[.59,.56],[.77,.46],[.90,.59],
+  [.76,.72],[.58,.61],[.40,.74],[.22,.64],[.06,.77],
+  [.20,.87],[.39,.77],[.57,.88],[.76,.78],[.90,.86],
+  [.78,.68],[.60,.77],[.42,.65],[.24,.76],[.06,.64],
+  [.18,.49],[.35,.59],[.52,.47],[.69,.55],[.87,.42]
+ ];
  let index=0,encounters=0,resting=false,paused=reduced,tick=null,petEnd=null,lastHit=0;
  const win=()=>({w:Math.max(320,window.innerWidth),h:Math.max(300,window.innerHeight)});
- function move(i,quick=false){
+ function target(i){
   const {w,h}=win(),p=positions[i%positions.length],size=w<=720?55:69;
   const headBottom=header.getBoundingClientRect().bottom+10;
-  const minY=Math.min(h-80,Math.max(75,headBottom));
-  const maxY=Math.max(minY,h-86);
-  const x=Math.max(6,Math.min(w-size-7,Math.round(p[0]*w)));
-  const y=Math.max(minY,Math.min(maxY,Math.round(p[1]*h)));
-  pip.classList.toggle("sf-pip-escape",quick);
-  pip.style.left=x+"px";pip.style.top=y+"px";
+  const minY=Math.min(h-80,Math.max(75,headBottom)),maxY=Math.max(minY,h-86);
+  return {x:Math.max(6,Math.min(w-size-7,Math.round(6+p[0]*(w-size-13)))),
+   y:Math.max(minY,Math.min(maxY,Math.round(minY+p[1]*(maxY-minY))))};
+ }
+ function clearTick(){if(tick!==null){clearTimeout(tick);tick=null}}
+ function clearPet(){if(petEnd!==null){clearTimeout(petEnd);petEnd=null}}
+ function holdPosition(){
+  // Capture the *current* interpolated location before removing a transition.
+  const rect=pip.getBoundingClientRect();
+  pip.style.transitionDuration="0ms";
+  pip.style.left=rect.left+"px";pip.style.top=rect.top+"px";
  }
  function announce(){
   pip.setAttribute("aria-label",resting?"Pip is resting: pet Pip now":
    "Pip the scheduling crawler. Encounter "+encounters+" of 10; Pip runs away when approached.");
  }
- function clearTick(){if(tick!==null){clearTimeout(tick);tick=null}}
- function resumeTick(){
+ function travelTo(i,escape=false){
   clearTick();
   if(paused||resting||document.hidden)return;
-  tick=setTimeout(()=>{
-   index=(index+1)%positions.length;move(index);resumeTick();
-  },5900);
+  const here=pip.getBoundingClientRect(),to=target(i);
+  const distance=Math.hypot(to.x-here.left,to.y-here.top);
+  // Do not create 6-second stops: schedule the next segment at transition end.
+  const duration=escape?1700:Math.max(1700,Math.round(1000*distance/SLOW_PIP_PIXELS_PER_SECOND));
+  pip.classList.toggle("sf-pip-escape",escape);
+  pip.style.transitionDuration=duration+"ms";
+  pip.style.left=to.x+"px";pip.style.top=to.y+"px";
+  tick=setTimeout(()=>{index=(index+1)%positions.length;travelTo(index)},duration);
  }
  function endPetWindow(){
-  if(petEnd!==null){clearTimeout(petEnd);petEnd=null}
-  resting=false;encounters=0;
+  clearPet();resting=false;encounters=0;
   pip.classList.remove("sf-pip-pettable","sf-pip-petted");
-  announce();if(!paused){index=(index+1)%positions.length;move(index,true);resumeTick()}
+  announce();
+  if(!paused){index=(index+1)%positions.length;travelTo(index)}
  }
  function encounter(){
   if(paused)return;
   if(resting){pip.classList.add("sf-pip-petted");hint.textContent="Thank you!";return}
-  // Ignore repeated pointer events during the rapid escape.
-  const now=Date.now();if(now-lastHit<650)return;lastHit=now;
+  const now=Date.now();if(now-lastHit<900)return;lastHit=now;
   encounters++;clearTick();
   if(encounters%10===0){
-   resting=true;pip.classList.add("sf-pip-pettable");
-   pip.classList.remove("sf-pip-escape");hint.textContent="Pet Pip!";
+   resting=true;holdPosition();
+   pip.classList.add("sf-pip-pettable");
+   pip.classList.remove("sf-pip-escape");
+   hint.textContent="Pet Pip!";
    petEnd=setTimeout(endPetWindow,9000);
   }else{
-   index=(index+2)%positions.length;move(index,true);resumeTick();
+   // Escapes are intentionally quicker than the normal slow crawl, but bounded.
+   index=(index+1)%positions.length;
+   travelTo(index,true);
   }
   announce();
  }
@@ -65,19 +89,27 @@ function createPipRoam(pip,header,reduced){
   if(event.key==="Enter"||event.key===" "){event.preventDefault();encounter()}
  });
  document.addEventListener("visibilitychange",()=>{
-  if(document.hidden)clearTick();else resumeTick();
+  if(document.hidden){clearTick();holdPosition()}
+  else if(!paused&&!resting){index=(index+1)%positions.length;travelTo(index)}
  });
- window.addEventListener("resize",()=>move(index),{passive:true});
+ window.addEventListener("resize",()=>{
+  if(paused||resting){holdPosition();return}
+  travelTo(index);
+ },{passive:true});
  document.body.append(pip);
- announce();move(index);resumeTick();
+ announce();
+ const start=target(index);
+ pip.style.transitionDuration="0ms";
+ pip.style.left=start.x+"px";pip.style.top=start.y+"px";
+ if(!paused)tick=setTimeout(()=>{index=1;travelTo(index)},100);
  return {setPaused(v){
+  if(paused===v)return;
   paused=v;
-  if(paused){clearTick();if(petEnd!==null){clearTimeout(petEnd);petEnd=null}}
-  else if(resting){petEnd=setTimeout(endPetWindow,9000)}
-  else resumeTick();
+  if(paused){clearTick();holdPosition();if(resting)clearPet()}
+  else if(resting)petEnd=setTimeout(endPetWindow,9000);
+  else{index=(index+1)%positions.length;travelTo(index)}
  }};
 }
-
 function createShell(){
  if(document.querySelector(".sf-global"))return;
  const path=location.pathname;
@@ -150,7 +182,7 @@ function createShell(){
   motion.disabled=true;
   motion.title="Motion disabled by your reduced-motion preference";
   motion.setAttribute("aria-label","Pip stays still because reduced motion is enabled");
- }else motion.addEventListener("click",()=>{paused=!paused;syncPip();roamController?.setPaused(paused)});
+ }else motion.addEventListener("click",()=>{paused=!paused;roamController?.setPaused(paused);syncPip()});
  wrap.append(motion);
  document.body.prepend(header);
  roamController=createPipRoam(pip,header,reduced);
