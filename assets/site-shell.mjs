@@ -2,6 +2,82 @@
 const base=new URL("../",import.meta.url);
 function address(path){return new URL(path,base).href}
 function entry(parent,label,path){const a=document.createElement("a");a.textContent=label;a.href=address(path);parent.append(a);return a}
+
+/* Pip travels through the *visible page*, not a mock progress engine.
+   Ten intentional encounters give one stationary petting window.
+   A private planning/project state is never read, fetched or modified here. */
+function createPipRoam(pip,header,reduced){
+ const hint=document.createElement("span");
+ hint.className="sf-pip-hint";hint.textContent="You can pet Pip!";
+ pip.append(hint);pip.classList.add("sf-pip-roamer");
+ pip.setAttribute("role","button");pip.tabIndex=0;
+ const positions=[[.06,.19],[.85,.27],[.87,.67],[.08,.78],[.48,.89],[.86,.49],[.04,.54],[.56,.26]];
+ let index=0,encounters=0,resting=false,paused=reduced,tick=null,petEnd=null,lastHit=0;
+ const win=()=>({w:Math.max(320,window.innerWidth),h:Math.max(300,window.innerHeight)});
+ function move(i,quick=false){
+  const {w,h}=win(),p=positions[i%positions.length],size=w<=720?55:69;
+  const headBottom=header.getBoundingClientRect().bottom+10;
+  const minY=Math.min(h-80,Math.max(75,headBottom));
+  const maxY=Math.max(minY,h-86);
+  const x=Math.max(6,Math.min(w-size-7,Math.round(p[0]*w)));
+  const y=Math.max(minY,Math.min(maxY,Math.round(p[1]*h)));
+  pip.classList.toggle("sf-pip-escape",quick);
+  pip.style.left=x+"px";pip.style.top=y+"px";
+ }
+ function announce(){
+  pip.setAttribute("aria-label",resting?"Pip is resting: pet Pip now":
+   "Pip the scheduling crawler. Encounter "+encounters+" of 10; Pip runs away when approached.");
+ }
+ function clearTick(){if(tick!==null){clearTimeout(tick);tick=null}}
+ function resumeTick(){
+  clearTick();
+  if(paused||resting||document.hidden)return;
+  tick=setTimeout(()=>{
+   index=(index+1)%positions.length;move(index);resumeTick();
+  },5900);
+ }
+ function endPetWindow(){
+  if(petEnd!==null){clearTimeout(petEnd);petEnd=null}
+  resting=false;encounters=0;
+  pip.classList.remove("sf-pip-pettable","sf-pip-petted");
+  announce();if(!paused){index=(index+1)%positions.length;move(index,true);resumeTick()}
+ }
+ function encounter(){
+  if(paused)return;
+  if(resting){pip.classList.add("sf-pip-petted");hint.textContent="Thank you!";return}
+  // Ignore repeated pointer events during the rapid escape.
+  const now=Date.now();if(now-lastHit<650)return;lastHit=now;
+  encounters++;clearTick();
+  if(encounters%10===0){
+   resting=true;pip.classList.add("sf-pip-pettable");
+   pip.classList.remove("sf-pip-escape");hint.textContent="Pet Pip!";
+   petEnd=setTimeout(endPetWindow,9000);
+  }else{
+   index=(index+2)%positions.length;move(index,true);resumeTick();
+  }
+  announce();
+ }
+ pip.addEventListener("pointerenter",event=>{if(event.pointerType!=="touch")encounter()});
+ pip.addEventListener("pointerdown",event=>{
+  if(event.pointerType==="touch"||resting){event.preventDefault();encounter()}
+ });
+ pip.addEventListener("keydown",event=>{
+  if(event.key==="Enter"||event.key===" "){event.preventDefault();encounter()}
+ });
+ document.addEventListener("visibilitychange",()=>{
+  if(document.hidden)clearTick();else resumeTick();
+ });
+ window.addEventListener("resize",()=>move(index),{passive:true});
+ document.body.append(pip);
+ announce();move(index);resumeTick();
+ return {setPaused(v){
+  paused=v;
+  if(paused){clearTick();if(petEnd!==null){clearTimeout(petEnd);petEnd=null}}
+  else if(resting){petEnd=setTimeout(endPetWindow,9000)}
+  else resumeTick();
+ }};
+}
+
 function createShell(){
  if(document.querySelector(".sf-global"))return;
  const path=location.pathname;
@@ -58,6 +134,7 @@ function createShell(){
   </g>
  </svg>`;
  rail.append(pip);header.append(rail);
+ let roamController=null;
  const motion=document.createElement("button");
  motion.className="sf-crawl-control";motion.type="button";
  let paused=reduced;
@@ -73,9 +150,10 @@ function createShell(){
   motion.disabled=true;
   motion.title="Motion disabled by your reduced-motion preference";
   motion.setAttribute("aria-label","Pip stays still because reduced motion is enabled");
- }else motion.addEventListener("click",()=>{paused=!paused;syncPip()});
+ }else motion.addEventListener("click",()=>{paused=!paused;syncPip();roamController?.setPaused(paused)});
  wrap.append(motion);
  document.body.prepend(header);
+ roamController=createPipRoam(pip,header,reduced);
  document.addEventListener("click",event=>{if(more.open&&!more.contains(event.target))more.open=false});
  document.addEventListener("keydown",event=>{if(event.key==="Escape")more.open=false});
 }
