@@ -110,13 +110,60 @@ function createPipRoam(pip,header,reduced){
   else{index=(index+1)%positions.length;travelTo(index)}
  }};
 }
+
+/* Shared, source-safe context: describes a workspace, never invents live progress. */
+const sfPageProfiles={
+ "index.html":{id:"home",title:"One governed project story",intro:"Choose a clear field view, or explore the technical methods under More.",rule:"Reported field evidence is not approval.",next:["Open constellation","projects/narayani/visual.html#constellation"]},
+ "planner.html":{id:"planner",title:"Schedule workbench",intro:"Load or inspect a test network, then compare recalculated dates and resource assignments.",rule:"Scenario schedules do not become approved baselines automatically.",next:["Learn the CPM principles","how/index.html"]},
+ "kernel-lab.html":{id:"kernel",title:"Mathematical engine lab",intro:"Explore the tested dependency and calendar contracts with reproducible examples.",rule:"Only inputs that pass the engine contract are meaningful.",next:["Researcher handbook","how/index.html"]},
+ "advanced.html":{id:"advanced",title:"Technical control console",intro:"Inspect activity, capacity and machine evidence without losing the field-facing roadmap.",rule:"Technical projections are not signed engineering releases.",next:["Open project constellation","projects/narayani/visual.html#constellation"]},
+ "roadmap.html":{id:"roadmap",title:"Development pathway",intro:"Follow which kernel capabilities are built, tested or still planned.",rule:"Planned work is not a deployed feature.",next:["Inspect the engine doctrine","how/index.html"]},
+ "projects/narayani/index.html":{id:"narayani-index",title:"Narayani evidence boundaries",intro:"Review pilot WBS scope, source-backed reports and outstanding work readiness.",rule:"Private source revisions and engineering holds remain governed in Drive.",next:["Open visual schedule","projects/narayani/visual.html#constellation"]},
+ "projects/narayani/visual.html":{id:"narayani-visual",title:"One visual planning model",intro:"Constellation, Gantt, calendar and checklist share the same validated WBS data.",rule:"Dates remain a synthetic scenario without an approved baseline.",next:["Researcher handbook","how/index.html"]},
+ "machine/index.html":{id:"machine",title:"Deterministic machine evidence",intro:"Separate reviewed synthetic inputs, generated outputs and source manifests.",rule:"A successful deterministic build is not construction authorization.",next:["Inspect WBS machine result","machine/wbs-sample/index.html"]},
+ "machine/wbs-sample/index.html":{id:"wbs-machine",title:"WBS machine output",intro:"Inspect the generated critical path and activity artifacts together.",rule:"This is source-pinned synthetic scheduling data, not signed site progress.",next:["Open field visual","projects/narayani/visual.html"]},
+ "knowledge/index.html":{id:"knowledge",title:"Construction knowledge catalogue",intro:"Search construction methods and prepare trade-specific readiness checks.",rule:"Method guidance does not replace an engineer's approved issue.",next:["Open WBS checklist","projects/narayani/visual.html#checklist"]},
+ "knowledge/task.html":{id:"task",title:"Method and readiness guide",intro:"See preparation logic, evidence and upstream method references for a selected task.",rule:"Validate local dimensions, site conditions and responsible approvals.",next:["Return to methods","knowledge/index.html"]},
+ "more/legacy-home.html":{id:"legacy",title:"Preserved field roadmap",intro:"Historical site-facing navigation and data views remain recoverable.",rule:"Legacy presentation is not a current authoritative record.",next:["Open current work center","index.html"]},
+ "how/index.html":{id:"how",title:"How the engine works",intro:"Learn CPM/PDM, calendars, WBS, resources, EVM and source-driven project generation.",rule:"Demonstration calculations are not approved site outcomes.",next:["Download the flashcards","how/skyforge-anki.csv"]}
+};
+function pageKey(){
+ const tail=location.pathname.startsWith(base.pathname)?location.pathname.slice(base.pathname.length):"";
+ return tail===""?"index.html":tail;
+}
+function mountContextGuide(profile){
+ if(!profile||["home","narayani-visual","how"].includes(profile.id))return;
+ if(document.querySelector(".sf-page-guide"))return;
+ const primary=document.querySelector("main, .wrap, .shell, .workspace");
+ if(!primary)return;
+ const guide=document.createElement("section");
+ guide.className="sf-page-guide";guide.setAttribute("aria-label","Workspace orientation and source boundaries");
+ function card(kicker,title,desc,lead=false){
+  const item=document.createElement("div");item.className="sf-page-guide__item"+(lead?" sf-page-guide__item--lead":"");
+  const eye=document.createElement("span");eye.className="sf-page-guide__eyebrow";eye.textContent=kicker;
+  const heading=document.createElement("strong");heading.textContent=title;
+  const p=document.createElement("p");p.textContent=desc;
+  item.append(eye,heading,p);return item;
+ }
+ const one=card("This workspace",profile.title,profile.intro,true);
+ const two=card("Interpretation rule","Keep project authority intact",profile.rule);
+ const three=card("Continue","Connected workspace","Use the verified source-backed view that matches your task.");
+ const a=document.createElement("a");a.href=address(profile.next[1]);a.textContent=profile.next[0]+" →";three.append(a);
+ guide.append(one,two,three);
+ const hero=primary.querySelector(".storm-hero,.hero");
+ if(hero&&hero.parentNode===primary)hero.after(guide);
+ else primary.prepend(guide);
+}
+
 function createShell(){
  if(document.querySelector(".sf-global"))return;
  const path=location.pathname;
+ const profile=sfPageProfiles[pageKey()]||null;
  const visual=path.endsWith("/projects/narayani/visual.html");
  const home=path===base.pathname||path===base.pathname+"index.html"; // Exact site root only: nested project directory URLs are NOT the home surface.
  document.body.classList.add("sf-shelled");
  document.body.dataset.sfSurface=visual?"visual":home?"home":"legacy";
+ document.body.dataset.sfPage=profile?.id||"other";
  const header=document.createElement("header");header.className="sf-global";header.setAttribute("aria-label","Skyforge primary navigation");
  const wrap=document.createElement("div");wrap.className="sf-inner";header.append(wrap);
  const brand=entry(wrap,"✦ SKYFORGE","index.html");brand.className="sf-mark";brand.setAttribute("aria-label","Skyforge home");
@@ -185,6 +232,7 @@ function createShell(){
  }else motion.addEventListener("click",()=>{paused=!paused;roamController?.setPaused(paused);syncPip()});
  wrap.append(motion);
  document.body.prepend(header);
+ mountContextGuide(profile);
  roamController=createPipRoam(pip,header,reduced);
  document.addEventListener("click",event=>{if(more.open&&!more.contains(event.target))more.open=false});
  document.addEventListener("keydown",event=>{if(event.key==="Escape")more.open=false});
