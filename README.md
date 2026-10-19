@@ -1,3 +1,19 @@
+## Skyforge v1.6 — Screenshot QA, roaming Pip and exact engine doctrine (19 October 2026)
+
+**Reason:** User-provided iPhone screenshots showed a dark outer home page with nearly unreadable section headings, and a miniature all-45-node WBS graph in a tall empty field view. These are explicit UI regressions, not changes in scheduling mathematics.
+
+**Changes:**
+- Strong white/off-white home palette and high-contrast text; phone header broken into a readable two-row navigation area with a scrollable view list.
+- Mobile constellation defaults to a **490×690 SVG viewport** so individual nodes can be read and selected. Drag to pan, Reset, **Full graph** (45-node overview), and **Find selected** remain available. This is a zoom window, not a new WBS layout/model.
+- Pip crawls around the **visible webpage**, fleeing user mouse hover and phone taps. On each **tenth distinct interaction**, Pip stays for a roughly nine-second petting opportunity. Existing user-controlled pause and reduced-motion behavior remain; all movement is ephemeral and unrelated to engineering progress.
+- **New [How Skyforge Works](how/index.html)** page is published with interactive CPM/EVM demonstrations **calling the real kernel** with synthetic example data, a truthful built-vs-future capabilities table, and 32 cards in [Anki CSV](how/skyforge-anki.csv).
+- Permanent [research doctrine](docs/research/SKYFORGE_REPRODUCIBLE_ENGINE_DOCTRINE_V1.md) enshrines CPM/PDM, WBS, calendars, crew/equipment/material resources, basic EVM, source/assumption authority, deterministic reproduction and the **AI adapter procedure** for truly different projects. **Each project's specific WBS must be compiled from verified project evidence; Narayani's template is not universal.**
+- [v1.6 mobile/mascot design specification](docs/design/SKYFORGE_MOBILE_ROAMING_PIP_V1_6.md) records screenshot issues, requested ten-encounter behavior and rollback to v1.5 commit `0e6122e77465e7f39667d771aac2147788126d16`.
+
+**Governance:** The scheduling kernel, project-model schema, 45/49/405/7 Narayani public data, MCQ authority, source hashes and engineered permits/holds are unchanged. The new generic project compiler, approved real cost-loaded baselines and complete P6/MS Project parity are **not** falsely described as delivered. Only public handbook HTML/CSV are added to Pages allowlist. Formal browser/device graphical QA remains separate from GitHub Actions tests.
+
+---
+
 ## Skyforge v1.5 — white theme and Pip the scheduling crawler (19 October 2026)
 
 **Design specification:** [Skyforge White + Pip Crawler v1.5](docs/design/SKYFORGE_WHITE_PIP_CRAWLER_V1_5.md).
