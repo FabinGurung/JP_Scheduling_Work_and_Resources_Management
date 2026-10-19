@@ -45,7 +45,7 @@ test("Pip is a small UI-only roaming companion and every tenth hover opens a pet
  assert.match(js,/if\(paused\)return/);
  assert.match(css,/\.sf-crawl-runner\.sf-pip-roamer\{/);
  assert.match(css,/position:fixed!important/);
- assert.match(css,/\.sf-pip-roamer\.sf-pip-escape\{transition-duration:\.52s/);
+ assert.match(css,/\.sf-pip-roamer\.sf-pip-escape\{transition-duration:1\.7s/);
  assert.match(css,/\.sf-pip-roamer\.sf-pip-pettable/);
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
  assert.doesNotMatch(js,/fetch\s*\(|WebSocket|localStorage|drive\.google\.com|slack\.com/);
@@ -81,4 +81,18 @@ test("Anki deck and public Pages allowlist are explicit and source-only/private 
  assert.match(build,/visualModel\.activities\?\.length!==45/);
  assert.match(build,/visualModel\.links\?\.length!==49/);
  assert.match(build,/visualModel\.activities\.reduce\(\(n,a\)=>n\+a\.checklist\.length,0\)!==405/);
+});
+
+test("Pip uses steady speed-controlled zigzag crawling without idle dwell",()=>{
+ const js=read("assets/site-shell.mjs"),css=read("assets/site-shell.css");
+ assert.match(js,/SLOW_PIP_PIXELS_PER_SECOND=16/);
+ assert.match(js,/Math\.hypot\(to\.x-here\.left,to\.y-here\.top\)/);
+ assert.match(js,/1000\*distance\/SLOW_PIP_PIXELS_PER_SECOND/);
+ assert.match(js,/tick=setTimeout\(\(\)=>\{index=\(index\+1\)%positions\.length;travelTo\(index\)\},duration\)/);
+ assert.match(js,/const positions=\[/);
+ assert.match(css,/transition-timing-function:linear,linear/);
+ assert.doesNotMatch(js,/\},5900\)/);
+ assert.doesNotMatch(js,/sf-pip-walk/);
+ assert.match(js,/encounters%10===0/);
+ assert.match(js,/petEnd=setTimeout\(endPetWindow,9000\)/);
 });
