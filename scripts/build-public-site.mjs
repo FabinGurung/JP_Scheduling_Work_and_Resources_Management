@@ -17,7 +17,7 @@ async function modules(relative){
  }
 }
 const approved=["index.html","advanced.html","planner.html","kernel-lab.html","roadmap.html","project-controls-demo.json",
- "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","more/legacy-home.html",
+ "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","assets/skyforge-unified.css","more/legacy-home.html",
  "knowledge/index.html","knowledge/task.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
 for(const f of approved)await cp(f);
 await modules("src");
@@ -154,6 +154,13 @@ async function styleAllowlistedPages(dir=""){
    const link='<link rel="stylesheet" href="'+prefix+'assets/site-shell.css" data-skyforge-shell="1">';
    if(!/<\/head>/i.test(markup))throw Error("Missing head closure: "+relative);
    markup=markup.replace(/<\/head>/i,link+"</head>");
+  }
+  // Enforce last-position canonical CSS after every page's legacy inline/external styles.
+  // Non-redirect pages only; dynamic project data and engineering JSON are untouched.
+  if(!markup.includes("skyforge-unified.css")){
+   const unified='<link rel="stylesheet" href="'+prefix+'assets/skyforge-unified.css" data-skyforge-unified="1">';
+   if(!/<\\/head>/i.test(markup))throw Error("Missing head closure for canonical skin: "+relative);
+   markup=markup.replace(/<\\/head>/i,unified+"</head>");
   }
   if(!markup.includes("site-shell.mjs")){
    const js='<script type="module" src="'+prefix+'assets/site-shell.mjs"></script>';
