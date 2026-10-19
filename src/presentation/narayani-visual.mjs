@@ -4,7 +4,13 @@ const $=id=>document.getElementById(id),SVG_NS="http://www.w3.org/2000/svg";
 const el=(tag,text,className)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(className)n.className=className;return n};
 const svg=(tag,attributes={},text)=>{const n=document.createElementNS(SVG_NS,tag);for(const [key,v] of Object.entries(attributes))n.setAttribute(key,String(v));if(text!==undefined)n.textContent=text;return n};
 let model=null,selected=null,activeTab="constellation",phaseFilter="ALL",term="",monthOffset=0,anchor="2026-10-19",drag=null;
-let viewport={x:0,y:0,w:1600,h:840};
+// A portrait phone must show usable nodes, not a 1600-unit-wide miniature.
+function initialGraphViewport(){
+ return window.matchMedia?.("(max-width: 720px)")?.matches?
+  {x:0,y:0,w:490,h:690}:{x:0,y:0,w:1600,h:840};
+}
+let viewport=initialGraphViewport();
+let graphWasPhone=window.innerWidth<=720;
 let threeSession=null,threeOpening=false;
 let previewSlot=-1,playTimer=null,previewMax=80;
 function computePreviewMax(){
@@ -108,6 +114,10 @@ function renderGraph(){
   graph.append(g);
  }
  setViewport();
+}
+function focusGraphOn(id){
+ const point=coordMap().get(id);if(!point)return;
+ viewport.x=point.x-viewport.w/2;viewport.y=point.y-viewport.h/2;setViewport();
 }
 function changeZoom(factor){const cx=viewport.x+viewport.w/2,cy=viewport.y+viewport.h/2;
  viewport.w=Math.max(280,Math.min(2500,viewport.w*factor));
@@ -373,7 +383,13 @@ function hook(){
  $("reset-3d").addEventListener("click",()=>threeSession?.reset());
  $("back-2d").addEventListener("click",()=>tab("constellation"));
  $("zoom-in").addEventListener("click",()=>changeZoom(.78));$("zoom-out").addEventListener("click",()=>changeZoom(1.3));
- $("reset-view").addEventListener("click",()=>{viewport={x:0,y:0,w:1600,h:840};setViewport()});
+ $("reset-view").addEventListener("click",()=>{viewport=initialGraphViewport();setViewport()});
+ $("graph-overview").addEventListener("click",()=>{viewport={x:0,y:0,w:1600,h:840};setViewport()});
+ $("graph-focus").addEventListener("click",()=>focusGraphOn(selected));
+ window.addEventListener("resize",()=>{
+  const phone=window.innerWidth<=720;
+  if(phone!==graphWasPhone){graphWasPhone=phone;viewport=initialGraphViewport();setViewport()}
+ },{passive:true});
  $("phase-picker").addEventListener("change",e=>{phaseFilter=e.target.value;renderGraph()});
  $("activity-search").addEventListener("input",e=>{term=e.target.value.toLowerCase();renderGraph()});
  $("calendar-prev").addEventListener("click",()=>{monthOffset-=3;renderCalendar()});
