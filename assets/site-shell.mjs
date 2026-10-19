@@ -68,7 +68,12 @@ function createShell(){
   motion.title=paused?"Play mascot":"Pause mascot";
   motion.textContent=paused?"▶ Pip":"Ⅱ Pip";
  }
- syncPip();motion.addEventListener("click",()=>{paused=!paused;syncPip()});
+ syncPip();
+ if(reduced){
+  motion.disabled=true;
+  motion.title="Motion disabled by your reduced-motion preference";
+  motion.setAttribute("aria-label","Pip stays still because reduced motion is enabled");
+ }else motion.addEventListener("click",()=>{paused=!paused;syncPip()});
  wrap.append(motion);
  document.body.prepend(header);
  document.addEventListener("click",event=>{if(more.open&&!more.contains(event.target))more.open=false});
