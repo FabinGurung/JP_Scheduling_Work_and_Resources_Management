@@ -177,7 +177,7 @@ await styleAllowlistedPages();
 for(const relative of skinned){
  const page=await readFile(join(out,relative),"utf8");
  const linkIndex=page.indexOf("assets/skyforge-unified.css");
- const matches=page.match(/assets\\/skyforge-unified\\.css/g)??[];
+ const matches=page.match(/assets\/skyforge-unified\.css/g)??[];
  if(linkIndex<0||matches.length!==1||
     page.lastIndexOf("</style>")>linkIndex||
     page.lastIndexOf("assets/site-shell.css")>linkIndex||
