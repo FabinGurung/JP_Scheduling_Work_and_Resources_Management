@@ -186,3 +186,57 @@ body.sf-shelled[data-sf-surface="visual"] .mobile-scroll-hint{color:#326a79;bord
  .sf-crawl-runner,.sf-pip-squish,.sf-pip-foot-a,.sf-pip-foot-b{animation:none!important;will-change:auto}
  body.sf-shelled[data-sf-surface="home"] .hero:after{animation:none!important}
 }
+
+/* v1.6 FIX: actual iPhone screenshots showed inherited dark gutters on the HOME view.
+   This higher-specificity rule explicitly wins over v1.0 dark-theme !important declarations. */
+html,body.sf-shelled[data-sf-surface="home"]{background:#f6f9fc!important;color:#20384b!important}
+body.sf-shelled[data-sf-surface="home"] main,
+body.sf-shelled[data-sf-surface="home"] .panel-header,
+body.sf-shelled[data-sf-surface="home"] .panel-header h2{color:#20384b!important}
+body.sf-shelled[data-sf-surface="home"] .small{color:#536d7f!important}
+body.sf-shelled[data-sf-surface="home"] .hero,
+body.sf-shelled[data-sf-surface="home"] .view-card,
+body.sf-shelled[data-sf-surface="home"] .note{box-shadow:0 8px 28px #21556e0d}
+body.sf-shelled[data-sf-surface="home"] .view-card strong,
+body.sf-shelled[data-sf-surface="home"] .note h2{color:#1b3c53!important}
+/* White page controls are readable even if older inline dark declarations win */
+body.sf-shelled[data-sf-surface="visual"]{background:#f6f9fc!important}
+body.sf-shelled[data-sf-surface="visual"] .toolbar{color:#29495c}
+body.sf-shelled[data-sf-surface="visual"] .gantt-axis .gantt-track span{color:#506e83!important}
+body.sf-shelled[data-sf-surface="visual"] .day:hover .day-label{color:#174759}
+body.sf-shelled[data-sf-surface="visual"] .day.inactive{opacity:.48}
+/* Movable Pip crosses the visible webpage; original timeline remains as a subtle motif. */
+.sf-crawl-rail{height:12px;background:#f6fbfa}
+.sf-crawl-milestone{bottom:2px;width:7px;height:7px}
+.sf-crawl-line{bottom:5px}
+.sf-crawl-runner.sf-pip-roamer{
+ position:fixed!important;left:10px;top:125px;bottom:auto;width:67px;height:53px;
+ z-index:260;cursor:pointer;pointer-events:auto;touch-action:manipulation;
+ animation:none!important;transition:left 3.1s cubic-bezier(.42,.09,.29,.98),top 3.1s cubic-bezier(.42,.09,.29,.98);
+ filter:drop-shadow(0 4px 9px #2b667926)
+}
+.sf-pip-roamer .sf-pip{width:66px;height:49px;filter:none}
+.sf-pip-roamer.sf-pip-escape{transition-duration:.52s,.52s}
+.sf-pip-roamer.sf-pip-pettable{transition:none;filter:drop-shadow(0 5px 16px #3ccfa15e)}
+.sf-pip-roamer.sf-pip-petted .sf-pip-squish{animation:sf-pip-pet .5s ease-in-out 3}
+.sf-pip-roamer:focus-visible{outline:3px solid #ba7d21;outline-offset:3px;border-radius:32px}
+.sf-pip-hint{display:none;position:absolute;bottom:calc(100% - 2px);left:4px;white-space:nowrap;
+ color:#2c6661;background:#e9fcf4;border:1px solid #89d2ba;border-radius:10px;padding:3px 7px;
+ font-size:10px;font-weight:800;box-shadow:0 3px 9px #1e6c5a25;pointer-events:none}
+.sf-pip-pettable .sf-pip-hint{display:block}
+.sf-crawl-paused .sf-pip-roamer{transition:none!important}
+@keyframes sf-pip-pet{50%{transform:rotate(-11deg) scale(1.10)}}
+@media(max-width:720px){
+ .sf-crawl-rail{height:9px}
+ .sf-crawl-runner.sf-pip-roamer{width:54px;height:44px;z-index:240}
+ .sf-pip-roamer .sf-pip{width:54px;height:41px}
+ body.sf-shelled[data-sf-surface="visual"] #graph{height:min(70vh,540px);min-height:420px}
+ body.sf-shelled[data-sf-surface="visual"] #constellation .toolbar{gap:8px;padding:12px!important}
+ body.sf-shelled[data-sf-surface="visual"] #constellation .toolbar .btn{min-height:42px}
+ body.sf-shelled[data-sf-surface="visual"] .wbs-guide{font-size:13px;fill:#345e6e}
+ body.sf-shelled[data-sf-surface="visual"] .graph-node .label{font-weight:750}
+}
+@media(prefers-reduced-motion:reduce){
+ .sf-crawl-runner.sf-pip-roamer{transition:none!important}
+ .sf-pip-roamer.sf-pip-petted .sf-pip-squish{animation:none!important}
+}
