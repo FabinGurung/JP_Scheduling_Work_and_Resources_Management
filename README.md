@@ -1,3 +1,13 @@
+## Skyforge v1.7 — Unify every published website surface (19 October 2026)
+
+All **14 current public HTML pages**, including generated machine examples and preserved technical/history pages, now load a **single white/teal style last**, after each legacy page's earlier CSS. The Pages builder also performs post-build readback to reject missing, duplicated or earlier-than-legacy canonical stylesheets.
+
+[Unified Theme Arc v1.7 spec](docs/design/SKYFORGE_UNIFIED_LIVE_THEME_ARC_V1_7.md) defines the exact colors, spacing, component behavior, responsive breakpoints, page families and safe treatment of formerly empty layout areas. On older tools/methods/evidence pages, compact **This Workspace / Interpret Results / Continue** panels explain actual available functions and limitations rather than invented reports or decorative filler. On the homepage and already dense constellation/research handbook these context strips are omitted to avoid clutter. Wide cards and desktop layouts use a shared page grid; mobile views retain legible controls, touch navigation and horizontal technical scrolling instead of hiding information.
+
+**Safety:** This arc changes shared presentation CSS/navigation and allowlisted static-site assembly only; no CPM, WBS, calendars, EVM, resources, MCQ, source-pinned models, live-sync controls, permits, engineering approvals, private Drive evidence, or Pip movement. The previous annotated tag [v1.6.1-visual.1](https://github.com/FabinGurung/JP_Scheduling_Work_and_Resources_Management/releases/tag/v1.6.1-visual.1) remains the rollback point. Confirm live CI separately; actual cross-device visual screenshots have not been independently obtained.
+
+---
+
 ## Skyforge v1.6.1 — slow continuous zigzag for Pip (19 October 2026)
 
 Pip's previous route had a `3.1s` transition followed by an approximately `2.8s` idle gap. The presentation-only walker now traverses short **serpentine/zigzag segments across the visible viewport at approximately 16 CSS pixels per second**, with next travel scheduled at transition completion instead of an arbitrary 5.9-second cycle. Movement uses distance-based linear CSS transitions and stays completely separate from engineering model, activity progress and approval logic.
