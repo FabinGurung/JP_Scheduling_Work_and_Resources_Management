@@ -1,3 +1,13 @@
+## Skyforge v1.6.1 — slow continuous zigzag for Pip (19 October 2026)
+
+Pip's previous route had a `3.1s` transition followed by an approximately `2.8s` idle gap. The presentation-only walker now traverses short **serpentine/zigzag segments across the visible viewport at approximately 16 CSS pixels per second**, with next travel scheduled at transition completion instead of an arbitrary 5.9-second cycle. Movement uses distance-based linear CSS transitions and stays completely separate from engineering model, activity progress and approval logic.
+
+The hover approach still makes Pip gently escape (now **1.7s**, rather than the original very fast 0.52s); every tenth encounter retains the **9-second stationary petting window**, plus mobile touch/keyboard input, the user's pause control, and reduced-motion behavior. The deterministic waypoints cover upper/mid/lower screen bands without data reads, network requests, storage or mutation of scheduling logic.
+
+This patch changes only `assets/site-shell.mjs`, `assets/site-shell.css`, its UI regression test, version and this README. The previous v1.6 commit `30c0e5956d09aa0c297bc1d2a366c9ab5f614fc9` is a rollback point. CI and Pages deployment are the release gate; the speed is code-defined, and real-device motion smoothness remains independent visual QA.
+
+---
+
 ## Skyforge v1.6 — Screenshot QA, roaming Pip and exact engine doctrine (19 October 2026)
 
 **Reason:** User-provided iPhone screenshots showed a dark outer home page with nearly unreadable section headings, and a miniature all-45-node WBS graph in a tall empty field view. These are explicit UI regressions, not changes in scheduling mathematics.
