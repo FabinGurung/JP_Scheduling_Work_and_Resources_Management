@@ -216,7 +216,7 @@ body.sf-shelled[data-sf-surface="visual"] .day.inactive{opacity:.48}
  filter:drop-shadow(0 4px 9px #2b667926)
 }
 .sf-pip-roamer .sf-pip{width:66px;height:49px;filter:none}
-.sf-pip-roamer.sf-pip-escape{transition-duration:.52s,.52s}
+.sf-pip-roamer.sf-pip-escape{transition-duration:1.7s,1.7s}
 .sf-pip-roamer.sf-pip-pettable{transition:none;filter:drop-shadow(0 5px 16px #3ccfa15e)}
 .sf-pip-roamer.sf-pip-petted .sf-pip-squish{animation:sf-pip-pet .5s ease-in-out 3}
 .sf-pip-roamer:focus-visible{outline:3px solid #ba7d21;outline-offset:3px;border-radius:32px}
@@ -268,3 +268,8 @@ body.sf-shelled[data-sf-surface="visual"] .day.inactive{opacity:.48}
  .sf-global .sf-more>summary{font-size:12px;padding:8px 10px}
  .sf-global .sf-dropdown{top:102px;max-height:65vh;overflow-y:auto}
 }
+
+/* v1.6.1: Linear, speed-controlled movement. JavaScript chooses a short
+   zigzag segment and sets its duration from distance / 16 CSS px per second.
+   No long idle interval between segments; fleeing remains a short exception. */
+.sf-crawl-runner.sf-pip-roamer{transition-timing-function:linear,linear}
