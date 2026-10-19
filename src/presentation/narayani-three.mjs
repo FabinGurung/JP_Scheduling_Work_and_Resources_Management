@@ -4,13 +4,13 @@
 // Failure must leave the 2D SVG view fully operational.
 const THREE_URL="https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
 export const THREE_PIN="0.180.0";
-const palette={normal:0x789bb6,reported:0xffc96a,hold:0xf08c7e,milestone:0x8eeaff,selected:0x83f8ee,active:0x7bdbff};
+const palette={normal:0x3b86a5,reported:0xb58136,hold:0xbf5c55,milestone:0x148c93,selected:0x0f5b6b,active:0x1a9b9b};
 export async function mountConstellation3D({host,model,selected,onSelect,onUnavailable}){
  if(!host||!model?.activities?.length||!Array.isArray(model.links)||typeof onSelect!=="function")throw Error("3D project model not ready");
  const THREE=await import(THREE_URL);
  let disposed=false,drag=null,frame=0,preview=-1,focus=selected,lon=0.3,lat=0.35,range=95;
- const scene=new THREE.Scene();scene.background=new THREE.Color(0x071324);
- scene.fog=new THREE.FogExp2(0x071324,0.0028);
+ const scene=new THREE.Scene();scene.background=new THREE.Color(0xf0f8fc);
+ scene.fog=new THREE.FogExp2(0xf0f8fc,0.0028);
  const camera=new THREE.PerspectiveCamera(51,1,0.1,400);
  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:"low-power"});
  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.8));
@@ -51,7 +51,7 @@ export async function mountConstellation3D({host,model,selected,onSelect,onUnava
   // Canvas textures are created for ID labels; no third-party fonts or remote assets.
   const c=document.createElement("canvas");c.width=256;c.height=64;
   const ctx=c.getContext("2d");ctx.clearRect(0,0,256,64);
-  ctx.fillStyle="#d3eeff";ctx.font="bold 30px system-ui,sans-serif";ctx.textAlign="center";ctx.fillText(a.id,128,43);
+  ctx.fillStyle="#28536b";ctx.font="bold 30px system-ui,sans-serif";ctx.textAlign="center";ctx.fillText(a.id,128,43);
   const texture=new THREE.CanvasTexture(c);
   const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthWrite:false}));
   sprite.position.set(0,3.45,0);sprite.scale.set(9,2.25,1);mesh.add(sprite);
@@ -60,7 +60,7 @@ export async function mountConstellation3D({host,model,selected,onSelect,onUnava
  for(const link of model.links){
   const from=meshMap.get(link.from),to=meshMap.get(link.to);if(!from||!to)throw Error("Orphan 3D dependency");
   const geo=new THREE.BufferGeometry().setFromPoints([from.position,to.position]);
-  const material=new THREE.LineBasicMaterial({color:0x557c9c,transparent:true,opacity:.42});
+  const material=new THREE.LineBasicMaterial({color:0x789cae,transparent:true,opacity:.56});
   const wire=new THREE.Line(geo,material);scene.add(wire);wires.push({wire,from:link.from,to:link.to});
  }
  // Consistent seeded starfield: ambience only, not imaginary activities.
@@ -69,7 +69,7 @@ export async function mountConstellation3D({host,model,selected,onSelect,onUnava
  const dots=new Float32Array(720*3);
  for(let i=0;i<720;i++){dots[i*3]=(random()-.5)*205;dots[i*3+1]=(random()-.5)*140;dots[i*3+2]=(random()-.5)*110-15}
  const stars=new THREE.BufferGeometry();stars.setAttribute("position",new THREE.BufferAttribute(dots,3));
- const starPoints=new THREE.Points(stars,new THREE.PointsMaterial({color:0x7b9db8,size:.22,transparent:true,opacity:.5,sizeAttenuation:true}));
+ const starPoints=new THREE.Points(stars,new THREE.PointsMaterial({color:0x83afbb,size:.22,transparent:true,opacity:.3,sizeAttenuation:true}));
  scene.add(starPoints);
  const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),target=new THREE.Vector3();
  function updateCamera(){
@@ -88,7 +88,7 @@ export async function mountConstellation3D({host,model,selected,onSelect,onUnava
   for(const line of wires){
    const linkActive=preview>=0&&byId.get(line.from).master_start_slot<=preview&&byId.get(line.to).master_start_slot<=preview;
    const picked=focus&&(line.to===focus||line.from===focus);
-   line.wire.material.color.setHex(picked?palette.selected:linkActive?palette.active:0x557c9c);
+   line.wire.material.color.setHex(picked?palette.selected:linkActive?palette.active:0x789cae);
    line.wire.material.opacity=picked?.95:linkActive?.68:.3;
   }
  }
