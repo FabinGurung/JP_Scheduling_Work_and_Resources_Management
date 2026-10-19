@@ -251,3 +251,12 @@ body.sf-shelled .sf-page-guide{clear:both}
  body.sf-shelled .storm-grid{grid-template-columns:1fr}
  body.sf-shelled .storm-band{padding:12px}
 }
+
+/* Last generated-public surface: source-pinned foundation output stays read-only. */
+body.sf-shelled[data-sf-page="machine-demo"] main{max-width:1340px;margin-inline:auto}
+body.sf-shelled[data-sf-page="machine-demo"] :is(.panel,.card,.box,.summary){
+ background:#fff;border-color:#d7e6ec;color:#244a60
+}
+@media(max-width:640px){
+ body.sf-shelled[data-sf-page="machine-demo"] main{padding-inline:12px}
+}
