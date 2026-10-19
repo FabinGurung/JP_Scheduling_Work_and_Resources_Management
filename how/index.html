@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f6f9fc">
+<meta name="description" content="How Skyforge's scheduling engine works, how to reproduce it and where CPM, resources, EVM and AI-adapted projects stand.">
+<title>How Skyforge Works · Engine Principles & Reproducibility</title>
+<link rel="stylesheet" href="../assets/site-shell.css">
+<style>
+:root{color-scheme:light;--text:#1a394c;--quiet:#557185;--edge:#d5e5ea;--primary:#13777b;--pale:#edf9f7;--warm:#fff6e8}
+*{box-sizing:border-box}body{margin:0;background:#f6f9fc;color:var(--text);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1240px;margin:auto;padding:24px 17px 90px}a{color:#0e727d}
+h1{font-size:clamp(30px,5vw,54px);line-height:1.09;letter-spacing:-.045em;margin:6px 0 18px}
+h2{font-size:clamp(20px,3vw,29px);line-height:1.2;letter-spacing:-.03em}
+h3{font-size:17px}h2,h3{color:#1b4254}p{margin:10px 0;max-width:980px}
+.eyebrow{font-size:12px;letter-spacing:.18em;color:#157c81;text-transform:uppercase;font-weight:900}
+.intro{color:#4b6c80;max-width:840px;font-size:17px}
+.hero{background:linear-gradient(125deg,#fff,#effaf8);border:1px solid var(--edge);border-radius:20px;padding:clamp(22px,4vw,43px);box-shadow:0 8px 28px #1c56700b}
+.jump{display:flex;flex-wrap:wrap;gap:9px;margin:21px 0}.jump a{border:1px solid #b8d9d9;border-radius:9px;background:white;padding:8px 12px;text-decoration:none;font-weight:700;font-size:13px}
+.section{margin:21px 0;border:1px solid var(--edge);background:#fff;border-radius:16px;padding:20px 23px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.pill{border:1px solid #cfe3e5;background:#f7fbfa;border-radius:12px;padding:14px}.pill b{color:#1b6571}
+.code{background:#edf6f7;border:1px solid #d1e5e5;border-radius:9px;padding:12px;font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-x:auto;white-space:pre-wrap}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:9px;border-bottom:1px solid #e1ebef;vertical-align:top}th{background:#f0f7f8;color:#275a65}
+.lab{border:1px solid #bedcd8;background:#f7fcfa;border-radius:14px;padding:17px}
+.lab-controls{display:flex;flex-wrap:wrap;gap:15px;margin:14px 0}
+.lab-controls label{font-weight:700;display:flex;flex-direction:column;gap:4px;color:#2b5567}
+input[type=range]{accent-color:#127d80;min-width:170px}
+input[type=number]{border:1px solid #c4d9e3;border-radius:7px;padding:9px;width:120px;background:#fff;color:#204a5e}
+.lab strong.output{font-size:26px;color:#087579}
+.bartrack{height:10px;border-radius:9px;background:#e0edef;min-width:110px;overflow:hidden}.bar{height:100%;background:#62a9b6;border-radius:9px}.bar.critical{background:#b77d24}
+.note{background:#fff8ed;border-left:4px solid #c88d32;border-radius:6px;padding:11px 14px;color:#6c511d;font-size:13px}
+.info{background:#edf8fb;border-left:4px solid #288a9a;padding:11px 14px;color:#2b5569;border-radius:6px;font-size:13px}
+.badge{font-size:11px;padding:4px 8px;border-radius:7px;background:#e7f5ee;color:#176448;white-space:nowrap;font-weight:800}
+.badge.draft{background:#fff1df;color:#986119}
+.card-head{display:flex;gap:13px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+details{border:1px solid #d7e6e9;border-radius:10px;margin:8px 0;background:#fff}summary{cursor:pointer;padding:13px;font-weight:700;color:#285369}details p{padding:0 13px 12px}
+.steps{counter-reset:step;padding:0;list-style:none}.steps li{counter-increment:step;padding:9px 11px;margin:8px 0;background:#f6fafb;border:1px solid #e3edf1;border-radius:9px}.steps li:before{content:counter(step) " / ";font-weight:900;color:#167d84}
+.footer{font-size:12px;color:#607b8c;padding:20px}
+a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #bc7b24;outline-offset:2px}
+@media(max-width:680px){.grid{grid-template-columns:1fr}main{padding:12px 10px 60px}.section{padding:14px 12px}.lab-controls{flex-direction:column}table{font-size:11px}th,td{padding:6px}}
+</style></head><body>
+<main>
+<header class="hero">
+ <div class="eyebrow">Skyforge / Researcher handbook / Engine doctrine</div>
+ <h1>Scheduling is a <span style="color:#117a80">calculated network.</span><br>Not a colored spreadsheet.</h1>
+ <p class="intro">A new project should inherit Skyforge's tested CPM, WBS, calendar, resource, provenance and approval principles while changing its tasks, measurements, disciplines and field parameters. The goal is reproducible calculation—not copying a fixed 45-task house schedule.</p>
+ <div class="note"><b>Current capability vs. destination:</b> CPM, calendar scheduling, resource controls, bounded leveling and basic EVM mathematics exist in the kernel. Automatic, fully governed compilation of every new project's drawings/BOQ/WBS and approved baselines is still a development objective. This page does not claim Primavera P6 or Microsoft Project feature parity.</div>
+ <nav class="jump" aria-label="Handbook chapters"><a href="#math">CPM & network</a><a href="#resources">Calendars/resources</a><a href="#evm">EVM</a><a href="#adapters">Project reproduction</a><a href="#status">Built vs pending</a><a href="#notes">Recall notes</a></nav>
+</header>
+<section id="math" class="section">
+ <h2>1. The core principle: precedence network and CPM</h2>
+ <p>Each activity has a stable ID, duration and source-owned WBS parent. Directed FS, SS, FF and SF relationships impose mathematical constraints. The forward pass calculates earliest dates, the backward pass calculates latest dates, and float identifies schedule sensitivity under an explicit finish requirement.</p>
+ <div class="grid">
+  <div class="pill"><b>Forward pass</b><div class="code">EF = ES + D
+ES(successor) = max(all incoming lower bounds)</div></div>
+  <div class="pill"><b>Backward pass</b><div class="code">LF = LS + D
+Total Float = LS − ES
+Critical if total float ≤ 0 (contract-dependent)</div></div>
+ </div>
+ <h3>Precedence types</h3>
+ <table><thead><tr><th>Link</th><th>Mathematical lower bound for successor S</th><th>Field analogy</th></tr></thead><tbody>
+ <tr><td>FS</td><td>ES(S) ≥ EF(P) + lag</td><td>Excavate, then place footing base</td></tr>
+ <tr><td>SS</td><td>ES(S) ≥ ES(P) + lag</td><td>Electrical rough-in follows framing progress</td></tr>
+ <tr><td>FF</td><td>EF(S) ≥ EF(P) + lag</td><td>Testing completion tied to installation completion</td></tr>
+ <tr><td>SF</td><td>EF(S) ≥ ES(P) + lag</td><td>Special shift handover logic; uncommon</td></tr>
+ </tbody></table>
+ <div class="lab">
+  <div class="card-head"><h3 style="margin:0">Live CPM lab — uses Skyforge's actual kernel</h3><span class="badge">Synthetic exercise only</span></div>
+  <p>Activity A (survey, 2 slots) branches into B (formwork) and C (procurement), then both must finish before D (pour preparation, 2 slots). Adjust the durations; the same <code>scheduleNetwork</code> function recalculates early/late dates and the critical route.</p>
+  <div class="lab-controls"><label>Formwork B: <output id="duration-b-out">3</output> working slots<input id="duration-b" type="range" min="1" max="9" value="3"></label>
+  <label>Procurement C: <output id="duration-c-out">4</output> working slots<input id="duration-c" type="range" min="1" max="9" value="4"></label></div>
+  <p>Earliest completion: <strong class="output" id="demo-finish">—</strong> working slots. <span id="demo-critical">Calculating…</span></p>
+  <div style="overflow-x:auto"><table><thead><tr><th>Work</th><th>ES</th><th>EF</th><th>LS</th><th>LF</th><th>Float</th><th>Range</th></tr></thead><tbody id="demo-rows"><tr><td colspan="7">Loading verified kernel…</td></tr></tbody></table></div>
+  <div class="note" style="margin-top:10px">These are pure working slots with one shared calendar and zero lag. They are not Narayani's approved dates, costs or concrete design details. No save/write action occurs.</div>
+ </div>
+</section>
+<section class="section" id="resources">
+ <h2>2. The five interlocking engines</h2>
+ <div class="grid">
+  <article class="pill"><b>WBS → scope spine</b><p>One hierarchical work package decomposition, stable foreign keys and explicit rollups. A sum of activity durations is not the project critical-path duration when tasks overlap.</p></article>
+  <article class="pill"><b>Calendars → real clock</b><p>Project day pattern, weather/activity calendars, resource availability and holiday exclusions. Curing may follow a continuous clock while a construction crew does not.</p></article>
+  <article class="pill"><b>Precedence/constraints → physics</b><p>Typed dependencies, signed lag and applicable scheduling constraints. Dangling IDs, cycles, impossible or unsupported time modes must fail instead of guessing.</p></article>
+  <article class="pill"><b>Resources → capacities</b><p>Labor in person-hours, equipment in machine-hours and materials in real quantities. A receipt or shortage must change calculated availability rather than a manually colored bar.</p></article>
+  <article class="pill"><b>Baseline & actuals → evidence</b><p>Approved schedule/cost snapshot versus immutable, sourced actual events; never promote a Slack report to structural acceptance, approved payment or construction release.</p></article>
+  <article class="pill"><b>AI adapters → project identity</b><p>New school, hospital or residence brings its own WBS, BOQ, calendars, resource units and assumptions—while retaining the validated engine laws and provenance contract.</p></article>
+ </div>
+</section>
+<section class="section" id="evm">
+ <h2>3. Earned value without invented actuals</h2>
+ <p>PV measures approved baseline value planned to date, EV is the budgeted value of <em>verified</em> completed work, and AC is governed actual cost. Schedule and cost ratios are different questions from physical critical-path lateness.</p>
+ <div class="code">SV = EV − PV       CV = EV − AC
+SPI = EV / PV      CPI = EV / AC
+When a denominator is zero → undefined, not fabricated.</div>
+ <div class="lab"><div class="card-head"><h3 style="margin:0">Actual Skyforge EVM function · learning sandbox</h3><span class="badge draft">Example data, not project truth</span></div>
+  <div class="lab-controls">
+   <label>PV<input id="pv" type="number" value="500" min="0"></label>
+   <label>EV<input id="ev" type="number" value="450" min="0"></label>
+   <label>AC<input id="ac" type="number" value="480" min="0"></label>
+  </div>
+  <p id="evm-results" aria-live="polite">Loading…</p>
+  <p class="info">SPI below 1 indicates unfavorable earned-value schedule performance, but alone does not establish a contractual completion-date delay. Do not publish EV/PV/AC without signed baseline, physical measurements and actual-cost sources.</p>
+ </div>
+</section>
+<section class="section" id="adapters">
+ <h2>4. Reproduce a new project's product without hallucinated principles</h2>
+ <ol class="steps">
+  <li><b>Discover authorities:</b> exact project ID, source register, last control checkpoint, engine version, approved and open revision registers.</li>
+  <li><b>Decompose the real project:</b> WBS/activities from zones, trade packages and designed physical sequence—not the Narayani 45-task template.</li>
+  <li><b>Record parameter provenance:</b> geometry, design loads, crew units, resource receipts, calendars, cost rates, delivery constraints, source revision and units.</li>
+  <li><b>Calculate justified missing measurements:</b> show formulas and source inputs. Tag scenario assumptions <code>ASSUMED_DRAFT</code>; never silently invent structural safety or issue-for-construction dimensions.</li>
+  <li><b>Normalize and enforce PK/FK:</b> project → WBS → activity → predecessor/resource/calendar. Detect duplicate IDs, invalid units, cycles and unavailable materials.</li>
+  <li><b>Use the pinned actual engine:</b> invoke CPM/calendar/resource functions; build derived Gantt, calendar and constellation from one validated source, not independently authored dates.</li>
+  <li><b>Review invariants:</b> re-run tests, scheduling oracle, quantity/unit checks, holds, source hashes, source read-back, public/private boundaries.</li>
+  <li><b>Tag every output:</b> <code>APPROVED</code> only with authoritative signoff; otherwise <code>CALCULATED_DRAFT</code>, <code>REPORTED</code>, <code>ASSUMED_DRAFT</code> or <code>HOLD</code>.</li>
+  <li><b>Release with rollback:</b> record input and output SHA-256, exact Git commit, engine adapter version, test evidence, outstanding debt and prior deployment.</li>
+ </ol>
+ <div class="info">**100/100 reproduction means deterministic behavior given identical validated sources, parameter contracts, calendar/timezone and engine commit.** It does not mean assumptions are true, that an activity list is universally applicable, or that every P6 feature already exists.</div>
+ <p><a href="../docs/research/SKYFORGE_REPRODUCIBLE_ENGINE_DOCTRINE_V1.md">Full doctrine in the GitHub repository →</a> <small>(repository document, not a Pages artifact)</small></p>
+</section>
+<section class="section" id="status">
+ <h2>5. What has actually been built?</h2>
+ <table><thead><tr><th>Principle</th><th>Skyforge status</th><th>Current limitation</th></tr></thead><tbody>
+ <tr><td>CPM FS/SS/FF/SF</td><td><span class="badge">Tested kernel</span></td><td>Shared-slot implementation rejects different activity calendars; use appropriate calendar-aware engine for applicable modes.</td></tr>
+ <tr><td>Working-day calendars</td><td><span class="badge">Tested kernel</span></td><td>Day resolution and documented calendar/time/lag modes; not complete P6 parity.</td></tr>
+ <tr><td>Resource constraints/leveling</td><td><span class="badge">Bounded implementation</span></td><td>Serial heuristic, not mathematically optimal global leveling.</td></tr>
+ <tr><td>WBS hierarchy</td><td><span class="badge">Tree/rollup code</span></td><td>Different projects need governed WBS instantiation and non-naive rollup policy.</td></tr>
+ <tr><td>EVM mathematics</td><td><span class="badge">Basic metrics</span></td><td>No approved cost-loaded Narayani baseline to calculate real EVM.</td></tr>
+ <tr><td>Narayani visualization</td><td><span class="badge">Public-safe projection</span></td><td>45/49/405 and hypothetical dates; not verified site completion.</td></tr>
+ <tr><td>AI compiles any new project</td><td><span class="badge draft">Design objective</span></td><td>Needs schema-bound project adapter, live source validation and approval gating.</td></tr>
+ <tr><td>P6/MS Project feature parity</td><td><span class="badge draft">Not claimed</span></td><td>Actual coverage must be benchmarked feature-by-feature.</td></tr>
+ </tbody></table>
+</section>
+<section class="section" id="notes"><div class="card-head"><h2 style="margin:0">6. Recall notes · Anki-ready</h2><a href="./skyforge-anki.csv" download>Download CSV flashcards ↓</a></div>
+<p>Use the cards below to remember the architecture and reasoning. For Anki, import the CSV with first field as Front and second field as Back (UTF-8).</p>
+<details><summary>Why not simply type dates into a spreadsheet?</summary><p>Dates and downstream impacts must be computed from WBS, dependencies, calendars, resources and constraints. Manual dates do not guarantee network consistency.</p></details>
+<details><summary>Does a green-looking node mean engineering acceptance?</summary><p>No. Reports, approvals, permits and structural holds are separate governed authorities; public synthetic status is not signoff.</p></details>
+<details><summary>What does exact reproduction mean?</summary><p>Pin engine commit, inputs, units, effective revisions, calendars, assumptions, algorithms, hashes and test evidence. Different projects keep the laws and change their parameter set.</p></details>
+<details><summary>What if a dimension is absent?</summary><p>Derive only what the available source supports; otherwise record explicit assumption and scenario impact, never an approved structural quantity.</p></details>
+<details><summary>What is SPI and why is it not the same as CPM delay?</summary><p>SPI = EV/PV is budgeted-value schedule performance. Finish-delay analysis also needs the actual driving dependency network and updated calendars.</p></details>
+</section>
+<footer class="footer">Skyforge research & development · The equations are engineering principles; the example labs call tested kernel functions with synthetic inputs and do not write any data. <a href="../">Return to Skyforge</a></footer>
+</main>
+<script type="module">
+import {scheduleNetwork} from "../src/kernel/cpm.mjs";
+import {earnedValueMetrics} from "../src/kernel/earned-value.mjs";
+const $=id=>document.getElementById(id);
+const constraints=[
+ {predecessor:"A",successor:"B",type:"FS",lag:0},
+ {predecessor:"A",successor:"C",type:"FS",lag:0},
+ {predecessor:"B",successor:"D",type:"FS",lag:0},
+ {predecessor:"C",successor:"D",type:"FS",lag:0}
+];
+function refreshCPM(){
+ const B=Number($("duration-b").value),C=Number($("duration-c").value);
+ $("duration-b-out").textContent=B;$("duration-c-out").textContent=C;
+ const p=scheduleNetwork({activities:[
+  {id:"A",name:"Survey",duration:2},{id:"B",name:"Formwork",duration:B},
+  {id:"C",name:"Procurement",duration:C},{id:"D",name:"Pour preparation",duration:2}
+ ],relationships:constraints});
+ $("demo-finish").textContent=p.project.early_finish;
+ $("demo-critical").textContent="Critical activities: "+p.activities.filter(a=>a.critical).map(a=>a.id).join(" → ");
+ const body=$("demo-rows");body.replaceChildren();
+ for(const a of p.activities){
+  const row=document.createElement("tr");
+  for(const value of [a.id+" · "+a.name,a.es,a.ef,a.ls,a.lf,a.total_float]){
+   const td=document.createElement("td");td.textContent=String(value);row.append(td);
+  }
+  const td=document.createElement("td"),track=document.createElement("div"),bar=document.createElement("div");
+  track.className="bartrack";bar.className="bar"+(a.critical?" critical":"");
+  bar.style.marginLeft=100*a.es/p.project.early_finish+"%";
+  bar.style.width=100*a.duration/p.project.early_finish+"%";
+  track.append(bar);td.append(track);row.append(td);body.append(row);
+ }
+}
+function refreshEVM(){
+ const pv=Number($("pv").value),ev=Number($("ev").value),ac=Number($("ac").value);
+ if(![pv,ev,ac].every(Number.isFinite)||Math.min(pv,ev,ac)<0){$("evm-results").textContent="Enter nonnegative finite example values.";return}
+ const m=earnedValueMetrics({bac:1000,pv,ev,ac});
+ const f=x=>x==null?"undefined":x.toFixed(3);
+ $("evm-results").textContent="SV "+m.sv+" · CV "+m.cv+" · SPI "+f(m.spi)+" · CPI "+f(m.cpi);
+}
+for(const id of ["duration-b","duration-c"])$(id).addEventListener("input",refreshCPM);
+for(const id of ["pv","ev","ac"])$(id).addEventListener("input",refreshEVM);
+try{refreshCPM();refreshEVM()}catch(e){$("demo-rows").textContent="Kernel exercise unavailable: "+String(e.message||e)}
+</script>
+</body></html>
