@@ -1,3 +1,15 @@
+## Skyforge v1.5 — white theme and Pip the scheduling crawler (19 October 2026)
+
+**Design specification:** [Skyforge White + Pip Crawler v1.5](docs/design/SKYFORGE_WHITE_PIP_CRAWLER_V1_5.md).
+
+Skyforge's **shared site navigation, homepage, Narayani 2D dependency constellation, Gantt, calendar, activity drawer and optional Three.js scene** now use a consistent soft-white engineering interface with dark text, teal navigation, amber reported/advisory states and coral hold states. The older flying dragon is hidden rather than deleted; archives and technical views remain in **More**.
+
+**Pip** is an original inline SVG fluffy inchworm-robot. It crawls only along a narrow seven-milestone strip directly below the sticky header (about 33 seconds for an alternating traversal), compresses gently like an inchworm, and never crosses or obstructs scheduling or data-entry controls. The visible **Pip** button pauses/resumes movement, keyboard interaction and `aria-pressed` are supported, and system reduced-motion settings disable motion and the playback control. Seven decorative stops are **not** progress, engineering approval or commitments.
+
+Only presentation files, UI tests, documentation and version metadata were updated. No CPM, WBS model, MCQ schema/answer, drawing data, evidence ledger, permit gate, resource code or GitHub Actions workflow was changed. The allowlisted Pages build, engineering-status fail-closed checks, 45/49/405/7 Narayani model checks, deterministic readback and 3,888-case calendar oracle remain mandatory. Independent browser/mobile pixel QA is distinct from Actions validation.
+
+---
+
 ## Skyforge v1.4 — Governed drawing crosswalk and mobile field lookup (18 October 2026)
 
 The existing private Narayani Project File Index (Google Drive) now contains an additional `Skyforge_WBS_Drawing_Crosswalk` tab, keyed by `PRJ-000007` and all 45 canonical WBS activity IDs. It has 101 **candidate** source references across indexed architectural and structural drawing files and the code report; no indexed source has been certified as a live approved issue solely because of this mapping. The mapping is based on WBS discipline/category, **not page- or sheet-level drawing content review**. Statutory permit, dedicated MEP release, issue register, G05/G06/G07/G08 engineering holds and baseline signoff remain unresolved. The existing Files, Project and RunLog sheets remain source authorities; no copies were made.
