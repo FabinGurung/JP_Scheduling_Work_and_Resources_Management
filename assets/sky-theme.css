@@ -115,3 +115,10 @@ body:has(.wrap) .btn{background:#ffba35;color:#583912;border:1px solid #e69c28;f
 @media(max-width:850px){.storm-grid{grid-template-columns:1fr 1fr}.storm-art{width:87%;opacity:.4}.storm-hero .storm-inner{padding:30px}.storm-list{grid-template-columns:1fr}}
 @media(max-width:590px){.storm-grid{grid-template-columns:1fr}.storm-hero{min-height:300px}.storm-art{width:100%;opacity:.21;mask-image:none}.storm-hero .storm-inner{padding:28px 20px}.storm-title{font-size:36px}.storm-explain{padding:16px 12px}.storm-band{padding:18px}.storm-compact{min-height:100px}.storm-compact .storm-inner{padding:16px}.storm-compact .storm-title{font-size:25px}.storm-compact .storm-art{opacity:.14}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important}.storm-dragon,.storm-cloud,.storm-spark{animation:none!important;will-change:auto}.storm-dragon{opacity:.33;transform:translateX(0)}.storm-btn:hover{transform:none}}
+
+/* Skyforge v1.5: retire the airborne dragon visually, preserving historic source for rollback. */
+body{background:linear-gradient(160deg,#f7fafc,#ffffff 48%,#f0f7fa)!important}
+.storm-art,.storm-dragon,.storm-cloud{display:none!important}
+.storm-hero{background:linear-gradient(112deg,#fff,#f2f9fc);border-color:#d9e7ed}
+.storm-hero:before{display:none}
+.storm-title em{background:linear-gradient(95deg,#137a82,#b37c2e);background-clip:text;-webkit-background-clip:text}
