@@ -8,7 +8,7 @@ const expected=[
  ["advanced.html","advanced"],["roadmap.html","roadmap"],
  ["projects/narayani/index.html","narayani-index"],
  ["projects/narayani/visual.html","narayani-visual"],
- ["machine/index.html","machine"],["machine/wbs-sample/index.html","wbs-machine"],
+ ["machine/index.html","machine"],["machine/demo-foundation/index.html","machine-demo"],["machine/wbs-sample/index.html","wbs-machine"],
  ["knowledge/index.html","knowledge"],["knowledge/task.html","task"],
  ["more/legacy-home.html","legacy"],["how/index.html","how"]
 ];
