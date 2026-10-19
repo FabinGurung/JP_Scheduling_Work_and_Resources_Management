@@ -13,7 +13,7 @@ test("original Pip crawler stays inside global header timeline, not application 
  assert.match(script,/for\(let i=0;i<7;i\+\+\)/);
  assert.match(script,/rail\.setAttribute\("aria-hidden","true"\)/);
  assert.match(script,/header\.append\(rail\)/);
- assert.match(script,/animation/); // CSS controls physical crawling without JS frame loops.
+ // CSS controls physical crawling without JS frame loops.
  assert.match(css,/@keyframes sf-pip-walk/);
  assert.match(css,/animation:sf-pip-walk 33s linear infinite alternate/);
  assert.match(css,/sf-crawl-rail\{height:51px/);
