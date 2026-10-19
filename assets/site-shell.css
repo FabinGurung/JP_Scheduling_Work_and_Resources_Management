@@ -240,3 +240,20 @@ body.sf-shelled[data-sf-surface="visual"] .day.inactive{opacity:.48}
  .sf-crawl-runner.sf-pip-roamer{transition:none!important}
  .sf-pip-roamer.sf-pip-petted .sf-pip-squish{animation:none!important}
 }
+
+/* Phone WBS cockpit: compact control bar; no giant white blanks or microscopic hit targets. */
+.graph-mobile-guide{display:none;margin:0!important;padding:10px 13px;color:#38677b;background:#f0f8f8;border-bottom:1px solid #d9e8eb;font-size:12px;line-height:1.5}
+@media(max-width:720px){
+ .graph-mobile-guide{display:block}
+ body.sf-shelled[data-sf-surface="visual"] #constellation .toolbar{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;padding:9px!important;align-items:center
+ }
+ body.sf-shelled[data-sf-surface="visual"] #constellation .toolbar .btn{
+  font-size:11px;min-width:0;min-height:40px;padding:7px 3px;white-space:normal
+ }
+ body.sf-shelled[data-sf-surface="visual"] #constellation .toolbar label{font-size:11px;color:#386177;font-weight:700}
+ body.sf-shelled[data-sf-surface="visual"] #phase-picker{grid-column:span 2;min-width:0;width:100%;font-size:12px}
+ body.sf-shelled[data-sf-surface="visual"] #activity-search{grid-column:span 2;width:100%;max-width:none!important}
+ body.sf-shelled[data-sf-surface="visual"] #graph{height:clamp(430px,65vh,560px);min-height:430px}
+}
