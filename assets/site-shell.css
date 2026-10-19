@@ -257,3 +257,14 @@ body.sf-shelled[data-sf-surface="visual"] .day.inactive{opacity:.48}
  body.sf-shelled[data-sf-surface="visual"] #activity-search{grid-column:span 2;width:100%;max-width:none!important}
  body.sf-shelled[data-sf-surface="visual"] #graph{height:clamp(430px,65vh,560px);min-height:430px}
 }
+
+/* Mobile nav audit: full-width scrollable views, without squeezing or obscuring labels. */
+@media(max-width:720px){
+ .sf-global .sf-inner{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 9px;padding:6px 10px 4px}
+ .sf-global .sf-mark{grid-column:1;grid-row:1;width:max-content;font-size:13px}
+ .sf-global .sf-crawl-control{grid-column:2;grid-row:1}
+ .sf-global .sf-menu{grid-column:1 / -1;grid-row:2;width:100%;max-width:100%;padding-bottom:3px;display:flex;overflow-x:auto;scrollbar-width:thin;justify-content:flex-start;min-height:43px}
+ .sf-global .sf-menu>a{min-height:35px;font-size:12px;padding:8px 11px}
+ .sf-global .sf-more>summary{font-size:12px;padding:8px 10px}
+ .sf-global .sf-dropdown{top:102px;max-height:65vh;overflow-y:auto}
+}
