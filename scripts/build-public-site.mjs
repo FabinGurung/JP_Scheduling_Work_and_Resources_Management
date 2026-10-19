@@ -172,6 +172,18 @@ async function styleAllowlistedPages(dir=""){
  }
 }
 await styleAllowlistedPages();
+// Strict build-time readback: every live HTML must load the same canonical CSS
+// after all legacy inline styles. Redirect-only archival stubs are excluded.
+for(const relative of skinned){
+ const page=await readFile(join(out,relative),"utf8");
+ const linkIndex=page.indexOf("assets/skyforge-unified.css");
+ const matches=page.match(/assets\\/skyforge-unified\\.css/g)??[];
+ if(linkIndex<0||matches.length!==1||
+    page.lastIndexOf("</style>")>linkIndex||
+    page.lastIndexOf("assets/site-shell.css")>linkIndex||
+    linkIndex>page.indexOf("</head>"))
+  throw Error("Unnormalized public page: "+relative);
+}
 const essential=["index.html","projects/narayani/visual.html","projects/narayani/index.html",
 "advanced.html","planner.html","kernel-lab.html","roadmap.html","machine/index.html",
 "machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","more/legacy-home.html"];
