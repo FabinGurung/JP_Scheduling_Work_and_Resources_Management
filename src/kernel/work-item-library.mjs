@@ -62,6 +62,7 @@ export function estimateCatalogWork({library,work_item_id,quantity,unit,crew={},
  // Never state numeric reference outputs as actual costs/quantities or approved duration.
  return {work_item_id,work_name:item.name,quantity,unit,calculation_status:days===null?"INCOMPLETE":"REFERENCE_SCENARIO_ONLY",
   engineering_approval:false,site_productivity_verified:false,
+  duration_interpretation:"THEORETICAL_LABOR_ROLE_CAPACITY_LOWER_BOUND_NOT_CONSTRUCTION_DURATION",
   source_id:item.benchmark_reference_id,applicability:item.applicability,material_requirements,
   role_requirements,crew_days:days,output_per_crew_day:perDay,output_per_crew_hour:perHour,gates};
 }
