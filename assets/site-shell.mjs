@@ -136,7 +136,7 @@ const sfPageProfiles={
 };
 function pageKey(){
  const tail=location.pathname.startsWith(base.pathname)?location.pathname.slice(base.pathname.length):"";
- return tail===""?"index.html":tail;
+ return tail===""?"index.html":tail.endsWith("/")?tail+"index.html":tail;
 }
 function mountContextGuide(profile){
  if(!profile||["home","narayani-visual","how","generic","studio","studio-clinic","studio-bridge","studio-narayani"].includes(profile.id))return;
