@@ -90,7 +90,7 @@ export function digitizeXer({text,project_id,project_name,source_name="P6 schedu
    throw Error("XER TASK requires unique task code, task key, name and resolvable PROJWBS");
   byId.set(t.task_id,id);
   const type=normal(t.task_type).toUpperCase();
-  if(type&&/MILESTONE/.test(type)&&num(t.target_drtn_hr_cnt)!==0)
+  if(type&&/MILESTONE/.test(type)&&num(t.target_drtn_hr_cnt??t.orig_dur_hr_cnt)!==0)
    throw Error("P6 milestone "+id+" must have zero planned duration");
   const h=num(t.target_drtn_hr_cnt??t.orig_dur_hr_cnt);
   const duration=slots(h,hours_per_day,"P6 target duration for "+id);
@@ -147,8 +147,9 @@ export function digitizeP6Xml({text,project_id,project_name,source_name="P6 sche
    wo=field(b,"WBSObjectId"),w=wbs.get(wo);
   if(!oid||!safeId(id)||!title||!w||activities.has(oid))throw Error("P6 XML activity requires ObjectId, Id, Name and WBSObjectId");
   const raw=field(b,"PlannedDuration")||field(b,"OriginalDuration");
-  const iso=/^PT(\d+(?:\.\d+)?)H(?:\d+(?:\.\d+)?M)?$/i.exec(raw);
-  const h=iso?Number(iso[1]):num(raw);
+  const iso=/^PT(?:(\d+(?:\.\d+)?)H)?(?:(\d+(?:\.\d+)?)M)?$/i.exec(raw);
+  const h=iso?((Number(iso[1]??0))+(Number(iso[2]??0)/60)):num(raw);
+  if(iso&&!iso[1]&&!iso[2])throw Error("Empty ISO P6 duration");
   const duration=slots(h,hours_per_day,"P6 planned hours for "+id);
   const parent=w.parent?wbs.get(w.parent):null;
   if(w.parent&&!parent)throw Error("Missing parent WBS object for "+w.id);
