@@ -7,7 +7,7 @@ import {compileProjectDraft} from "../kernel/project-template.mjs";
 const digest=x=>sha256Hex(x);
 const name=x=>typeof x==="string"&&x.trim().length>0&&x.length<=180&&!/[<>\u0000-\u001f]/.test(x);
 export function projectGenericVisual(spec){
- if(!["PUBLIC_SYNTHETIC","LOCAL_UNVERIFIED"].includes(spec?.classification))throw Error("Generic view compilation requires recognized source scope");
+ if(!["PUBLIC_SYNTHETIC","LOCAL_UNVERIFIED"].includes(spec?.classification))throw Error("Generic view compilation requires public-synthetic or local-unverified source scope");
  const local=spec.classification==="LOCAL_UNVERIFIED";
  if(!["CALENDAR_CPM","SHARED_CPM","RESOURCE_LEVELING"].includes(spec.scheduling_mode))throw Error("Unsupported scheduling mode");
  const compiled=compileProjectDraft(spec);
