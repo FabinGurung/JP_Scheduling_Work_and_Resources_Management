@@ -1,0 +1,128 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f8fb"><meta name="description" content="Source-checked Skyforge construction work item labor and materials reference catalog.">
+<title>Construction Work-Item Reference Library · Skyforge</title>
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;color:#203b4f;background:#f5f8fb;font:14px/1.5 system-ui,-apple-system,sans-serif}
+main{max-width:1260px;margin:auto;padding:18px 14px 75px}h1{font-size:clamp(28px,4vw,45px);letter-spacing:-.04em;line-height:1.1;margin:6px 0 13px}
+h2{font-size:20px}a{color:#13797c}p{max-width:900px;color:#577282}
+.hero{background:linear-gradient(130deg,#fff,#e9f8f6);border:1px solid #d5e4ea;border-radius:18px;padding:clamp(20px,3vw,36px)}
+.kicker{text-transform:uppercase;letter-spacing:.16em;font-size:11px;font-weight:800;color:#147b80}
+.columns{display:grid;grid-template-columns:minmax(230px,.8fr) minmax(0,2fr);gap:16px;margin-top:17px}
+.panel{background:#fff;border:1px solid #d7e6ec;border-radius:15px;padding:17px;min-width:0}
+label{display:block;font-size:12px;font-weight:800;color:#28596b;margin:9px 0 5px}
+input,select{border:1px solid #bbd2dd;padding:10px;border-radius:8px;width:100%;background:white;color:#23475a}
+button{background:#fff;border:1px solid #cbdee4;padding:9px;border-radius:9px;color:#244c62;cursor:pointer;text-align:left}
+button:hover{border-color:#359b9c;background:#f0faf9}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ba7b26;outline-offset:2px}
+#items{display:grid;gap:8px;max-height:68vh;overflow:auto;padding-right:4px}
+#items button[aria-current=true]{background:#e6f7f4;border-color:#55aca9}
+.badge{font-size:11px;display:inline-block;border-radius:8px;padding:3px 7px;background:#eff5f7;color:#385c70;margin:4px 4px 4px 0}
+.draft{background:#fff4e4;color:#996220}.ref{background:#e7f8f1;color:#176650}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px solid #e0ebee;padding:9px 6px;text-align:left;vertical-align:top}th{background:#f5fafb}
+.split{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.cell{border:1px solid #dce8ec;background:#f7fbfc;border-radius:11px;padding:11px;min-width:0}.cell strong{display:block;font-size:16px;margin:7px 0}
+.warning{background:#fff7e9;border-left:4px solid #c28d3a;padding:12px;border-radius:7px;color:#74511f;margin:14px 0}
+.link-row{display:flex;gap:8px;flex-wrap:wrap}.link-row a{background:#f2fafb;border:1px solid #ccdee4;border-radius:9px;padding:8px 12px;font-size:12px;font-weight:700;text-decoration:none}
+#schedule-status{margin-top:10px;font-weight:700}#calculations{overflow-wrap:anywhere}ul{padding-left:20px}
+@media(max-width:860px){.columns{grid-template-columns:1fr}#items{grid-template-columns:repeat(2,minmax(0,1fr));max-height:300px}}
+@media(max-width:540px){main{padding:10px 9px 60px}.panel{padding:13px}.columns{gap:10px}#items{grid-template-columns:1fr}.split{grid-template-columns:1fr}table{font-size:12px}}
+</style></head><body><main>
+<header class="hero"><div class="kicker">Skyforge · Independent engineering library v0.1</div>
+<h1>What does a work item actually require?</h1>
+<p>Source-referenced components, quantities, crew categories and calculation gates for construction scheduling. Unlike a typical online rate table, this library <b>never silently substitutes a national benchmark for a particular site</b>.</p>
+<div class="warning"><b>Evidence boundary:</b> Delhi CPWD masonry coefficients are reference examples, not Nepal-approved productivity. The other method templates deliberately contain no invented coefficients. A crew-day result is a <b>theoretical role-capacity lower bound</b>—it excludes access, sequencing, inspection holds, rework, weather and actual site productivity.</div>
+<div class="link-row"><a href="../how/">How scheduling works →</a><a href="../planner.html">Open scheduling planner →</a><a href="https://github.com/FabinGurung/JP_Scheduling_Work_and_Resources_Management/blob/kernel-v0.2-open-source-engines/machine/work-items/work-item-library-v0.1.json">View canonical JSON source →</a></div>
+</header>
+<div class="columns"><section class="panel" aria-labelledby="browse"><h2 id="browse">Work-item index</h2>
+<label for="find">Filter trade or item</label><input id="find" type="search" placeholder="brick, rebar, concrete, MEP…">
+<p id="count">Loading evidence catalog…</p><div id="items"></div></section>
+<section class="panel" aria-live="polite"><div id="details"><h2>Select an activity</h2><p>The validated reference catalog will be displayed here.</p></div>
+<div id="calculator" hidden><h2>Evaluate a reference quantity</h2>
+<div class="split"><div><label for="quantity">Work quantity</label><input type="number" min=".001" step="any" id="quantity" placeholder="Measured project quantity"></div>
+<div><label for="hours">Crew work hours / day (optional)</label><input type="number" min="1" step=".5" id="hours" placeholder="e.g. approved shift"></div>
+<div><label for="applicable">Matching specification confirmed?</label><select id="applicable"><option value="no">Unverified</option><option value="yes">Only for this reference exercise</option></select></div></div>
+<div id="crew-entries"></div>
+<button id="calculate" style="margin-top:13px;background:#157e82;color:white;font-weight:800;text-align:center">Calculate source-bound scenario</button>
+<div id="calculations" role="status"></div>
+</div></section></div>
+<section class="panel" style="margin-top:16px"><h2>Reference hierarchy and what we still need</h2>
+<p><b>Priority 1:</b> a completed site's measured quantity, actual person-hours, equipment hours, weather and site method, all linked to an immutable record. <b>Priority 2:</b> explicitly identified national norms and manufacturer specifications that match the exact work description. <b>Priority 3:</b> transparently stated planning assumptions (never auto-approved).</p>
+<p>The user-mentioned historical completed-project upload could not yet be matched to verified quantity-and-labor-time evidence. No historic measured productivity has been admitted from it. The source index below remains a research pointer, not project approval.</p>
+<div id="sources">Loading citations…</div>
+</section></main>
+<script type="module">
+import {estimateCatalogWork,validateWorkItemLibrary} from "../src/kernel/work-item-library.mjs";
+const $=id=>document.getElementById(id);let library=null,selected=null;
+const text=(tag,value,cls)=>{const x=document.createElement(tag);x.textContent=String(value);if(cls)x.className=cls;return x};
+function detail(item){
+ selected=item;$("details").replaceChildren(text("h2",item.name));
+ const row=document.createElement("div");
+ row.append(text("span",item.id,"badge"),text("span",item.evidence_level,item.benchmark_reference_id?"badge ref":"badge draft"),text("span",item.authority,"badge draft"));
+ $("details").append(row,text("p","Scope: "+item.applicability),text("p",item.notes));
+ const table=document.createElement("table");
+ table.innerHTML="<thead><tr><th>Required per work unit</th><th>Type</th><th>Coefficient</th></tr></thead>";
+ const tbody=document.createElement("tbody");
+ for(const x of item.material_per_unit){const tr=document.createElement("tr");[x.id,"Material",x.quantity+" "+x.unit+" / "+item.unit].forEach(t=>tr.append(text("td",t)));tbody.append(tr)}
+ for(const x of item.labor_role_days_per_unit){const tr=document.createElement("tr");[x.role,"Labor",x.days+" worker-day / "+item.unit].forEach(t=>tr.append(text("td",t)));tbody.append(tr)}
+ if(!tbody.children.length){const r=document.createElement("tr"),cell=text("td","No quantity or labor productivity coefficient has been verified for this method template.");cell.colSpan=3;r.append(cell);tbody.append(r)}
+ table.append(tbody);$("details").append(table);
+ $("calculator").hidden=false;$("quantity").value="";$("hours").value="";$("applicable").value="no";
+ $("crew-entries").replaceChildren(text("h3","Available crew by role"));
+ for(const x of item.labor_role_days_per_unit){
+  const l=text("label",x.role+" · workers");l.htmlFor="crew-"+x.role;
+  const input=document.createElement("input");input.type="number";input.min="1";input.step="1";input.placeholder="Enter actual headcount";
+  input.id="crew-"+x.role;input.dataset.role=x.role;
+  $("crew-entries").append(l,input);
+ }
+ if(!item.labor_role_days_per_unit.length)$("crew-entries").append(text("p","No verified role-based labor coefficient. Duration remains uncalculated."));
+ $("calculations").replaceChildren();
+ for(const b of document.querySelectorAll("#items button"))b.setAttribute("aria-current",String(b.dataset.item===item.id));
+}
+function updateFilter(){
+ const q=$("find").value.toLowerCase().trim();
+ $("items").replaceChildren();
+ let count=0;
+ for(const item of library.items){
+  if(![item.name,item.id,item.discipline,item.work_type].join(" ").toLowerCase().includes(q))continue;
+  const b=document.createElement("button");b.type="button";b.dataset.item=item.id;
+  b.setAttribute("aria-current",String(item.id===selected?.id));
+  b.append(text("strong",item.name),text("div",item.id+" · "+item.unit+" · "+item.evidence_level,"badge"));
+  b.addEventListener("click",()=>detail(item));$("items").append(b);count++;
+ }
+ $("count").textContent=count+" of "+library.items.length+" public work templates";
+}
+$("find").addEventListener("input",()=>{if(library)updateFilter()});
+$("calculate").addEventListener("click",()=>{
+ if(!selected)return;
+ try{
+  const quantity=Number($("quantity").value);
+  if($("quantity").value.trim()===""||!Number.isFinite(quantity)||quantity<=0)throw Error("Enter a measured positive quantity");
+  const crew={};
+  for(const el of $("crew-entries").querySelectorAll("input")){
+   if(el.value.trim()==="")continue;crew[el.dataset.role]=Number(el.value);
+  }
+  const hrs=$("hours").value.trim()===""?null:Number($("hours").value);
+  const r=estimateCatalogWork({library,work_item_id:selected.id,quantity,unit:selected.unit,crew,
+   working_hours_per_day:hrs,product_reference_confirmed:$("applicable").value==="yes"});
+  const box=$("calculations");box.replaceChildren(text("h3",r.calculation_status));
+  box.append(text("p",r.crew_days==null?"Crew duration not calculable from this reference.":"Lower-bound crew workdays: "+r.crew_days+" · upper-bound output/day: "+r.output_per_crew_day.toFixed(3)+" "+r.unit+"/day"));
+  if(r.output_per_crew_hour!=null)box.append(text("p","Theoretical maximum rate: "+r.output_per_crew_hour.toFixed(3)+" "+r.unit+"/crew-hour"));
+  if(r.material_requirements.length){box.append(text("h3","Published-material coefficients × supplied quantity"));
+   for(const m of r.material_requirements)box.append(text("p",m.material_id+": "+m.quantity.toFixed(3)+" "+m.unit))}
+  box.append(text("h3","Uncleared checks"));
+  if(!r.gates.length)box.append(text("p","Even with specified inputs, local acceptance and crew productivity remain unverified."));
+  else for(const g of r.gates)box.append(text("p","• "+g));
+  box.append(text("p","No engineering release; no measured productivity; no construction duration commitment."));
+ }catch(e){$("calculations").replaceChildren(text("p",e.message))}
+});
+try{
+ const resp=await fetch("./library.json",{cache:"no-store"});if(!resp.ok)throw Error("Catalog fetch failed");
+ library=await resp.json();validateWorkItemLibrary(library);
+ updateFilter();detail(library.items.find(x=>x.id==="MASONRY_CPWD_6322")??library.items[0]);
+ const target=$("sources");target.replaceChildren();
+ for(const src of library.sources){
+  const p=document.createElement("p"),a=document.createElement("a");a.href=src.url;a.target="_blank";a.rel="noopener noreferrer";a.textContent=src.agency+" · "+src.year;
+  p.append(a,text("span"," — "+src.scope));target.append(p);
+ }
+}catch(e){$("count").textContent="Library could not be verified: "+e.message;}
+</script></body></html>
