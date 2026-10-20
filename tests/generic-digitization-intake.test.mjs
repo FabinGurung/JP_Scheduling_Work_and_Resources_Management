@@ -67,7 +67,7 @@ test("TSV warns on ignored fields rather than fabricating quantities",()=>{
 });
 test("static studio compiles CSV and JSON locally without network upload or approval",()=>{
  const html=readFileSync(new URL("../projects/generic/index.html",import.meta.url),"utf8");
- assert.match(html,/import \{digitizeGenericTable\}/);
+ assert.match(html,/import \{digitizeGenericTable,digitizeTaskSeedJSON\}/);
  assert.match(html,/import \{projectGenericVisual\}/);
  assert.match(html,/download\.addEventListener\("click"/);
  assert.match(html,/LOCAL_UNVERIFIED/);
