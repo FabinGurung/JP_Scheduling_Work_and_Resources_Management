@@ -12,7 +12,7 @@ h1{font-size:clamp(34px,5vw,59px);line-height:1.08;letter-spacing:-.055em;margin
 h2{font-size:22px;line-height:1.2}p{color:#577486}.hero>p{max-width:750px;font-size:17px;margin:0 0 20px}
 a{color:#147e83}
 .big-cta{display:inline-block;text-decoration:none;background:#147e83;color:white!important;padding:13px 22px;border-radius:11px;font-weight:850}
-.hierarchy{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:22px 0}
+.hierarchy{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:22px 0}
 .level{border:1px solid #d7e6ec;background:#fff;border-radius:16px;padding:20px;min-height:195px}
 .level small{color:#147e83;letter-spacing:.12em;text-transform:uppercase;font-size:11px;font-weight:850}
 .level h2{margin:10px 0}.level p{font-size:13px;line-height:1.55}
@@ -30,16 +30,15 @@ a{color:#147e83}
 <div class="eyebrow">Level 0 · System overview</div>
 <h1>One engine.<br>Many construction projects.</h1>
 <p>Skyforge is a reusable construction-scheduling platform: one tested mathematical foundation, independent source-governed project records, and repeatable project visualization.</p>
-<a class="big-cta" href="./studio/">Enter the Template Engine / Studio →</a>
+<a class="big-cta" href="./studio/">Open Studio / Template Engine →</a> <a href="./projects/" style="display:inline-block;padding:12px 18px;font-weight:800">Browse Projects ↗</a>
 </section>
 <div class="hierarchy" aria-label="System levels">
-<div class="level"><small>Level 0 · Here</small><h2>Overview</h2><p>The architectural entry point explains what the system is and how its projects connect.</p><a href="./studio/">Continue into the Studio →</a></div>
-<div class="level"><small>Level 1 · Reusable system</small><h2>Template Engine</h2><p>WBS normalization, schedule importer and generator, CPM/PDM, resource modeling, work-item knowledge and four common views.</p><a href="./studio/">Open shared engine →</a></div>
-<div class="level"><small>Level 2 · Instances</small><h2>Project Records</h2><p>Each project has its own WBS, evidence, assumptions and views. No cloned scheduling algorithms or inherited project-specific activity data.</p><a href="./studio/#projects">Browse projects →</a></div>
+<div class="level"><small>Level 1 · Template Engine / Studio</small><h2>Template Engine</h2><p>WBS normalization, schedule importer and generator, CPM/PDM, resource modeling, work-item knowledge and four common views.</p><a href="./studio/">Open shared engine →</a></div>
+<div class="level"><small>Level 1 · Sister department</small><h2>Projects</h2><p>Independent Level-2 records live here. Every project calls the separate Level-1 Studio rather than owning a different scheduling engine.</p><a href="./projects/">Browse project records →</a></div>
 </div>
 <div class="bottom">
 <section class="card emphasis"><h2>Describe your WBS, not a file format</h2><p>Explain a project in ChatGPT or supply site plans, WBS lists, quantities and scheduling requirements. Normalize and validate the structure first. Then generate Excel, supported P6 exchange files, canonical JSON, and views from the same model with clear assumptions.</p><a href="./projects/generic/">Open WBS Digitization Workbench →</a><p><a href="./how/index.html">Read the scheduling-engine methodology →</a></p></section>
-<section class="card"><h2>Preserved project workflows</h2><p>The Narayani project’s existing governed WBS, inspection boundaries, field reporting and history remain intact. Find its record through the Studio.</p><a href="./studio/projects/narayani/">Narayani project record →</a></section>
+<section class="card"><h2>Preserved project workflows</h2><p>The Narayani project’s existing governed WBS, inspection boundaries, field reporting and history remain intact. Find its record through the sister Projects department.</p><a href="./projects/narayani/">Narayani project record →</a></section>
 </div>
 <div class="note">Planning scenarios are not approved construction dates. Identical source inputs and a pinned engine can reproduce calculations; actual site correctness still requires measurements, revisions and responsible approval.</div>
 </main></body></html>
