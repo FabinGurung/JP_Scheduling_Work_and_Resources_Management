@@ -1,0 +1,109 @@
+
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#f5f8fb;color:#203b4f;font:14px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1420px;margin:auto;padding:20px 16px 75px}
+.hero{background:linear-gradient(135deg,#fff 10%,#eaf8f5);border:1px solid #d5e5e9;border-radius:20px;padding:24px clamp(18px,4vw,43px)}
+.eyebrow{color:#0e7c82;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:900}
+h1{font-size:clamp(28px,4.3vw,47px);letter-spacing:-.045em;line-height:1.12;margin:9px 0}
+h2{font-size:21px;margin:6px 0 10px}
+p{margin:7px 0;color:#526f82}
+.deck{max-width:870px;font-size:16px}
+.controls{display:flex;gap:11px;flex-wrap:wrap;align-items:end;margin:16px 0}
+.controls label{display:grid;gap:4px;font-size:12px;color:#2b6375;font-weight:800;flex:1 1 190px}
+select,input[type=file]{background:#fff;border:1px solid #c5dbe3;border-radius:10px;padding:10px;color:#20495d;width:100%;max-width:390px}
+a{color:#0b747b}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.actions a{background:#fff;border:1px solid #c4dfdf;border-radius:9px;padding:8px 13px;text-decoration:none;font-weight:730;font-size:12px}
+.guide{background:#fff7e8;border-left:4px solid #c68b31;padding:12px 14px;margin:13px 0;border-radius:8px;color:#725521}
+.workspace{margin:14px 0;background:#fff;border:1px solid #d7e6eb;border-radius:17px;padding:16px;min-height:330px}
+.gv-project{background:#f4fafb;border-radius:12px;padding:14px;border:1px solid #dcebee}
+.gv-muted{color:#557384;font-size:12px}
+.gv-warning{border:1px solid #efdcbb;background:#fff7ea;color:#895d27;border-radius:9px;padding:10px;font-weight:700;font-size:12px}
+.gv-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}
+.gv-meta p{font-size:11px;overflow-wrap:anywhere;margin:3px 0}
+.gv-meta strong{color:#2e6072}
+.gv-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.gv-tab{cursor:pointer;font:700 13px system-ui;color:#315d6d;background:#fff;border:1px solid #cce1e4;border-radius:10px;padding:10px 15px}
+.gv-tab[aria-selected=true]{background:#e1f4ef;color:#0e7279;border-color:#54aaa9}
+.gv-panel{border:1px solid #e0eced;border-radius:12px;padding:13px;min-height:220px}
+.gv-panel[hidden]{display:none}
+.gv-scroll{overflow:auto;border:1px solid #d6e7ea;border-radius:12px;background-color:#f7fbfc;
+background-image:linear-gradient(#8bc5c520 1px,transparent 1px),linear-gradient(90deg,#8bc5c520 1px,transparent 1px);
+background-size:25px 25px}
+.gv-scroll svg{display:block;max-width:none}
+.gv-scroll g[data-task]{cursor:pointer}
+.gv-scroll g[data-selected=true] rect{fill:#e2f5f2;stroke:#16878d;stroke-width:3}
+.gv-scroll g:focus-visible rect{stroke:#c48a2e;stroke-width:4}
+.gv-detail{margin-top:12px;padding:12px 14px;border:1px solid #cae2e0;border-radius:12px;background:#f2fbf9}
+.gv-gantt{display:grid;gap:7px}
+.gv-gantt-row{display:grid;grid-template-columns:minmax(125px,28%) minmax(0,1fr);gap:9px;align-items:center;border-bottom:1px solid #e3edf0;padding:6px 0}
+.gv-gantt-label{font-size:12px;color:#2c5064}
+.gv-gantt-track{position:relative;height:24px;min-width:80px;border-radius:5px;
+background:repeating-linear-gradient(90deg,#eef6f7 0,#eef6f7 19px,#fff 20px);overflow:hidden}
+.gv-gantt-bar{position:absolute;top:5px;height:14px;background:#2e91a0;border-radius:4px;min-width:3px}
+.gv-gantt-bar[data-critical=true]{background:#ba8530}
+.gv-dates{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:8px}
+.gv-date{display:flex;align-items:center;gap:8px;background:#f7fbfc;border:1px solid #ddebee;border-radius:9px;padding:10px;font-size:12px}
+.gv-date-stamp{font-weight:800;color:#2d6574;white-space:nowrap}
+.gv-date-label{background:#e9f4f3;border-radius:4px;color:#397779;font-size:10px;padding:4px}
+.gv-check{background:#f7fbfb;border:1px solid #dce9e9;border-radius:10px;padding:12px;margin:9px 0}
+.gv-check strong{color:#2b5d6c}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #b8862e;outline-offset:2px}
+@media(max-width:720px){main{padding:11px 9px 50px}.hero{padding:15px}.workspace{padding:9px}.gv-meta{grid-template-columns:1fr}
+.gv-tab{flex:1 1 42%;padding:10px}.gv-gantt-row{grid-template-columns:minmax(100px,36%) minmax(0,1fr)}.gv-gantt-label{font-size:11px}}
+
+/* Organic WBS tree: no time axis. Teal shows scope ancestry; gold shows CPM links. */
+.gv-tree-viewport{height:min(69vh,650px);min-height:420px;max-width:100%;
+ scrollbar-color:#b6d8dc #eff8f8;overscroll-behavior:contain;
+ background:radial-gradient(ellipse at 52% 83%,#d5ede8 0%,#f1faf9 34%,#fcffff 85%);
+ touch-action:pan-x pan-y}
+.gv-tree-toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:8px 0 12px}
+.gv-tree-control{cursor:pointer;border:1px solid #b6d9d7;background:#edf9f5;
+ color:#27666d;padding:9px 13px;font-size:12px;font-weight:750;border-radius:22px}
+.gv-tree-control[aria-pressed=false]{background:#fff;color:#577b86}
+.gv-tree-viewport .gv-tree-branch{filter:drop-shadow(0 0 4px #6bbdb053)}
+.gv-skill-halo{fill:#d8f2ebbd;stroke:#aedcd2;stroke-width:1.2}
+.gv-skill-core{fill:#fafffe;stroke:#5ba99f;stroke-width:2.3}
+.gv-skill-root .gv-skill-core{fill:#d4eee5;stroke:#237f78;stroke-width:3.7}
+.gv-skill-wbs .gv-skill-core{fill:#e7f5f1;stroke:#44998e;stroke-width:3}
+.gv-skill-emblem{fill:#21867c;font-size:26px;font-weight:800}
+.gv-skill-root .gv-skill-emblem{font-size:35px}
+.gv-skill-label{font:650 12px system-ui,-apple-system,sans-serif;fill:#2b5b69;
+ paint-order:stroke;stroke:#fcffff;stroke-width:5;stroke-linejoin:round}
+.gv-skill-label-major{font-size:14px;font-weight:780}
+.gv-skill-activity{cursor:pointer}
+.gv-skill-activity[data-selected=true] .gv-skill-core{fill:#c7eae2;stroke:#107f7c;stroke-width:4}
+.gv-skill-activity[data-selected=true] .gv-skill-halo{fill:#c0eadc}
+.gv-skill-activity:focus-visible .gv-skill-halo{stroke:#c88b31;stroke-width:4}
+.gv-skill-branches path{stroke-dasharray:0;animation:gv-branch-grow 1s ease-out both}
+.gv-skill-activity{animation:gv-leaf-enter .7s ease-out both;transform-box:fill-box}
+@keyframes gv-branch-grow{from{opacity:.1;stroke-dasharray:2 12}to{opacity:1;stroke-dasharray:0}}
+@keyframes gv-leaf-enter{from{opacity:0}to{opacity:1}}
+@media(max-width:720px){
+ .gv-tree-viewport{height:min(66vh,600px);min-height:390px}
+ .gv-tree-control{flex:1 1 45%;padding:10px}
+ .gv-tree-toolbar{gap:7px}
+}
+@media(prefers-reduced-motion:reduce){
+ .gv-skill-branches path,.gv-skill-activity{animation:none!important}
+}
+.gv-import-diagnostics{font-size:12px;line-height:1.7;color:#8b6129;margin:9px 0}.gv-import-diagnostics p{font-size:12px;margin:4px 0}.gv-tree-control{cursor:pointer}
+.gv-pdf-review{background:#fffdf4;border:1px solid #e6cd9e;border-radius:12px;padding:13px;margin:12px 0}
+.gv-pdf-review textarea{display:block;width:100%;min-height:170px;resize:vertical;font:12px/1.4 ui-monospace,monospace;background:#fff;border:1px solid #c6d5df;color:#284b5e;border-radius:8px;padding:10px}
+.gv-pdf-review button{margin-top:8px;background:#e4f5f2;border-color:#8fc8c0}
+
+
+
+/* One project record instance = one shared renderer, not a fork. */
+.sf-instance{max-width:1350px;margin:0 auto;padding:20px 15px 55px}
+.sf-instance-hero{border:1px solid #d3e6e8;background:linear-gradient(126deg,#fff,#e9f7f4);border-radius:20px;padding:25px 28px}
+.sf-instance-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:#147e83}
+.sf-instance-title{font-size:clamp(25px,3.3vw,42px);margin:7px 0;line-height:1.15;letter-spacing:-.035em}
+.sf-instance-lede{max-width:820px;color:#577385}
+.sf-instance-trail{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.sf-instance-trail a{display:inline-block;text-decoration:none;font-weight:750;font-size:12px;padding:8px 11px;background:#fff;border:1px solid #d0e5e6;border-radius:10px;color:#176b78}
+.sf-instance-status{margin:14px 0 6px;font-size:12px;color:#637e8b}
+.sf-instance #views{margin-top:12px}
+.sf-instance .gv-project{background:#fff;border:1px solid #dae9e9}
+@media(max-width:640px){.sf-instance{padding:12px 9px 35px}.sf-instance-hero{padding:16px}.sf-instance-trail a{flex:1 1 auto;text-align:center}}
