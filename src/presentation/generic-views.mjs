@@ -16,7 +16,7 @@ const svg=(tag,attributes={})=>{
 };
 export function validateGenericViewModel(model){
  if(model?.format!=="SKYFORGE_GENERIC_VIEW_MODEL_V1"||
- model.classification!=="PUBLIC_SYNTHETIC_DRAFT_ONLY"||
+ !["PUBLIC_SYNTHETIC_DRAFT_ONLY","LOCAL_UNVERIFIED_DRAFT_ONLY"].includes(model.classification)||
  model.engineering_release!==false||model.baseline_approved!==false||
  model.views_basis!=="ONE_CANONICAL_COMPUTED_MODEL_NO_AUTO_APPROVAL")
   throw Error("Model is not an approved public-synthetic generic visualization");
@@ -52,6 +52,8 @@ export function renderGenericProject(model,mount){
  const intro=el("p","gv-muted",
   "Draft schedule · "+model.engine_mode+" · "+model.activities.length+" activities · "+model.links.length+" links · "+model.checklist.length+" source-supplied prompts");
  const ethics=el("p","gv-warning",
+ model.classification==="LOCAL_UNVERIFIED_DRAFT_ONLY"?
+ "LOCAL UNVERIFIED IMPORT · Durations and quantities are unverified source assertions; no dates, progress, baseline or engineering approval may be inferred.":
  "SYNTHETIC TRAINING ONLY · Assumed durations; neither construction completion nor an approved baseline. Calendar dates show calculated START/FINISH events, not verified daily progress.");
  project.append(heading,intro,ethics);
  const meta=el("div","gv-meta");
