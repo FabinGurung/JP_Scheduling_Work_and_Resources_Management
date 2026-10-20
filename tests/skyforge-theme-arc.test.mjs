@@ -8,6 +8,7 @@ const expected=[
  ["advanced.html","advanced"],["roadmap.html","roadmap"],
  ["projects/narayani/index.html","narayani-index"],
  ["projects/narayani/visual.html","narayani-visual"],
+ ["projects/generic/index.html","generic"],["work-items/index.html","work-items"],
  ["machine/index.html","machine"],["machine/demo-foundation/index.html","machine-demo"],["machine/wbs-sample/index.html","wbs-machine"],
  ["knowledge/index.html","knowledge"],["knowledge/task.html","task"],
  ["more/legacy-home.html","legacy"],["how/index.html","how"]
@@ -25,7 +26,7 @@ test("every live nonredirect workspace has an exact theme and source-context pro
  assert.doesNotMatch(js,/drive\.google\.com|docs\.google\.com|slack\.com\/archives/);
 });
 
-test("public builder ships canonical skin LAST on all 14 nonredirect HTML files",()=>{
+test("public builder ships canonical skin LAST on all 16 nonredirect HTML files",()=>{
  const build=read("scripts/build-public-site.mjs");
  assert.match(build,/"assets\/skyforge-unified\.css"/);
  assert.match(build,/if\(!markup\.includes\("skyforge-unified\.css"\)\)/);
