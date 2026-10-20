@@ -121,7 +121,10 @@ const sfPageProfiles={
  "projects/narayani/index.html":{id:"narayani-index",title:"Narayani evidence boundaries",intro:"Review pilot WBS scope, source-backed reports and outstanding work readiness.",rule:"Private source revisions and engineering holds remain governed in Drive.",next:["Open visual schedule","projects/narayani/visual.html#constellation"]},
  "projects/narayani/visual.html":{id:"narayani-visual",title:"One visual planning model",intro:"Constellation, Gantt, calendar and checklist share the same validated WBS data.",rule:"Dates remain a synthetic scenario without an approved baseline.",next:["Researcher handbook","how/index.html"]},
  "projects/generic/index.html":{id:"generic",title:"Reusable project workspace",intro:"Each example has its own WBS and calculated events; four views share one model.",rule:"All built-in examples are public synthetic drafts, never live engineering approvals.",next:["Read the project compiler protocol","how/index.html"]},
- "studio/index.html":{id:"studio",title:"Reusable scheduling template",intro:"WBS import, kernel methods, work-item library and project records are all inside this single Level-1 Studio.",rule:"The template is versioned; project-specific approvals stay with each source record.",next:["Prepare a project","projects/generic/index.html"]},
+ "studio/index.html":{id:"studio",title:"Reusable scheduling template",intro:"WBS import, engineering methods and tested view components live in this Level-1 Studio, sibling to Projects.",rule:"The template is versioned; approvals stay with each project.",next:["Prepare a WBS","projects/generic/index.html"]},
+ "projects/index.html":{id:"projects",title:"Project registry",intro:"This Level-1 section is a sibling of Studio. Each project owns distinct source and evidence records.",rule:"A project record is not a cloned engine or an approved baseline.",next:["Explore template Studio","studio/index.html"]},
+ "projects/community-clinic/index.html":{id:"projects-clinic",title:"Synthetic Community Clinic",intro:"Independent Level-2 project record using the shared Studio renderer.",rule:"Public synthetic activities are not approved field progress.",next:["Project registry","projects/index.html"]},
+ "projects/pedestrian-bridge/index.html":{id:"projects-bridge",title:"Synthetic Footbridge",intro:"Independent Level-2 WBS reusing exactly the same generic view engine.",rule:"No synthetic dates are certified baselines.",next:["Project registry","projects/index.html"]},
  "studio/projects/narayani/index.html":{id:"studio-narayani",title:"Existing governed project",intro:"Original Narayani field controls remain at their existing source-linked project URLs.",rule:"This directory index does not approve source migration.",next:["Open existing field view","projects/narayani/visual.html"]},
  "studio/projects/community-clinic/index.html":{id:"studio-clinic",title:"Synthetic community clinic project",intro:"Calls the one project-independent renderer with its own canonical model.",rule:"Synthetic activities do not establish project-approved progress.",next:["Open Studio","studio/index.html"]},
  "studio/projects/pedestrian-bridge/index.html":{id:"studio-bridge",title:"Synthetic pedestrian footbridge project",intro:"Calls the same shared renderer, with different WBS and activities.",rule:"Synthetic scheduling is not a signed baseline.",next:["Open Studio","studio/index.html"]},
@@ -139,7 +142,7 @@ function pageKey(){
  return tail===""?"index.html":tail.endsWith("/")?tail+"index.html":tail;
 }
 function mountContextGuide(profile){
- if(!profile||["home","narayani-visual","how","generic","studio","studio-clinic","studio-bridge","studio-narayani"].includes(profile.id))return;
+ if(!profile||["home","narayani-visual","how","generic","studio","projects","projects-clinic","projects-bridge","studio-clinic","studio-bridge","studio-narayani"].includes(profile.id))return;
  if(document.querySelector(".sf-page-guide"))return;
  const primary=document.querySelector("main")||document.querySelector(".workspace")||document.querySelector(".wrap")||document.querySelector(".shell");
  if(!primary)return;
@@ -175,11 +178,14 @@ function createShell(){
  const wrap=document.createElement("div");wrap.className="sf-inner";header.append(wrap);
  const brand=entry(wrap,"✦ SKYFORGE","index.html");brand.className="sf-mark";brand.setAttribute("aria-label","Skyforge home");
  const navigation=document.createElement("nav");navigation.className="sf-menu";navigation.setAttribute("aria-label","Site engineer views");
- const tabs=[["Overview","index.html"],["Studio","studio/index.html"],["Projects","studio/index.html#projects"]];
+ const tabs=[["Overview","index.html"],["Studio","studio/index.html"],["Projects","projects/index.html"]];
  for(const [label,target] of tabs){
   const a=entry(navigation,label,target);
   if((home&&label==="Overview")||(pageKey()==="studio/index.html"&&label==="Studio")||
-   (pageKey().startsWith("studio/projects/")&&label==="Projects"))a.setAttribute("aria-current","page");
+   ((pageKey()==="projects/index.html"||pageKey().startsWith("projects/community-clinic/")||
+    pageKey().startsWith("projects/pedestrian-bridge/")||
+    pageKey().startsWith("projects/narayani/")||
+    pageKey().startsWith("studio/projects/"))&&label==="Projects"))a.setAttribute("aria-current","page");
  }
  const more=document.createElement("details");more.className="sf-more";
  const summary=document.createElement("summary");summary.textContent="More ▾";summary.setAttribute("aria-label","More pages and advanced tools");more.append(summary);
