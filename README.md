@@ -1,3 +1,15 @@
+## Skyforge v1.10 — Native Generic Project Digitization (20 October 2026)
+
+**Updated product:** [Generic Project Studio](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/generic/). **Reproduction/specification:** [Native format digitization v1.10](docs/research/SKYFORGE_GENERIC_NATIVE_DIGITIZATION_V1_10.md).
+
+The Studio now supports user-selected **native .xlsx Excel schedule tables, single-project Primavera P6 XER and BusinessObjects XML schedule structures, and machine-readable PDF schedule-table text** in addition to CSV/TSV, structured task-seed and canonical local JSON. Formats are deliberately bounded and schema-sensitive, **not** generalized AI guessing of arbitrary documents. Excel demands exact known header columns; P6 requires explicit hours-per-working-day normalization, preserves WBS parents without fabricating tasks, and rejects fractional conversions; PDF text is extracted locally with pinned PDF.js and must be explicitly reviewed/corrected before draft compilation. Encrypted workbooks, formula-based cells, scanned PDFs and unknown formats fail closed.
+
+**Authority:** Every accepted source remains `LOCAL_UNVERIFIED`, with SHA-256 of the original file bytes, explicit import warnings, and no project approvals or actual-progress writes. Inputs remain local in the browser. PDF.js external runtime JavaScript is fetched on demand; only the module/worker code comes from CDN, never project document data. All four views still use the same deterministic draft project compiler. Original Narayani 45/49/405 field structures and private Google Drive registries remain untouched.
+
+**Validation:** `tests/native-importers.test.mjs` exercises XER, P6 XML, a real compressed XLSX fixture and PDF geometry-extracted schedule rows; existing 3,888 calendar oracle and public Pages privacy build checks remain required. Physical browser graphical QA is intentionally left to the user after release.
+
+---
+
 ## Skyforge v1.9 — Project-agnostic four-view studio (20 October 2026)
 
 **Product:** [Generic Project Studio](projects/generic/index.html) · **Researcher contract:** [Generic Project Studio v1.9](docs/research/SKYFORGE_GENERIC_PROJECT_STUDIO_V1_9.md).
