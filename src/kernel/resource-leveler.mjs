@@ -97,12 +97,16 @@ function normalizeLinks(relationships,states){
   }
   return edges.sort((a,b)=>cmp(a.successor,b.successor)||cmp(a.predecessor,b.predecessor)||cmp(a.type,b.type)||a.lag-b.lag);
 }
-function topology(ids,edges){
+function topology(ids,edges,preferred=null){
+  if(preferred!=null&&(!Array.isArray(preferred)||preferred.length!==ids.length||
+     new Set(preferred).size!==ids.length||preferred.some(id=>!ids.includes(id))))
+    throw new Error("Explicit priority order must list each known activity exactly once");
+  const rank=new Map((preferred??ids).map((id,i)=>[id,i]));
   const order=[],done=new Set();
   while(order.length<ids.length){
     const eligible=ids.filter(id=>!done.has(id)&&edges.every(e=>e.successor!==id||done.has(e.predecessor)));
     if(!eligible.length)throw new Error("Cyclic resource-leveling relationship network");
-    const id=eligible.sort(cmp)[0];
+    const id=eligible.sort((a,b)=>rank.get(a)-rank.get(b)||cmp(a,b))[0];
     done.add(id);order.push(id);
   }
   return order;
@@ -143,8 +147,12 @@ export function levelResourceDependentNetwork(input={}){
     throw new Error("Seq14 serial resource leveling does not yet implement date constraints");
   if(input.dataDate!=null||input.dataDateSlot!=null||input.data_date!=null)
     throw new Error("Seq14 serial resource leveling does not yet implement data-date rescheduling");
-  if(input.levelingPolicy!=null&&input.levelingPolicy!=="SERIAL_TOPOLOGICAL_ID")
+  if(input.levelingPolicy!=null&&!["SERIAL_TOPOLOGICAL_ID","SERIAL_PRIORITY_EXPLICIT"].includes(input.levelingPolicy))
     throw new Error("Unsupported leveling policy");
+  if(input.levelingPolicy==="SERIAL_PRIORITY_EXPLICIT"&&!Array.isArray(input.priority_order))
+    throw new Error("Explicit resource-leveling policy requires priority_order");
+  if(input.levelingPolicy!=="SERIAL_PRIORITY_EXPLICIT"&&input.priority_order!=null)
+    throw new Error("Explicit priority_order requires SERIAL_PRIORITY_EXPLICIT");
   if(!Array.isArray(assignments))throw new Error("assignments must be an array");
   const states=new Map();
   for(const raw of activities){
@@ -160,7 +168,8 @@ export function levelResourceDependentNetwork(input={}){
       throw new Error("Assignment references unknown activity: "+(row.activity_id??row.activityId));
   }
   const links=normalizeLinks(relationships,states);
-  const order=topology([...states.keys()].sort(cmp),links);
+  const order=topology([...states.keys()].sort(cmp),links,input.priority_order??null);
+  const policy=input.levelingPolicy??"SERIAL_TOPOLOGICAL_ID";
   const renewable=new Map(),materials=new Map(),placed=new Map(),diagnostics=[];
   for(const id of order){
     const state=states.get(id),bound=boundFor(id,links,placed,state);
@@ -180,7 +189,7 @@ export function levelResourceDependentNetwork(input={}){
       leveling_delay_days:selected.start-baseline.start,
       leveling_delayed:delayed,
       resource_leveling_applied:true,
-      scheduling_policy:"SERIAL_TOPOLOGICAL_ID"
+      scheduling_policy:policy
     };
     placed.set(id,result);
     for(const slot of selected.work_slots){
@@ -192,7 +201,7 @@ export function levelResourceDependentNetwork(input={}){
       conflicts:conflictDays});
   }
   return {
-    policy:"SERIAL_TOPOLOGICAL_ID",resolution:"DAY",resource_leveling_applied:true,
+    policy,resolution:"DAY",resource_leveling_applied:true,
     optimality_claim:"NONE",order,activities:order.map(id=>placed.get(id)),
     diagnostics,resource_allocations:[...renewable].flatMap(([id,slots])=>[...slots].map(([slot,units])=>({resource_id:id,slot,units})))
       .sort((a,b)=>a.slot-b.slot||cmp(a.resource_id,b.resource_id)),
