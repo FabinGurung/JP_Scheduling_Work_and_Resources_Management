@@ -82,6 +82,7 @@ test("public compiler and source pins prevent cross-project output from exposing
  assert.match(wf,/test ! -e dist\/machine\/generic-projects\/community-clinic.json/);
  assert.match(renderer,/No source-supplied task checklist was provided/);
  assert.match(renderer,/document\.createElementNS/);
- assert.match(ui,/file\.size>2_000_000/);
+ assert.match(ui,/file\.size>max/);
+ assert.match(ui,/ext==="pdf"\?15_000_000:ext==="xlsx"\?12_000_000:8_000_000/);
  assert.doesNotMatch(ui,/fetch\(.+api\.github\.com/);
 });
