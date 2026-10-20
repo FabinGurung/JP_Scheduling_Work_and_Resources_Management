@@ -1,3 +1,24 @@
+## Skyforge v1.8 — Engine-first construction planning and work-item library (20 October 2026)
+
+**Authoritative research and runbook:** [Skyforge Work Item & Engine v1.8](docs/research/SKYFORGE_WORK_ITEM_AND_ENGINE_V1_8.md).  
+**Public reference catalog:** [Construction Work-Item Library](work-items/index.html).  
+**Catalog machine authority:** `machine/work-items/work-item-library-v0.1.json` (Git-blob pinned on public build), optional `machine/work-items/optional-schema-v0.1.sql` (schema only; no database deployed).  
+
+### Kernel advancements before Narayani next calls it
+
+- `src/kernel/schedule-project.mjs` delegates explicit `SHARED_CPM`, `CALENDAR_CPM` or `RESOURCE_LEVELING` modes, auto-routes genuine multi-calendar input to existing calendar-aware CPM, and fails closed if resource constraints could be ignored.
+- `src/kernel/resource-priority-audit.mjs` exhaustively checks precedence-feasible serial priority orders for **at most seven activities**; offers a certified optimality result **within that restricted scheduling family only**, not the global NP-hard RCPSP optimum. The existing deterministic serial leveler remains and supports an explicitly validated priority order without changing its default output.
+- `src/kernel/governed-evm.mjs` computes EVM only from supplied approved baseline identity/hash, complete verified physical progress and verified cost event ledgers, rejecting unsupported or duplicated events. **No external signature authentication, persistent baseline storage or live finance reconciliation is claimed.**
+- `src/kernel/project-template.mjs` compiles **any valid project-specific WBS and activity list** into a canonical *draft machine schedule* with source manifest, explicit quantity/duration assumptions and SHA-256 input identity. Missing durations or calendar/resource definitions return `INCOMPLETE_NO_SCHEDULE` rather than fabricated dates. The generic project four-view UI remains a separate milestone; Narayani's fixed model and safety holds are untouched.
+- The public work-item library has **14 trade templates**; only **two specific 2023 CPWD masonry clauses** currently carry numerically source-verified Delhi material coefficients, with a role-based labor coefficient for one clause. Remaining Nepal-specific productivity fields deliberately remain blank. The calculator displays theoretical crew-capacity lower bounds, **not a site duration estimate or construction approval**.
+- Historical completed-project source search did **not** identify a reliable joined record of measured output and actual labor-hours, so **zero private site-measured productivity factors** were admitted; further source reconciliation is needed before calibration.
+
+**Required design distinction:** Exact same signed/pinned inputs + pinned code + units + calendars ⇒ exact deterministic machine output. Source evidence and accepted site productivity are not guaranteed by algorithmic reproducibility. Research references: official [CPWD 2023 DAR](https://cpwd.gov.in/Publication/CPWD_DAR_Vol_I_14092023-Civil.pdf), [RICS NRM](https://www.rics.org/profession-standards/rics-standards-and-guidance/sector-standards/construction-standards/nrm), [Nepal DoR](https://www.dor.gov.np/mo-dang/publication/qrdc-guidelines-standard-specifications-codes-and-norms), and [ASCE context research](https://doi.org/10.1061/%28ASCE%29CO.1943-7862.0001127).
+
+**Governance:** Publish only allowlisted reference JSON; no updates to Narayani-specific WBS, drawing register, engineering acceptance or private attendance/finance sources. Prior [v1.6.1 tagged release](https://github.com/FabinGurung/JP_Scheduling_Work_and_Resources_Management/releases/tag/v1.6.1-visual.1) remains preserved. The previous v1.7 theme remains active. Deployment still requires all tests, 3,888 calendar cases and deterministic/privacy readback.
+
+---
+
 ## Skyforge v1.7 — Unify every published website surface (19 October 2026)
 
 All **14 current public HTML pages**, including generated machine examples and preserved technical/history pages, now load a **single white/teal style last**, after each legacy page's earlier CSS. The Pages builder also performs post-build readback to reject missing, duplicated or earlier-than-legacy canonical stylesheets.
