@@ -1,0 +1,168 @@
+{
+  "format": "SKYFORGE_PROJECT_INPUT_V1",
+  "classification": "PUBLIC_SYNTHETIC",
+  "project": {
+    "id": "DEMO_CLINIC",
+    "name": "Synthetic Community Clinic"
+  },
+  "wbs": [
+    {
+      "wbs_id": "CLINIC",
+      "name": "Clinic delivery"
+    },
+    {
+      "wbs_id": "SURVEY",
+      "name": "Site and authorization",
+      "parent_wbs_id": "CLINIC"
+    },
+    {
+      "wbs_id": "SHELL",
+      "name": "Structure and envelope",
+      "parent_wbs_id": "CLINIC"
+    },
+    {
+      "wbs_id": "SERVICES",
+      "name": "Services and testing",
+      "parent_wbs_id": "CLINIC"
+    }
+  ],
+  "activities": [
+    {
+      "id": "CL01",
+      "name": "Site control survey",
+      "wbs_id": "SURVEY",
+      "duration": 2,
+      "calendar_id": "FIVE",
+      "duration_basis": "ASSUMED_DRAFT",
+      "assumption_reason": "Synthetic visualization exercise only. Not measured or approved for construction."
+    },
+    {
+      "id": "CL02",
+      "name": "Setting out",
+      "wbs_id": "SURVEY",
+      "duration": 2,
+      "calendar_id": "FIVE",
+      "duration_basis": "ASSUMED_DRAFT",
+      "assumption_reason": "Synthetic visualization exercise only. Not measured or approved for construction."
+    },
+    {
+      "id": "CL03",
+      "name": "Foundation concrete",
+      "wbs_id": "SHELL",
+      "duration": 4,
+      "calendar_id": "SIX",
+      "duration_basis": "ASSUMED_DRAFT",
+      "assumption_reason": "Synthetic visualization exercise only. Not measured or approved for construction."
+    },
+    {
+      "id": "CL04",
+      "name": "Wall masonry",
+      "wbs_id": "SHELL",
+      "duration": 5,
+      "calendar_id": "FIVE",
+      "duration_basis": "ASSUMED_DRAFT",
+      "assumption_reason": "Synthetic visualization exercise only. Not measured or approved for construction."
+    },
+    {
+      "id": "CL05",
+      "name": "Electrical rough-in",
+      "wbs_id": "SERVICES",
+      "duration": 3,
+      "calendar_id": "FIVE",
+      "duration_basis": "ASSUMED_DRAFT",
+      "assumption_reason": "Synthetic visualization exercise only. Not measured or approved for construction."
+    },
+    {
+      "id": "CL06",
+      "name": "Service inspection",
+      "wbs_id": "SERVICES",
+      "duration": 1,
+      "calendar_id": "FIVE",
+      "duration_basis": "ASSUMED_DRAFT",
+      "assumption_reason": "Synthetic visualization exercise only. Not measured or approved for construction."
+    }
+  ],
+  "relationships": [
+    {
+      "predecessor": "CL01",
+      "successor": "CL02",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "CL02",
+      "successor": "CL03",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "CL03",
+      "successor": "CL04",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "CL04",
+      "successor": "CL05",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "CL05",
+      "successor": "CL06",
+      "type": "FS",
+      "lag": 0
+    }
+  ],
+  "source_manifest": [],
+  "scheduling_mode": "CALENDAR_CPM",
+  "projectStart": "2026-11-02",
+  "horizonEnd": "2027-01-29",
+  "projectCalendarId": "FIVE",
+  "calendars": {
+    "FIVE": {
+      "working_weekdays": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "holidays": []
+    },
+    "SIX": {
+      "working_weekdays": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "holidays": []
+    }
+  },
+  "checklist": [
+    {
+      "id": "CHK01",
+      "activity_id": "CL02",
+      "title": "Confirm the setting-out reference is documented",
+      "authority": "PUBLIC_SYNTHETIC_DRAFT",
+      "status": "NOT_REPORTED"
+    },
+    {
+      "id": "CHK02",
+      "activity_id": "CL03",
+      "title": "Confirm the pour hold-point has been cleared by the responsible engineer",
+      "authority": "PUBLIC_SYNTHETIC_DRAFT",
+      "status": "NOT_REPORTED"
+    },
+    {
+      "id": "CHK03",
+      "activity_id": "CL06",
+      "title": "Record authorized service-inspection evidence",
+      "authority": "PUBLIC_SYNTHETIC_DRAFT",
+      "status": "NOT_REPORTED"
+    }
+  ]
+}
