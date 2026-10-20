@@ -1,10 +1,10 @@
-import {createHash} from "node:crypto";
+import {sha256Hex} from "../kernel/sha256.mjs";
 import {compileProjectDraft} from "../kernel/project-template.mjs";
 /** Project-agnostic, privacy-limited view projection. Node-side compile only.
  * All four visualizations consume ONE model, not independently computed dates.
  * Checklist entries are passed through ONLY when explicitly supplied.
  */
-const digest=x=>createHash("sha256").update(x).digest("hex");
+const digest=x=>sha256Hex(x);
 const name=x=>typeof x==="string"&&x.trim().length>0&&x.length<=180&&!/[<>\u0000-\u001f]/.test(x);
 export function projectGenericVisual(spec){
  if(spec?.classification!=="PUBLIC_SYNTHETIC")throw Error("Generic published model requires public-synthetic input classification");
