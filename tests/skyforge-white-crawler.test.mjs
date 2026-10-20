@@ -48,7 +48,7 @@ test("home and Narayani views use consistent white styling after old inline styl
  assert.match(shell,/\.drawer\{background:#fff/);
  assert.ok(home.indexOf('assets/site-shell.css')>home.indexOf("</style>"));
  assert.ok(visual.indexOf('assets/site-shell.css')>visual.indexOf("</style>"));
- assert.match(home,/theme-color" content="#f6f9fc"/);
+ assert.match(home,/theme-color" content="#f5f8fb"/);
  assert.match(visual,/theme-color" content="#f6f9fc"/);
  assert.match(visual,/id="graph"/);
  assert.match(visual,/id="calendar-months"/);
