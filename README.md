@@ -1,3 +1,21 @@
+## Skyforge v1.9 — Project-agnostic four-view studio (20 October 2026)
+
+**Product:** [Generic Project Studio](projects/generic/index.html) · **Researcher contract:** [Generic Project Studio v1.9](docs/research/SKYFORGE_GENERIC_PROJECT_STUDIO_V1_9.md).
+
+The generic project compiler from v1.8 now feeds a **single canonical project view model** to four unified views: WBS/dependency constellation, computed Gantt, start/finish event calendar and **only explicitly source-supplied checklist prompts**. The renderer never recalculates schedule dates in browser or invents completed work.
+
+Independent public-synthetic demonstration projects prove the principle: a **six-activity community clinic** (three draft readiness prompts) and an **eight-activity pedestrian footbridge** (four draft readiness prompts), with different WBS structures and dependencies. No private project data is included.
+
+- Kernel adapters: `src/visual/generic-project-model.mjs` converts `compileProjectDraft` results to `SKYFORGE_GENERIC_VIEW_MODEL_V1`; `src/presentation/generic-views.mjs` renders the four views from it.
+- Exact source reproduction: `npm run generic:build` / `npm run generic:verify`. Git blob hashes of each original synthetic input, canonical JSON SHA-256 and manifest checks are enforced on every Actions deployment.
+- [Public generic demo](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/generic/) allows switching between reviewed examples and locally opening a precompiled **public-synthetic** view JSON. Raw Excel/PDF/P6/WBS ingestion is **not** implemented in that browser surface; users must first compile and validate inputs.
+- Skyforge Pages explicitly publishes only the two derived public-synthetic models, not the original input fixtures, local private project source registers, or unverified field/finance records.
+- The previous **Narayani field model, 45 activities, 49 edges, 405 MCQ prompts, 7 milestones, permit/inspection holds and private evidence governance remain unchanged**. Its field UI has not been replaced by the generic prototype.
+
+**Outstanding:** Project-agnostic real-site authenticated importer, issued drawing/quantity revision reconciliation, full resource-loaded baseline, live EVM approval, 3D construction BIM, field evidence sync and independent mobile/desktop graphical QA. v1.9 is a tested **public-synthetic planning engine/display** milestone, not a certification of project scope or issued construction dates. Preserve historical release tag [v1.6.1-visual.1](https://github.com/FabinGurung/JP_Scheduling_Work_and_Resources_Management/releases/tag/v1.6.1-visual.1) and Git history.
+
+---
+
 ## Skyforge v1.8 — Engine-first construction planning and work-item library (20 October 2026)
 
 **Authoritative research and runbook:** [Skyforge Work Item & Engine v1.8](docs/research/SKYFORGE_WORK_ITEM_AND_ENGINE_V1_8.md).  
