@@ -1,3 +1,17 @@
+## Skyforge v1.11 — One Studio, multiple project records (20 October 2026)
+
+**Level 0:** [Overview homepage](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/) · **Level 1:** [Template Engine / Studio](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/studio/) · **Level 2:** individual project records. [Full source/governance architecture](docs/architecture/SKYFORGE_LEVELS_AND_PROJECT_TEMPLATE_V1_11.md).
+
+All scheduling, digitization, engineering reference, calculation and evidence tools are now discoverable within **one Level-1 Studio**. The Level-0 homepage provides an architectural entry point rather than a Narayani-only visual dashboard. The shared global navigation uses Overview / Studio / Projects; former deep links are retained under More and from the Studio.
+
+New Level-2 URLs for [Community Clinic](studio/projects/community-clinic/index.html), [Pedestrian Footbridge](studio/projects/pedestrian-bridge/index.html) and [Narayani](studio/projects/narayani/index.html). The two synthetic instances call the **same shared generic four-view renderer** and read separate source-validated model JSON, without cloning the kernel. Narayani's already governed historical workbench and 45/49/405 records remain at existing URLs; this Level-2 index does **not** falsely claim an unapproved generic conversion.
+
+**Future AI authoring contract:** user may describe a WBS in chat first—no Excel, XER or XML file is necessary. Normalize IDs/scope/dependencies/evidence and identify missing fields, then build requested editable Excel and supported P6 exchange exports from one canonical model, and only afterward instantiate a new source-scoped project record. Native P6 export-round-trip validation is not currently part of the website importer; avoid claiming fully verified P6 authoring until target-version import succeeds. No approved baseline or actual field progress is fabricated.
+
+**Protection:** The v1.10 native importers, source hashes, Pip motion, 3,888 calendar oracle, Narayani source governance and public Pages allowlist remain intact. Earlier project URLs are not removed or redirected. Manual mobile visual QA is reserved for the user.
+
+---
+
 ## Skyforge v1.10 — Native Generic Project Digitization (20 October 2026)
 
 **Updated product:** [Generic Project Studio](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/generic/). **Reproduction/specification:** [Native format digitization v1.10](docs/research/SKYFORGE_GENERIC_NATIVE_DIGITIZATION_V1_10.md).
