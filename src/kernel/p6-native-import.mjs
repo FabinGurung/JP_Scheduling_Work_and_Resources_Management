@@ -6,13 +6,24 @@ const esc=x=>'"'+String(x??"").replace(/"/g,'""')+'"';
 const headings=["activity_id","activity_name","wbs_id","wbs_name","parent_wbs_id","duration_slots","predecessors","work_quantity","work_unit"];
 const normal=s=>String(s??"").trim();
 const sourceEntry=(text,kind)=>sha256Hex(new TextEncoder().encode(text));
-function makeDraft({rows,format,project_id,project_name,source_name,original_sha256,hours_per_day=null,extra=[]}){
+function makeDraft({rows,format,project_id,project_name,source_name,original_sha256,hours_per_day=null,extra=[],all_wbs=[]}){
  if(!rows.length)throw Error("No activities found in source");
- const csv=[headings.join(","),...rows.map(r=>headings.map(h=>esc(r[h])).join(","))].join("\n")+"\n";
+ // Source WBS parents may have zero activities: retain their node identities
+ // separately instead of fabricating activities merely to satisfy the CSV importer.
+ const normalizedRows=rows.map(r=>({...r,parent_wbs_id:""}));
+ const csv=[headings.join(","),...normalizedRows.map(r=>headings.map(h=>esc(r[h])).join(","))].join("\n")+"\n";
  const d=digitizeGenericTable({text:csv,format:"CSV",project_id,project_name,source_name});
  d.source_format=format;d.source_sha256=original_sha256;
  d.project.source_manifest[0].sha256=original_sha256;
  d.project.source_manifest[0].revision="UNVERIFIED_"+format+"_SOURCE";
+ if(all_wbs.length){
+  const complete=new Map(all_wbs.map(w=>[w.wbs_id,w]));
+  if(complete.size!==all_wbs.length)throw Error("Duplicated P6 WBS code");
+  for(const r of rows)if(!complete.has(r.wbs_id))throw Error("Activity missing WBS");
+  for(const w of all_wbs)if(w.parent_wbs_id&&!complete.has(w.parent_wbs_id))
+   throw Error("Referenced P6 WBS parent missing");
+  d.project.wbs=all_wbs;
+ }
  d.diagnostics.push(...extra);
  if(hours_per_day!=null)d.diagnostics.push({code:"USER_SUPPLIED_HOURS_PER_DAY",severity:"WARNING",detail:"Converted explicit source hours using entered "+hours_per_day+" h/day. Does not prove this project's calendars, work patterns or productivity."});
  return d;
@@ -39,7 +50,7 @@ const relType=s=>{
  return dict[x];
 };
 /** XER: one project per local import; project/task WBS and predecessor IDs remain linked. */
-export function digitizeXer({text,project_id,project_name,source_name="P6 schedule.xer",hours_per_day}){
+export function digitizeXer({text,project_id,project_name,source_name="P6 schedule.xer",hours_per_day,original_sha256=null}){
  if(typeof text!=="string"||text.length>8000000||!text.startsWith("ERMHDR"))
   throw Error("Native XER must start ERMHDR and be less than 8 MB");
  const tables=new Map();let table=null,fields=null;
@@ -61,6 +72,17 @@ export function digitizeXer({text,project_id,project_name,source_name="P6 schedu
   if(!w.wbs_id||wbsMap.has(w.wbs_id))throw Error("Invalid or duplicate XER PROJWBS key");
   wbsMap.set(w.wbs_id,w);
  }
+ const all_wbs=[],codeByOid=new Map();
+ for(const w of wbsMap.values()){
+  const code=normal(w.wbs_short_name)||"WBS_"+w.wbs_id;
+  if(!safeId(code)||[...codeByOid.values()].includes(code))throw Error("P6 WBS code not safely unique: "+code);
+  codeByOid.set(w.wbs_id,code);
+ }
+ for(const w of wbsMap.values()){
+  if(w.parent_wbs_id&&!wbsMap.has(w.parent_wbs_id))throw Error("XER missing parent WBS ID");
+  all_wbs.push({wbs_id:codeByOid.get(w.wbs_id),name:w.wbs_name||"Unverified WBS "+codeByOid.get(w.wbs_id),
+    ...(w.parent_wbs_id?{parent_wbs_id:codeByOid.get(w.parent_wbs_id)}:{})});
+ }
  const rows=[],byId=new Map();
  for(const t of tasks){
   const id=normal(t.task_code),w=wbsMap.get(t.wbs_id);
@@ -70,17 +92,16 @@ export function digitizeXer({text,project_id,project_name,source_name="P6 schedu
   const type=normal(t.task_type).toUpperCase();
   if(type&&/MILESTONE/.test(type)&&num(t.target_drtn_hr_cnt)!==0)
    throw Error("P6 milestone "+id+" must have zero planned duration");
-  const h=num(t.target_drtn_hr_cnt);
+  const h=num(t.target_drtn_hr_cnt??t.orig_dur_hr_cnt);
   const duration=slots(h,hours_per_day,"P6 target duration for "+id);
-  const parent=w.parent_wbs_id&&wbsMap.has(w.parent_wbs_id)?normal(wbsMap.get(w.parent_wbs_id)?.wbs_short_name||""):"";
-  if(w.parent_wbs_id&&wbsMap.has(w.parent_wbs_id)&&!safeId(parent))throw Error("XER parent WBS ID cannot be normalized safely");
-  const code=normal(w.wbs_short_name)||"WBS_"+w.wbs_id;
+  const parent=w.parent_wbs_id?codeByOid.get(w.parent_wbs_id):"";
+  const code=codeByOid.get(w.wbs_id);
   if(!safeId(code))throw Error("XER WBS code requires explicit mapping: "+code);
   rows.push({activity_id:id,activity_name:t.task_name,wbs_id:code,wbs_name:w.wbs_name||"Unverified WBS "+code,
    parent_wbs_id:parent,duration_slots:String(duration),predecessors:""});
  }
  const byCode=new Map(rows.map(r=>[r.activity_id,r]));
- for(const p of preds.filter(x=>x.proj_id===pid)){
+ for(const p of preds.filter(x=>(x.proj_id??pid)===pid)){
   const successor=byId.get(p.task_id),predecessor=byId.get(p.pred_task_id);
   if(!successor||!predecessor)throw Error("XER relationship has missing activity FK");
   const type=relType(p.pred_type),lag=lagSlots(num(p.lag_hr_cnt||"0"),hours_per_day);
@@ -88,7 +109,7 @@ export function digitizeXer({text,project_id,project_name,source_name="P6 schedu
  }
  const unknownTables=[...tables.keys()].filter(x=>!["PROJECT","TASK","TASKPRED","PROJWBS","CALENDAR","CURRTYPE"].includes(x));
  const result=makeDraft({rows,format:"XER",project_id,project_name,source_name,
-  original_sha256:sourceEntry(text),hours_per_day,extra:[
+  original_sha256:original_sha256??sourceEntry(text),hours_per_day,all_wbs,extra:[
   {code:"P6_CALENDAR_NOT_IMPORTED",severity:"HOLD",detail:"P6 per-activity calendars, holidays and detailed hours are not admitted into abstract-slot schedules."},
   ...(unknownTables.length?[{code:"XER_TABLES_NOT_IMPORTED",severity:"WARNING",detail:unknownTables.join(", ").slice(0,320)}]:[])
  ]});
@@ -101,7 +122,7 @@ const deEnt=s=>String(s).replace(/&#(x[0-9a-f]+|\d+);|&(?:amp|lt|gt|quot|apos);/
 const blocks=(s,tag)=>[...s.matchAll(new RegExp("<(?:[A-Za-z][\\w.-]*:)?"+tag+"(?:\\s[^<>]*)?>([\\s\\S]*?)<\\/(?:[A-Za-z][\\w.-]*:)?"+tag+"\\s*>","gi"))].map(x=>x[1]);
 const field=(s,key)=>deEnt(blocks(s,key)[0]?.replace(/<[^>]+>/g,"").trim()??"");
 /** P6 BusinessObjects XML subset: ID + WBS, duration + relationship sources required. */
-export function digitizeP6Xml({text,project_id,project_name,source_name="P6 schedule.xml",hours_per_day}){
+export function digitizeP6Xml({text,project_id,project_name,source_name="P6 schedule.xml",hours_per_day,original_sha256=null}){
  if(typeof text!=="string"||text.length>8000000||!/<(?:[\w.-]+:)?(?:APIBusinessObjects|Project)\b/.test(text))throw Error("P6 XML document root not recognized");
  if(/<!DOCTYPE|<!ENTITY|<\?xml-stylesheet/i.test(text))throw Error("XML DTD, entities and stylesheets are forbidden");
  const projects=blocks(text,"Project");
@@ -113,6 +134,12 @@ export function digitizeP6Xml({text,project_id,project_name,source_name="P6 sche
   const oid=field(b,"ObjectId"),id=field(b,"Code")||field(b,"Id"),title=field(b,"Name");
   if(!oid||!safeId(id)||!title||wbs.has(oid))throw Error("Malformed WBS object; WBS ObjectId, Code and Name required");
   wbs.set(oid,{id,title,parent:field(b,"ParentObjectId")});
+ }
+ const all_wbs=[];
+ for(const w of wbs.values()){
+  if(w.parent&&!wbs.has(w.parent))throw Error("P6 XML missing parent WBS ObjectId");
+  if([...wbs.values()].filter(x=>x.id===w.id).length>1)throw Error("Duplicate normalized WBS code");
+  all_wbs.push({wbs_id:w.id,name:w.title,...(w.parent?{parent_wbs_id:wbs.get(w.parent).id}:{})});
  }
  const rows=[],activities=new Map();
  for(const b of activityBlocks){
@@ -138,6 +165,6 @@ export function digitizeP6Xml({text,project_id,project_name,source_name="P6 sche
   const r=byCode.get(succ);r.predecessors+=(r.predecessors?";":"")+pred+":"+type+":"+lag;
  }
  return makeDraft({rows,format:"P6_XML",project_id,project_name,source_name,
-  original_sha256:sourceEntry(text),hours_per_day,extra:[{code:"P6_XML_CALENDAR_NOT_IMPORTED",severity:"HOLD",
+  original_sha256:original_sha256??sourceEntry(text),hours_per_day,all_wbs,extra:[{code:"P6_XML_CALENDAR_NOT_IMPORTED",severity:"HOLD",
   detail:"Calendars, activity steps, resources and actuals are not represented in this first normalized schedule adapter."}]});
 }
