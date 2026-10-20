@@ -260,3 +260,49 @@ body.sf-shelled[data-sf-page="machine-demo"] :is(.panel,.card,.box,.summary){
 @media(max-width:640px){
  body.sf-shelled[data-sf-page="machine-demo"] main{padding-inline:12px}
 }
+
+/* Arc v1.10 · Organic WBS tree: meaningful hierarchy independent of CPM dates. */
+body.sf-shelled[data-sf-page="narayani-visual"] #graph{
+ background-image:radial-gradient(circle at 51% 84%,#c4e7df9e,transparent 50%),
+  radial-gradient(circle,#6ba5ae20 1px,transparent 1px)!important;
+ background-size:100% 100%,22px 22px!important;
+ background-color:#f8fcfb!important
+}
+body.sf-shelled[data-sf-page="narayani-visual"] .graph-wbs-branch{
+ fill:none;stroke:#58aa9f;stroke-linecap:round;opacity:.77;
+ filter:drop-shadow(0 0 5px #90d9c550)
+}
+body.sf-shelled[data-sf-page="narayani-visual"] .graph-tree-root{
+ fill:#deeee8;stroke:#28857b;stroke-width:5
+}
+body.sf-shelled[data-sf-page="narayani-visual"] .graph-tree-root-label,
+body.sf-shelled[data-sf-page="narayani-visual"] .graph-wbs-caption{
+ font-size:20px;font-weight:750;fill:#245d68;paint-order:stroke;
+ stroke:#f9fffe;stroke-width:6;stroke-linejoin:round
+}
+body.sf-shelled[data-sf-page="narayani-visual"] .graph-wbs-skill{
+ cursor:pointer
+}
+body.sf-shelled[data-sf-page="narayani-visual"] .graph-wbs-skill-halo{
+ fill:#d2f0e8;stroke:#9acfc3;stroke-width:2
+}
+body.sf-shelled[data-sf-page="narayani-visual"] .graph-wbs-skill-core{
+ fill:#f7fffd;stroke:#318c80;stroke-width:3
+}
+body.sf-shelled[data-sf-page="narayani-visual"] .graph-wbs-glyph{
+ font-size:28px;fill:#2a9287
+}
+body.sf-shelled[data-sf-page="narayani-visual"] .graph-wbs-skill.dimmed{opacity:.35}
+body.sf-shelled[data-sf-page="narayani-visual"] .organic-dependency{
+ fill:none;stroke:#bd8c43;stroke-dasharray:6 12;stroke-width:2;
+ pointer-events:none;transition:opacity .18s linear
+}
+body.sf-shelled[data-sf-page="narayani-visual"] .organic-dependency.related{
+ stroke:#a77924;stroke-width:3.5
+}
+body.sf-shelled[data-sf-page="narayani-visual"] .graph-node .outer{
+ filter:drop-shadow(0 0 7px #45a9a247)
+}
+@media(prefers-reduced-motion:reduce){
+ body.sf-shelled[data-sf-page="narayani-visual"] .organic-dependency{transition:none}
+}
