@@ -174,7 +174,7 @@ export function digitizeTaskSeedJSON({text,project_id,project_name,source_name="
   if(duration!==null&&(!Number.isSafeInteger(duration)||duration<0))
    throw Error("Invalid source duration_days for "+id);
   if(task.type==="Milestone"&&duration!==0)throw Error("Milestone must have zero source duration: "+id);
-  activities.push({id,name:task.name,wbs_id:wbsId,duration,activity_type:task.type==="Milestone"?"MILESTONE":"TASK",
+  activities.push({id,name:task.name,wbs_id:wbsId,duration,activity_type:task.type==="Milestone"?"FINISH_MILESTONE":"TASK",
    duration_basis:"ASSUMED_DRAFT",
    assumption_reason:"Unverified P6-style seed duration_days interpreted as nominal day slots; no actual calendar or approval."});
  }
