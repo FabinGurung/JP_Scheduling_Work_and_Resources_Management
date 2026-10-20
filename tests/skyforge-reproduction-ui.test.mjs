@@ -19,8 +19,14 @@ test("phone constellation starts zoomed to readable portion and retains full ove
  const html=read("projects/narayani/visual.html");
  const css=read("assets/site-shell.css");
  assert.match(js,/function initialGraphViewport/);
- assert.match(js,/w:490,h:690/);
- assert.match(js,/w:1600,h:840/);
+ // The organic WBS tree uses a responsive, trunk-centered viewport, NOT
+ // fixed coordinate extents copied from the former Gantt-like lane layout.
+ assert.match(js,/const w=phone\?720:1550,h=phone\?730:840/);
+ assert.match(js,/organicTree\.root\.x-w\/2/);
+ assert.match(js,/organicTree\.root\.y-h\*\.82/);
+ assert.match(js,/organicTree=layoutOrganicSkillTree\(/);
+ assert.match(js,/w:organicTree\.width,h:organicTree\.height/);
+ assert.doesNotMatch(js,/w:490,h:690|w:1600,h:840/);
  assert.match(js,/function focusGraphOn/);
  assert.match(js,/window\.addEventListener\("resize"/);
  assert.match(html,/id="graph-overview"/);
