@@ -7,7 +7,8 @@ import {compileProjectDraft} from "../kernel/project-template.mjs";
 const digest=x=>sha256Hex(x);
 const name=x=>typeof x==="string"&&x.trim().length>0&&x.length<=180&&!/[<>\u0000-\u001f]/.test(x);
 export function projectGenericVisual(spec){
- if(spec?.classification!=="PUBLIC_SYNTHETIC")throw Error("Generic published model requires public-synthetic input classification");
+ if(!["PUBLIC_SYNTHETIC","LOCAL_UNVERIFIED"].includes(spec?.classification))throw Error("Generic view compilation requires recognized source scope");
+ const local=spec.classification==="LOCAL_UNVERIFIED";
  if(!["CALENDAR_CPM","SHARED_CPM","RESOURCE_LEVELING"].includes(spec.scheduling_mode))throw Error("Unsupported scheduling mode");
  const compiled=compileProjectDraft(spec);
  if(compiled.schedule===null||compiled.gaps.length)throw Error("Incomplete project cannot publish calculated model: "+JSON.stringify(compiled.gaps));
@@ -43,7 +44,7 @@ export function projectGenericVisual(spec){
   ...(a.finish_date?[{date:a.finish_date,activity_id:a.id,kind:"FINISH"}]:[])
  ]).sort((a,b)=>a.date.localeCompare(b.date)||a.activity_id.localeCompare(b.activity_id)||a.kind.localeCompare(b.kind));
  return {
-  format:"SKYFORGE_GENERIC_VIEW_MODEL_V1",classification:"PUBLIC_SYNTHETIC_DRAFT_ONLY",
+  format:"SKYFORGE_GENERIC_VIEW_MODEL_V1",classification:local?"LOCAL_UNVERIFIED_DRAFT_ONLY":"PUBLIC_SYNTHETIC_DRAFT_ONLY",
   project:{id:spec.project.id,name:spec.project.name},
   input_sha256:compiled.input_sha256,
   planning_status:compiled.planning_status,
