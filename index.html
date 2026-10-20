@@ -1,56 +1,45 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#f6f9fc"><meta name="description" content="Skyforge: visually explore Narayani Parajuli's WBS, dependency constellation, 3-month planning calendar, Gantt and work checklists.">
-<title>Skyforge | Construction Mission Control</title>
-
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f8fb"><meta name="description" content="Skyforge construction scheduling: one shared engine and independently governed project records.">
+<title>Skyforge · Scheduling System Overview</title>
 <style>
-:root{color-scheme:dark;--ink:#eaf5ff;--muted:#a5c5db;--line:#385774;--cyan:#75e5eb}
-body{margin:0;background:#091729;color:var(--ink);font:15px/1.55 system-ui,sans-serif}
-body.sf-shelled{background:#091729!important;color:#eaf5ff!important}
-main{max-width:1220px;padding:24px 18px 55px;margin:auto}
-.hero{position:relative;isolation:isolate;overflow:hidden;border:1px solid #416785;border-radius:23px;padding:clamp(25px,5vw,64px);background:radial-gradient(circle at 77% 52%,#205279 0,transparent 36%),linear-gradient(120deg,#0c213b,#123850 68%,#0c2037);box-shadow:0 22px 80px #0004}
-.hero:before{content:"";position:absolute;pointer-events:none;inset:0;background-image:radial-gradient(circle,#d2f7ff 1px,transparent 1.5px);background-size:48px 46px;opacity:.19}
-.hero:after{content:"";position:absolute;right:-11%;top:-42%;width:min(68vw,590px);aspect-ratio:1;border:1px solid #74c5ff4a;border-radius:50%;box-shadow:0 0 0 52px #93e5ff06,0 0 0 110px #66bfe708,0 0 0 175px #7af0ff07;pointer-events:none;animation:orbit 18s linear infinite}
-@keyframes orbit{50%{transform:translate(-13px,9px) rotate(180deg)}100%{transform:rotate(360deg)}}
-.eyebrow{font-size:11px;letter-spacing:.18em;font-weight:850;text-transform:uppercase;color:#7deafa;position:relative}
-h1{position:relative;font-size:clamp(34px,6vw,70px);letter-spacing:-.05em;line-height:1.07;max-width:780px;margin:12px 0 16px}
-h1 span{color:#82edf4}.hero p{position:relative;max-width:640px;color:#d1e4f1;font-size:16px}
-.actions{position:relative;display:flex;flex-wrap:wrap;gap:10px;margin-top:25px}
-.action{display:inline-flex;justify-content:center;align-items:center;gap:9px;border:1px solid #5c9db4;border-radius:11px;padding:12px 19px;text-decoration:none;color:#ebfaff;background:#1b3c59;font-weight:850}
-.action.primary{background:#80e8ed;color:#0d2432;border-color:#b8ffff}
-.action:hover{filter:brightness(1.1);transform:translateY(-1px)}
-.panel-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:24px 0 12px}
-h2{font-size:19px;letter-spacing:-.025em;margin:0}
-.small{color:var(--muted);font-size:12px}
-.views{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.view-card{border:1px solid #344f6a;background:linear-gradient(140deg,#152b43,#102338);border-radius:15px;padding:20px;min-height:155px;display:flex;flex-direction:column;gap:10px;color:inherit;text-decoration:none;transition:transform .15s,border .15s}
-.view-card:hover{border-color:#8de9ee;transform:translateY(-2px)}
-.view-card .icon{font-size:24px;color:#89edf7}.view-card strong{font-size:17px}.view-card p{font-size:12px;color:#a9c5d6;margin:0}.view-card span:last-child{font-size:12px;color:#8ce9f6;margin-top:auto;font-weight:850}
-.state{border:1px solid #425e78;border-radius:14px;padding:16px 19px;background:#102136;margin:18px 0;display:flex;align-items:center;gap:13px;flex-wrap:wrap}
-.state strong{color:#94f0dd}.state p{margin:0;max-width:850px;font-size:12px;color:#b2c8d8}
-.numbers{display:flex;gap:8px;flex-wrap:wrap}.numbers span{padding:7px 11px;background:#173a50;border:1px solid #396680;border-radius:9px;font-size:11px;color:#b7dced}.numbers b{font-size:16px;color:#ebfbff;margin-right:5px}
-.lower{display:grid;grid-template-columns:1.2fr .8fr;gap:12px;margin-top:20px}.note{border:1px solid #344d64;background:#11243a;border-radius:13px;padding:17px}.note p{font-size:12px;color:#b9cbdb;margin:8px 0 0}.note a{color:#95edf6}
-.footer{color:#83a0b5;font-size:11px;margin:24px 0}
-@media(max-width:720px){.views,.lower{grid-template-columns:1fr}.hero{padding:26px 22px}.hero:after{opacity:.45}.view-card{min-height:110px}}
-@media(prefers-reduced-motion:reduce){.hero:after{animation:none}.view-card{transition:none}}
-</style><link rel="stylesheet" href="./assets/site-shell.css"></head>
-<body><main id="content"><section class="hero">
-<div class="eyebrow">Project PRJ-000007 · Construction Command System</div>
-<h1>See the whole build.<br><span>Know what comes next.</span></h1>
-<p>Explore the WBS as a living constellation. Open a checklist, understand prerequisites and look three months ahead—all from one project model.</p>
-<div class="actions"><a class="action primary" href="./projects/narayani/visual.html#constellation">✦ Explore constellation →</a><a class="action" href="./projects/narayani/visual.html#calendar">▦ Three-month calendar</a></div>
+*{box-sizing:border-box}
+body{margin:0;background:#f5f8fb;color:#203b4f;font:15px/1.6 system-ui,-apple-system,sans-serif}
+main{max-width:1200px;margin:auto;padding:27px 16px 66px}
+.hero{background:linear-gradient(120deg,#fff 10%,#e8f8f4);border:1px solid #d7e8e8;border-radius:22px;padding:clamp(27px,5vw,60px)}
+.hero .eyebrow{font-size:11px;font-weight:900;letter-spacing:.14em;color:#147e83;text-transform:uppercase}
+h1{font-size:clamp(34px,5vw,59px);line-height:1.08;letter-spacing:-.055em;margin:10px 0 17px}
+h2{font-size:22px;line-height:1.2}p{color:#577486}.hero>p{max-width:750px;font-size:17px;margin:0 0 20px}
+a{color:#147e83}
+.big-cta{display:inline-block;text-decoration:none;background:#147e83;color:white!important;padding:13px 22px;border-radius:11px;font-weight:850}
+.hierarchy{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:22px 0}
+.level{border:1px solid #d7e6ec;background:#fff;border-radius:16px;padding:20px;min-height:195px}
+.level small{color:#147e83;letter-spacing:.12em;text-transform:uppercase;font-size:11px;font-weight:850}
+.level h2{margin:10px 0}.level p{font-size:13px;line-height:1.55}
+.level a{text-decoration:none;font-weight:750;font-size:13px}
+.bottom{display:grid;grid-template-columns:1.5fr 1fr;gap:15px;margin-top:18px}
+.card{background:#fff;border:1px solid #d9e8ed;border-radius:16px;padding:20px}
+.card p{font-size:13px}.card a{font-weight:730}
+.emphasis{background:#f0f9f7;border-color:#c7e7e2}
+.note{margin-top:19px;border-left:4px solid #ba8330;background:#fff8ec;padding:13px 16px;border-radius:8px;font-size:12px;color:#7b622e}
+@media(max-width:800px){.hierarchy{grid-template-columns:1fr}.level{min-height:0}.bottom{grid-template-columns:1fr}}
+@media(max-width:570px){main{padding:12px 9px 45px}.hero{padding:22px}.big-cta{display:block;text-align:center}}
+</style></head>
+<body><main>
+<section class="hero">
+<div class="eyebrow">Level 0 · System overview</div>
+<h1>One engine.<br>Many construction projects.</h1>
+<p>Skyforge is a reusable construction-scheduling platform: one tested mathematical foundation, independent source-governed project records, and repeatable project visualization.</p>
+<a class="big-cta" href="./studio/">Enter the Template Engine / Studio →</a>
 </section>
-<div class="panel-header"><h2>Choose your view</h2><span class="small">Narayani Parajuli · One shared structured model</span></div>
-<section class="views" aria-label="Site-engineer project views">
-<a class="view-card" href="./projects/narayani/visual.html#constellation"><span class="icon">✦</span><strong>Constellation · 2D / 3D</strong><p>Explore activity stars, dependencies, holds and the next steps in 2D or optional Three.js.</p><span>Open project graph →</span></a>
-<a class="view-card" href="./projects/narayani/visual.html#gantt"><span class="icon">▰</span><strong>Gantt</strong><p>How tasks overlap over time, linked to the same work nodes.</p><span>Explore timeline →</span></a>
-<a class="view-card" href="./projects/narayani/visual.html#calendar"><span class="icon">▦</span><strong>Calendar</strong><p>Named work for each day in the rolling three-month scenario.</p><span>Plan ahead →</span></a>
-</section>
-<section class="state"><strong>Evidence-backed, not automatically approved</strong><p>The project has a Construction-stage administrative record, but the dated programme is illustrative. Slack MCQ answers are reported progress until accepted by the appropriate authority; engineering holds and permits remain independent.</p>
-<div class="numbers"><span><b>45</b>activity nodes</span><span><b>49</b>dependencies</span><span><b>405</b>checklist prompts</span><span><b>7</b>milestones</span></div></section>
-<div class="lower">
-<section class="note"><h2>Checklist-first field reporting</h2><p>Pick an activity → answer one multiple-choice checklist item → paste the structured reply in the dedicated private <strong>#site-progress-mcq</strong> channel. Your reported progress can update the visual state without guessing from unstructured conversation.</p><p><a href="./projects/narayani/visual.html#checklist">Open checklists →</a></p></section>
-<section class="note"><h2>Why this engine works</h2><p>CPM, WBS, working calendars, resource constraints and EVM are reusable principles—not a fixed Narayani task list. Learn the mathematical network and the source-governed procedure for reproducing new projects.</p><p><a href="./projects/generic/">Open Generic Project Studio — two independent WBS examples →</a></p><p><a href="./how/index.html">Open the engine handbook and live CPM lab →</a></p><p><a href="./work-items/">Open verified construction work-item reference library →</a></p><p><a href="./how/skyforge-anki.csv">Download 32 Anki recall cards ↓</a></p><p>Original scheduler, technical tools and archives remain in <strong>More</strong>.</p></section>
+<div class="hierarchy" aria-label="System levels">
+<div class="level"><small>Level 0 · Here</small><h2>Overview</h2><p>The architectural entry point explains what the system is and how its projects connect.</p><a href="./studio/">Continue into the Studio →</a></div>
+<div class="level"><small>Level 1 · Reusable system</small><h2>Template Engine</h2><p>WBS normalization, schedule importer and generator, CPM/PDM, resource modeling, work-item knowledge and four common views.</p><a href="./studio/">Open shared engine →</a></div>
+<div class="level"><small>Level 2 · Instances</small><h2>Project Records</h2><p>Each project has its own WBS, evidence, assumptions and views. No cloned scheduling algorithms or inherited project-specific activity data.</p><a href="./studio/#projects">Browse projects →</a></div>
 </div>
-<p class="footer">SKYFORGE · Visual construction control · Public-safe planning projection · No engineer approval implied</p>
-</main><script type="module" src="./assets/site-shell.mjs"></script></body></html>
+<div class="bottom">
+<section class="card emphasis"><h2>Describe your WBS, not a file format</h2><p>Explain a project in ChatGPT or supply site plans, WBS lists, quantities and scheduling requirements. Normalize and validate the structure first. Then generate Excel, supported P6 exchange files, canonical JSON, and views from the same model with clear assumptions.</p><a href="./projects/generic/">Open WBS Digitization Workbench →</a></section>
+<section class="card"><h2>Preserved project workflows</h2><p>The Narayani project’s existing governed WBS, inspection boundaries, field reporting and history remain intact. Find its record through the Studio.</p><a href="./studio/projects/narayani/">Narayani project record →</a></section>
+</div>
+<div class="note">Planning scenarios are not approved construction dates. Identical source inputs and a pinned engine can reproduce calculations; actual site correctness still requires measurements, revisions and responsible approval.</div>
+</main></body></html>
