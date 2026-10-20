@@ -28,11 +28,13 @@ export function calculateGovernedEvm({baseline,as_of,physical_progress,actual_co
   if(!id(a.wbs_id)||!date(a.planned_as_of)||a.planned_as_of!==as_of)throw Error("Time-phased baseline snapshot must match as_of");
   budgets.set(a.activity_id,budget);bac+=budget;pv+=budget*plan;
  }
- const seen=new Set();
+ const seen=new Set(),events=new Set();
  for(const x of physical_progress){
   if(!id(x.activity_id)||seen.has(x.activity_id)||!budgets.has(x.activity_id))throw Error("Invalid/duplicate physical progress");
   if(!id(x.event_id)||!id(x.evidence_ref)||!id(x.signed_by)||x.verification_status!=="VERIFIED_PHYSICAL"||!date(x.verified_at)||x.verified_at>as_of)
    throw Error("Unapproved or unsourced physical progress, EVM NOT_READY");
+  if(events.has(x.event_id))throw Error("Duplicate physical evidence event");
+  events.add(x.event_id);
   ev+=budgets.get(x.activity_id)*fraction(x.physical_fraction,"Verified physical fraction");
   seen.add(x.activity_id);
  }
@@ -42,6 +44,7 @@ export function calculateGovernedEvm({baseline,as_of,physical_progress,actual_co
   if(!id(x.event_id)||expenses.has(x.event_id)||!id(x.evidence_ref)||!id(x.approved_by)||
     x.verification_status!=="VERIFIED_COST"||!date(x.paid_or_accrued_at)||x.paid_or_accrued_at>as_of||
     x.currency!==currency)throw Error("Unverified or duplicated actual cost; EVM NOT_READY");
+  if(events.has(x.event_id))throw Error("Cost and physical evidence event IDs collide");
   expenses.add(x.event_id);ac+=n(x.amount,"Actual cost");
  }
  const metrics=earnedValueMetrics({bac,pv,ev,ac});
