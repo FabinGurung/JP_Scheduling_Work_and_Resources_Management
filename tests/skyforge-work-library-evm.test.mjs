@@ -133,7 +133,7 @@ test("published catalog is exact versioned JSON, no private work evidence and so
  assert.match(builder,/writeFile\(join\(out,"work-items\/library.json"\),catalogText\)/);
  assert.match(page,/estimateCatalogWork,validateWorkItemLibrary/);
  assert.match(page,/lower bound/i);
- assert.match(page,/working hours/i);
+ assert.match(page,/Crew work hours/i);
  assert.match(shell,/work-items\/index.html/);
  assert.equal(library.items.filter(x=>x.benchmark_reference_id!==null).length,2);
  assert.doesNotMatch(JSON.stringify(library),/docs\.google\.com|drive\.google\.com|SLACK::|PROGRESS\|/);
