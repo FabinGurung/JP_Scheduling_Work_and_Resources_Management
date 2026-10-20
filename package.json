@@ -18,7 +18,9 @@
     "progress:private-reconcile": "node scripts/reconcile-private-drive-export.mjs",
     "sync:narayani:live": "node scripts/run-narayani-live-sync.mjs",
     "visual:build": "node scripts/run-narayani-visual.mjs --build",
-    "visual:verify": "node scripts/run-narayani-visual.mjs --verify"
+    "visual:verify": "node scripts/run-narayani-visual.mjs --verify",
+    "generic:build": "node scripts/run-generic-visual.mjs --build",
+    "generic:verify": "node scripts/run-generic-visual.mjs --verify"
   },
   "engines": {
     "node": ">=20"
