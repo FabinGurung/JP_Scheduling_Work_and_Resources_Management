@@ -1,0 +1,211 @@
+{
+  "format": "SKYFORGE_PROJECT_INPUT_V1",
+  "classification": "PUBLIC_SYNTHETIC",
+  "project": {
+    "id": "DEMO_BRIDGE",
+    "name": "Synthetic Pedestrian Footbridge"
+  },
+  "wbs": [
+    {
+      "wbs_id": "BRIDGE",
+      "name": "Footbridge delivery"
+    },
+    {
+      "wbs_id": "FOUND",
+      "name": "Groundworks",
+      "parent_wbs_id": "BRIDGE"
+    },
+    {
+      "wbs_id": "SUPER",
+      "name": "Superstructure",
+      "parent_wbs_id": "BRIDGE"
+    },
+    {
+      "wbs_id": "CLOSE",
+      "name": "Completion and handover",
+      "parent_wbs_id": "BRIDGE"
+    }
+  ],
+  "activities": [
+    {
+      "id": "BR01",
+      "name": "Access and survey",
+      "wbs_id": "FOUND",
+      "duration": 2,
+      "calendar_id": "FIVE",
+      "duration_basis": "ASSUMED_DRAFT",
+      "assumption_reason": "Synthetic visualization exercise only. Not measured or approved for construction."
+    },
+    {
+      "id": "BR02",
+      "name": "Abutment excavation",
+      "wbs_id": "FOUND",
+      "duration": 3,
+      "calendar_id": "SIX",
+      "duration_basis": "ASSUMED_DRAFT",
+      "assumption_reason": "Synthetic visualization exercise only. Not measured or approved for construction."
+    },
+    {
+      "id": "BR03",
+      "name": "Abutment concrete",
+      "wbs_id": "FOUND",
+      "duration": 4,
+      "calendar_id": "SIX",
+      "duration_basis": "ASSUMED_DRAFT",
+      "assumption_reason": "Synthetic visualization exercise only. Not measured or approved for construction."
+    },
+    {
+      "id": "BR04",
+      "name": "Fabricate bridge members",
+      "wbs_id": "SUPER",
+      "duration": 7,
+      "calendar_id": "FIVE",
+      "duration_basis": "ASSUMED_DRAFT",
+      "assumption_reason": "Synthetic visualization exercise only. Not measured or approved for construction."
+    },
+    {
+      "id": "BR05",
+      "name": "Install members",
+      "wbs_id": "SUPER",
+      "duration": 2,
+      "calendar_id": "FIVE",
+      "duration_basis": "ASSUMED_DRAFT",
+      "assumption_reason": "Synthetic visualization exercise only. Not measured or approved for construction."
+    },
+    {
+      "id": "BR06",
+      "name": "Install deck",
+      "wbs_id": "SUPER",
+      "duration": 3,
+      "calendar_id": "SIX",
+      "duration_basis": "ASSUMED_DRAFT",
+      "assumption_reason": "Synthetic visualization exercise only. Not measured or approved for construction."
+    },
+    {
+      "id": "BR07",
+      "name": "Load test documentation",
+      "wbs_id": "CLOSE",
+      "duration": 2,
+      "calendar_id": "FIVE",
+      "duration_basis": "ASSUMED_DRAFT",
+      "assumption_reason": "Synthetic visualization exercise only. Not measured or approved for construction."
+    },
+    {
+      "id": "BR08",
+      "name": "Handover review",
+      "wbs_id": "CLOSE",
+      "duration": 1,
+      "calendar_id": "FIVE",
+      "duration_basis": "ASSUMED_DRAFT",
+      "assumption_reason": "Synthetic visualization exercise only. Not measured or approved for construction."
+    }
+  ],
+  "relationships": [
+    {
+      "predecessor": "BR01",
+      "successor": "BR02",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "BR02",
+      "successor": "BR03",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "BR01",
+      "successor": "BR04",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "BR03",
+      "successor": "BR05",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "BR04",
+      "successor": "BR05",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "BR05",
+      "successor": "BR06",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "BR06",
+      "successor": "BR07",
+      "type": "FS",
+      "lag": 0
+    },
+    {
+      "predecessor": "BR07",
+      "successor": "BR08",
+      "type": "FS",
+      "lag": 0
+    }
+  ],
+  "source_manifest": [],
+  "scheduling_mode": "CALENDAR_CPM",
+  "projectStart": "2026-11-09",
+  "horizonEnd": "2027-02-26",
+  "projectCalendarId": "FIVE",
+  "calendars": {
+    "FIVE": {
+      "working_weekdays": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "holidays": []
+    },
+    "SIX": {
+      "working_weekdays": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "holidays": []
+    }
+  },
+  "checklist": [
+    {
+      "id": "CHK01",
+      "activity_id": "BR02",
+      "title": "Record access and excavation readiness evidence",
+      "authority": "PUBLIC_SYNTHETIC_DRAFT",
+      "status": "NOT_REPORTED"
+    },
+    {
+      "id": "CHK02",
+      "activity_id": "BR05",
+      "title": "Verify documented erection method and inspection hold",
+      "authority": "PUBLIC_SYNTHETIC_DRAFT",
+      "status": "NOT_REPORTED"
+    },
+    {
+      "id": "CHK03",
+      "activity_id": "BR07",
+      "title": "Record signed testing evidence",
+      "authority": "PUBLIC_SYNTHETIC_DRAFT",
+      "status": "NOT_REPORTED"
+    },
+    {
+      "id": "CHK04",
+      "activity_id": "BR08",
+      "title": "Record handover requirements",
+      "authority": "PUBLIC_SYNTHETIC_DRAFT",
+      "status": "NOT_REPORTED"
+    }
+  ]
+}
