@@ -120,6 +120,7 @@ const sfPageProfiles={
  "roadmap.html":{id:"roadmap",title:"Development pathway",intro:"Follow which kernel capabilities are built, tested or still planned.",rule:"Planned work is not a deployed feature.",next:["Inspect the engine doctrine","how/index.html"]},
  "projects/narayani/index.html":{id:"narayani-index",title:"Narayani evidence boundaries",intro:"Review pilot WBS scope, source-backed reports and outstanding work readiness.",rule:"Private source revisions and engineering holds remain governed in Drive.",next:["Open visual schedule","projects/narayani/visual.html#constellation"]},
  "projects/narayani/visual.html":{id:"narayani-visual",title:"One visual planning model",intro:"Constellation, Gantt, calendar and checklist share the same validated WBS data.",rule:"Dates remain a synthetic scenario without an approved baseline.",next:["Researcher handbook","how/index.html"]},
+ "projects/generic/index.html":{id:"generic",title:"Reusable project workspace",intro:"Each example has its own WBS and calculated events; four views share one model.",rule:"All built-in examples are public synthetic drafts, never live engineering approvals.",next:["Read the project compiler protocol","how/index.html"]},
  "machine/index.html":{id:"machine",title:"Deterministic machine evidence",intro:"Separate reviewed synthetic inputs, generated outputs and source manifests.",rule:"A successful deterministic build is not construction authorization.",next:["Inspect WBS machine result","machine/wbs-sample/index.html"]},
  "machine/demo-foundation/index.html":{id:"machine-demo",title:"Synthetic foundation demonstration",intro:"Read generated plan evidence, validated input references and machine output together.",rule:"A synthetic example contains no site-approved structural dimensions or work release.",next:["Open machine evidence centre","machine/index.html"]},
  "machine/wbs-sample/index.html":{id:"wbs-machine",title:"WBS machine output",intro:"Inspect the generated critical path and activity artifacts together.",rule:"This is source-pinned synthetic scheduling data, not signed site progress.",next:["Open field visual","projects/narayani/visual.html"]},
@@ -134,7 +135,7 @@ function pageKey(){
  return tail===""?"index.html":tail;
 }
 function mountContextGuide(profile){
- if(!profile||["home","narayani-visual","how"].includes(profile.id))return;
+ if(!profile||["home","narayani-visual","how","generic"].includes(profile.id))return;
  if(document.querySelector(".sf-page-guide"))return;
  const primary=document.querySelector("main")||document.querySelector(".workspace")||document.querySelector(".wrap")||document.querySelector(".shell");
  if(!primary)return;
@@ -182,7 +183,7 @@ function createShell(){
  for(const [label,target] of [["How this engine works","how/index.html"],["Work-item library","work-items/index.html"],["Download Anki cards","how/skyforge-anki.csv"],["Full classic WBS","projects/narayani/index.html"],["Construction methods","knowledge/index.html"],["Development roadmap","roadmap.html"],["Legacy field homepage","more/legacy-home.html"]])entry(menu,label,target);
  menu.append(Object.assign(document.createElement("div"),{className:"sf-divider"}));
  menu.append(Object.assign(document.createElement("div"),{className:"sf-dropdown-heading",textContent:"Planner & engineering tools"}));
- for(const [label,target] of [["Resource planner","planner.html"],["Scheduling engine lab","kernel-lab.html"],["Machine evidence","machine/index.html"],["Original technical dashboard","advanced.html"],["WBS machine Gantt","machine/wbs-sample/index.html"],["Upstream reference","knowledge/task.html?key=waterproofing"]])entry(menu,label,target);
+ for(const [label,target] of [["Generic project studio","projects/generic/index.html"],["Resource planner","planner.html"],["Scheduling engine lab","kernel-lab.html"],["Machine evidence","machine/index.html"],["Original technical dashboard","advanced.html"],["WBS machine Gantt","machine/wbs-sample/index.html"],["Upstream reference","knowledge/task.html?key=waterproofing"]])entry(menu,label,target);
  more.append(menu);navigation.append(more);wrap.append(navigation);
  // Pip is a decorative scheduling metaphor, not a source of actual-progress data.
  // Keep the character inside this dedicated rail; never cover buttons, calendars or WBS content.
