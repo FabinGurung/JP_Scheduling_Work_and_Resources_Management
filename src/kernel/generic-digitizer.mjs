@@ -131,3 +131,84 @@ export function digitizeGenericTable({text,format,project_id,project_name,source
   source_format:format,planning_status:unmappedCalendars.length?"BLOCKED_CALENDAR_MAPPING":"UNVERIFIED_LOCAL_DRAFT",
   project:spec,diagnostics};
 }
+
+/** A generic adapter for versioned TASK-SEED JSON, not native Primavera XER/XML.
+ * Source dictionaries may give WBS labels, but never provide durations or approvals.
+ */
+export function parseWbsDictionaryMarkdown(text){
+ if(typeof text!=="string"||text.length>200000)throw Error("WBS dictionary must be bounded text");
+ const section=text.match(/##\s*WBS Level 1[^\n]*([\s\S]*?)(?:\n---|\n##\s|$)/i)?.[1]??text;
+ const map={};
+ for(const line of section.split(/\r?\n/)){
+  const m=line.match(/^\s*[*-]\s+\*\*([A-Za-z0-9_-]{1,45})\*\*\s*[-–:]\s*(.+?)\s*$/);
+  if(!m)continue;
+  if(map[m[1]])throw Error("Duplicate WBS dictionary code "+m[1]);
+  if(!safe(m[2]))throw Error("Invalid WBS dictionary label");
+  map[m[1]]=m[2];
+ }
+ return map;
+}
+export function digitizeTaskSeedJSON({text,project_id,project_name,source_name="Local task-seed JSON",dictionary_text=null}){
+ if(typeof text!=="string"||text.length>2000000)throw Error("Task-seed JSON input exceeds 2 million characters");
+ if(!ident(project_id)||!safe(project_name)||!safe(source_name))throw Error("Valid named project and source required");
+ let raw;try{raw=JSON.parse(text)}catch{throw Error("Task seed must contain valid JSON, not guessed Markdown instructions")}
+ if(!raw||!Array.isArray(raw.tasks)||raw.tasks.length<1||raw.tasks.length>2000)
+  throw Error("Task seed requires 1..2000 structured tasks");
+ const names=dictionary_text===null?{}:parseWbsDictionaryMarkdown(dictionary_text);
+ const wbs=new Map(),activities=[],relationships=[],activityIds=new Set(),notes=[];
+ for(const task of raw.tasks){
+  const id=task.task_id,code=String(task.wbs_code??"");
+  if(!ident(id)||activityIds.has(id)||!/^[A-Za-z0-9_-]{1,45}$/.test(code)||!safe(task.name))
+   throw Error("Invalid or duplicated task identifier, WBS code, or name");
+  activityIds.add(id);
+  const wbsId="WBS_"+code;
+  if(!wbs.has(wbsId)){
+   const titled=names[code];
+   wbs.set(wbsId,{wbs_id:wbsId,name:titled??"Unverified WBS code "+code});
+   if(!titled)notes.push({code:"UNMAPPED_WBS_LABEL",severity:"WARNING",field:code,
+    detail:"A verified WBS dictionary label was not supplied; code retained without guessing."});
+  }
+  if(task.type!=null&&!["Task","Milestone"].includes(task.type))
+   throw Error("Unrecognized task type for "+id);
+  const duration=task.duration_days==null?null:task.duration_days;
+  if(duration!==null&&(!Number.isSafeInteger(duration)||duration<0))
+   throw Error("Invalid source duration_days for "+id);
+  if(task.type==="Milestone"&&duration!==0)throw Error("Milestone must have zero source duration: "+id);
+  activities.push({id,name:task.name,wbs_id:wbsId,duration,activity_type:task.type==="Milestone"?"MILESTONE":"TASK",
+   duration_basis:"ASSUMED_DRAFT",
+   assumption_reason:"Unverified P6-style seed duration_days interpreted as nominal day slots; no actual calendar or approval."});
+ }
+ for(const task of raw.tasks){
+  if(task.predecessors!=null&&!Array.isArray(task.predecessors))
+   throw Error("Invalid predecessors array for "+task.task_id);
+  for(const p of task.predecessors??[]){
+   if(!ident(p?.id)||!activityIds.has(p.id)||
+    !["FS","SS","FF","SF"].includes(p.type))
+    throw Error("Unknown or invalid predecessor relationship for "+task.task_id);
+   const lag=p.lag_days??0;
+   if(!Number.isSafeInteger(lag))throw Error("Explicit integer lag_days required for "+task.task_id);
+   relationships.push({predecessor:p.id,successor:task.task_id,type:p.type,lag});
+  }
+ }
+ const edgeKeys=new Set();
+ for(const r of relationships){
+  const key=[r.predecessor,r.successor,r.type,r.lag].join("|");
+  if(edgeKeys.has(key))throw Error("Duplicate task relationship");
+  edgeKeys.add(key);
+ }
+ const source_sha256=sha256Hex(text);
+ const spec={format:"SKYFORGE_PROJECT_INPUT_V1",classification:"LOCAL_UNVERIFIED",
+  project:{id:project_id,name:project_name},
+  wbs:[...wbs.values()],activities,relationships,
+  source_manifest:[{source_id:"LOCAL_IMPORT",revision:"UNVERIFIED_LOCAL_TASK_SEED",
+   sha256:source_sha256,authority:"UNVERIFIED_SOURCE"}],
+  scheduling_mode:"SHARED_CPM",checklist:[]};
+ return {format:"SKYFORGE_DIGITIZATION_CANDIDATE_V1",source_format:"TASK_SEED_JSON",
+  source_name,source_sha256,planning_status:"UNVERIFIED_LOCAL_DRAFT",project:spec,
+  diagnostics:[
+   {code:"SOURCE_NOT_REVIEWED",severity:"HOLD",detail:"Task and predecessor values are imported, not independently approved."},
+   {code:"NOMINAL_DAYS_NOT_WORKING_CALENDAR",severity:"HOLD",detail:"Source duration_days are interpreted as abstract nominal slots. Calendar, holidays, resource constraints and actual dates remain unresolved."},
+   ...(raw.project_metadata?.scheduling_engine_instructions?
+    [{code:"SOURCE_INSTRUCTIONS_IGNORED",severity:"NOTE",detail:"Text instructions from source data are never treated as engine commands."}]:[]),
+   ...notes]};
+}
