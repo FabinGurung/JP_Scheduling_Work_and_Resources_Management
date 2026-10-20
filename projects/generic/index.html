@@ -93,6 +93,7 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
 @media(prefers-reduced-motion:reduce){
  .gv-skill-branches path,.gv-skill-activity{animation:none!important}
 }
+.gv-import-diagnostics{font-size:12px;line-height:1.7;color:#8b6129;margin:9px 0}.gv-import-diagnostics p{font-size:12px;margin:4px 0}.gv-tree-control{cursor:pointer}
 </style></head><body><main>
 <header class="hero">
  <div class="eyebrow">Skyforge · Generic project studio · Draft-only</div>
@@ -101,9 +102,13 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
  <div class="guide"><b>Safety:</b> Both included projects are deliberately synthetic. Durations are assumed, all approvals remain false, and the calendar shows scheduled events rather than actual daily construction progress. A locally selected compiled model stays in your browser and is never uploaded.</div>
  <div class="controls">
   <label for="demo">Project source fixture<select id="demo"><option value="community-clinic">Community clinic — 6 tasks</option><option value="pedestrian-bridge">Pedestrian bridge — 8 tasks</option></select></label>
-  <label for="upload">Or open a locally compiled generic view JSON<input id="upload" type="file" accept=".json,application/json" aria-describedby="upload-help"></label>
+  <label for="local-id">Local project ID<input id="local-id" value="LOCAL_WBS" type="text" pattern="[A-Za-z][A-Za-z0-9_-]*" maxlength="64"></label>
+  <label for="local-name">Local project description<input id="local-name" value="Unverified Local WBS" type="text" maxlength="180"></label>
+  <label for="upload">Digitize local CSV, TSV, or canonical JSON<input id="upload" type="file" accept=".csv,.tsv,.json,text/csv,text/tab-separated-values,application/json" aria-describedby="upload-help"></label>
  </div>
- <p id="upload-help">Only <code>SKYFORGE_GENERIC_VIEW_MODEL_V1</code> with <code>PUBLIC_SYNTHETIC_DRAFT_ONLY</code> is accepted. Raw WBS files need server-side compilation and source review; this form does not make engineering decisions.</p>
+ <p id="upload-help"><b>Generic digitalization:</b> import an explicit-schema CSV/TSV work-item table, local unverified project JSON, or previously compiled safe view model. Your original files stay on your device. CSV header: <code>activity_id,activity_name,wbs_id,wbs_name,parent_wbs_id,duration_slots,predecessors</code>. The predecessor cell uses quoted <code>ID:FS:0;ID:SS:2</code> syntax; empty fields are allowed for root WBS and no predecessor. Missing durations block dates. Unmapped calendar IDs block scheduling. Excel, P6 XER/XML and PDF still need audited converters; export a structured CSV rather than claiming unsupported fields were imported.</p>
+ <button id="save-draft" type="button" class="gv-tree-control" hidden>Download normalized unverified project JSON</button>
+ <div id="import-diagnostics" class="gv-import-diagnostics" role="status" aria-live="polite"></div>
  <div class="actions"><a href="../how/">CPM and engine principles →</a><a href="../work-items/">Work-item library →</a><a href="https://github.com/FabinGurung/JP_Scheduling_Work_and_Resources_Management/blob/kernel-v0.2-open-source-engines/docs/research/SKYFORGE_GENERIC_PROJECT_STUDIO_V1_9.md">Reproduction and source contract →</a></div>
 </header>
 <section class="workspace"><div id="state" role="status" aria-live="polite">Loading canonical project model…</div><div id="views"></div></section>
@@ -111,29 +116,88 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
 </main>
 <script type="module">
 import {renderGenericProject,validateGenericViewModel} from "../src/presentation/generic-views.mjs";
+import {digitizeGenericTable} from "../src/kernel/generic-digitizer.mjs";
+import {projectGenericVisual} from "../src/visual/generic-project-model.mjs";
 const choices=new Set(["community-clinic","pedestrian-bridge"]);
 const state=document.getElementById("state"),mount=document.getElementById("views");
+const info=document.getElementById("import-diagnostics"),download=document.getElementById("save-draft");
+let candidate=null;
+const showDiagnostics=messages=>{
+ info.replaceChildren();
+ for(const x of messages){
+  const p=document.createElement("p");
+  p.textContent=(x.severity??"NOTE")+" · "+(x.code??"NOTICE")+
+   (x.field?" · "+x.field:"")+(x.detail?" · "+x.detail:"");
+  info.append(p);
+ }
+};
+function updateDraft(value){candidate=value;download.hidden=!candidate}
+function showModel(model,message){
+ validateGenericViewModel(model);renderGenericProject(model,mount);state.textContent=message;
+}
 async function loadDemo(key){
  if(!choices.has(key))throw Error("Unknown synthetic fixture");
- state.textContent="Loading reviewed source "+key+"…";
+ state.textContent="Loading reviewed synthetic source "+key+"…";
  const response=await fetch("./"+key+".json",{cache:"no-store"});
  if(!response.ok)throw Error("Public synthetic model unavailable");
- const value=await response.json();validateGenericViewModel(value);
- renderGenericProject(value,mount);
- state.textContent="Source reviewed · "+value.project.name+" · draft model only";
+ const value=await response.json();
+ showModel(value,"Published synthetic source · "+value.project.name+" · draft model only");
+ updateDraft(null);showDiagnostics([]);
 }
 document.getElementById("demo").addEventListener("change",async ev=>{
  try{await loadDemo(ev.target.value)}catch(e){state.textContent="Model blocked: "+e.message;mount.replaceChildren()}
 });
+function onlyLocalUnverified(spec){
+ if(spec?.classification!=="LOCAL_UNVERIFIED"||
+  spec.source_manifest?.some(x=>x.authority!=="UNVERIFIED_SOURCE")||
+  spec.activities?.some(x=>x.duration_basis!=="ASSUMED_DRAFT"||
+   x.quantity_basis!=null&&x.quantity_basis!=="ASSUMED_DRAFT"))
+  throw Error("Raw project JSON requires LOCAL_UNVERIFIED scope and assumption-tagged inputs; approved source admission is a separate governed workflow.");
+ return spec;
+}
 document.getElementById("upload").addEventListener("change",async ev=>{
  const file=ev.target.files?.[0];if(!file)return;
  try{
-  if(file.size>2_000_000)throw Error("Model exceeds 2 MB read-only preview limit");
-  const input=JSON.parse(await file.text());
-  validateGenericViewModel(input);
-  renderGenericProject(input,mount);
-  state.textContent="Locally opened compiled synthetic model · no file was uploaded";
- }catch(e){state.textContent="Model blocked: "+e.message;mount.replaceChildren()}
+  if(file.size>2_000_000)throw Error("Local import exceeds 2 MB limit");
+  const ext=file.name.split(".").pop().toLowerCase(),text=await file.text();
+  showDiagnostics([]);
+  if(["csv","tsv"].includes(ext)){
+   const batch=digitizeGenericTable({text,format:ext.toUpperCase(),
+    project_id:document.getElementById("local-id").value.trim(),
+    project_name:document.getElementById("local-name").value.trim(),source_name:file.name});
+   updateDraft(batch.project);showDiagnostics(batch.diagnostics);
+   if(batch.planning_status==="BLOCKED_CALENDAR_MAPPING"){
+    mount.replaceChildren();
+    state.textContent="Digitized source retained as unverified draft; missing calendar definitions must be supplied before scheduling.";
+    return;
+   }
+   try{
+    const model=projectGenericVisual(batch.project);
+    showModel(model,"Local CSV/TSV digitized and calculated only as an UNVERIFIED abstract-slot scenario · source SHA-256 "+batch.source_sha256);
+   }catch(e){
+    mount.replaceChildren();state.textContent="Imported source, but scheduling blocked: "+e.message;
+   }
+  }else if(ext==="json"){
+   const parsed=JSON.parse(text);
+   if(parsed.format==="SKYFORGE_GENERIC_VIEW_MODEL_V1"){
+    showModel(parsed,"Locally opened compiled read-only model; no file transmitted");
+    updateDraft(null);
+   }else if(parsed.format==="SKYFORGE_PROJECT_INPUT_V1"){
+    onlyLocalUnverified(parsed);updateDraft(parsed);
+    showModel(projectGenericVisual(parsed),"Locally calculated unverified JSON project; not a live or approved baseline");
+   }else throw Error("Unsupported JSON contract. Expected compiled view or LOCAL_UNVERIFIED project.");
+  }else throw Error("Unsupported extension: export spreadsheet or P6 data as explicit-schema CSV/TSV. PDF cannot provide verified relationships automatically.");
+ }catch(e){
+  state.textContent="Input rejected: "+e.message;mount.replaceChildren();updateDraft(null);
+ }
+});
+download.addEventListener("click",()=>{
+ if(!candidate)return;
+ const bytes=JSON.stringify(candidate,null,2)+"\n";
+ const blob=new Blob([bytes],{type:"application/json"});
+ const url=URL.createObjectURL(blob);const a=document.createElement("a");
+ a.href=url;a.download="skyforge-"+candidate.project.id+"-UNVERIFIED.json";document.body.append(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 loadDemo("community-clinic").catch(e=>{state.textContent="Model blocked: "+e.message;mount.replaceChildren()});
 </script></body></html>
