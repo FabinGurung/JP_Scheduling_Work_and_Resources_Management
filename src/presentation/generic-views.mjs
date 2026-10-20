@@ -1,3 +1,4 @@
+import {layoutOrganicSkillTree} from "./generic-organic-layout.mjs";
 /** Shared renderer for ANY verified Skyforge generic public draft model.
  * Browser-only; never calls scheduling solvers and never writes source records.
  */
@@ -73,54 +74,107 @@ export function renderGenericProject(model,mount){
  }
  mount.append(nav,...panels.values());
  const byId=new Map(model.activities.map(a=>[a.id,a]));
- // Graph positions depend on source WBS assignments; no project-specific IDs.
- const activeWbs=model.wbs.filter(w=>model.activities.some(a=>a.wbs_id===w.id));
- const groups=activeWbs.map(w=>model.activities.filter(a=>a.wbs_id===w.id));
- const maxPer=Math.max(1,...groups.map(g=>g.length)),width=Math.max(660,activeWbs.length*270+100);
- const height=Math.max(340,maxPer*88+138),stage=svg("svg",{
-  viewBox:"0 0 "+width+" "+height,width,height,role:"img",
-  "aria-label":"Project activity dependency constellation, computed draft"
- });
- const positions=new Map();
- groups.forEach((group,col)=>{
-  const x=125+col*270;
-  stage.append(Object.assign(svg("text",{x,y:34,fill:"#246779","font-size":14,"font-weight":750}),{textContent:activeWbs[col].title.slice(0,27)}));
-  group.forEach((a,i)=>positions.set(a.id,{x,y:83+i*88}));
- });
- for(const link of model.links){
-  const a=positions.get(link.from),b=positions.get(link.to);
-  if(!a||!b)continue;
-  const l=svg("path",{d:"M"+a.x+","+a.y+" Q"+((a.x+b.x)/2)+","+((a.y+b.y)/2-12)+" "+b.x+","+b.y,
-   fill:"none",stroke:"#82a5b2","stroke-width":"1.7","stroke-dasharray":"4 4"});
-  stage.append(l);
+ // A botanical/WBS skill constellation — entirely independent from CPM time slots.
+ // Solid teal branches signify WBS membership, gold dotted lines signify dependencies.
+ const tree=layoutOrganicSkillTree(model);
+ const stage=svg("svg",{viewBox:"0 0 "+tree.width+" "+tree.height,width:tree.width,
+  height:tree.height,role:"group",
+  "aria-label":"Organic project skill tree — WBS branches grow upward from project roots"});
+ stage.classList.add("gv-skill-tree");
+ const branchesLayer=svg("g",{"class":"gv-skill-branches","aria-hidden":"true"});
+ function curve(a,b){const span=Math.abs(b.y-a.y);
+  return "M"+a.x+","+a.y+" C"+a.x+","+(a.y-span*.47)+" "+b.x+","+(b.y+span*.47)+" "+b.x+","+b.y}
+ for(const e of tree.branches){
+  const path=svg("path",{d:curve(e.a,e.b),"class":"gv-tree-branch",fill:"none",
+   stroke:"#5aafa5","stroke-width":e.from==="PROJECT"?6:3.5,"stroke-linecap":"round"});
+  branchesLayer.append(path);
  }
- let activeActivity=null;const detail=el("div","gv-detail");
+ stage.append(branchesLayer);
+ const depLayer=svg("g",{"class":"gv-dependency-lines","aria-hidden":"true"});
+ for(const e of tree.dependencies){
+  // Cross-links float behind task leaves; the graph is not a temporal axis.
+  const midY=Math.min(e.a.y,e.b.y)-78-(Math.abs(e.a.x-e.b.x)*.06);
+  const path=svg("path",{d:"M"+e.a.x+","+e.a.y+" Q"+((e.a.x+e.b.x)/2)+","+midY+
+    " "+e.b.x+","+e.b.y,fill:"none","class":"gv-dependency-line",
+    stroke:"#caa45d","stroke-width":1.7,"stroke-dasharray":"5 8"});
+  depLayer.append(path);
+ }
+ stage.append(depLayer);
+ function medallion(p,kind,label){
+  const g=svg("g",{"class":"gv-skill-"+kind,"transform":"translate("+p.x+" "+p.y+")"});
+  g.append(svg("circle",{cx:0,cy:0,r:kind==="root"?52:kind==="wbs"?41:27,
+   "class":"gv-skill-halo"}));
+  g.append(svg("circle",{cx:0,cy:0,r:kind==="root"?37:kind==="wbs"?29:19,
+   "class":"gv-skill-core"}));
+  if(kind==="activity"){
+   g.append(svg("path",{d:"M0,-11 C11,-8 12,3 0,12 C-12,3 -11,-8 0,-11Z",
+    fill:"#66bdaf",stroke:"#f8fffd","stroke-width":1.5}));
+   const t=svg("text",{x:0,y:46,"text-anchor":"middle","class":"gv-skill-label"});
+   t.textContent=label.length>30?label.slice(0,28)+"…":label;g.append(t);
+  }else{
+   const emblem=svg("text",{x:0,y:6,"text-anchor":"middle","class":"gv-skill-emblem"});
+   emblem.textContent=kind==="root"?"✦":"✧";g.append(emblem);
+   const t=svg("text",{x:0,y:kind==="root"?69:56,
+     "text-anchor":"middle","class":"gv-skill-label gv-skill-label-major"});
+   t.textContent=label.length>34?label.slice(0,32)+"…":label;g.append(t);
+  }
+  return g;
+ }
+ stage.append(medallion(tree.root,"root",model.project.name));
+ for(const w of tree.nodes)stage.append(medallion(w,"wbs",w.label));
+ const detail=el("div","gv-detail");
+ let selectedId=null;
+ const scroll=el("div","gv-scroll gv-tree-viewport");
+ const toolbar=el("div","gv-tree-toolbar");
+ const overview=el("button","gv-tree-control","Trunk / origin");
+ overview.type="button";overview.title="Return to the base of the workflow tree";
+ const dependencies=el("button","gv-tree-control","Dependencies: shown");
+ dependencies.type="button";dependencies.setAttribute("aria-pressed","true");
+ dependencies.title="Toggle the secondary, dotted CPM dependency connections";
+ function centerOn(p){
+  const v=scroll.getBoundingClientRect();
+  scroll.scrollLeft=Math.max(0,p.x-v.width*.5);
+  scroll.scrollTop=Math.max(0,p.y-v.height*.53);
+ }
+ overview.addEventListener("click",()=>centerOn(tree.root));
+ let depsVisible=true;
+ dependencies.addEventListener("click",()=>{
+  depsVisible=!depsVisible;depLayer.style.display=depsVisible?"":"none";
+  dependencies.textContent="Dependencies: "+(depsVisible?"shown":"hidden");
+  dependencies.setAttribute("aria-pressed",String(depsVisible));
+ });
+ toolbar.append(overview,dependencies);
  function select(id){
-  activeActivity=id;const a=byId.get(id);detail.replaceChildren();
-  if(!a)return;
+  const a=byId.get(id);if(!a)return;
+  selectedId=id;detail.replaceChildren();
   detail.append(el("strong","",a.id+" · "+a.title),
-   el("p","gv-muted","Start "+a.start+" · Finish "+a.finish+
-    (a.start_date?" · "+a.start_date+" → "+a.finish_date:"")+
+   el("p","gv-muted","WBS branch: "+a.wbs_id+" · Scheduled start "+a.start+
+    " · finish "+a.finish+(a.start_date?" · "+a.start_date+" → "+a.finish_date:"")+
     " · "+a.duration+" declared duration"));
-  detail.append(el("p","gv-muted","Duration basis: "+a.duration_basis+"; "+(a.assumption_reason||"source-linked")));
+  detail.append(el("p","gv-muted","Duration basis: "+a.duration_basis+
+   "; "+(a.assumption_reason||"source-linked")));
   for(const node of stage.querySelectorAll("[data-task]"))
    node.setAttribute("data-selected",String(node.getAttribute("data-task")===id));
  }
  for(const a of model.activities){
-  const p=positions.get(a.id);if(!p)continue;
-  const group=svg("g",{tabindex:"0",role:"button","aria-label":a.title,"data-task":a.id,"data-selected":"false"});
-  const r=svg("rect",{x:p.x-101,y:p.y-27,width:203,height:54,rx:12,fill:"#fff",stroke:a.critical?"#bd872e":"#7ab4b7","stroke-width":a.critical?2.6:1.6});
-  const t=svg("text",{x:p.x,y:p.y-3,"text-anchor":"middle","font-size":12,fill:"#21445c","font-weight":720});
-  t.textContent=a.id+" · "+a.title.slice(0,25);
-  const sub=svg("text",{x:p.x,y:p.y+14,"text-anchor":"middle","font-size":10,fill:"#567d8d"});
-  sub.textContent="Day "+a.start+" → "+a.finish;
-  group.append(r,t,sub);
-  group.addEventListener("click",()=>select(a.id));
-  group.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();select(a.id)}});
-  stage.append(group);
+  const p=tree.taskPositions[a.id];if(!p)continue;
+  const node=medallion(p,"activity",a.title);
+  node.setAttribute("data-task",a.id);node.setAttribute("data-selected","false");
+  node.setAttribute("tabindex","0");node.setAttribute("role","button");
+  node.setAttribute("aria-label","Inspect "+a.id+": "+a.title);
+  node.addEventListener("click",()=>{select(a.id);centerOn(p)});
+  node.addEventListener("keydown",event=>{
+   if(event.key==="Enter"||event.key===" "){event.preventDefault();select(a.id);centerOn(p)}
+  });
+  stage.append(node);
  }
- const graphScroll=el("div","gv-scroll");graphScroll.append(stage);
- panels.get("graph").append(el("p","gv-muted","Each WBS phase contains its own activity nodes. Select a node for its inputs and calculated dates; dependency lines are scenario logic, not verified execution."),graphScroll,detail);
+ scroll.append(stage);
+ panels.get("graph").append(el("p","gv-muted",
+  "An upward-growing WBS skill tree, not a Gantt chart. Solid branches connect scope to activities; dotted gold arcs show separate CPM dependencies. Scroll upward to explore work, or select a leaf to inspect its computed dates."),
+  toolbar,scroll,detail);
+ if(model.activities.length)select(model.activities[0].id);
+ // Begin at the trunk so users can climb through the scope to its tasks.
+ requestAnimationFrame(()=>centerOn(tree.root));
  // Gantt uses the SAME start/finish events; no separately entered dates.
  const horizon=Math.max(1,Math.max(...model.activities.map(a=>a.finish)));
  const gantt=el("div","gv-gantt");
@@ -158,7 +212,6 @@ export function renderGenericProject(model,mount){
    cp.append(row);
   }
  }
- if(model.activities[0])select(model.activities[0].id);
  choose(types.some(([id])=>location.hash==="#"+id)?location.hash.slice(1):"graph");
  return {model,choose};
 }
