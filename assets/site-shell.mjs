@@ -126,7 +126,8 @@ const sfPageProfiles={
  "knowledge/index.html":{id:"knowledge",title:"Construction knowledge catalogue",intro:"Search construction methods and prepare trade-specific readiness checks.",rule:"Method guidance does not replace an engineer's approved issue.",next:["Open WBS checklist","projects/narayani/visual.html#checklist"]},
  "knowledge/task.html":{id:"task",title:"Method and readiness guide",intro:"See preparation logic, evidence and upstream method references for a selected task.",rule:"Validate local dimensions, site conditions and responsible approvals.",next:["Return to methods","knowledge/index.html"]},
  "more/legacy-home.html":{id:"legacy",title:"Preserved field roadmap",intro:"Historical site-facing navigation and data views remain recoverable.",rule:"Legacy presentation is not a current authoritative record.",next:["Open current work center","index.html"]},
- "how/index.html":{id:"how",title:"How the engine works",intro:"Learn CPM/PDM, calendars, WBS, resources, EVM and source-driven project generation.",rule:"Demonstration calculations are not approved site outcomes.",next:["Download the flashcards","how/skyforge-anki.csv"]}
+ "how/index.html":{id:"how",title:"How the engine works",intro:"Learn CPM/PDM, calendars, WBS, resources, EVM and source-driven project generation.",rule:"Demonstration calculations are not approved site outcomes.",next:["Work-item reference catalog","work-items/index.html"]},
+ "work-items/index.html":{id:"work-items",title:"Sourced construction work items",intro:"Consult source-scoped materials and role-day rates, not invented Nepal crew production figures.",rule:"Published coefficients are reference scenarios, not verified site durations or engineering approvals.",next:["Open generic scheduling planner","planner.html"]}
 };
 function pageKey(){
  const tail=location.pathname.startsWith(base.pathname)?location.pathname.slice(base.pathname.length):"";
@@ -178,7 +179,7 @@ function createShell(){
  const summary=document.createElement("summary");summary.textContent="More ▾";summary.setAttribute("aria-label","More pages and advanced tools");more.append(summary);
  const menu=document.createElement("div");menu.className="sf-dropdown";
  menu.append(Object.assign(document.createElement("div"),{className:"sf-dropdown-heading",textContent:"Reference & project history"}));
- for(const [label,target] of [["How this engine works","how/index.html"],["Download Anki cards","how/skyforge-anki.csv"],["Full classic WBS","projects/narayani/index.html"],["Construction methods","knowledge/index.html"],["Development roadmap","roadmap.html"],["Legacy field homepage","more/legacy-home.html"]])entry(menu,label,target);
+ for(const [label,target] of [["How this engine works","how/index.html"],["Work-item library","work-items/index.html"],["Download Anki cards","how/skyforge-anki.csv"],["Full classic WBS","projects/narayani/index.html"],["Construction methods","knowledge/index.html"],["Development roadmap","roadmap.html"],["Legacy field homepage","more/legacy-home.html"]])entry(menu,label,target);
  menu.append(Object.assign(document.createElement("div"),{className:"sf-divider"}));
  menu.append(Object.assign(document.createElement("div"),{className:"sf-dropdown-heading",textContent:"Planner & engineering tools"}));
  for(const [label,target] of [["Resource planner","planner.html"],["Scheduling engine lab","kernel-lab.html"],["Machine evidence","machine/index.html"],["Original technical dashboard","advanced.html"],["WBS machine Gantt","machine/wbs-sample/index.html"],["Upstream reference","knowledge/task.html?key=waterproofing"]])entry(menu,label,target);
