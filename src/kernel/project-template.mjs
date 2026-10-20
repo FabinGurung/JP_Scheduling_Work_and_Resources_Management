@@ -1,4 +1,4 @@
-import {createHash} from "node:crypto";
+import {sha256Hex} from "./sha256.mjs";
 import {buildWbsTree} from "./wbs.mjs";
 import {scheduleProject} from "./schedule-project.mjs";
 /**
@@ -7,7 +7,7 @@ import {scheduleProject} from "./schedule-project.mjs";
  */
 const validId=s=>typeof s==="string"&&/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(s);
 const sane=s=>typeof s==="string"&&s.length>0&&s.length<=180&&!/[<>\u0000-\u001f]/.test(s);
-const hash=s=>createHash("sha256").update(s).digest("hex");
+const hash=s=>sha256Hex(s);
 export function compileProjectDraft(spec){
  if(spec?.format!=="SKYFORGE_PROJECT_INPUT_V1"||!validId(spec.project?.id)||!sane(spec.project.name))
   throw Error("Invalid project input contract");
