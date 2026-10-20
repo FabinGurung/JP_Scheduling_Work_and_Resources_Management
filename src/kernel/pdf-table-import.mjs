@@ -74,6 +74,8 @@ export function digitizePdfTable({csv,project_id,project_name,source_name,origin
  d.source_format="PDF_TEXT_TABLE";d.source_sha256=original_pdf_sha256;
  d.project.source_manifest[0].sha256=original_pdf_sha256;
  d.project.source_manifest[0].revision="UNVERIFIED_MACHINE_READABLE_PDF_TABLE";
+ d.project.import_conversion={format:"PDF_TEXT_TABLE",source_sha256:original_pdf_sha256,
+  reviewed_table_sha256:sha256Hex(csv),ocr_performed:false,alignment_authority:"USER_REVIEWED_UNVERIFIED"};
  d.diagnostics.push({code:"PDF_TEXT_ALIGNMENT_REVIEW_REQUIRED",severity:"HOLD",
   detail:"PDF.js extracted text and tentative column alignment. Verify row IDs, values, relationships, and source versions before use. No OCR or approvals."});
  return d;
