@@ -18,7 +18,7 @@ async function modules(relative){
 }
 const approved=["index.html","advanced.html","planner.html","kernel-lab.html","roadmap.html","project-controls-demo.json",
  "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","assets/skyforge-unified.css","more/legacy-home.html",
- "knowledge/index.html","knowledge/task.html","work-items/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
+ "knowledge/index.html","knowledge/task.html","work-items/index.html","projects/generic/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
 for(const f of approved)await cp(f);
 await modules("src");
 // Separate, reviewed, PUBLIC work-item catalog only. No private project source files.
@@ -149,6 +149,39 @@ for(const file of ["project-model.json","visual-manifest.json"]){
  const dst=join(out,"projects/narayani",file);await mkdir(dirname(dst),{recursive:true});
  await copyFile(join(root,"generated/public/narayani-visual",file),dst);
 }
+// Generic, variable-count workspaces are published from only two reviewed
+// PUBLIC_SYNTHETIC fixtures. Their full raw schedule inputs remain private to
+// source control and are never copied to GitHub Pages.
+const genericManifestText=await readFile(join(root,"generated/public/generic/manifest.json"),"utf8");
+const genericManifest=JSON.parse(genericManifestText);
+if(genericManifest.format!=="SKYFORGE_GENERIC_VISUAL_MANIFEST_V1"||
+ genericManifest.classification!=="PUBLIC_SYNTHETIC_DRAFT_ONLY"||
+ genericManifest.engineering_release!==false||genericManifest.baseline_approved!==false||
+ genericManifest.fixtures?.length!==2)throw Error("Generic four-view publication authority mismatch");
+const approvedGeneric={"community-clinic":{id:"DEMO_CLINIC",activities:6,checklist:3},
+ "pedestrian-bridge":{id:"DEMO_BRIDGE",activities:8,checklist:4}};
+await mkdir(join(out,"projects/generic"),{recursive:true});
+for(const fixture of genericManifest.fixtures){
+ const allow=approvedGeneric[fixture.name];
+ if(!allow||fixture.project_id!==allow.id||fixture.activity_count!==allow.activities||
+ fixture.checklist_count!==allow.checklist)throw Error("Generic fixture not allowlisted");
+ const modelBytes=await readFile(join(root,"generated/public/generic",fixture.name+".json"));
+ if(createHash("sha256").update(modelBytes).digest("hex")!==fixture.model_sha256)
+  throw Error("Generic model digest mismatch "+fixture.name);
+ const model=JSON.parse(modelBytes);
+ if(model.format!=="SKYFORGE_GENERIC_VIEW_MODEL_V1"||
+ model.classification!=="PUBLIC_SYNTHETIC_DRAFT_ONLY"||
+ model.project?.id!==allow.id||model.input_sha256!==fixture.input_sha256||
+ model.engineering_release!==false||model.baseline_approved!==false||
+ model.activities?.length!==allow.activities||model.checklist?.length!==allow.checklist||
+ model.activities.some(x=>x.status!=="CALCULATED_DRAFT_NOT_ACTUAL")||
+ modelBytes.toString("utf8").includes("drive.google.com")||
+ modelBytes.toString("utf8").includes("docs.google.com")||
+ modelBytes.toString("utf8").includes("SLACK:"))
+  throw Error("Generic model unsafe for Pages");
+ await writeFile(join(out,"projects/generic",fixture.name+".json"),modelBytes);
+}
+await writeFile(join(out,"projects/generic/manifest.json"),genericManifestText);
 await cp("machine/index.html");
 // One shared futuristic navigation/theme on every PUBLIC, allowlisted page.
 // Machine outputs and old dashboards remain intact, available only through More.
@@ -200,7 +233,7 @@ for(const relative of skinned){
 }
 const essential=["index.html","projects/narayani/visual.html","projects/narayani/index.html",
 "advanced.html","planner.html","kernel-lab.html","roadmap.html","machine/index.html",
-"machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","work-items/index.html","more/legacy-home.html"];
+"machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","work-items/index.html","projects/generic/index.html","more/legacy-home.html"];
 if(essential.some(p=>!skinned.includes(p)))throw Error("Site shell incomplete: "+essential.filter(p=>!skinned.includes(p)));
 console.log("SKYFORGE SHARED SHELL PASS:",skinned.length,"public pages unified; legacy pages preserved under More.");
 console.log("Public Pages allowlist PASS: no repository-wide upload, no private engineering files");
