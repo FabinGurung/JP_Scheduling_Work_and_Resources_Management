@@ -16,6 +16,9 @@ function makeDraft({rows,format,project_id,project_name,source_name,original_sha
  d.source_format=format;d.source_sha256=original_sha256;
  d.project.source_manifest[0].sha256=original_sha256;
  d.project.source_manifest[0].revision="UNVERIFIED_"+format+"_SOURCE";
+ d.project.import_conversion={format,source_sha256:original_sha256,
+   nominal_hours_per_day:hours_per_day,output_unit:"NOMINAL_INTEGER_DAY_SLOTS",
+   source_calendar_equivalence:false,resource_parity:false};
  if(all_wbs.length){
   const complete=new Map(all_wbs.map(w=>[w.wbs_id,w]));
   if(complete.size!==all_wbs.length)throw Error("Duplicated P6 WBS code");
