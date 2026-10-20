@@ -69,6 +69,12 @@ test("P6 XML imports source WBS ObjectIds and FS relations while forbidding DTD"
  assert.equal(d.source_format,"P6_XML");
  assert.throws(()=>digitizeP6Xml({...project,text:'<!DOCTYPE a>'+xml,hours_per_day:8}),/DTD/);
  assert.throws(()=>digitizeP6Xml({...project,text:xml.replace("<WBSObjectId>2</WBSObjectId>","<WBSObjectId>9</WBSObjectId>"),hours_per_day:8}),/requires/);
+ assert.throws(()=>digitizeP6Xml({...project,
+  text:xml.replace("<PlannedDuration>16</PlannedDuration>","<PlannedDuration>PT16H30M</PlannedDuration>"),
+  hours_per_day:8}),/no rounding/);
+ const exact=digitizeP6Xml({...project,text:xml.replace("<PlannedDuration>16</PlannedDuration>","<PlannedDuration>PT16H30M</PlannedDuration>"),
+  hours_per_day:8.25});
+ assert.equal(exact.project.activities[0].duration,2);
 });
 const u16=(v,n,x)=>v.writeUInt16LE(x,n),u32=(v,n,x)=>v.writeUInt32LE(x>>>0,n);
 function makeZip(files){
