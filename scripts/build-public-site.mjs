@@ -18,9 +18,23 @@ async function modules(relative){
 }
 const approved=["index.html","advanced.html","planner.html","kernel-lab.html","roadmap.html","project-controls-demo.json",
  "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","assets/skyforge-unified.css","more/legacy-home.html",
- "knowledge/index.html","knowledge/task.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
+ "knowledge/index.html","knowledge/task.html","work-items/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
 for(const f of approved)await cp(f);
 await modules("src");
+// Separate, reviewed, PUBLIC work-item catalog only. No private project source files.
+// A source change requires explicit Git-blob pin review before it can be published.
+const catalogText=await readFile(join(root,"machine/work-items/work-item-library-v0.1.json"),"utf8");
+const catalogBlob=createHash("sha1").update("blob "+Buffer.byteLength(catalogText)+"\\0").update(catalogText).digest("hex");
+if(catalogBlob!=="ea105e6b404d3a8b136e5e89a55a172485f4156e")throw Error("Unreviewed work-item catalog source");
+const catalog=JSON.parse(catalogText);
+if(catalog.format!=="SKYFORGE_WORK_ITEM_LIBRARY_V1"||
+ catalog.classification!=="PUBLIC_REFERENCE_NO_PRIVATE_PROJECT_RECORDS"||
+ catalog.items?.length!==14||catalog.items.some(x=>x.authority!=="NOT_SITE_APPROVED")||
+ catalogText.includes("docs.google.com")||catalogText.includes("drive.google.com")||
+ catalogText.includes("SLACK::"))throw Error("Unsafe work-item source");
+await mkdir(join(out,"work-items"),{recursive:true});
+await writeFile(join(out,"work-items/library.json"),catalogText);
+
 const machine=["index.html","plan.json","upstreams.json","manifest.json"];
 const raw=await readFile(join(root,"machine/requests/demo-foundation.json"),"utf8");
 const digest=createHash("sha1").update("blob "+Buffer.byteLength(raw)+"\0").update(raw).digest("hex");
@@ -186,7 +200,7 @@ for(const relative of skinned){
 }
 const essential=["index.html","projects/narayani/visual.html","projects/narayani/index.html",
 "advanced.html","planner.html","kernel-lab.html","roadmap.html","machine/index.html",
-"machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","more/legacy-home.html"];
+"machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","work-items/index.html","more/legacy-home.html"];
 if(essential.some(p=>!skinned.includes(p)))throw Error("Site shell incomplete: "+essential.filter(p=>!skinned.includes(p)));
 console.log("SKYFORGE SHARED SHELL PASS:",skinned.length,"public pages unified; legacy pages preserved under More.");
 console.log("Public Pages allowlist PASS: no repository-wide upload, no private engineering files");
