@@ -122,3 +122,19 @@ test("generic compiler accepts two distinct project-specific WBS models, never c
  const unfounded=base("PROJECT_BAD","Unreferenced work",1);unfounded.activities[0].duration_basis="REVIEWED_SOURCE";
  assert.throws(()=>compileProjectDraft(unfounded),/source/);
 });
+
+test("published catalog is exact versioned JSON, no private work evidence and source-pinned in Pages",()=>{
+ const page=readFileSync(new URL("../work-items/index.html",import.meta.url),"utf8");
+ const builder=readFileSync(new URL("../scripts/build-public-site.mjs",import.meta.url),"utf8");
+ const shell=readFileSync(new URL("../assets/site-shell.mjs",import.meta.url),"utf8");
+ assert.match(builder,/work-items\/index.html/);
+ assert.match(builder,/ea105e6b404d3a8b136e5e89a55a172485f4156e/);
+ assert.match(builder,/catalog\.classification!=="PUBLIC_REFERENCE_NO_PRIVATE_PROJECT_RECORDS"/);
+ assert.match(builder,/writeFile\(join\(out,"work-items\/library.json"\),catalogText\)/);
+ assert.match(page,/estimateCatalogWork,validateWorkItemLibrary/);
+ assert.match(page,/lower bound/i);
+ assert.match(page,/working hours/i);
+ assert.match(shell,/work-items\/index.html/);
+ assert.equal(library.items.filter(x=>x.benchmark_reference_id!==null).length,2);
+ assert.doesNotMatch(JSON.stringify(library),/docs\.google\.com|drive\.google\.com|SLACK::|PROGRESS\|/);
+});
