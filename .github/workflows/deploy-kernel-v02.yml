@@ -67,6 +67,10 @@ jobs:
         run: npm run visual:build
       - name: Verify deterministic 45-node model and 405 MCQ checklists
         run: npm run visual:verify
+      - name: Build arbitrary-project public-synthetic four-view models
+        run: npm run generic:build
+      - name: Verify generic project models byte-for-byte
+        run: npm run generic:verify
       - name: Build public-safe allowlisted site only
         env:
           NARAYANI_AUTHENTICATED_SYNC: ${{ vars.NARAYANI_SYNC_ENABLED }}
@@ -87,6 +91,12 @@ jobs:
           test -s dist/projects/narayani/visual.html
           test -s dist/projects/narayani/project-model.json
           test -s dist/projects/narayani/visual-manifest.json
+          test -s dist/projects/generic/index.html
+          test -s dist/projects/generic/community-clinic.json
+          test -s dist/projects/generic/pedestrian-bridge.json
+          test -s dist/projects/generic/manifest.json
+          test ! -e dist/machine/generic-projects/community-clinic.json
+          test ! -e dist/machine/generic-projects/pedestrian-bridge.json
           test ! -e dist/machine/project-mappings/narayani-checklist-config-v0.1.json
           test -s dist/projects/narayani/progress-manifest.json
           test ! -e dist/machine/project-mappings/narayani-progress-public-v0.1.json
