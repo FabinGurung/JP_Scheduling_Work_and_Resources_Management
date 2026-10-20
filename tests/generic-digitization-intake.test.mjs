@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {createHash} from "node:crypto";
 import {readFileSync} from "node:fs";
 import {sha256Hex} from "../src/kernel/sha256.mjs";
-import {parseDelimited,digitizeGenericTable} from "../src/kernel/generic-digitizer.mjs";
+import {parseDelimited,digitizeGenericTable,digitizeTaskSeedJSON,parseWbsDictionaryMarkdown} from "../src/kernel/generic-digitizer.mjs";
 import {compileProjectDraft} from "../src/kernel/project-template.mjs";
 import {projectGenericVisual} from "../src/visual/generic-project-model.mjs";
 import {validateGenericViewModel} from "../src/presentation/generic-views.mjs";
@@ -75,4 +75,37 @@ test("static studio compiles CSV and JSON locally without network upload or appr
  assert.match(html,/no file transmitted/);
  const kernel=readFileSync(new URL("../src/kernel/project-template.mjs",import.meta.url),"utf8");
  assert.doesNotMatch(kernel,/from "node:crypto"/);
+});
+
+test("original synthetic 45-task WBS seed can be digitized, compiled and displayed without Narayani-specific conversion",()=>{
+ const content=readFileSync(new URL("../machine/source-snapshots/wbs_schedule_sample/schedule_seed.json",import.meta.url),"utf8");
+ const dictionary=["# WBS","## WBS Level 1: Project Lifecycle",
+ "*   **1000** - Project Initiation & Planning",
+ "*   **2000** - Architectural & Engineering Design","---"].join("\n");
+ assert.equal(parseWbsDictionaryMarkdown(dictionary)["1000"],"Project Initiation & Planning");
+ const batch=digitizeTaskSeedJSON({text:content,project_id:"LOCAL_SAMPLE",project_name:"Original Drive WBS seed",
+  source_name:"Project Schedule Seed Data.md",dictionary_text:dictionary});
+ assert.equal(batch.project.classification,"LOCAL_UNVERIFIED");
+ assert.equal(batch.project.source_manifest.length,1);
+ assert.ok(batch.project.wbs.some(x=>x.wbs_id==="WBS_1000"&&x.name==="Project Initiation & Planning"));
+ const model=projectGenericVisual(batch.project);
+ assert.equal(model.activities.length,45);
+ assert.equal(model.wbs.length,10);
+ assert.equal(model.checklist.length,0);
+ assert.equal(model.calendar_events.length,0);
+ assert.ok(batch.diagnostics.some(x=>x.code==="NOMINAL_DAYS_NOT_WORKING_CALENDAR"));
+ assert.ok(batch.diagnostics.some(x=>x.code==="SOURCE_INSTRUCTIONS_IGNORED"));
+ assert.equal(model.engineering_release,false);
+ assert.deepEqual(model,projectGenericVisual(batch.project));
+});
+test("structured seed fails closed on dangling predecessor, duplicated task, and wrong milestone duration",()=>{
+ const original=JSON.parse(readFileSync(new URL("../machine/source-snapshots/wbs_schedule_sample/schedule_seed.json",import.meta.url),"utf8"));
+ const d=data=>digitizeTaskSeedJSON({text:JSON.stringify(data),project_id:"LOCAL_SAMPLE",project_name:"Sample"});
+ const unknown=structuredClone(original);unknown.tasks[1].predecessors[0].id="UNKNOWN";
+ assert.throws(()=>d(unknown),/Unknown or invalid predecessor/);
+ const dup=structuredClone(original);dup.tasks[1].task_id=dup.tasks[0].task_id;
+ assert.throws(()=>d(dup),/duplicated task/);
+ const milestone=structuredClone(original);const x=milestone.tasks.find(t=>t.type==="Milestone");
+ assert.ok(x);x.duration_days=4;
+ assert.throws(()=>d(milestone),/Milestone must have zero/);
 });
