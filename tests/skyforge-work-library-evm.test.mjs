@@ -5,6 +5,7 @@ import {validateWorkItemLibrary,estimateCatalogWork} from "../src/kernel/work-it
 import {scheduleProject} from "../src/kernel/schedule-project.mjs";
 import {calculateGovernedEvm} from "../src/kernel/governed-evm.mjs";
 import {auditSerialPrioritySpace} from "../src/kernel/resource-priority-audit.mjs";
+import {compileProjectDraft} from "../src/kernel/project-template.mjs";
 const library=JSON.parse(readFileSync(new URL("../machine/work-items/work-item-library-v0.1.json",import.meta.url),"utf8"));
 const task=(id,duration=1)=>({id,activity_type:"RESOURCE_DEPENDENT",duration});
 test("work-item library validates exact sources; generic Nepal templates never fabricate coefficients",()=>{
@@ -91,4 +92,33 @@ test("bounded serial priority audit visits orderings but explicitly cannot claim
  assert.equal(s.optimality_claim,"EXACT_WITHIN_SERIAL_PRIORITY_FAMILY_NOT_GLOBAL_RESOURCE_OPTIMUM");
  assert.equal(s.solution.resource_leveling_applied,true);
  assert.throws(()=>auditSerialPrioritySpace({...fixture,activities:Array.from({length:8},(_,i)=>task("X"+i))}),/bounded/);
+});
+
+test("generic compiler accepts two distinct project-specific WBS models, never clones Narayani",()=>{
+ const base=(projectId,name,duration)=>({
+  format:"SKYFORGE_PROJECT_INPUT_V1",project:{id:projectId,name},
+  wbs:[{wbs_id:"SCOPE",name:"Project scope"},{wbs_id:"WORK",name:"Unique scope work",parent_wbs_id:"SCOPE"}],
+  activities:[{id:"ACT1",wbs_id:"WORK",name:"Site-specific task",duration,duration_basis:"ASSUMED_DRAFT",
+     assumption_reason:"Synthetic testcase only: task duration supplied to test reproducibility"}],
+  relationships:[],source_manifest:[],scheduling_mode:"SHARED_CPM"
+ });
+ const first=base("PROJECT_ALPHA","Bridge prototype",3);
+ const second=base("PROJECT_BETA","School prototype",9);
+ const a=compileProjectDraft(first),b=compileProjectDraft(second);
+ assert.deepEqual(a,compileProjectDraft(first));
+ assert.notEqual(a.input_sha256,b.input_sha256);
+ assert.equal(a.schedule.output.project.early_finish,3);
+ assert.equal(b.schedule.output.project.early_finish,9);
+ assert.equal(a.activity_count,1);
+ assert.equal(a.planning_status,"CALCULATED_WITH_EXPLICIT_ASSUMPTIONS");
+ assert.equal(a.views_authority,"GENERIC_MACHINE_MODEL_ONLY_NO_APPROVED_FOUR_VIEW_RENDERER");
+ const incomplete=base("PROJECT_GAP","Unmeasured work",null);
+ const missing=compileProjectDraft(incomplete);
+ assert.equal(missing.planning_status,"INCOMPLETE_NO_SCHEDULE");
+ assert.equal(missing.schedule,null);
+ assert.ok(missing.gaps.some(x=>x.code==="DURATION_NOT_PROVIDED"));
+ const orphan=base("PROJECT_BAD","Unreferenced work",1);orphan.activities[0].wbs_id="UNKNOWN";
+ assert.throws(()=>compileProjectDraft(orphan),/foreign key/);
+ const unfounded=base("PROJECT_BAD","Unreferenced work",1);unfounded.activities[0].duration_basis="REVIEWED_SOURCE";
+ assert.throws(()=>compileProjectDraft(unfounded),/source/);
 });
