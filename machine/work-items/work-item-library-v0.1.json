@@ -1,0 +1,419 @@
+{
+  "format": "SKYFORGE_WORK_ITEM_LIBRARY_V1",
+  "version": "0.1.0",
+  "classification": "PUBLIC_REFERENCE_NO_PRIVATE_PROJECT_RECORDS",
+  "scope": "Project-independent templates, published reference rates only for exact matched specifications. No automatic Nepal productivity, crew or safety claim.",
+  "sources": [
+    {
+      "id": "CPWD_DAR2023_CIVIL_V1",
+      "agency": "CPWD Government of India",
+      "year": 2023,
+      "url": "https://cpwd.gov.in/Publication/CPWD_DAR_Vol_I_14092023-Civil.pdf",
+      "scope": "Delhi DAR 2023, not a Nepal site productivity or statutory work specification",
+      "retrieved": "2026-10-20"
+    },
+    {
+      "id": "RICS_NRM2022",
+      "agency": "RICS",
+      "year": 2022,
+      "url": "https://www.rics.org/profession-standards/rics-standards-and-guidance/sector-standards/construction-standards/nrm",
+      "scope": "Measurement classification guidance, not quantified production rates",
+      "retrieved": "2026-10-20"
+    },
+    {
+      "id": "NEPAL_DOR_SPEC",
+      "agency": "Nepal Department of Roads",
+      "year": 2025,
+      "url": "https://www.dor.gov.np/mo-dang/publication/qrdc-guidelines-standard-specifications-codes-and-norms",
+      "scope": "Road and bridge work specifications; not automatic residential labor coefficients",
+      "retrieved": "2026-10-20"
+    },
+    {
+      "id": "ASCE_PROD_CONTEXT",
+      "agency": "ASCE 2016 research",
+      "year": 2016,
+      "url": "https://doi.org/10.1061/%28ASCE%29CO.1943-7862.0001127",
+      "scope": "Site context and work sampling materially influence labor output; no universal coefficients",
+      "retrieved": "2026-10-20"
+    }
+  ],
+  "items": [
+    {
+      "id": "BRICK_NEPALESE",
+      "name": "Nepal local brick masonry",
+      "unit": "m3",
+      "discipline": "MASONRY",
+      "work_type": "masonry",
+      "required_site_inputs": [
+        "brick_dimensions",
+        "mortar_mix",
+        "thickness",
+        "wall_volume",
+        "crew",
+        "floor_level"
+      ],
+      "benchmark_reference_id": null,
+      "benchmark_clause": null,
+      "applicability": "NEEDS_SITE_QUANTITY_AND_METHOD_AND_APPROVED_SPEC",
+      "material_per_unit": [],
+      "labor_role_days_per_unit": [],
+      "equipment_hours_per_unit": [],
+      "evidence_level": "METHOD_TEMPLATE_ONLY",
+      "authority": "NOT_SITE_APPROVED",
+      "notes": "No default productivity is asserted. Supply a verified project measure or explicitly documented benchmark and site crew."
+    },
+    {
+      "id": "EARTH_FOUNDATION_MANUAL",
+      "name": "Foundation excavation manual",
+      "unit": "m3",
+      "discipline": "EARTHWORK",
+      "work_type": "excavation",
+      "required_site_inputs": [
+        "L",
+        "B",
+        "D",
+        "soil_class",
+        "shoring",
+        "lead",
+        "lift",
+        "groundwater",
+        "crew"
+      ],
+      "benchmark_reference_id": null,
+      "benchmark_clause": null,
+      "applicability": "NEEDS_SITE_QUANTITY_AND_METHOD_AND_APPROVED_SPEC",
+      "material_per_unit": [],
+      "labor_role_days_per_unit": [],
+      "equipment_hours_per_unit": [],
+      "evidence_level": "METHOD_TEMPLATE_ONLY",
+      "authority": "NOT_SITE_APPROVED",
+      "notes": "No default productivity is asserted. Supply a verified project measure or explicitly documented benchmark and site crew."
+    },
+    {
+      "id": "EARTH_MECH",
+      "name": "Excavator excavation",
+      "unit": "m3",
+      "discipline": "EARTHWORK",
+      "work_type": "excavation",
+      "required_site_inputs": [
+        "site_volume",
+        "soil",
+        "excavator_class",
+        "truck_cycle",
+        "lead",
+        "groundwater",
+        "working_hours"
+      ],
+      "benchmark_reference_id": null,
+      "benchmark_clause": null,
+      "applicability": "NEEDS_SITE_QUANTITY_AND_METHOD_AND_APPROVED_SPEC",
+      "material_per_unit": [],
+      "labor_role_days_per_unit": [],
+      "equipment_hours_per_unit": [],
+      "evidence_level": "METHOD_TEMPLATE_ONLY",
+      "authority": "NOT_SITE_APPROVED",
+      "notes": "No default productivity is asserted. Supply a verified project measure or explicitly documented benchmark and site crew."
+    },
+    {
+      "id": "FORMWORK_RCC",
+      "name": "Formwork to RCC member",
+      "unit": "m2",
+      "discipline": "FORMWORK",
+      "work_type": "formwork",
+      "required_site_inputs": [
+        "member_geometry",
+        "formwork_system",
+        "surface_area",
+        "reuse_cycles",
+        "crew"
+      ],
+      "benchmark_reference_id": null,
+      "benchmark_clause": null,
+      "applicability": "NEEDS_SITE_QUANTITY_AND_METHOD_AND_APPROVED_SPEC",
+      "material_per_unit": [],
+      "labor_role_days_per_unit": [],
+      "equipment_hours_per_unit": [],
+      "evidence_level": "METHOD_TEMPLATE_ONLY",
+      "authority": "NOT_SITE_APPROVED",
+      "notes": "No default productivity is asserted. Supply a verified project measure or explicitly documented benchmark and site crew."
+    },
+    {
+      "id": "MASONRY_CPWD_6322",
+      "name": "Non-modular clay fly-ash brick masonry, 1:6 mortar, class 7.5",
+      "unit": "m3",
+      "discipline": "MASONRY",
+      "work_type": "masonry",
+      "required_site_inputs": [
+        "mortar_1_6",
+        "class_7_5_brick",
+        "building_level",
+        "site_crew_role_counts",
+        "working_hours_per_day",
+        "site_access",
+        "drawing_approval"
+      ],
+      "benchmark_reference_id": "CPWD_DAR2023_CIVIL_V1",
+      "benchmark_clause": "DAR 2023 Vol I item 6.32.2, 1 m3 analysis",
+      "applicability": "DELHI_SPECIFIC_NON_MODULAR_CLAY_FLYASH_CLASS7_5_AND_1_6_MORTAR_NOT_NEPAL_GENERIC",
+      "material_per_unit": [
+        {
+          "id": "NONMODULAR_CLAY_FLYASH_BRICK_CLASS7_5",
+          "unit": "each",
+          "quantity": 494
+        },
+        {
+          "id": "CEMENT_MORTAR_1_6",
+          "unit": "m3",
+          "quantity": 0.25
+        }
+      ],
+      "labor_role_days_per_unit": [
+        {
+          "role": "MASON_FIRST_CLASS",
+          "days": 0.47
+        },
+        {
+          "role": "MASON_SECOND_CLASS",
+          "days": 0.47
+        },
+        {
+          "role": "HELPER",
+          "days": 1.8
+        },
+        {
+          "role": "WATER_CARRIER",
+          "days": 0.2
+        }
+      ],
+      "equipment_hours_per_unit": [],
+      "evidence_level": "PUBLISHED_REFERENCE_COEFFICIENT",
+      "authority": "NOT_SITE_APPROVED",
+      "notes": "Quoted item is a Delhi estimating reference, not a Nepal crew productivity guarantee. Extra 1.13 coolie-day/m3 for lifting above floor 2 up to floor V is NOT included in default coefficient; plan it separately with verified level/access."
+    },
+    {
+      "id": "MASONRY_CPWD_6341",
+      "name": "Non-modular class 10 fly ash brick masonry, 1:4 mortar",
+      "unit": "m3",
+      "discipline": "MASONRY",
+      "work_type": "masonry",
+      "required_site_inputs": [
+        "mortar_1_4",
+        "class_10_brick",
+        "building_level",
+        "site_crew_role_counts",
+        "working_hours_per_day",
+        "site_access",
+        "drawing_approval"
+      ],
+      "benchmark_reference_id": "CPWD_DAR2023_CIVIL_V1",
+      "benchmark_clause": "DAR 2023 Vol I item 6.34.1 material components",
+      "applicability": "DELHI_SPECIFIC_NON_MODULAR_FLYASH_CLASS10_AND_1_4_MORTAR_NOT_NEPAL_GENERIC",
+      "material_per_unit": [
+        {
+          "id": "NONMODULAR_FLYASH_BRICK_CLASS10",
+          "unit": "each",
+          "quantity": 487
+        },
+        {
+          "id": "CEMENT_MORTAR_1_4",
+          "unit": "m3",
+          "quantity": 0.22
+        }
+      ],
+      "labor_role_days_per_unit": [],
+      "equipment_hours_per_unit": [],
+      "evidence_level": "PUBLISHED_REFERENCE_MATERIAL_ONLY",
+      "authority": "NOT_SITE_APPROVED",
+      "notes": "Source confirms material inputs; labor role coefficients intentionally left blank because a matching labor table was not independently verified."
+    },
+    {
+      "id": "MEP_PIPE",
+      "name": "MEP pipe runs",
+      "unit": "m",
+      "discipline": "MEP",
+      "work_type": "plumbing",
+      "required_site_inputs": [
+        "pipe_type",
+        "diameter",
+        "routing",
+        "fittings",
+        "pressure_test",
+        "crew"
+      ],
+      "benchmark_reference_id": null,
+      "benchmark_clause": null,
+      "applicability": "NEEDS_SITE_QUANTITY_AND_METHOD_AND_APPROVED_SPEC",
+      "material_per_unit": [],
+      "labor_role_days_per_unit": [],
+      "equipment_hours_per_unit": [],
+      "evidence_level": "METHOD_TEMPLATE_ONLY",
+      "authority": "NOT_SITE_APPROVED",
+      "notes": "No default productivity is asserted. Supply a verified project measure or explicitly documented benchmark and site crew."
+    },
+    {
+      "id": "PAINT_FINISH",
+      "name": "Wall surface finishing paint",
+      "unit": "m2",
+      "discipline": "FINISH",
+      "work_type": "painting",
+      "required_site_inputs": [
+        "net_area",
+        "coat_count",
+        "surface_prep",
+        "approved_coverage_rate",
+        "crew"
+      ],
+      "benchmark_reference_id": null,
+      "benchmark_clause": null,
+      "applicability": "NEEDS_SITE_QUANTITY_AND_METHOD_AND_APPROVED_SPEC",
+      "material_per_unit": [],
+      "labor_role_days_per_unit": [],
+      "equipment_hours_per_unit": [],
+      "evidence_level": "METHOD_TEMPLATE_ONLY",
+      "authority": "NOT_SITE_APPROVED",
+      "notes": "No default productivity is asserted. Supply a verified project measure or explicitly documented benchmark and site crew."
+    },
+    {
+      "id": "PCC_BEDDING",
+      "name": "Foundation PCC",
+      "unit": "m3",
+      "discipline": "CONCRETE",
+      "work_type": "pcc",
+      "required_site_inputs": [
+        "design_grade",
+        "approved_mix",
+        "placement_volume",
+        "access",
+        "batch_method",
+        "crew"
+      ],
+      "benchmark_reference_id": null,
+      "benchmark_clause": null,
+      "applicability": "NEEDS_SITE_QUANTITY_AND_METHOD_AND_APPROVED_SPEC",
+      "material_per_unit": [],
+      "labor_role_days_per_unit": [],
+      "equipment_hours_per_unit": [],
+      "evidence_level": "METHOD_TEMPLATE_ONLY",
+      "authority": "NOT_SITE_APPROVED",
+      "notes": "No default productivity is asserted. Supply a verified project measure or explicitly documented benchmark and site crew."
+    },
+    {
+      "id": "PLASTER_12MM",
+      "name": "12mm cement plaster",
+      "unit": "m2",
+      "discipline": "FINISH",
+      "work_type": "plaster",
+      "required_site_inputs": [
+        "net_area",
+        "thickness",
+        "mix_design",
+        "substrate",
+        "scaffolding",
+        "crew"
+      ],
+      "benchmark_reference_id": null,
+      "benchmark_clause": null,
+      "applicability": "NEEDS_SITE_QUANTITY_AND_METHOD_AND_APPROVED_SPEC",
+      "material_per_unit": [],
+      "labor_role_days_per_unit": [],
+      "equipment_hours_per_unit": [],
+      "evidence_level": "METHOD_TEMPLATE_ONLY",
+      "authority": "NOT_SITE_APPROVED",
+      "notes": "No default productivity is asserted. Supply a verified project measure or explicitly documented benchmark and site crew."
+    },
+    {
+      "id": "RCC_FOOTING",
+      "name": "RCC footing placement",
+      "unit": "m3",
+      "discipline": "CONCRETE",
+      "work_type": "rcc",
+      "required_site_inputs": [
+        "concrete_grade",
+        "pour_volume",
+        "truck_cycle",
+        "pump_rate",
+        "crew",
+        "testing",
+        "pour_approval"
+      ],
+      "benchmark_reference_id": null,
+      "benchmark_clause": null,
+      "applicability": "NEEDS_SITE_QUANTITY_AND_METHOD_AND_APPROVED_SPEC",
+      "material_per_unit": [],
+      "labor_role_days_per_unit": [],
+      "equipment_hours_per_unit": [],
+      "evidence_level": "METHOD_TEMPLATE_ONLY",
+      "authority": "NOT_SITE_APPROVED",
+      "notes": "No default productivity is asserted. Supply a verified project measure or explicitly documented benchmark and site crew."
+    },
+    {
+      "id": "REBAR_FIXING",
+      "name": "Cutting bending and fixing rebar",
+      "unit": "kg",
+      "discipline": "REINFORCEMENT",
+      "work_type": "rebar",
+      "required_site_inputs": [
+        "approved_bbs",
+        "dia_mix",
+        "bars_kg",
+        "splice_waste",
+        "crew"
+      ],
+      "benchmark_reference_id": null,
+      "benchmark_clause": null,
+      "applicability": "NEEDS_SITE_QUANTITY_AND_METHOD_AND_APPROVED_SPEC",
+      "material_per_unit": [],
+      "labor_role_days_per_unit": [],
+      "equipment_hours_per_unit": [],
+      "evidence_level": "METHOD_TEMPLATE_ONLY",
+      "authority": "NOT_SITE_APPROVED",
+      "notes": "No default productivity is asserted. Supply a verified project measure or explicitly documented benchmark and site crew."
+    },
+    {
+      "id": "TILE_FIXING",
+      "name": "Floor/wall tiling",
+      "unit": "m2",
+      "discipline": "FINISH",
+      "work_type": "tiling",
+      "required_site_inputs": [
+        "approved_tile_size",
+        "net_area",
+        "adhesive_type",
+        "waste",
+        "crew"
+      ],
+      "benchmark_reference_id": null,
+      "benchmark_clause": null,
+      "applicability": "NEEDS_SITE_QUANTITY_AND_METHOD_AND_APPROVED_SPEC",
+      "material_per_unit": [],
+      "labor_role_days_per_unit": [],
+      "equipment_hours_per_unit": [],
+      "evidence_level": "METHOD_TEMPLATE_ONLY",
+      "authority": "NOT_SITE_APPROVED",
+      "notes": "No default productivity is asserted. Supply a verified project measure or explicitly documented benchmark and site crew."
+    },
+    {
+      "id": "WATERPROOFING",
+      "name": "Waterproofing membrane/coating",
+      "unit": "m2",
+      "discipline": "ENVELOPE",
+      "work_type": "waterproofing",
+      "required_site_inputs": [
+        "approved_product",
+        "dry_wet_area",
+        "layers",
+        "coverage_datasheet",
+        "crew"
+      ],
+      "benchmark_reference_id": null,
+      "benchmark_clause": null,
+      "applicability": "NEEDS_SITE_QUANTITY_AND_METHOD_AND_APPROVED_SPEC",
+      "material_per_unit": [],
+      "labor_role_days_per_unit": [],
+      "equipment_hours_per_unit": [],
+      "evidence_level": "METHOD_TEMPLATE_ONLY",
+      "authority": "NOT_SITE_APPROVED",
+      "notes": "No default productivity is asserted. Supply a verified project measure or explicitly documented benchmark and site crew."
+    }
+  ]
+}
