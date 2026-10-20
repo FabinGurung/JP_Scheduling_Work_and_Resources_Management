@@ -72,7 +72,8 @@ test("P6 XML imports source WBS ObjectIds and FS relations while forbidding DTD"
  assert.throws(()=>digitizeP6Xml({...project,
   text:xml.replace("<PlannedDuration>16</PlannedDuration>","<PlannedDuration>PT16H30M</PlannedDuration>"),
   hours_per_day:8}),/no rounding/);
- const exact=digitizeP6Xml({...project,text:xml.replace("<PlannedDuration>16</PlannedDuration>","<PlannedDuration>PT16H30M</PlannedDuration>"),
+ const exact=digitizeP6Xml({...project,text:xml.replace("<PlannedDuration>16</PlannedDuration>","<PlannedDuration>PT16H30M</PlannedDuration>")
+  .replace("<PlannedDuration>8</PlannedDuration>","<PlannedDuration>PT8H15M</PlannedDuration>"),
   hours_per_day:8.25});
  assert.equal(exact.project.activities[0].duration,2);
 });
