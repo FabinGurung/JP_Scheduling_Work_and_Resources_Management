@@ -94,6 +94,10 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
  .gv-skill-branches path,.gv-skill-activity{animation:none!important}
 }
 .gv-import-diagnostics{font-size:12px;line-height:1.7;color:#8b6129;margin:9px 0}.gv-import-diagnostics p{font-size:12px;margin:4px 0}.gv-tree-control{cursor:pointer}
+.gv-pdf-review{background:#fffdf4;border:1px solid #e6cd9e;border-radius:12px;padding:13px;margin:12px 0}
+.gv-pdf-review textarea{display:block;width:100%;min-height:170px;resize:vertical;font:12px/1.4 ui-monospace,monospace;background:#fff;border:1px solid #c6d5df;color:#284b5e;border-radius:8px;padding:10px}
+.gv-pdf-review button{margin-top:8px;background:#e4f5f2;border-color:#8fc8c0}
+
 </style></head><body><main>
 <header class="hero">
  <div class="eyebrow">Skyforge · Generic project studio · Draft-only</div>
@@ -105,9 +109,16 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
   <label for="local-id">Local project ID<input id="local-id" value="LOCAL_WBS" type="text" pattern="[A-Za-z][A-Za-z0-9_-]*" maxlength="64"></label>
   <label for="local-name">Local project description<input id="local-name" value="Unverified Local WBS" type="text" maxlength="180"></label>
   <label for="dictionary">Optional WBS dictionary Markdown<input id="dictionary" type="file" accept=".md,.txt,text/markdown,text/plain" aria-describedby="upload-help"></label>
-  <label for="upload">Digitize local CSV, TSV, structured seed JSON/MD, or canonical JSON<input id="upload" type="file" accept=".csv,.tsv,.json,.md,text/csv,text/tab-separated-values,application/json,text/markdown" aria-describedby="upload-help"></label>
+  <label for="p6-hours">P6 working hours per nominal day (required for XER/XML)<input id="p6-hours" type="number" min="0.5" max="24" step="0.5" placeholder="Enter P6 hours/day; no default"></label>
+  <label for="upload">Open Excel, P6 XER/XML, PDF, CSV/TSV, or normalized JSON<input id="upload" type="file" accept=".xlsx,.xer,.xml,.pdf,.csv,.tsv,.json,.md,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" aria-describedby="upload-help"></label>
  </div>
- <p id="upload-help"><b>Generic digitalization:</b> import an explicit-schema CSV/TSV work-item table, the project WBS task-seed JSON (even if saved as .md), local unverified canonical project JSON, or previously compiled safe view model. Optionally select a matching WBS dictionary to preserve genuine phase names. Your original files stay on your device. CSV header: <code>activity_id,activity_name,wbs_id,wbs_name,parent_wbs_id,duration_slots,predecessors</code>. The predecessor cell uses quoted <code>ID:FS:0;ID:SS:2</code> syntax; empty fields are allowed for root WBS and no predecessor. Missing durations block dates. Unmapped calendar IDs block scheduling. Excel, P6 XER/XML and PDF still need audited converters; export a structured CSV rather than claiming unsupported fields were imported.</p>
+ <p id="upload-help"><b>Generic digitalization:</b> import an explicit-schema CSV/TSV work-item table, the project WBS task-seed JSON (even if saved as .md), local unverified canonical project JSON, or previously compiled safe view model. Optionally select a matching WBS dictionary to preserve genuine phase names. Your original files stay on your device. CSV header: <code>activity_id,activity_name,wbs_id,wbs_name,parent_wbs_id,duration_slots,predecessors</code>. The predecessor cell uses quoted <code>ID:FS:0;ID:SS:2</code> syntax; empty fields are allowed for root WBS and no predecessor. Missing durations block dates. Unmapped calendar IDs block scheduling. Excel XLSX reads the explicit activity-table worksheet only; formulas and ambiguous sheets are blocked. XER/XML read P6 activity/WBS/relationship subsets and require a user-confirmed hours-per-day divisor (not imported holidays/resources/actuals). PDF.js can extract machine-readable text locally; only tables with explicit activity-column headers can be previewed and confirmed. Scans/OCR, XLS, MS Project MPP and unsupported layouts are blocked—not guessed. PDF.js uses a pinned external code-only CDN; project file bytes are never transmitted.</p>
+ <section id="pdf-review" class="gv-pdf-review" hidden>
+ <h2>Review extracted PDF activity table</h2>
+ <p>Check every activity ID, WBS, duration and relationship. The extracted table is not accepted automatically; you may correct its CSV cells below before explicitly digitizing it.</p>
+ <textarea id="pdf-csv" rows="9" spellcheck="false" aria-label="Machine-extracted PDF CSV table; review before converting"></textarea>
+ <button type="button" id="confirm-pdf" class="gv-tree-control">Digitize this reviewed PDF table as UNVERIFIED</button>
+ </section>
  <button id="save-draft" type="button" class="gv-tree-control" hidden>Download normalized unverified project JSON</button>
  <div id="import-diagnostics" class="gv-import-diagnostics" role="status" aria-live="polite"></div>
  <div class="actions"><a href="../how/">CPM and engine principles →</a><a href="../work-items/">Work-item library →</a><a href="https://github.com/FabinGurung/JP_Scheduling_Work_and_Resources_Management/blob/kernel-v0.2-open-source-engines/docs/research/SKYFORGE_GENERIC_PROJECT_STUDIO_V1_9.md">Reproduction and source contract →</a></div>
@@ -119,10 +130,35 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
 import {renderGenericProject,validateGenericViewModel} from "../src/presentation/generic-views.mjs";
 import {digitizeGenericTable,digitizeTaskSeedJSON} from "../src/kernel/generic-digitizer.mjs";
 import {projectGenericVisual} from "../src/visual/generic-project-model.mjs";
+import {digitizeXer,digitizeP6Xml} from "../src/kernel/p6-native-import.mjs";
+import {digitizeXlsx} from "../src/kernel/xlsx-native-import.mjs";
+import {pdfTextItemsToTable,digitizePdfTable,pdfSourceSha256} from "../src/kernel/pdf-table-import.mjs";
+import {sha256Hex} from "../src/kernel/sha256.mjs";
 const choices=new Set(["community-clinic","pedestrian-bridge"]);
 const state=document.getElementById("state"),mount=document.getElementById("views");
 const info=document.getElementById("import-diagnostics"),download=document.getElementById("save-draft");
-let candidate=null;
+let candidate=null,pdfInput=null;
+const projectInputs=()=>({project_id:document.getElementById("local-id").value.trim(),
+ project_name:document.getElementById("local-name").value.trim()});
+const parseP6Hours=()=>{
+ const input=document.getElementById("p6-hours");
+ if(!input.value.trim())throw Error("P6 hours per day must be entered explicitly. The importer will not assume an 8-hour shift.");
+ const n=Number(input.value);
+ if(!Number.isFinite(n)||n<=0||n>24)throw Error("P6 hours per day must be 0–24, explicitly supplied");
+ return n;
+};
+function applyBatch(batch,label){
+ updateDraft(batch.project);showDiagnostics(batch.diagnostics);
+ if(batch.planning_status==="BLOCKED_CALENDAR_MAPPING"){
+  mount.replaceChildren();state.textContent="Source digitized but calendar mapping is missing; normalized draft can be downloaded.";
+  return;
+ }
+ try{
+  showModel(projectGenericVisual(batch.project),label+" · UNVERIFIED draft · "+batch.project.activities.length+" tasks · source SHA "+batch.source_sha256);
+ }catch(e){mount.replaceChildren();state.textContent="Source digitized, scheduling blocked: "+e.message+
+  " · download the draft to correct missing input";}
+}
+
 const showDiagnostics=messages=>{
  info.replaceChildren();
  for(const x of messages){
@@ -158,55 +194,75 @@ function onlyLocalUnverified(spec){
 }
 document.getElementById("upload").addEventListener("change",async ev=>{
  const file=ev.target.files?.[0];if(!file)return;
+ document.getElementById("pdf-review").hidden=true;pdfInput=null;
+ const ext=file.name.split(".").pop().toLowerCase();
  try{
-  if(file.size>2_000_000)throw Error("Local import exceeds 2 MB limit");
-  const ext=file.name.split(".").pop().toLowerCase(),text=await file.text();
+  const max=ext==="pdf"?15_000_000:ext==="xlsx"?12_000_000:8_000_000;
+  if(file.size>max)throw Error("File exceeds "+(max/1000000)+" MB local import limit");
+  state.textContent="Reading local "+ext.toUpperCase()+" source; no upload…";
   showDiagnostics([]);
-
-  if(["csv","tsv"].includes(ext)){
-   const batch=digitizeGenericTable({text,format:ext.toUpperCase(),
-    project_id:document.getElementById("local-id").value.trim(),
-    project_name:document.getElementById("local-name").value.trim(),source_name:file.name});
-   updateDraft(batch.project);showDiagnostics(batch.diagnostics);
-   if(batch.planning_status==="BLOCKED_CALENDAR_MAPPING"){
-    mount.replaceChildren();
-    state.textContent="Digitized source retained as unverified draft; missing calendar definitions must be supplied before scheduling.";
-    return;
+  const inputs={...projectInputs(),source_name:file.name};
+  if(ext==="xlsx"){
+   const batch=await digitizeXlsx({...inputs,bytes:new Uint8Array(await file.arrayBuffer())});
+   applyBatch(batch,"Native XLSX · explicit source table");
+  }else if(ext==="xer"||ext==="xml"){
+   const bytes=new Uint8Array(await file.arrayBuffer());
+   // XER frequently uses Latin-1; preserve original bytes via SHA-256 and decode explicitly.
+   const text=new TextDecoder(ext==="xer"?"windows-1252":"utf-8",{fatal:true}).decode(bytes);
+   const method=ext==="xer"?digitizeXer:digitizeP6Xml;
+   const batch=method({...inputs,text,hours_per_day:parseP6Hours(),original_sha256:sha256Hex(bytes)});
+   applyBatch(batch,"Native Primavera P6 "+ext.toUpperCase()+" · nominal day-slot scenario");
+  }else if(ext==="pdf"){
+   const bytes=new Uint8Array(await file.arrayBuffer());
+   const moduleUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs";
+   let lib;try{lib=await import(moduleUrl)}catch{throw Error("Pinned PDF.js parser could not load. PDF bytes were not uploaded; retry online or use native Excel/XER source.")}
+   lib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
+   const pdf=await lib.getDocument({data:bytes.slice(),useSystemFonts:false}).promise;
+   if(pdf.numPages>100)throw Error("PDF over 100 pages. Split the schedule source.");
+   const pages=[];
+   for(let i=1;i<=pdf.numPages;i++){
+    const page=await pdf.getPage(i),texts=await page.getTextContent();
+    pages.push(texts.items);
    }
-   try{
-    const model=projectGenericVisual(batch.project);
-    showModel(model,"Local CSV/TSV digitized and calculated only as an UNVERIFIED abstract-slot scenario · source SHA-256 "+batch.source_sha256);
-   }catch(e){
-    mount.replaceChildren();state.textContent="Imported source, but scheduling blocked: "+e.message;
-   }
+   const table=pdfTextItemsToTable(pages);
+   pdfInput={...inputs,original_pdf_sha256:pdfSourceSha256(bytes)};
+   const section=document.getElementById("pdf-review");
+   document.getElementById("pdf-csv").value=table.csv;section.hidden=false;
+   state.textContent="PDF text extracted locally: "+table.rows+" candidate rows. REVIEW AND CONFIRM the table. No calculation yet.";
+   mount.replaceChildren();updateDraft(null);
+   showDiagnostics([{severity:"HOLD",code:"PDF_REVIEW_REQUIRED",detail:"Coordinates can misalign; review and confirm source columns before compiling."}]);
+  }else if(["csv","tsv"].includes(ext)){
+   const batch=digitizeGenericTable({...inputs,text:await file.text(),format:ext.toUpperCase()});
+   applyBatch(batch,"Explicit-schema "+ext.toUpperCase());
   }else if(["json","md"].includes(ext)){
-   const parsed=JSON.parse(text);
+   const raw=await file.text(),parsed=JSON.parse(raw);
    if(parsed?.project_metadata&&Array.isArray(parsed.tasks)){
     const dictionary=document.getElementById("dictionary").files?.[0];
     const dictText=dictionary?await dictionary.text():null;
-    const batch=digitizeTaskSeedJSON({text,project_id:document.getElementById("local-id").value.trim(),
-      project_name:document.getElementById("local-name").value.trim(),source_name:file.name,dictionary_text:dictText});
-    updateDraft(batch.project);showDiagnostics(batch.diagnostics);
-    try{
-     showModel(projectGenericVisual(batch.project),
-      "P6-style TASK SEED digitized as unverified nominal slots · "+batch.project.activities.length+" activities · not a native XER import");
-    }catch(e){
-     mount.replaceChildren();state.textContent="Task-seed imported, but scheduling blocked: "+e.message;
-    }
-    return;
-   }
-   if(parsed.format==="SKYFORGE_GENERIC_VIEW_MODEL_V1"){
+    const batch=digitizeTaskSeedJSON({text:raw,...inputs,dictionary_text:dictText});
+    applyBatch(batch,"Original P6-style JSON task seed");
+   }else if(parsed.format==="SKYFORGE_GENERIC_VIEW_MODEL_V1"){
     showModel(parsed,"Locally opened compiled read-only model; no file transmitted");
     updateDraft(null);
    }else if(parsed.format==="SKYFORGE_PROJECT_INPUT_V1"){
     onlyLocalUnverified(parsed);updateDraft(parsed);
-    showModel(projectGenericVisual(parsed),"Locally calculated unverified JSON project; not a live or approved baseline");
-   }else throw Error("Unsupported JSON contract. Expected compiled view or LOCAL_UNVERIFIED project.");
-  }else throw Error("Unsupported extension: use explicit CSV/TSV or supported structured JSON task seed; XER, XLSX, XML and PDF are not silently guessed.");
+    showModel(projectGenericVisual(parsed),"Locally calculated unverified JSON; not approved");
+   }else throw Error("Unsupported JSON contract");
+  }else throw Error("Unsupported extension. PDF scans, native MPP, XLS and ambiguous documents need a verified digital source.");
  }catch(e){
-  state.textContent="Input rejected: "+e.message;mount.replaceChildren();updateDraft(null);
+  state.textContent="Input blocked: "+e.message;mount.replaceChildren();updateDraft(null);
  }
 });
+document.getElementById("confirm-pdf").addEventListener("click",()=>{
+ if(!pdfInput)return;
+ try{
+  const csv=document.getElementById("pdf-csv").value;
+  const batch=digitizePdfTable({...pdfInput,csv});
+  applyBatch(batch,"User-reviewed, machine-text PDF schedule");
+  document.getElementById("pdf-review").hidden=true;
+ }catch(e){state.textContent="PDF review blocked: "+e.message}
+});
+
 download.addEventListener("click",()=>{
  if(!candidate)return;
  const bytes=JSON.stringify(candidate,null,2)+"\n";
