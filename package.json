@@ -1,6 +1,6 @@
 {
   "name": "project-controls-kernel",
-  "version": "1.9.0-generic.1",
+  "version": "1.10.0-digitalization.1",
   "private": true,
   "type": "module",
   "scripts": {
