@@ -78,7 +78,7 @@ export function digitizeGenericTable({text,format,project_id,project_name,source
   const parent=x.parent_wbs_id||null;
   if(parent!==null&&!ident(parent))throw Error("Invalid parent WBS at line "+line);
   const prev=wbs.get(x.wbs_id);
-  if(prev&&(prev.name!==x.wbs_name||prev.parent_wbs_id!==parent))
+  if(prev&&(prev.name!==x.wbs_name||(prev.parent_wbs_id??null)!==parent))
    throw Error("Conflicting WBS name/parent for "+x.wbs_id);
   if(!prev)wbs.set(x.wbs_id,{wbs_id:x.wbs_id,name:x.wbs_name,...(parent?{parent_wbs_id:parent}:{})});
   let duration=null;
