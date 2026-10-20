@@ -2,7 +2,7 @@
 
 **Date:** 20 October 2026. **Branch:** `kernel-v0.2-open-source-engines`.  
 **Change classification:** navigation/instance architecture, not engineering approval or project-data replacement.  
-**Public canonical entry points:** `/` → `/studio/` → `/studio/projects/{project}/`.
+**Public canonical entry points:** `/` → two sibling Level-1 departments (`/studio/` and `/projects/`), then Level-2 project records at `/projects/{project}/`. Older `/studio/projects/` links remain compatibility routes.
 
 ## The governing levels
 
@@ -10,16 +10,17 @@
 | --- | --- | --- | --- |
 | Level 0 | `/` | Only the overview homepage: explain the system | No real-project scheduling data |
 | Level 1 | `/studio/` | ONE reusable engine/studio surface: import, normalization, CPM/PDM, EVM, work-item methods, visualization components and QA evidence | Versioned engine and reference contracts |
-| Level 2 | `/studio/projects/{project}/` | Independent project records with their own source provenance, WBS IDs, quantities, relationships, calendars and optional project-specific checklist prompts | Project-level source revision, evidence and approvals |
+| Level 1 | `/projects/` | Sister department to Studio: project registry and source-controlled independent project records | Distinct source/evidence authority for each project |
+| Level 2 | `/projects/{project}/` | Individual WBS, quantities, relationships, calendars, provenance and view instances consuming the shared Studio engine | Project-level source revision, evidence and approvals |
 
 **Critical:** A "Level 1" is a logical department, not a requirement that all source modules physically sit in one folder. Avoid moving kernel source paths, changing existing deep links or copying each engine into every project directory. All earlier tools continue to work at their established URLs and become linked from the Level-1 Studio.
 
 ## Technical implementation
 
 - `studio/index.html` is the single Level-1 portal.
-- `studio/projects/community-clinic/index.html` and `studio/projects/pedestrian-bridge/index.html` are thin independent Level-2 **instances** of the SAME `src/presentation/studio-project-page.mjs` bootstrap and `src/presentation/generic-views.mjs` renderer. They load separate SHA-verified, allowlisted synthetic project models and never duplicate scheduling formulas.
+- `projects/community-clinic/index.html` and `projects/pedestrian-bridge/index.html` are the canonical thin independent Level-2 **instances** of the SAME `src/presentation/studio-project-page.mjs` bootstrap and `src/presentation/generic-views.mjs` renderer. They load separate SHA-verified, allowlisted synthetic project models and never duplicate scheduling formulas.
 - `assets/studio-project.css` is the common responsive project-instance presentation layer.
-- `studio/projects/narayani/index.html` is a Level-2 **governed legacy project record** that directs to Narayani's existing source-locked field interface and does not falsely claim an unapproved conversion into a generic project. Its 45/49/405/7 work contracts, evidence and approvals remain untouched.
+- `projects/narayani/index.html` remains the governed Level-2 project; `studio/projects/narayani/index.html` is an older compatibility record. The canonical path is a Level-2 **governed legacy project record** that directs to Narayani's existing source-locked field interface and does not falsely claim an unapproved conversion into a generic project. Its 45/49/405/7 work contracts, evidence and approvals remain untouched.
 - `projects/generic/index.html` remains the active project **digitization workbench**, supporting structured CSV/TSV/JSON and strictly scoped local XLSX, P6 XER/XML, and machine-readable PDF extraction. Its source files are unverified until project review.
 - `assets/site-shell.mjs` shows only **Overview · Studio · Projects** in primary navigation. Technical tools and historical deep links are retained under **More** and inside Studio.
 - `scripts/build-public-site.mjs` has a closed allowlist for the new pages and CSS, then applies canonical unified CSS and enforces public privacy checks. No repository-wide deployment.
@@ -52,3 +53,7 @@ Engine mathematically derived draft schedules are NOT the site's actual progress
 ## How a future researcher should remember the product
 
 *The website is not the engine, and a project's Gantt is not its source. One normalized engineering engine interprets many evidence-governed project datasets. Level 0 is an overview, Level 1 is the engine, Level 2 is the project. Views and files are projections and exports from that model, never separately invented construction truths.*
+
+## October 20 clarification — Constellation is not an authoring editor
+
+The v1.11 navigation/level reorganization did not touch `src/presentation/narayani-visual.mjs`, `src/presentation/generic-views.mjs` or their scheduling math relative to v1.10. Narayani retains pan/zoom, phase filter, node selection, calendar/scenario playback, optional 3D camera and checklist workflow. The **generic public-synthetic constellation is read-only**: it supports branch navigation, node selection and inspection, but it cannot edit WBS nodes, relationships, durations or publish a new baseline in place. This is an outstanding authoring capability, not a regression caused by the latest navigation change. For data changes, normalize WBS from user description or import in Studio, then rebuild a new deterministic project model; do not silently mutate the served source JSON.
