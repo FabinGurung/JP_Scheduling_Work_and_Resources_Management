@@ -6,12 +6,13 @@ import {earnedValueMetrics} from "../src/kernel/earned-value.mjs";
 const read=p=>readFileSync(new URL("../"+p,import.meta.url),"utf8");
 
 test("homepage true white canvas has unambiguous high-priority overrides",()=>{
- const css=read("assets/site-shell.css"),home=read("index.html");
+ const css=read("assets/site-shell.css"),home=read("index.html"),studio=read("studio/index.html");
  assert.match(css,/html,body\.sf-shelled\[data-sf-surface="home"\]\{background:#f6f9fc!important;color:#20384b!important\}/);
  assert.match(css,/\.panel-header h2\{color:#20384b!important\}/);
  assert.match(css,/body\.sf-shelled\[data-sf-surface="home"\] \.view-card strong/);
  assert.match(home,/href="\.\/how\/index\.html"/);
- assert.match(home,/href="\.\/how\/skyforge-anki\.csv"/);
+ assert.match(studio,/href="\.\.\/how\/skyforge-anki\.csv"/);
+ assert.match(home,/href="\.\/studio\/"/);
 });
 
 test("phone constellation starts zoomed to readable portion and retains full overview",()=>{
