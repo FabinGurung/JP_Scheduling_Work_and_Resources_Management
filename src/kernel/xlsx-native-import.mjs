@@ -118,6 +118,8 @@ export async function digitizeXlsx({bytes,project_id,project_name,source_name="S
  result.source_format="XLSX";result.source_sha256=original_sha256;
  result.project.source_manifest[0].sha256=original_sha256;
  result.project.source_manifest[0].revision="UNVERIFIED_XLSX_WORKSHEET_"+selected.name.slice(0,80);
+ result.project.import_conversion={format:"XLSX",source_sha256:original_sha256,
+  worksheet:selected.name,formula_evaluation:false,header_mapping:"EXPLICIT_EXACT"};
  result.diagnostics.push({code:"EXCEL_SHEET_IMPORTED",severity:"NOTE",detail:"Explicit activity table imported from "+selected.name+"; formulas and other sheets not evaluated."});
  return result;
 }
