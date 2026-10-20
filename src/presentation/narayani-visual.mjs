@@ -1,13 +1,17 @@
+import {layoutOrganicSkillTree} from "./generic-organic-layout.mjs";
 // Single-source construction constellation. Browser reads ONLY project-model.json.
 // No Google Drive / Slack credentials and no implicit completion write.
 const $=id=>document.getElementById(id),SVG_NS="http://www.w3.org/2000/svg";
 const el=(tag,text,className)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(className)n.className=className;return n};
 const svg=(tag,attributes={},text)=>{const n=document.createElementNS(SVG_NS,tag);for(const [key,v] of Object.entries(attributes))n.setAttribute(key,String(v));if(text!==undefined)n.textContent=text;return n};
 let model=null,selected=null,activeTab="constellation",phaseFilter="ALL",term="",monthOffset=0,anchor="2026-10-19",drag=null;
+let organicTree=null;
 // A portrait phone must show usable nodes, not a 1600-unit-wide miniature.
 function initialGraphViewport(){
- return window.matchMedia?.("(max-width: 720px)")?.matches?
-  {x:0,y:0,w:490,h:690}:{x:0,y:0,w:1600,h:840};
+ const phone=window.matchMedia?.("(max-width: 720px)")?.matches;
+ const w=phone?720:1550,h=phone?730:840;
+ if(!organicTree)return {x:0,y:0,w,h};
+ return {x:organicTree.root.x-w/2,y:organicTree.root.y-h*.82,w,h};
 }
 let viewport=initialGraphViewport();
 let graphWasPhone=window.innerWidth<=720;
@@ -65,15 +69,7 @@ function status(a){return a.hold_ids.length||a.mcq_report_state==="BLOCKED"?"hel
  (a.reported_subwork_count||a.mcq_report_state&&a.mcq_report_state!=="NOT_STARTED")?"reported":"unverified"}
 function setupPicker(){const pick=$("phase-picker");for(const p of model.phases){const o=el("option",p.title);o.value=p.id;pick.append(o)}}
 function coordMap(){
- const maximum=Math.max(...model.activities.map(a=>a.master_finish_exclusive_slot),1);
- const phaseMap=new Map(model.phases.map((p,i)=>[p.id,i]));
- const grouped=new Map();
- return new Map(model.activities.map(a=>{
-  const ph=phaseMap.get(a.phase_id),index=grouped.get(a.phase_id)||0;grouped.set(a.phase_id,index+1);
-  // Relative-time horizontal distribution, recognizable phase lanes, stable ID positions.
-  const center=a.type==="Milestone"?a.master_start_slot:(a.master_start_slot+a.master_finish_exclusive_slot)/2;
-  return [a.id,{x:85+1430*center/maximum,y:72+ph*72+((index%4)-1.5)*10}];
- }));
+ return new Map(Object.entries(organicTree.taskPositions));
 }
 function relatedIds(id){
  const ids=new Set([id]),pred=new Map(model.activities.map(a=>[a.id,a.predecessor_ids]));
@@ -86,28 +82,50 @@ function setViewport(){const g=$("graph");g.setAttribute("viewBox",[viewport.x,v
 function renderGraph(){
  const graph=$("graph"),coords=coordMap(),by=byId(),focus=selected?relatedIds(selected):new Set();
  graph.replaceChildren();
- for(const p of model.phases){
-  const lane=model.phases.indexOf(p),y=72+lane*72;
-  graph.append(svg("line",{x1:20,y1:y+32,x2:1580,y2:y+32,stroke:"#214063","stroke-width":1,opacity:.6}));
-  graph.append(svg("text",{x:24,y:y-24,class:"wbs-guide"},p.title));
+ const tree=organicTree;
+ function branchPath(a,b){
+  const h=Math.abs(a.y-b.y);
+  return "M"+a.x+" "+a.y+" C"+a.x+" "+(a.y-h*.42)+" "+b.x+" "+(b.y+h*.42)+" "+b.x+" "+b.y;
+ }
+ // Scope hierarchy grows from the project trunk: it is NEVER laid out by dates.
+ for(const link of tree.branches){
+  graph.append(svg("path",{d:branchPath(link.a,link.b),class:"graph-wbs-branch",
+   "stroke-width":link.from==="PROJECT"?5:3}));
  }
  for(const link of model.links){
-  const a=coords.get(link.from),b=coords.get(link.to),relevance=selected&&(link.to===selected||focus.has(link.to)&&focus.has(link.from));
-  const start=a.x+12,end=b.x-12,dx=Math.max(22,(end-start)/2);
-  const path=svg("path",{d:"M"+start+" "+a.y+" C"+(start+dx)+" "+a.y+" "+(end-dx)+" "+b.y+" "+end+" "+b.y,
-   class:"graph-link"+(relevance?" related":"")+(by.get(link.to).hold_ids.length?" hold":"")+
-   (previewSlot>=0&&by.get(link.from).master_start_slot<=previewSlot&&by.get(link.to).master_start_slot<=previewSlot?" preview-active":"")});
-  graph.append(path);
+  const a=coords.get(link.from),b=coords.get(link.to);
+  const relevance=selected&&(link.to===selected||focus.has(link.to)&&focus.has(link.from));
+  const midY=Math.min(a.y,b.y)-65;
+  graph.append(svg("path",{d:"M"+a.x+" "+a.y+" Q"+((a.x+b.x)/2)+" "+midY+" "+b.x+" "+b.y,
+    class:"graph-link organic-dependency"+(relevance?" related":""),
+    opacity:relevance?.78:.11}));
+ }
+ const root=tree.root;
+ graph.append(svg("circle",{cx:root.x,cy:root.y,r:43,class:"graph-tree-root"}));
+ graph.append(svg("text",{x:root.x,y:root.y+67,"text-anchor":"middle",class:"graph-tree-root-label"},"Project / WBS"));
+ for(const p of tree.nodes){
+  const dim=phaseFilter!=="ALL"&&phaseFilter!==p.id;
+  const g=svg("g",{transform:"translate("+p.x+" "+p.y+")",
+    class:"graph-wbs-skill"+(dim?" dimmed":""),
+    tabindex:"0",role:"button","aria-label":"Focus WBS "+p.label});
+  g.append(svg("circle",{r:31,class:"graph-wbs-skill-halo"}));
+  g.append(svg("circle",{r:23,class:"graph-wbs-skill-core"}));
+  g.append(svg("text",{x:0,y:6,"text-anchor":"middle",class:"graph-wbs-glyph"},"✧"));
+  g.append(svg("text",{x:0,y:50,"text-anchor":"middle",class:"graph-wbs-caption"},p.label.slice(0,36)));
+  g.addEventListener("click",()=>{phaseFilter=p.id;$("phase-picker").value=p.id;focusGraphOn(model.activities.find(a=>a.phase_id===p.id)?.id);renderGraph()});
+  g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();phaseFilter=p.id;$("phase-picker").value=p.id;focusGraphOn(model.activities.find(a=>a.phase_id===p.id)?.id);renderGraph()}});
+  graph.append(g);
  }
  for(const a of model.activities){
   const n=coords.get(a.id),dim=(phaseFilter!=="ALL"&&phaseFilter!==a.phase_id)||term&&!((a.title+" "+a.id).toLowerCase().includes(term));
   const cls="graph-node "+status(a)+(a.type==="Milestone"?" milestone":"")+
    (a.id===selected?" selected":focus.has(a.id)?" related":"")+
    (previewSlot>=a.master_start_slot&&(a.type==="Milestone"?previewSlot===a.master_start_slot:previewSlot<a.master_finish_exclusive_slot)?" preview-active":"");
-  const g=svg("g",{class:cls,transform:"translate("+n.x+" "+n.y+")",tabindex:"0",role:"button","aria-label":a.id+" "+a.title,opacity:dim?.17:1});
-  g.append(svg("circle",{class:"outer",r:a.type==="Milestone"?17:13}));
-  g.append(svg("circle",{class:"dot",r:a.type==="Milestone"?6:4}));
-  g.append(svg("text",{class:"label",x:0,y:-22,"text-anchor":"middle"},a.id));
+  const g=svg("g",{class:cls,transform:"translate("+n.x+" "+n.y+")",tabindex:"0",role:"button",
+    "aria-label":a.id+" "+a.title,opacity:dim?.17:1});
+  g.append(svg("circle",{class:"outer",r:a.type==="Milestone"?18:14}));
+  g.append(svg("circle",{class:"dot",r:a.type==="Milestone"?7:5}));
+  g.append(svg("text",{class:"label",x:0,y:-25,"text-anchor":"middle"},a.id));
   const title=svg("title",{},a.title+" — "+status(a));g.append(title);
   g.addEventListener("click",()=>{if(!drag?.moved)choose(a.id)});
   g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();choose(a.id)}});
@@ -384,13 +402,13 @@ function hook(){
  $("back-2d").addEventListener("click",()=>tab("constellation"));
  $("zoom-in").addEventListener("click",()=>changeZoom(.78));$("zoom-out").addEventListener("click",()=>changeZoom(1.3));
  $("reset-view").addEventListener("click",()=>{viewport=initialGraphViewport();setViewport()});
- $("graph-overview").addEventListener("click",()=>{viewport={x:0,y:0,w:1600,h:840};setViewport()});
+ $("graph-overview").addEventListener("click",()=>{viewport={x:0,y:0,w:organicTree.width,h:organicTree.height};setViewport()});
  $("graph-focus").addEventListener("click",()=>focusGraphOn(selected));
  window.addEventListener("resize",()=>{
   const phone=window.innerWidth<=720;
   if(phone!==graphWasPhone){graphWasPhone=phone;viewport=initialGraphViewport();setViewport()}
  },{passive:true});
- $("phase-picker").addEventListener("change",e=>{phaseFilter=e.target.value;renderGraph()});
+ $("phase-picker").addEventListener("change",e=>{phaseFilter=e.target.value;renderGraph();if(phaseFilter!=="ALL"){const a=model.activities.find(x=>x.phase_id===phaseFilter);if(a)focusGraphOn(a.id)}else{viewport=initialGraphViewport();setViewport()}});
  $("activity-search").addEventListener("input",e=>{term=e.target.value.toLowerCase();renderGraph()});
  $("calendar-prev").addEventListener("click",()=>{monthOffset-=3;renderCalendar()});
  $("calendar-next").addEventListener("click",()=>{monthOffset+=3;renderCalendar()});
@@ -405,6 +423,13 @@ async function main(){
   model=await r.json();
   if(model.format!=="PCK_CONSTRUCTION_VIEW_MODEL_V1"||model.project?.baseline_approved!==false||model.activities?.length!==45||
      model.links?.length!==49||model.channel?.response_contract!=="PCK_MCQ_V1"||model.mcq_summary?.authority!=="REPORTED_ONLY"||model.activities.some(a=>a.checklist.length!==9))throw Error("Invalid or unapproved project model");
+  organicTree=layoutOrganicSkillTree({
+   project:{name:"Narayani WBS"},
+   wbs:model.phases.map(p=>({id:p.id,title:p.title,parent_id:null})),
+   activities:model.activities.map(a=>({id:a.id,wbs_id:a.phase_id,title:a.title})),
+   links:model.links
+  });
+  viewport=initialGraphViewport();
   anchor=model.planning_scenario.start_date;
   $("count-nodes").textContent=model.activities.length;$("count-links").textContent=model.links.length;
   $("count-checks").textContent=model.activities.reduce((n,a)=>n+a.checklist.length,0);
