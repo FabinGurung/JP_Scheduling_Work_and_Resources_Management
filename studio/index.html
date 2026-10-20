@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f8fb"><meta name="description" content="Skyforge reusable project scheduling template and source-governed project records">
+<title>Skyforge Studio · The Reusable Scheduling Engine</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f8fb;color:#203b4f;font:14px/1.6 system-ui,-apple-system,sans-serif}
+main{max-width:1320px;margin:auto;padding:22px 17px 70px}
+a{color:#147e83}h1{font-size:clamp(33px,4.5vw,55px);line-height:1.1;letter-spacing:-.047em;margin:8px 0 12px}
+h2{font-size:22px;letter-spacing:-.02em;margin:0 0 8px}h3{font-size:16px;margin:0 0 5px}
+p{color:#5a7788;margin:7px 0 12px}.eyebrow{color:#198486;font-size:11px;font-weight:850;letter-spacing:.15em;text-transform:uppercase}
+.hero{background:linear-gradient(125deg,#fff,#e8f7f3 78%);border:1px solid #d7e9e7;border-radius:22px;padding:clamp(22px,4vw,44px)}
+.hero p{max-width:780px;font-size:16px}.hero .cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+a.cta-primary,a.cta-outline{display:inline-flex;text-decoration:none;border-radius:11px;padding:11px 18px;font-weight:770;align-items:center;justify-content:center}
+a.cta-primary{background:#147e83;color:#fff}a.cta-outline{border:1px solid #bddbdb;color:#186a75;background:#fff}
+.section-head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin:26px 0 12px}
+.section-head small{color:#78909c}.records{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.record{background:#fff;border:1px solid #d9e7eb;border-radius:16px;padding:19px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;transition:border .15s,transform .15s}
+.record:hover{border-color:#6aadae;transform:translateY(-2px)}
+.record .kind{font-size:10px;color:#427885;text-transform:uppercase;letter-spacing:.08em;font-weight:830}
+.record strong{font-size:18px;line-height:1.3}
+.record p{font-size:12px;margin:0}.record .go{font-size:12px;color:#147e83;font-weight:750;margin-top:auto}
+.layout{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-top:21px}
+.panel{background:#fff;border:1px solid #d9e7eb;border-radius:16px;padding:20px}
+.steps{display:grid;gap:8px}.step{display:grid;grid-template-columns:38px 1fr;gap:13px;align-items:start;background:#f4faf9;border:1px solid #e1efef;padding:12px;border-radius:10px}
+.step-num{border-radius:10px;background:#dbf1ec;color:#147e83;text-align:center;padding:8px 0;font-weight:850}
+.step b{color:#284e62}.step p{font-size:12px;margin:2px 0}
+.links{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.links a{padding:12px;border-radius:10px;background:#f3f9fa;border:1px solid #dfeded;text-decoration:none;font-size:13px;font-weight:730;color:#286375}
+.rule{font-size:12px;background:#fff8ec;border-left:4px solid #bb8b3a;border-radius:8px;padding:11px 14px;margin-top:16px;color:#815f2d}
+@media(max-width:900px){.records{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}}
+@media(max-width:570px){main{padding:11px 9px 40px}.hero{padding:20px}.records{grid-template-columns:1fr}.record{min-height:125px}.links{grid-template-columns:1fr}.hero .cta a{flex:1 1 100%}}
+@media(prefers-reduced-motion:reduce){.record{transition:none}}
+</style></head><body><main>
+<section class="hero">
+<div class="eyebrow">Level 1 / Template architecture / Skyforge</div>
+<h1>One engineering engine.<br>Every construction project.</h1>
+<p>Skyforge Studio is the reusable scheduling workspace. Each project supplies its own WBS, activities, sources, calendars and resources. The CPM/EVM principles and view renderer remain shared, tested and versioned—not copied into separate websites.</p>
+<div class="cta">
+<a class="cta-primary" href="../projects/generic/">Prepare or import a project WBS →</a>
+<a class="cta-outline" href="#projects">Explore existing project records ↓</a>
+</div>
+</section>
+<div class="section-head" id="projects"><h2>Level 2 · Project records</h2><small>Records are source-specific; engine code stays shared</small></div>
+<section class="records" aria-label="Registered project instances">
+<a class="record" href="./projects/narayani/"><span class="kind">Historical project / governed pilot</span><strong>Narayani Parajuli</strong><p>Existing project-specific field dashboard, 45 activities and engineering holds are preserved. The original controlled view remains authoritative for that pilot.</p><span class="go">Open project record →</span></a>
+<a class="record" href="./projects/community-clinic/"><span class="kind">Synthetic / reusable template check</span><strong>Community Clinic</strong><p>Six source-supplied activities demonstrate one computed four-view model.</p><span class="go">Open reusable project instance →</span></a>
+<a class="record" href="./projects/pedestrian-bridge/"><span class="kind">Synthetic / independent WBS</span><strong>Pedestrian Footbridge</strong><p>Eight activities, a different scope taxonomy and branching dependencies; same shared renderer.</p><span class="go">Open reusable project instance →</span></a>
+</section>
+<div class="layout">
+<section class="panel"><h2>How each new project is created</h2>
+<div class="steps"><div class="step"><span class="step-num">01</span><div><b>Describe the WBS</b><p>Tell ChatGPT the scope, divisions, tasks and the construction method—or provide drawings or a schedule.</p></div></div>
+<div class="step"><span class="step-num">02</span><div><b>Normalize the source</b><p>Build WBS IDs, activity IDs, FK relationships and evidence. Identify unknown durations, quantities and resource assumptions explicitly.</p></div></div>
+<div class="step"><span class="step-num">03</span><div><b>Generate reproducible files</b><p>Generate an Excel workbook, canonical JSON, and supported Primavera P6 exchange files using the same validated model.</p></div></div>
+<div class="step"><span class="step-num">04</span><div><b>Instantiate the project record</b><p>Supply one validated project dataset to the shared CPM kernel and four-view renderer. No cloned algorithms or hand-typed dates.</p></div></div></div>
+</section>
+<section class="panel"><h2>One shared engine and knowledge base</h2><p>All former engineering tools remain accessible here, rather than competing as separate primary homepage destinations.</p>
+<div class="links">
+<a href="../projects/generic/">Project digitization & imports ↗</a>
+<a href="../planner.html">CPM / resource planner ↗</a>
+<a href="../kernel-lab.html">Mathematical kernel lab ↗</a>
+<a href="../how/">Research methodology ↗</a>
+<a href="../work-items/">Labor / material reference library ↗</a>
+<a href="../knowledge/">Construction methods ↗</a>
+<a href="../machine/">Machine reproducibility evidence ↗</a>
+<a href="../roadmap.html">Roadmap / outstanding debt ↗</a>
+<a href="../advanced.html">Engineering control console ↗</a>
+<a href="../how/skyforge-anki.csv">Anki recall notes ↓</a>
+</div>
+<div class="rule">Source truth is separate from presentation. Dates and quantities calculated from stated assumptions are draft scenarios until independently verified. A passing deterministic test does not confer construction approval.</div>
+</section>
+</div>
+</main></body></html>
