@@ -145,7 +145,17 @@ export function renderGenericProject(model,mount){
   dependencies.textContent="Dependencies: "+(depsVisible?"shown":"hidden");
   dependencies.setAttribute("aria-pressed",String(depsVisible));
  });
- toolbar.append(overview,dependencies);
+ const branchPicker=el("select","gv-branch-picker");
+ branchPicker.setAttribute("aria-label","Focus WBS skill-tree branch");
+ const blank=el("option","","Jump to a WBS branch…");blank.value="";branchPicker.append(blank);
+ for(const w of tree.nodes){
+  const option=el("option","",w.label);option.value=w.id;branchPicker.append(option);
+ }
+ branchPicker.addEventListener("change",()=>{
+  const w=tree.nodes.find(x=>x.id===branchPicker.value);
+  if(w)centerOn(w);
+ });
+ toolbar.append(overview,dependencies,branchPicker);
  function select(id){
   const a=byId.get(id);if(!a)return;
   selectedId=id;detail.replaceChildren();
