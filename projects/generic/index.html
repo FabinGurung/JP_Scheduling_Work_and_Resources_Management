@@ -57,11 +57,47 @@ background:repeating-linear-gradient(90deg,#eef6f7 0,#eef6f7 19px,#fff 20px);ove
 button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #b8862e;outline-offset:2px}
 @media(max-width:720px){main{padding:11px 9px 50px}.hero{padding:15px}.workspace{padding:9px}.gv-meta{grid-template-columns:1fr}
 .gv-tab{flex:1 1 42%;padding:10px}.gv-gantt-row{grid-template-columns:minmax(100px,36%) minmax(0,1fr)}.gv-gantt-label{font-size:11px}}
+
+/* Organic WBS tree: no time axis. Teal shows scope ancestry; gold shows CPM links. */
+.gv-tree-viewport{height:min(69vh,650px);min-height:420px;max-width:100%;
+ scrollbar-color:#b6d8dc #eff8f8;overscroll-behavior:contain;
+ background:radial-gradient(ellipse at 52% 83%,#d5ede8 0%,#f1faf9 34%,#fcffff 85%);
+ touch-action:pan-x pan-y}
+.gv-tree-toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:8px 0 12px}
+.gv-tree-control{cursor:pointer;border:1px solid #b6d9d7;background:#edf9f5;
+ color:#27666d;padding:9px 13px;font-size:12px;font-weight:750;border-radius:22px}
+.gv-tree-control[aria-pressed=false]{background:#fff;color:#577b86}
+.gv-tree-viewport .gv-tree-branch{filter:drop-shadow(0 0 4px #6bbdb053)}
+.gv-skill-halo{fill:#d8f2ebbd;stroke:#aedcd2;stroke-width:1.2}
+.gv-skill-core{fill:#fafffe;stroke:#5ba99f;stroke-width:2.3}
+.gv-skill-root .gv-skill-core{fill:#d4eee5;stroke:#237f78;stroke-width:3.7}
+.gv-skill-wbs .gv-skill-core{fill:#e7f5f1;stroke:#44998e;stroke-width:3}
+.gv-skill-emblem{fill:#21867c;font-size:26px;font-weight:800}
+.gv-skill-root .gv-skill-emblem{font-size:35px}
+.gv-skill-label{font:650 12px system-ui,-apple-system,sans-serif;fill:#2b5b69;
+ paint-order:stroke;stroke:#fcffff;stroke-width:5;stroke-linejoin:round}
+.gv-skill-label-major{font-size:14px;font-weight:780}
+.gv-skill-activity{cursor:pointer}
+.gv-skill-activity[data-selected=true] .gv-skill-core{fill:#c7eae2;stroke:#107f7c;stroke-width:4}
+.gv-skill-activity[data-selected=true] .gv-skill-halo{fill:#c0eadc}
+.gv-skill-activity:focus-visible .gv-skill-halo{stroke:#c88b31;stroke-width:4}
+.gv-skill-branches path{stroke-dasharray:0;animation:gv-branch-grow 1s ease-out both}
+.gv-skill-activity{animation:gv-leaf-enter .7s ease-out both;transform-box:fill-box}
+@keyframes gv-branch-grow{from{opacity:.1;stroke-dasharray:2 12}to{opacity:1;stroke-dasharray:0}}
+@keyframes gv-leaf-enter{from{opacity:0}to{opacity:1}}
+@media(max-width:720px){
+ .gv-tree-viewport{height:min(66vh,600px);min-height:390px}
+ .gv-tree-control{flex:1 1 45%;padding:10px}
+ .gv-tree-toolbar{gap:7px}
+}
+@media(prefers-reduced-motion:reduce){
+ .gv-skill-branches path,.gv-skill-activity{animation:none!important}
+}
 </style></head><body><main>
 <header class="hero">
  <div class="eyebrow">Skyforge · Generic project studio · Draft-only</div>
  <h1>One schedule. Four consistent views.</h1>
- <p class="deck">This studio reads the same calculated project model for the constellation, Gantt, calendar and checklist. Change the project, and the WBS and views change together—without inheriting Narayani's activity list.</p>
+ <p class="deck">This studio reads the same calculated project model for an organic, upward-growing WBS skill tree, Gantt, calendar and checklist. Change the project, and the WBS and views change together—without inheriting Narayani's activity list.</p>
  <div class="guide"><b>Safety:</b> Both included projects are deliberately synthetic. Durations are assumed, all approvals remain false, and the calendar shows scheduled events rather than actual daily construction progress. A locally selected compiled model stays in your browser and is never uploaded.</div>
  <div class="controls">
   <label for="demo">Project source fixture<select id="demo"><option value="community-clinic">Community clinic — 6 tasks</option><option value="pedestrian-bridge">Pedestrian bridge — 8 tasks</option></select></label>
