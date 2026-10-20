@@ -18,7 +18,7 @@ export function layoutOrganicSkillTree(model){
   if(w.parent_id){const parent=byId.get(w.parent_id);if(!parent)throw Error("Missing WBS parent "+w.parent_id);parent.children.push(w)}
   else roots.push(w);
  }
- if(!roots.length)throw Error("WBS hierarchy lacks root");
+ if(!roots.length)throw Error("WBS hierarchy contains a cycle (no root)");
  const tasks=new Map([...byId].map(([id])=>[id,[]]));
  const used=new Set();
  for(const a of model.activities){
