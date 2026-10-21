@@ -5,9 +5,93 @@
 :root{--bg:#f4f6f9;--p:#fff;--ink:#182230;--muted:#667085;--line:#dfe4eb;--blue:#315fd4}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial;background:var(--bg);color:var(--ink)}header{background:#202733;color:#fff}.bar{max-width:1250px;margin:auto;padding:18px;display:flex;align-items:center;gap:10px}.brand{font-weight:900}.sp{flex:1}.nav{color:#fff;text-decoration:none;border:1px solid #4a5565;border-radius:6px;padding:7px 9px;font-size:11px}.wrap{max-width:1250px;margin:auto;padding:18px}.hero,.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}.hero h1{margin:0 0 6px;font-size:25px}.hero p,.card p{color:var(--muted);font-size:12px;line-height:1.6}.branch{display:inline-block;background:#edf2ff;color:#3452b5;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:800}.surface{display:grid;grid-template-columns:1fr 1fr;gap:12px}.road{display:grid;gap:10px}.phase{background:#fff;border:1px solid var(--line);border-radius:10px;padding:13px;display:grid;grid-template-columns:84px 1fr auto;gap:12px;align-items:start}.ver{font-weight:900;font-size:16px}.phase h3{margin:0 0 5px;font-size:13px}.phase p{margin:0;color:var(--muted);font-size:11px;line-height:1.5}.state{font-size:9px;font-weight:900;border-radius:999px;padding:5px 7px}.done{background:#eaf8f2;color:#087a55}.active{background:#fff2dc;color:#a15c00}.future{background:#eef2f6;color:#475467}.tree{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;background:#111827;color:#dbe4ef;border-radius:8px;padding:13px;white-space:pre-wrap}.note{border-left:4px solid var(--blue);background:#eef4ff;padding:11px;font-size:11px;line-height:1.5;border-radius:7px}
 @media(max-width:800px){.surface{grid-template-columns:1fr}.phase{grid-template-columns:68px 1fr}.phase .state{grid-column:2}}
+
+/* v1.14 debt audit; primary live roadmap, previous SEQ history folded below. */
+.sf-rm-intro{background:linear-gradient(125deg,#fff 4%,#e8f7f2);border:1px solid #d4e7e6;border-radius:18px;padding:25px 28px;margin:0 0 17px}
+.sf-rm-kicker{font-size:11px;color:#1d7e81;text-transform:uppercase;letter-spacing:.13em;font-weight:850}
+.sf-rm-intro h2{font-size:clamp(26px,3vw,40px);margin:5px 0 10px;letter-spacing:-.035em;line-height:1.15}
+.sf-rm-intro p{font-size:14px;line-height:1.6;color:#526b78;max-width:880px}
+.sf-rm-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px}
+.sf-rm-actions a{border:1px solid #bcdadb;background:#fff;border-radius:9px;padding:10px 13px;text-decoration:none;color:#216c71;font-size:12px;font-weight:800}
+.sf-rm-actions a:first-child{background:#217b80;color:#fff}
+.sf-rm-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:0 0 18px}
+.sf-rm-metric{border:1px solid #dbe8e8;border-radius:13px;background:#fff;padding:15px}
+.sf-rm-metric strong{font-size:26px;display:block;color:#277a7b;line-height:1.2}
+.sf-rm-metric span{font-size:11px;color:#527180;font-weight:650}
+.sf-rm-columns{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:15px}
+.sf-rm-panel{background:#fff;border:1px solid #d6e7e9;border-radius:14px;padding:20px}
+.sf-rm-panel h2{font-size:20px;margin:0 0 6px;letter-spacing:-.02em}
+.sf-rm-panel p{font-size:12px;line-height:1.5;color:#55707d}
+.sf-rm-line{border-top:1px solid #e4edee;padding:11px 0;display:flex;gap:13px}
+.sf-rm-line:first-of-type{border-top:0}
+.sf-rm-line div{flex:1;min-width:0}
+.sf-rm-line strong{display:block;font-size:13px;color:#244f5e}
+.sf-rm-line p{margin:2px 0;color:#5a7481;font-size:11px}
+.sf-rm-status{align-self:start;white-space:nowrap;border:1px solid #e1e8e7;border-radius:6px;padding:3px 7px;font-size:10px;color:#55757a;background:#f4f9f7;font-weight:750}
+.sf-rm-status.open{background:#fff7e7;color:#986c2c;border-color:#f0dfbd}
+.sf-rm-records{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:13px 0}
+.sf-rm-record{display:block;background:#f3faf8;border:1px solid #d8eae4;border-radius:10px;padding:13px;text-decoration:none;color:#22656e;font-weight:800}
+.sf-rm-record small{display:block;font-size:10px;color:#6d8791;font-weight:550;margin-top:3px}
+.sf-rm-archive{border:1px solid #dbe6e9;border-radius:12px;margin-top:22px;background:#fff;overflow:hidden}
+.sf-rm-archive>summary{cursor:pointer;padding:16px 20px;color:#46717e;font-weight:750;font-size:13px}
+.sf-rm-archive .old-roadmap{padding:0 12px 15px}
+@media(max-width:720px){.sf-rm-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.sf-rm-columns,.sf-rm-records{grid-template-columns:1fr}
+.sf-rm-intro{padding:18px}.sf-rm-panel{padding:15px}.sf-rm-line{flex-wrap:wrap}.sf-rm-status{order:-1}}
 </style><link rel="stylesheet" href="./assets/sky-theme.css"></head><body>
 <header><div class="bar"><div class="brand">Project Controls Kernel</div><div class="sp"></div><a class="nav" href="./index.html">Project Controls</a><a class="nav" href="./planner.html">Live Scheduler</a><a class="nav" href="./kernel-lab.html">Engine Lab</a><a class="nav" href="./knowledge/">Construction Knowledge</a></div></header>
 <div class="sky-ribbon" aria-hidden="true"></div><section class="storm-hero storm-compact" aria-label="Skyforge roadmap theme"><div class="storm-art" data-dragon-scene aria-hidden="true"></div><div class="storm-inner"><span class="storm-kicker">⚡ Where we are going</span><h1 class="storm-title">From prototype to <em>site intelligence.</em></h1><p class="storm-lead">What the scheduling kernel does, what you can operate today, and what remains a future milestone.</p></div></section><main class="wrap">
+<section class="sf-rm-intro" id="current-roadmap">
+ <div class="sf-rm-kicker">Live roadmap · 22 October 2026 · Skyforge universal beta v1.14 audit</div>
+ <h2>Built, tested, but not yet a governed live construction platform.</h2>
+ <p>One scheduling engine, two sister Level-1 departments (Studio and Projects), four project records and synchronized draft visualization. This roadmap separates what is genuinely implemented from workflows that still depend on source verification, calendar mapping and project approvals.</p>
+ <div class="sf-rm-actions">
+  <a href="./projects/">Explore four project records →</a>
+  <a href="./studio/">Open reusable Studio →</a>
+  <a href="./projects/uploaded-wbs/">Inspect uploaded 45-task WBS →</a>
+  <a href="https://github.com/FabinGurung/JP_Scheduling_Work_and_Resources_Management/actions">Read live GitHub Actions →</a>
+ </div>
+</section>
+<section class="sf-rm-metrics" aria-label="Verified project portfolio statistics">
+ <div class="sf-rm-metric"><strong>4</strong><span>Beta project records / one editing template</span></div>
+ <div class="sf-rm-metric"><strong>45 + 49</strong><span>Uploaded WBS activities + dependencies</span></div>
+ <div class="sf-rm-metric"><strong>405</strong><span>Reported-only Narayani checklist entries</span></div>
+ <div class="sf-rm-metric"><strong>3,888</strong><span>Existing calendar oracle cases in CI</span></div>
+</section>
+<div class="sf-rm-columns">
+ <section class="sf-rm-panel" aria-label="Completed product capabilities">
+  <h2>What we have built</h2>
+  <div class="sf-rm-line"><div><strong>L0 Overview → L1 Studio / Projects → L2 project records</strong><p>Two sister departments; one kernel and shared design system. Four instances use the same beta editor, with Narayani's original governed field page preserved.</p></div><span class="sf-rm-status">LIVE</span></div>
+  <div class="sf-rm-line"><div><strong>WBS & organic constellation editing</strong><p>Drag nodes to arrange local positions; add/rename/delete activities; change WBS membership; create/remove FS, SS, FF, SF links and lags; validate cycles and foreign keys.</p></div><span class="sf-rm-status">BETA</span></div>
+  <div class="sf-rm-line"><div><strong>One computed four-view model</strong><p>Organic constellation, Gantt, calendar events when dates exist and source-defined checklists. Local edits recalculate draft slots, not approved field data.</p></div><span class="sf-rm-status">LIVE</span></div>
+  <div class="sf-rm-line"><div><strong>Deterministic scheduling kernel</strong><p>Typed CPM links and lag, calendar/holiday tests, resource leveling foundation, productivity and basic EVM calculations. Full enterprise integration is not implied.</p></div><span class="sf-rm-status">TESTED</span></div>
+  <div class="sf-rm-line"><div><strong>Source-sensitive digitization</strong><p>CSV/TSV, JSON/task-seed, bounded XLSX, P6 XER/XML and machine-readable PDF text tables. Unsupported source meanings fail closed; scans and full P6 parity are not implemented.</p></div><span class="sf-rm-status">BETA</span></div>
+  <div class="sf-rm-line"><div><strong>Reproducible GitHub Pages publication</strong><p>Git-blob-pinned source snapshots, SHA-256 model readback, Pages privacy allowlist and regression suites. Source files and actual field approvals are not automatically publicized.</p></div><span class="sf-rm-status">TESTED</span></div>
+ </section>
+ <section class="sf-rm-panel" aria-label="Remaining debt and development priorities">
+  <h2>Outstanding debt · ordered</h2>
+  <div class="sf-rm-line"><div><strong>D1 · Mobile and editor interaction acceptance</strong><p>Validate real iPhone Safari drag/pan, preserve user viewport, test multi-touch and large 45-node canopy; automated checks do not replace device QA. User performs visual acceptance.</p></div><span class="sf-rm-status open">QA OPEN</span></div>
+  <div class="sf-rm-line"><div><strong>D2 · Editing ergonomics and scope operations</strong><p>Drag-to-connect dependency edges, editing the WBS branch hierarchy itself, batch edits, keyboard accessibility and a reliable large-graph inspector remain to be built.</p></div><span class="sf-rm-status open">OPEN</span></div>
+  <div class="sf-rm-line"><div><strong>D3 · Draft saving and adoption</strong><p>Current undo/download/import are local only. No cross-device project history, collaborative conflict handling, source-controlled admission or automatic Google Drive commit.</p></div><span class="sf-rm-status open">OPEN</span></div>
+  <div class="sf-rm-line"><div><strong>D4 · Accurate dates/resources on edited scenarios</strong><p>The beta recalculates abstract nominal slots; detailed activity calendars, materials, crews and governed cost/EVM baselines are not yet carried through into edited project views.</p></div><span class="sf-rm-status open">OPEN</span></div>
+  <div class="sf-rm-line"><div><strong>D5 · Excel/P6 round-trip output</strong><p>Input readers are present. End-to-end schema-versioned workbook/P6 export, import-back comparison and MS Project parity remain unverified.</p></div><span class="sf-rm-status open">OPEN</span></div>
+  <div class="sf-rm-line"><div><strong>D6 · Real project authority and IFC/4D</strong><p>Narayani private provenance reconciliation, approved baseline/actual progress, 3D BIM geometry linkage and secure publication still require separate controls.</p></div><span class="sf-rm-status open">OPEN</span></div>
+ </section>
+</div>
+<section class="sf-rm-panel" style="margin-top:14px" aria-label="Project records and immediate QA">
+ <h2>The four project records</h2>
+ <div class="sf-rm-records">
+ <a class="sf-rm-record" href="./projects/narayani/beta.html">Narayani · governed public scenario<small>45 activities / 49 links / 405 source-reported checks / legacy field page preserved</small></a>
+ <a class="sf-rm-record" href="./projects/uploaded-wbs/">Uploaded original construction WBS<small>10 WBS divisions / 45 scheduled activities / 49 relationships / 2 dictionary-only items</small></a>
+ <a class="sf-rm-record" href="./projects/community-clinic/">Community Clinic<small>6 activity synthetic example / same shared editor</small></a>
+ <a class="sf-rm-record" href="./projects/pedestrian-bridge/">Pedestrian Footbridge<small>8 activity synthetic example / same shared editor</small></a>
+ </div>
+ <p><strong>Next practical milestone:</strong> Test an actual uploaded WBS on mobile and desktop, record usability defects, then build drag-to-connect + WBS branch management with revisioned drafts. Calendar/resource/P6 parity and governed field updates remain separate engineering workstreams.</p>
+ <p><strong>Source rule:</strong> Never infer approved completion, site resource quantity, actual cost or contractual dates from an unapproved WBS. Same pinned source and engine can reproduce a calculation; it does not establish that unknown site inputs are correct.</p>
+</section>
+<details class="sf-rm-archive">
+<summary>Historical v0.2–v0.9 roadmap and Narayani P0–P4 arcs (retained for audit)</summary>
+<div class="old-roadmap">
+
 <section class="card" style="border:2px solid #387f9f;background:linear-gradient(110deg,#102439,#173f55);color:#e9fbff">
 <div class="branch" style="background:#174e60;color:#a9f3ff">NEW PRIMARY PRODUCT ROADMAP · VISUAL CONSTRUCTION COMMAND SYSTEM</div>
 <h2 style="font-size:24px;margin:9px 0">One checklist graph. Multiple synchronized views.</h2>
@@ -72,4 +156,4 @@ CURRENT · SEQ16 Light-sky UX + accurate product guidance
 <div class="phase"><div class="ver">v0.8</div><div><h3>4D / IFC</h3><p>IfcWorkPlan, IfcWorkSchedule, IfcTask, resources/costs and model-element ↔ activity links.</p></div><span class="state future">PLANNED</span></div>
 <div class="phase"><div class="ver">v0.9</div><div><h3>Schedule QA + Risk</h3><p>Open ends, lag/constraint/float checks, relationship density, three-point durations and Monte Carlo P50/P80.</p></div><span class="state future">PLANNED</span></div>
 <div class="phase"><div class="ver">v1.0</div><div><h3>Governed Live System</h3><p>Governed project/schedule/progress/work-catalogue sources, authenticated writes, provenance and A9-aligned release controls.</p></div><span class="state future">PLANNED</span></div>
-</div></main><script type="module" src="./assets/sky-dragon.mjs"></script></body></html>
+</div></div></details></main><script type="module" src="./assets/sky-dragon.mjs"></script></body></html>
