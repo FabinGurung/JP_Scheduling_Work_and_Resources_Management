@@ -126,6 +126,7 @@ const sfPageProfiles={
  "projects/community-clinic/index.html":{id:"projects-clinic",title:"Synthetic Community Clinic",intro:"Independent Level-2 project record using the shared Studio renderer.",rule:"Public synthetic activities are not approved field progress.",next:["Project registry","projects/index.html"]},
  "projects/pedestrian-bridge/index.html":{id:"projects-bridge",title:"Synthetic Footbridge",intro:"Independent Level-2 WBS reusing exactly the same generic view engine.",rule:"No synthetic dates are certified baselines.",next:["Project registry","projects/index.html"]},
  "projects/uploaded-wbs/index.html":{id:"uploaded-wbs",title:"Original uploaded WBS · complete lifecycle",intro:"The two uploaded reference documents are compiled into one source-pinned 45-activity, 49-relationship model using the shared Studio engine.",rule:"Uploaded source metadata explicitly marks durations synthetic; no approved calendar or baseline exists.",next:["Browse projects","projects/index.html"]},
+ "projects/narayani/beta.html":{id:"narayani-beta",title:"Narayani universal beta editor",intro:"The same common constellation editor and four-view project model, with 405 source-reported checks read only.",rule:"Editing cannot authorize field progress or overwrite Narayani source authority.",next:["Return to project registry","projects/index.html"]},
  "studio/projects/narayani/index.html":{id:"studio-narayani",title:"Existing governed project",intro:"Original Narayani field controls remain at their existing source-linked project URLs.",rule:"This directory index does not approve source migration.",next:["Open existing field view","projects/narayani/visual.html"]},
  "studio/projects/community-clinic/index.html":{id:"studio-clinic",title:"Synthetic community clinic project",intro:"Calls the one project-independent renderer with its own canonical model.",rule:"Synthetic activities do not establish project-approved progress.",next:["Open Studio","studio/index.html"]},
  "studio/projects/pedestrian-bridge/index.html":{id:"studio-bridge",title:"Synthetic pedestrian footbridge project",intro:"Calls the same shared renderer, with different WBS and activities.",rule:"Synthetic scheduling is not a signed baseline.",next:["Open Studio","studio/index.html"]},
@@ -143,7 +144,7 @@ function pageKey(){
  return tail===""?"index.html":tail.endsWith("/")?tail+"index.html":tail;
 }
 function mountContextGuide(profile){
- if(!profile||["home","narayani-visual","how","generic","studio","projects","projects-clinic","projects-bridge","uploaded-wbs","studio-clinic","studio-bridge","studio-narayani"].includes(profile.id))return;
+ if(!profile||["home","narayani-visual","how","generic","studio","projects","projects-clinic","projects-bridge","uploaded-wbs","narayani-beta","studio-clinic","studio-bridge","studio-narayani"].includes(profile.id))return;
  if(document.querySelector(".sf-page-guide"))return;
  const primary=document.querySelector("main")||document.querySelector(".workspace")||document.querySelector(".wrap")||document.querySelector(".shell");
  if(!primary)return;
