@@ -23,7 +23,7 @@ const manifest={format:"SKYFORGE_GENERIC_VISUAL_MANIFEST_V1",classification:"PUB
  engineering_release:false,baseline_approved:false,
  generic_compiler:"SKYFORGE_PROJECT_INPUT_V1",fixtures:[]};
 for(const f of fixtures){
- let raw,spec;
+ let raw,spec,dictionaryOnly=[];
  if(f.kind==="USER_UPLOADED_SYNTHETIC_WBS"){
   // Original snapshots were already independently compared to both Drive
   // files, byte for byte. Reuse them directly, never synthesize a new WBS.
@@ -51,6 +51,16 @@ for(const f of fixtures){
      candidate.project.source_manifest[0].authority!=="UNVERIFIED_SOURCE"||
      candidate.source_sha256!==createHash("sha256").update(raw).digest("hex"))
    throw Error("Uploaded WBS failed source integrity/admission gates");
+  // The dictionary is broader than the executable seed. Keep unmatched
+  // dictionary work items visible as UNSCHEDULED, not fake CPM nodes.
+  const scheduledCodes=new Set(source.tasks.map(x=>x.task_id.replace(/^[TM]/,"")));
+  dictionaryOnly=[...dict.matchAll(/^\*\s+\*\*(\d{4,5})\s*:\*\*\s*(.+?)\s*$/gm)]
+   .map(m=>({code:m[1],name:m[2].replace(/\*\*/g,"").trim(),
+    status:"DICTIONARY_ONLY_NOT_SCHEDULED"}))
+   .filter(x=>!scheduledCodes.has(x.code));
+  if(dictionaryOnly.length!==2||dictionaryOnly[0].code!=="5020"||
+     dictionaryOnly[1].code!=="9050")
+   throw Error("Unexpected unscheduled WBS dictionary work items: review before publication");
   // Only THIS pinned, reviewed synthetic source is approved for PUBLIC
   // visualization. Activity evidence remains assumed, never approved.
   spec={...candidate.project,classification:"PUBLIC_SYNTHETIC"};
@@ -67,6 +77,11 @@ for(const f of fixtures){
    throw Error("Synthetic source classification/count authority mismatch");
  }
  const model=projectGenericVisual(spec);
+ if(f.kind==="USER_UPLOADED_SYNTHETIC_WBS"){
+  model.source_dictionary_only=dictionaryOnly;
+  model.source_scope="USER_UPLOADED_SYNTHETIC_WBS";
+  model.source_dictionary_item_count=47;
+ }
  validateGenericViewModel(model);
  if(model.counts.activities!==f.activities||model.counts.checklist!==f.checklist||
  (f.links!=null&&model.counts.links!==f.links)||
