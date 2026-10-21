@@ -1,6 +1,6 @@
 {
   "name": "project-controls-kernel",
-  "version": "1.12.0-uploaded-wbs.1",
+  "version": "1.13.0-universal-beta.1",
   "private": true,
   "type": "module",
   "scripts": {
