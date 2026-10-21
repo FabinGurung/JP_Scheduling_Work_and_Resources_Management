@@ -240,7 +240,7 @@ export function renderGenericProject(model,mount,options={}){
   "An upward-growing WBS skill tree, not a Gantt chart. Solid branches connect scope to activities; dotted gold arcs show separate CPM dependencies. "+
   (options.onNodeMoved?"Drag a leaf or WBS branch to arrange your local draft; use the editor above for schedule changes.":"Select a leaf to inspect its computed dates.")),
   toolbar,scroll,detail);
- if(model.activities.length)select(model.activities[0].id);
+ if(model.activities.length)select(byId.has(options.selectedId)?options.selectedId:model.activities[0].id);
  // Begin at the trunk so users can climb through the scope to its tasks.
  requestAnimationFrame(()=>centerOn(tree.root));
  // Gantt uses the SAME start/finish events; no separately entered dates.
