@@ -149,3 +149,9 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
 .sf-beta-file{flex:1 1 100%}
 .sf-beta-btn{padding:10px 9px}
 }
+
+/* Prevent unseen losses of source calendars/checklists after a local scenario edit. */
+.sf-beta-scenario-warning{font-size:12px;line-height:1.55;margin:8px 0 12px;
+ border:1px solid #eadbb7;border-left:4px solid #b88b42;border-radius:8px;
+ padding:10px 12px;background:#fffaf0;color:#775d27}
+.sf-beta-scenario-warning[hidden]{display:none!important}
