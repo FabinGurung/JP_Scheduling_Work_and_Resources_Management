@@ -13,7 +13,7 @@ test("Level 0 links Studio and Projects as sibling Level-1 departments, records 
  assert.match(studio,/href="\.\.\/projects\/"/);
  for(const name of ["community-clinic","pedestrian-bridge","narayani"]){
   assert.ok(projects.includes('href="./'+name+(name==="narayani"?'/beta.html':'/')+'"'));
-  assert.ok(studio.includes('href="../projects/'+name+'/"'));
+  assert.ok(studio.includes('href="../projects/'+name+(name==="narayani"?'/beta.html':'/')+'"'));
   assert.ok(shell.includes('studio/projects/'+name+'/index.html'));
  }
  assert.match(shell,/const tabs=\[\["Overview","index.html"\],\["Studio","studio\/index.html"\],\["Projects","projects\/index.html"\]\]/);
@@ -25,7 +25,7 @@ test("each synthetic project is only a data instance of the exact shared generic
  assert.match(bootstrap,/mountBetaWorkspace\(model,mount\)/);
  assert.match(bootstrap,/adaptNarayaniPublicModel\(published\)/);
  assert.match(bootstrap,/model\.project\.id!==ref\.projectId/);
- assert.match(bootstrap,/model\.classification!=="PUBLIC_SYNTHETIC_DRAFT_ONLY"/);
+ assert.match(bootstrap,/model\.classification!==\(ref\.governed\?/);
  for(const name of records){
   const page=read("projects/"+name+"/index.html");
   assert.match(page,/src\/presentation\/studio-project-page\.mjs/);
