@@ -242,7 +242,15 @@ export function renderGenericProject(model,mount,options={}){
   toolbar,scroll,detail);
  if(model.activities.length)select(byId.has(options.selectedId)?options.selectedId:model.activities[0].id);
  // Begin at the trunk so users can climb through the scope to its tasks.
- requestAnimationFrame(()=>centerOn(tree.root));
+ requestAnimationFrame(()=>{
+  // Keep the user's viewport when the editor recalculates or drops a node.
+  // New project loads still begin at the root of the organic WBS.
+  if(options.initialScroll&&Number.isFinite(options.initialScroll.left)&&
+    Number.isFinite(options.initialScroll.top)){
+   scroll.scrollLeft=Math.max(0,options.initialScroll.left);
+   scroll.scrollTop=Math.max(0,options.initialScroll.top);
+  }else centerOn(tree.root);
+ });
  // Gantt uses the SAME start/finish events; no separately entered dates.
  const horizon=Math.max(1,Math.max(...model.activities.map(a=>a.finish)));
  const gantt=el("div","gv-gantt");
