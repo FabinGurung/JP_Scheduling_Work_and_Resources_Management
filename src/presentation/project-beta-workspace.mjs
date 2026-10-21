@@ -95,7 +95,7 @@ export function mountBetaWorkspace(original,mount){
   syncFields();
   const view=dirty?preview:base;
   renderGenericProject(view,views,{
-   layoutPositions:positions,
+   layoutPositions:positions,selectedId:selected,
    onSelect(id){
     if(draft.activities.some(a=>a.id===id)){
      selected=id;fields.selected.value=id;
