@@ -5,7 +5,8 @@ import {renderGenericProject,validateGenericViewModel} from "./generic-views.mjs
  */
 const registry=Object.freeze({
  "community-clinic":{filename:"community-clinic.json",projectId:"DEMO_CLINIC"},
- "pedestrian-bridge":{filename:"pedestrian-bridge.json",projectId:"DEMO_BRIDGE"}
+ "pedestrian-bridge":{filename:"pedestrian-bridge.json",projectId:"DEMO_BRIDGE"},
+ "uploaded-wbs":{filename:"uploaded-wbs.json",projectId:"UPLOADED_WBS_V1"}
 });
 export function projectRecordRegistry(){return {...registry};}
 export async function bootstrapProjectRecord(doc=document){
