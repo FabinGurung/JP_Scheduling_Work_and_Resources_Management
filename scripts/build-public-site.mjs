@@ -184,7 +184,12 @@ for(const fixture of genericManifest.fixtures){
  model.activities?.length!==allow.activities||model.checklist?.length!==allow.checklist||
  (allow.links!=null&&model.links?.length!==allow.links)||
  (allow.wbs!=null&&model.wbs?.length!==allow.wbs)||
- (allow.scope!=null&&(model.calendar_events?.length!==0||
+ (allow.scope!=null&&(model.source_scope!==allow.scope||
+ model.source_dictionary_item_count!==47||
+ model.source_dictionary_only?.length!==2||
+ model.source_dictionary_only[0].code!=="5020"||
+ model.source_dictionary_only[1].code!=="9050"||
+ model.calendar_events?.length!==0||
  model.activities.some(a=>a.duration_basis!=="ASSUMED_DRAFT")||
  model.activities.filter(a=>a.duration===0).length!==7))||
  model.activities.some(x=>x.status!=="CALCULATED_DRAFT_NOT_ACTUAL")||
