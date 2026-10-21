@@ -107,3 +107,45 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
 .sf-instance #views{margin-top:12px}
 .sf-instance .gv-project{background:#fff;border:1px solid #dae9e9}
 @media(max-width:640px){.sf-instance{padding:12px 9px 35px}.sf-instance-hero{padding:16px}.sf-instance-trail a{flex:1 1 auto;text-align:center}}
+
+/* v1.13 universal beta – same controls across all four project records. */
+.sf-beta-banner{background:linear-gradient(122deg,#f5fffd,#eaf7fa);border:1px solid #cde7e4;
+ border-radius:15px;padding:15px 18px;margin:12px 0 8px}
+.sf-beta-banner strong{font-size:17px;color:#236b71}
+.sf-beta-banner p{font-size:12px;margin:6px 0;color:#527681}
+.sf-beta-actions,.sf-beta-mini{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.sf-beta-actions{margin:10px 0}
+.sf-beta-btn{appearance:none;cursor:pointer;border:1px solid #b9d5d6;background:#fff;
+ padding:9px 12px;font-size:12px;font-weight:750;color:#296b76;border-radius:9px;
+ min-height:37px}
+.sf-beta-btn:disabled{opacity:.4;cursor:not-allowed}
+.sf-beta-btn.sf-beta-primary{background:#177a81;border-color:#177a81;color:#fff}
+.sf-beta-btn.sf-beta-risk{border-color:#e2c6bf;color:#9b6155}
+.sf-beta-file{font-size:12px;color:#587989;width:min(270px,100%);padding:7px}
+.sf-beta-status{font-size:12px;color:#24636a;min-height:21px;font-weight:650}
+.sf-beta-status[data-bad=true]{color:#a34f3e}
+.sf-beta-guard{background:#fff8eb;color:#85652d;padding:9px 12px;border-left:4px solid #c39a51;
+ border-radius:7px;font-size:11px}
+.sf-beta-tools{margin:10px 0}
+.sf-beta-details{border:1px solid #d1e4e5;background:#fff;border-radius:13px;padding:13px}
+.sf-beta-details>summary{cursor:pointer;font-size:13px;font-weight:810;color:#226b72;list-style:auto}
+.sf-beta-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-top:12px}
+.sf-beta-fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
+ border:1px solid #d9e7e9;border-radius:11px;padding:12px;margin:0;min-width:0;background:#fbfdfd}
+.sf-beta-fieldset legend{font-size:12px;font-weight:800;color:#397b83;padding:0 5px}
+.sf-beta-field{display:flex;flex-direction:column;font-size:11px;font-weight:700;
+ color:#53707c;gap:3px;min-width:0}
+.sf-beta-field select,.sf-beta-field input{font:12px system-ui,-apple-system,sans-serif;border:1px solid #c4dae0;
+ border-radius:7px;min-width:0;max-width:100%;height:37px;padding:6px 8px;background:#fff;color:#22485a}
+.sf-beta-mini{grid-column:1/-1}
+.sf-beta-link-summary{grid-column:1/-1;margin:0;font-size:11px;color:#6b8795}
+.gv-drag-enabled{touch-action:none;cursor:grab;user-select:none}
+.gv-drag-enabled:active{cursor:grabbing}
+.gv-drag-enabled .gv-skill-halo{stroke-dasharray:3 4}
+.sf-beta-views{min-width:0}
+@media(max-width:860px){.sf-beta-grid{grid-template-columns:1fr}}
+@media(max-width:540px){.sf-beta-fieldset{grid-template-columns:1fr}
+.sf-beta-actions .sf-beta-btn{flex:1 1 calc(50% - 8px)}
+.sf-beta-file{flex:1 1 100%}
+.sf-beta-btn{padding:10px 9px}
+}
