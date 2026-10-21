@@ -1,4 +1,6 @@
-import {renderGenericProject,validateGenericViewModel} from "./generic-views.mjs";
+import {validateGenericViewModel} from "./generic-views.mjs";
+import {mountBetaWorkspace} from "./project-beta-workspace.mjs";
+import {adaptNarayaniPublicModel} from "./narayani-beta-adapter.mjs";
 /** Level-2 project record bootstrap. ONE shared view engine for every published
  * synthetic instance. No copied project dates, no separate WBS implementations.
  * Raw uploads remain handled by the Level-1 digitization workbench.
@@ -6,7 +8,8 @@ import {renderGenericProject,validateGenericViewModel} from "./generic-views.mjs
 const registry=Object.freeze({
  "community-clinic":{filename:"community-clinic.json",projectId:"DEMO_CLINIC"},
  "pedestrian-bridge":{filename:"pedestrian-bridge.json",projectId:"DEMO_BRIDGE"},
- "uploaded-wbs":{filename:"uploaded-wbs.json",projectId:"UPLOADED_WBS_V1"}
+ "uploaded-wbs":{filename:"uploaded-wbs.json",projectId:"UPLOADED_WBS_V1"},
+ "narayani":{filename:"../narayani/project-model.json",projectId:"PRJ-000007",governed:true}
 });
 export function projectRecordRegistry(){return {...registry};}
 export async function bootstrapProjectRecord(doc=document){
@@ -15,16 +18,18 @@ export async function bootstrapProjectRecord(doc=document){
  if(!mount||!status)throw Error("Project instance shell missing");
  if(!ref){status.textContent="Unregistered project record; no model was calculated.";return false}
  try{
-  const url=new URL("../../projects/generic/"+ref.filename,import.meta.url);
+  const url=ref.governed?new URL("../../projects/narayani/project-model.json",import.meta.url):
+    new URL("../../projects/generic/"+ref.filename,import.meta.url);
   const response=await fetch(url,{cache:"no-store"});
   if(!response.ok)throw Error("Published source-derived project model not available");
-  const model=await response.json();
+  const published=await response.json();
+  const model=ref.governed?adaptNarayaniPublicModel(published):published;
   validateGenericViewModel(model);
   if(model.project.id!==ref.projectId||
-    model.classification!=="PUBLIC_SYNTHETIC_DRAFT_ONLY"||
+    model.classification!==(ref.governed?"PUBLIC_SAFE_GOVERNED_SCENARIO":"PUBLIC_SYNTHETIC_DRAFT_ONLY")||
     model.baseline_approved!==false||model.engineering_release!==false)
    throw Error("Project model does not match registered source and approval limits");
-  renderGenericProject(model,mount);
+  mountBetaWorkspace(model,mount);
   const differences=doc.querySelector("#source-differences");
   if(differences){
    differences.replaceChildren();
@@ -40,7 +45,7 @@ export async function bootstrapProjectRecord(doc=document){
     }
    }
   }
-  status.textContent="Loaded one canonical model · "+model.counts.activities+
+  status.textContent="Universal beta template loaded · "+model.counts.activities+
     " source-supplied activities · "+model.counts.links+" dependencies · "+model.counts.checklist+
     " supplied checklist prompts · SHA "+model.input_sha256;
   return true;
