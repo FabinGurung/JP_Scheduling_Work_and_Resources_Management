@@ -16,7 +16,7 @@ const svg=(tag,attributes={})=>{
 };
 export function validateGenericViewModel(model){
  if(model?.format!=="SKYFORGE_GENERIC_VIEW_MODEL_V1"||
- !["PUBLIC_SYNTHETIC_DRAFT_ONLY","LOCAL_UNVERIFIED_DRAFT_ONLY"].includes(model.classification)||
+ !["PUBLIC_SYNTHETIC_DRAFT_ONLY","LOCAL_UNVERIFIED_DRAFT_ONLY","PUBLIC_SAFE_GOVERNED_SCENARIO"].includes(model.classification)||
  model.engineering_release!==false||model.baseline_approved!==false||
  model.views_basis!=="ONE_CANONICAL_COMPUTED_MODEL_NO_AUTO_APPROVAL")
   throw Error("Model is not an approved public-synthetic generic visualization");
@@ -35,7 +35,11 @@ export function validateGenericViewModel(model){
  }
  for(const edge of model.links)if(!aids.has(edge.from)||!aids.has(edge.to))throw Error("Invalid dependency");
  for(const c of model.checklist)if(!aids.has(c.activity_id)||
-   c.authority!=="PUBLIC_SYNTHETIC_DRAFT"||c.status!=="NOT_REPORTED")throw Error("Invalid checklist provenance");
+  !((c.authority==="PUBLIC_SYNTHETIC_DRAFT"&&c.status==="NOT_REPORTED")||
+    (model.classification==="PUBLIC_SAFE_GOVERNED_SCENARIO"&&
+     c.authority==="PUBLIC_SAFE_REPORTED_ONLY"&&
+     ["NOT_REPORTED","NOT_DONE","IN_PROGRESS","REPORTED_DONE","BLOCKED","NOT_APPLICABLE_REQUESTED"].includes(c.status))))
+  throw Error("Invalid checklist provenance");
  for(const c of model.calendar_events)if(!aids.has(c.activity_id)||
     !/^\d{4}-\d{2}-\d{2}$/.test(c.date)||!["START","FINISH"].includes(c.kind))throw Error("Invalid event-only calendar");
  const nums=model.counts;
@@ -43,7 +47,7 @@ export function validateGenericViewModel(model){
  nums.links!==model.links.length||nums.checklist!==model.checklist.length)throw Error("Model totals disagree");
  return true;
 }
-export function renderGenericProject(model,mount){
+export function renderGenericProject(model,mount,options={}){
  validateGenericViewModel(model);
  if(!mount||typeof mount.replaceChildren!=="function")throw Error("Mount element required");
  mount.replaceChildren();
@@ -53,7 +57,9 @@ export function renderGenericProject(model,mount){
   "Draft schedule · "+model.engine_mode+" · "+model.activities.length+" activities · "+model.links.length+" links · "+model.checklist.length+" source-supplied prompts");
  const ethics=el("p","gv-warning",
  model.classification==="LOCAL_UNVERIFIED_DRAFT_ONLY"?
- "LOCAL UNVERIFIED IMPORT · Durations and quantities are unverified source assertions; no dates, progress, baseline or engineering approval may be inferred.":
+ "LOCAL UNVERIFIED BETA EDIT · No source writes. Schedule slots are recalculated from local assumptions and no approval or field completion is inferred.":
+ model.classification==="PUBLIC_SAFE_GOVERNED_SCENARIO"?
+ "NARAYANI REPORTED-ONLY SCENARIO · Original 405 check statuses are read-only reports, not engineering acceptance. Dates are an unapproved scenario. Original field controls remain on the preserved project page.":
  "SYNTHETIC TRAINING ONLY · Assumed durations; neither construction completion nor an approved baseline. Calendar dates show calculated START/FINISH events, not verified daily progress.");
  project.append(heading,intro,ethics);
  const meta=el("div","gv-meta");
@@ -79,6 +85,22 @@ export function renderGenericProject(model,mount){
  // A botanical/WBS skill constellation — entirely independent from CPM time slots.
  // Solid teal branches signify WBS membership, gold dotted lines signify dependencies.
  const tree=layoutOrganicSkillTree(model);
+ // Visual coordinates may be dragged in a draft, independently of CPM dates.
+ // A layout adjustment does not change source WBS membership or scheduling.
+ if(options.layoutPositions&&typeof options.layoutPositions==="object"){
+  const positions=new Map([["PROJECT",tree.root],...tree.nodes.map(n=>[n.id,n]),
+   ...Object.values(tree.taskPositions).map(n=>[n.id,n])]);
+  for(const [id,pos] of Object.entries(options.layoutPositions)){
+   const point=positions.get(id);
+   if(point&&Number.isFinite(pos?.x)&&Number.isFinite(pos?.y)){
+    point.x=Math.max(20,Math.min(tree.width-20,pos.x));
+    point.y=Math.max(15,Math.min(tree.height-15,pos.y));
+   }
+  }
+  for(const line of [...tree.branches,...tree.dependencies]){
+   line.a=positions.get(line.from);line.b=positions.get(line.to);
+  }
+ }
  const stage=svg("svg",{viewBox:"0 0 "+tree.width+" "+tree.height,width:tree.width,
   height:tree.height,role:"group",
   "aria-label":"Organic project skill tree — WBS branches grow upward from project roots"});
@@ -123,7 +145,38 @@ export function renderGenericProject(model,mount){
   return g;
  }
  stage.append(medallion(tree.root,"root",model.project.name));
- for(const w of tree.nodes)stage.append(medallion(w,"wbs",w.label));
+ function draggable(node,point,id){
+  if(typeof options.onNodeMoved!=="function")return;
+  node.classList.add("gv-drag-enabled");
+  let start=null,moved=false;
+  node.addEventListener("pointerdown",event=>{
+   if(event.button!==0&&event.pointerType!=="touch")return;
+   start={x:event.clientX,y:event.clientY,px:point.x,py:point.y};
+   moved=false;node.setPointerCapture?.(event.pointerId);
+  });
+  node.addEventListener("pointermove",event=>{
+   if(!start)return;
+   const dx=event.clientX-start.x,dy=event.clientY-start.y;
+   if(Math.abs(dx)+Math.abs(dy)>4)moved=true;
+   if(moved)node.setAttribute("transform","translate("+
+    Math.round(Math.max(20,Math.min(tree.width-20,start.px+dx)))+" "+
+    Math.round(Math.max(15,Math.min(tree.height-15,start.py+dy)))+")");
+  });
+  node.addEventListener("pointerup",event=>{
+   if(!start)return;
+   const {x,y,px,py}=start;start=null;
+   if(moved){
+    node.dataset.justDragged="true";
+    options.onNodeMoved(id,{x:Math.round(Math.max(20,Math.min(tree.width-20,px+event.clientX-x))),
+     y:Math.round(Math.max(15,Math.min(tree.height-15,py+event.clientY-y)))});
+   }
+  });
+  node.addEventListener("pointercancel",()=>{start=null});
+ }
+ for(const w of tree.nodes){
+  const node=medallion(w,"wbs",w.label);
+  draggable(node,w,w.id);stage.append(node);
+ }
  const detail=el("div","gv-detail");
  let selectedId=null;
  const scroll=el("div","gv-scroll gv-tree-viewport");
@@ -159,6 +212,7 @@ export function renderGenericProject(model,mount){
  function select(id){
   const a=byId.get(id);if(!a)return;
   selectedId=id;detail.replaceChildren();
+  options.onSelect?.(id);
   detail.append(el("strong","",a.id+" · "+a.title),
    el("p","gv-muted","WBS branch: "+a.wbs_id+" · Scheduled start "+a.start+
     " · finish "+a.finish+(a.start_date?" · "+a.start_date+" → "+a.finish_date:"")+
@@ -174,7 +228,8 @@ export function renderGenericProject(model,mount){
   node.setAttribute("data-task",a.id);node.setAttribute("data-selected","false");
   node.setAttribute("tabindex","0");node.setAttribute("role","button");
   node.setAttribute("aria-label","Inspect "+a.id+": "+a.title);
-  node.addEventListener("click",()=>{select(a.id);centerOn(p)});
+  draggable(node,p,a.id);
+  node.addEventListener("click",()=>{if(node.dataset.justDragged==="true"){node.dataset.justDragged="false";return}select(a.id);centerOn(p)});
   node.addEventListener("keydown",event=>{
    if(event.key==="Enter"||event.key===" "){event.preventDefault();select(a.id);centerOn(p)}
   });
@@ -182,7 +237,8 @@ export function renderGenericProject(model,mount){
  }
  scroll.append(stage);
  panels.get("graph").append(el("p","gv-muted",
-  "An upward-growing WBS skill tree, not a Gantt chart. Solid branches connect scope to activities; dotted gold arcs show separate CPM dependencies. Scroll upward to explore work, or select a leaf to inspect its computed dates."),
+  "An upward-growing WBS skill tree, not a Gantt chart. Solid branches connect scope to activities; dotted gold arcs show separate CPM dependencies. "+
+  (options.onNodeMoved?"Drag a leaf or WBS branch to arrange your local draft; use the editor above for schedule changes.":"Select a leaf to inspect its computed dates.")),
   toolbar,scroll,detail);
  if(model.activities.length)select(model.activities[0].id);
  // Begin at the trunk so users can climb through the scope to its tasks.
@@ -216,7 +272,9 @@ export function renderGenericProject(model,mount){
  const cp=panels.get("checklist");
  if(!model.checklist.length)cp.append(el("p","gv-warning","No source-supplied task checklist was provided. Skyforge does not generate or certify inspection instructions from a bare WBS."));
  else{
-  cp.append(el("p","gv-muted","These are explicitly supplied synthetic prompts. Their state is NOT_REPORTED and no interaction records approval."));
+  cp.append(el("p","gv-muted",model.classification==="PUBLIC_SAFE_GOVERNED_SCENARIO"?
+  "Original Narayani reports, READ ONLY. REPORTED_DONE is not engineer-approved completion. This beta cannot change or approve any field report.":
+  "These are explicitly supplied synthetic prompts. Their state is NOT_REPORTED and no interaction records approval."));
   for(const item of model.checklist){
    const row=el("div","gv-check");
    row.append(el("strong","",item.activity_id+" · "+byId.get(item.activity_id).title),
