@@ -15,9 +15,9 @@ export function adaptNarayaniPublicModel(source){
   source.activities.some(a=>a.checklist?.length!==9||a.status!=="UNVERIFIED"))
   throw Error("Narayani public scenario identity or authority invalid");
  const ids=new Set(source.activities.map(a=>a.id));
- const wbs=source.phases.map(p=>({id:p.id,title:p.title,parent_id:null}));
+ const wbs=source.phases.map(p=>({id:"WBS_"+p.id,title:p.title,parent_id:null}));
  const activities=source.activities.map(a=>({
-  id:a.id,title:a.title,wbs_id:a.phase_id,duration:a.master_work_slots,
+  id:a.id,title:a.title,wbs_id:"WBS_"+a.phase_id,duration:a.master_work_slots,
   start:a.master_start_slot,finish:a.master_finish_exclusive_slot,
   start_date:a.scenario_start,finish_date:a.scenario_finish,
   duration_basis:"ASSUMED_DRAFT",assumption_reason:"Unapproved public scheduling scenario derived from Narayani master WBS",
