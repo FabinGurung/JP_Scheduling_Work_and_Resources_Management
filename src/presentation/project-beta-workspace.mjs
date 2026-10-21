@@ -6,6 +6,12 @@ import {makeBetaDraftSpec,changeBetaDraft,recalculateBetaDraft,betaExportPackage
  */
 const e=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n};
 const named=(node,name)=>node.querySelector('[name="'+name+'"]');
+export function parseNominalDuration(text){
+ if(typeof text!=="string"||!/^(0|[1-9][0-9]*)$/.test(text.trim()))throw Error("Duration must be an explicitly entered nonnegative whole number; blank is unknown, not zero");
+ const n=Number(text.trim());
+ if(!Number.isSafeInteger(n))throw Error("Duration exceeds safe integer precision");
+ return n;
+}
 const row=(name,label,type="text")=>{
  const l=e("label","sf-beta-field",label),v=e("input");
  v.name=name;v.type=type;if(type==="number"){v.min="0";v.step="1"}
@@ -67,7 +73,9 @@ export function mountBetaWorkspace(original,mount){
  form.append(intro);
  const notice=e("p","sf-beta-guard","Editing changes a LOCAL UNVERIFIED SCENARIO only. Source model, 405 Narayani reported check statuses, approved baselines and official project records are NOT modified. Download JSON to save; refresh without export discards edits.");
  const views=e("div","sf-beta-views");
- mount.append(banner,actions,messages,form,notice,views);
+ const scenarioWarning=e("p","sf-beta-scenario-warning",
+  "Draft calculations use abstract nominal slots. When activities or dependencies change, source checklist reports and date projections are not carried into the revised draft; they remain available in the untouched published record.");
+ mount.append(banner,actions,messages,form,notice,scenarioWarning,views);
  const fields={
   selected:selectedField.querySelector("select"),name:activityName.querySelector("input"),
   wbs:wbsField.querySelector("select"),duration:duration.querySelector("input"),
@@ -89,12 +97,17 @@ export function mountBetaWorkspace(original,mount){
   const a=draft.activities.find(a=>a.id===fields.selected.value)??draft.activities[0];
   selected=a.id;fields.selected.value=a.id;fields.name.value=a.name;
   fields.wbs.value=a.wbs_id;fields.duration.value=String(a.duration);
-  currentLinks.textContent=draft.relationships.length+" typed dependencies · no cycles / orphan references admitted.";
+  currentLinks.textContent=draft.relationships.length+" typed dependencies · cycles / orphan references blocked by validation.";
+  scenarioWarning.hidden=!dirty;
  }
  function render(){
   syncFields();
   const view=dirty?preview:base;
+  const previousViewport=views.querySelector(".gv-tree-viewport");
+  const previousScroll=previousViewport?
+   {left:previousViewport.scrollLeft,top:previousViewport.scrollTop}:null;
   renderGenericProject(view,views,{
+   initialScroll:previousScroll,
    layoutPositions:positions,selectedId:selected,
    onSelect(id){
     if(draft.activities.some(a=>a.id===id)){
@@ -132,12 +145,18 @@ export function mountBetaWorkspace(original,mount){
   }catch(error){info("Edit blocked: "+error.message,true);return false}
  }
  fields.selected.addEventListener("change",()=>{selected=fields.selected.value;syncFields()});
- save.addEventListener("click",()=>apply({kind:"UPDATE_ACTIVITY",id:selected,
-  name:fields.name.value,wbs_id:fields.wbs.value,duration:Number(fields.duration.value)}));
+ save.addEventListener("click",()=>{
+  try{apply({kind:"UPDATE_ACTIVITY",id:selected,
+   name:fields.name.value,wbs_id:fields.wbs.value,
+   duration:parseNominalDuration(fields.duration.value)})}
+  catch(error){info("Edit blocked: "+error.message,true)}
+ });
  add.addEventListener("click",()=>{
-  const id=fields.newId.value.trim();
-  if(apply({kind:"ADD_ACTIVITY",activity:{id,name:fields.name.value,wbs_id:fields.wbs.value,
-   duration:Number(fields.duration.value)}})){selected=id;fields.newId.value="";render()}
+  try{
+   const id=fields.newId.value.trim();
+   if(apply({kind:"ADD_ACTIVITY",activity:{id,name:fields.name.value,wbs_id:fields.wbs.value,
+    duration:parseNominalDuration(fields.duration.value)}})){selected=id;fields.newId.value="";render()}
+  }catch(error){info("Add blocked: "+error.message,true)}
  });
  remove.addEventListener("click",()=>apply({kind:"REMOVE_ACTIVITY",id:selected}));
  const relationship=(kind)=>{
