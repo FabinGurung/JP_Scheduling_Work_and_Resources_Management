@@ -1,3 +1,17 @@
+## Skyforge v1.12 — Original uploaded complete WBS, source-verified project visualization (21 October 2026)
+
+**New Level-2 project:** [Uploaded Full Construction WBS](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/uploaded-wbs/) · **Level-1 project registry:** [Projects](projects/index.html) · **Shared model workbench:** [Generic Studio](projects/generic/index.html) (choose Uploaded complete WBS) · **Full research and QA contract:** [v1.12 WBS source reconciliation](docs/research/SKYFORGE_UPLOADED_WBS_VISUALIZATION_V1_12.md).
+
+The two uploaded WBS files in the governed planning source folder were independently compared to repository snapshots and matched byte-for-byte. They describe a **synthetic standard building lifecycle template**, not construction works verified on a real site. A source-pinned build compiles **10 original WBS phases, 45 activities, 49 predecessor relationships and seven zero-duration milestones** through `digitizeTaskSeedJSON` into the same generic four-view source model. There is **no separate hardcoded scheduling engine or independent manual HTML timeline**.
+
+**Important reconciliation:** The dictionary lists 47 work items; the activity seed has 45. `5020` (Shoring & Retaining Walls) and `9050` (Millwork, Cabinetry & Doors) exist in the dictionary but have **no scheduled activity**. The Level-2 project shows both as `DICTIONARY_ONLY_NOT_SCHEDULED` rather than creating tasks or durations. No approved start date/calendar, verified field progress, crew capacity, construction checklists or actual completion is invented. Calendar and Checklist views report these absence conditions.
+
+`scripts/run-generic-visual.mjs` now compiles three public synthetic fixture models and verifies their SHA-256 output byte-for-byte. `scripts/build-public-site.mjs` and GitHub Actions use strict source Git-blob pins and allowlist checks and exclude raw source snapshots from published Pages. Prior Narayani source/evidence contracts are preserved unchanged.
+
+**Next goal (not in this release):** Generic constellation editing—adding WBS activities, dragging nodes and changing dependency links—with revisioned draft save, conflict checks and source provenance. Do not confuse current pan/zoom/activity inspection with authoring.
+
+---
+
 ## Skyforge v1.11 — One Studio, multiple project records (20 October 2026)
 
 **Level 0:** [Overview homepage](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/) · **Level 1 — Studio:** [Engine](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/studio/) · **Level 1 — Projects:** [Project registry](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/) · **Level 2:** records inside Projects. [Full source/governance architecture](docs/architecture/SKYFORGE_LEVELS_AND_PROJECT_TEMPLATE_V1_11.md).
