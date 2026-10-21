@@ -18,7 +18,7 @@ async function modules(relative){
 }
 const approved=["index.html","advanced.html","planner.html","kernel-lab.html","roadmap.html","project-controls-demo.json",
  "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","assets/skyforge-unified.css","assets/studio-project.css","more/legacy-home.html",
- "knowledge/index.html","knowledge/task.html","work-items/index.html","projects/generic/index.html","studio/index.html","projects/index.html","projects/community-clinic/index.html","projects/pedestrian-bridge/index.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
+ "knowledge/index.html","knowledge/task.html","work-items/index.html","projects/generic/index.html","studio/index.html","projects/index.html","projects/community-clinic/index.html","projects/pedestrian-bridge/index.html","projects/uploaded-wbs/index.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
 for(const f of approved)await cp(f);
 await modules("src");
 // Separate, reviewed, PUBLIC work-item catalog only. No private project source files.
@@ -157,14 +157,22 @@ const genericManifest=JSON.parse(genericManifestText);
 if(genericManifest.format!=="SKYFORGE_GENERIC_VISUAL_MANIFEST_V1"||
  genericManifest.classification!=="PUBLIC_SYNTHETIC_DRAFT_ONLY"||
  genericManifest.engineering_release!==false||genericManifest.baseline_approved!==false||
- genericManifest.fixtures?.length!==2)throw Error("Generic four-view publication authority mismatch");
+ genericManifest.fixtures?.length!==3)throw Error("Generic four-view publication authority mismatch");
 const approvedGeneric={"community-clinic":{id:"DEMO_CLINIC",activities:6,checklist:3},
- "pedestrian-bridge":{id:"DEMO_BRIDGE",activities:8,checklist:4}};
+ "pedestrian-bridge":{id:"DEMO_BRIDGE",activities:8,checklist:4},
+ "uploaded-wbs":{id:"UPLOADED_WBS_V1",activities:45,checklist:0,links:49,wbs:10,scope:"USER_UPLOADED_SYNTHETIC_WBS",
+  source:"40f2d8e35bf1fd71c5acb84a64272115cacadb99",
+  dict:"ff1e3126efe8811be9bc398054aec601efaf7482"}};
 await mkdir(join(out,"projects/generic"),{recursive:true});
 for(const fixture of genericManifest.fixtures){
  const allow=approvedGeneric[fixture.name];
  if(!allow||fixture.project_id!==allow.id||fixture.activity_count!==allow.activities||
- fixture.checklist_count!==allow.checklist)throw Error("Generic fixture not allowlisted");
+ fixture.checklist_count!==allow.checklist||
+ (allow.links!=null&&fixture.dependency_count!==allow.links)||
+ (allow.scope!=null&&(fixture.source_scope!==allow.scope||
+ fixture.input_git_blob!==allow.source||
+ fixture.dictionary_git_blob!==allow.dict)))
+  throw Error("Generic fixture not allowlisted");
  const modelBytes=await readFile(join(root,"generated/public/generic",fixture.name+".json"));
  if(createHash("sha256").update(modelBytes).digest("hex")!==fixture.model_sha256)
   throw Error("Generic model digest mismatch "+fixture.name);
@@ -174,6 +182,11 @@ for(const fixture of genericManifest.fixtures){
  model.project?.id!==allow.id||model.input_sha256!==fixture.input_sha256||
  model.engineering_release!==false||model.baseline_approved!==false||
  model.activities?.length!==allow.activities||model.checklist?.length!==allow.checklist||
+ (allow.links!=null&&model.links?.length!==allow.links)||
+ (allow.wbs!=null&&model.wbs?.length!==allow.wbs)||
+ (allow.scope!=null&&(model.calendar_events?.length!==0||
+ model.activities.some(a=>a.duration_basis!=="ASSUMED_DRAFT")||
+ model.activities.filter(a=>a.duration===0).length!==7))||
  model.activities.some(x=>x.status!=="CALCULATED_DRAFT_NOT_ACTUAL")||
  modelBytes.toString("utf8").includes("drive.google.com")||
  modelBytes.toString("utf8").includes("docs.google.com")||
@@ -233,7 +246,7 @@ for(const relative of skinned){
 }
 const essential=["index.html","projects/narayani/visual.html","projects/narayani/index.html",
 "advanced.html","planner.html","kernel-lab.html","roadmap.html","machine/index.html",
-"machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","work-items/index.html","projects/generic/index.html","studio/index.html","projects/index.html","projects/community-clinic/index.html","projects/pedestrian-bridge/index.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","more/legacy-home.html"];
+"machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","work-items/index.html","projects/generic/index.html","studio/index.html","projects/index.html","projects/community-clinic/index.html","projects/pedestrian-bridge/index.html","projects/uploaded-wbs/index.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","more/legacy-home.html"];
 if(essential.some(p=>!skinned.includes(p)))throw Error("Site shell incomplete: "+essential.filter(p=>!skinned.includes(p)));
 console.log("SKYFORGE SHARED SHELL PASS:",skinned.length,"public pages unified; legacy pages preserved under More.");
 console.log("Public Pages allowlist PASS: no repository-wide upload, no private engineering files");
