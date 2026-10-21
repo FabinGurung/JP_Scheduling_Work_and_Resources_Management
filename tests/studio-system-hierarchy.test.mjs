@@ -12,7 +12,7 @@ test("Level 0 links Studio and Projects as sibling Level-1 departments, records 
  assert.match(home,/href="\.\/projects\/"/);
  assert.match(studio,/href="\.\.\/projects\/"/);
  for(const name of ["community-clinic","pedestrian-bridge","narayani"]){
-  assert.ok(projects.includes('href="./'+name+'/"'));
+  assert.ok(projects.includes('href="./'+name+(name==="narayani"?'/beta.html':'/')+'"'));
   assert.ok(studio.includes('href="../projects/'+name+'/"'));
   assert.ok(shell.includes('studio/projects/'+name+'/index.html'));
  }
@@ -22,7 +22,8 @@ test("each synthetic project is only a data instance of the exact shared generic
  const bootstrap=read("src/presentation/studio-project-page.mjs");
  assert.match(bootstrap,/from "\.\/generic-views\.mjs"/);
  assert.match(bootstrap,/validateGenericViewModel\(model\)/);
- assert.match(bootstrap,/renderGenericProject\(model,mount\)/);
+ assert.match(bootstrap,/mountBetaWorkspace\(model,mount\)/);
+ assert.match(bootstrap,/adaptNarayaniPublicModel\(published\)/);
  assert.match(bootstrap,/model\.project\.id!==ref\.projectId/);
  assert.match(bootstrap,/model\.classification!=="PUBLIC_SYNTHETIC_DRAFT_ONLY"/);
  for(const name of records){
