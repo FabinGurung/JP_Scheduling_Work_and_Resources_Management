@@ -94,6 +94,8 @@ jobs:
           test -s dist/projects/generic/index.html
           test -s dist/projects/generic/community-clinic.json
           test -s dist/projects/generic/pedestrian-bridge.json
+          test -s dist/projects/generic/uploaded-wbs.json
+          test -s dist/projects/uploaded-wbs/index.html
           test -s dist/projects/generic/manifest.json
           test ! -e dist/machine/generic-projects/community-clinic.json
           test ! -e dist/machine/generic-projects/pedestrian-bridge.json
@@ -104,6 +106,7 @@ jobs:
           test -s dist/projects/narayani/manifest.json
           test ! -e dist/machine/project-mappings/narayani-v0.1.json
           test ! -e dist/machine/source-snapshots/wbs_schedule_sample/schedule_seed.json
+          test ! -e dist/machine/source-snapshots/wbs_schedule_sample/wbs_dictionary.md
       - name: Validate upstream registry and fail-closed project data
         run: |
           python - <<'PY'
