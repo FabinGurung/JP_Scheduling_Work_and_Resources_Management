@@ -4,6 +4,7 @@ import {readFileSync} from "node:fs";
 import {projectGenericVisual} from "../src/visual/generic-project-model.mjs";
 import {validateGenericViewModel} from "../src/presentation/generic-views.mjs";
 import {adaptNarayaniPublicModel} from "../src/presentation/narayani-beta-adapter.mjs";
+import {parseNominalDuration} from "../src/presentation/project-beta-workspace.mjs";
 import {makeBetaDraftSpec,assertBetaDraft,changeBetaDraft,recalculateBetaDraft,betaExportPackage,restoreBetaPackage} from "../src/presentation/beta-draft.mjs";
 const read=p=>readFileSync(new URL("../"+p,import.meta.url),"utf8");
 const fixture=JSON.parse(read("machine/generic-projects/community-clinic.json"));
@@ -128,4 +129,24 @@ test("four canonical project records share one beta UI module; original Narayani
  assert.match(index,/href="\.\/narayani\/beta\.html"/);
  assert.match(builder,/"projects\/narayani\/beta\.html"/);
  assert.match(read("projects/narayani/visual.html"),/id="graph"|id=\\"graph\\"/);
+});
+
+test("blank/invalid duration is blocked, never silently converted into a milestone",()=>{
+ for(const x of ["","  ","-1","3.25","2e1","1.0","NaN","Infinity","abc"])
+  assert.throws(()=>parseNominalDuration(x),/duration|Duration/);
+ assert.equal(parseNominalDuration("0"),0);
+ assert.equal(parseNominalDuration("25"),25);
+ assert.equal(parseNominalDuration(" 250 "),250);
+ assert.throws(()=>parseNominalDuration("99999999999999999999999999"),/safe integer/);
+});
+test("all four project editor rerenders preserve constellation position and show scenario-loss warning",()=>{
+ const viewer=read("src/presentation/generic-views.mjs"),
+  editor=read("src/presentation/project-beta-workspace.mjs"),
+  style=read("assets/studio-project.css");
+ assert.match(editor,/initialScroll:previousScroll/);
+ assert.match(viewer,/scroll\.scrollLeft=Math\.max\(0,options\.initialScroll\.left\)/);
+ assert.match(viewer,/scroll\.scrollTop=Math\.max\(0,options\.initialScroll\.top\)/);
+ assert.match(editor,/parseNominalDuration\(fields\.duration\.value\)/);
+ assert.match(editor,/source checklist reports and date projections/);
+ assert.match(style,/\.sf-beta-scenario-warning\[hidden\]/);
 });
