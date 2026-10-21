@@ -105,7 +105,7 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
  <p class="deck">This studio reads the same calculated project model for an organic, upward-growing WBS skill tree, Gantt, calendar and checklist. Change the project, and the WBS and views change together—without inheriting Narayani's activity list.</p>
  <div class="guide"><b>Safety:</b> Both included projects are deliberately synthetic. Durations are assumed, all approvals remain false, and the calendar shows scheduled events rather than actual daily construction progress. A locally selected compiled model stays in your browser and is never uploaded.</div>
  <div class="controls">
-  <label for="demo">Project source fixture<select id="demo"><option value="community-clinic">Community clinic — 6 tasks</option><option value="pedestrian-bridge">Pedestrian bridge — 8 tasks</option></select></label>
+  <label for="demo">Project source fixture<select id="demo"><option value="community-clinic">Community clinic — 6 tasks</option><option value="pedestrian-bridge">Pedestrian bridge — 8 tasks</option><option value="uploaded-wbs">Uploaded complete WBS — 45 activities</option></select></label>
   <label for="local-id">Local project ID<input id="local-id" value="LOCAL_WBS" type="text" pattern="[A-Za-z][A-Za-z0-9_-]*" maxlength="64"></label>
   <label for="local-name">Local project description<input id="local-name" value="Unverified Local WBS" type="text" maxlength="180"></label>
   <label for="dictionary">Optional WBS dictionary Markdown<input id="dictionary" type="file" accept=".md,.txt,text/markdown,text/plain" aria-describedby="upload-help"></label>
@@ -134,7 +134,7 @@ import {digitizeXer,digitizeP6Xml} from "../src/kernel/p6-native-import.mjs";
 import {digitizeXlsx} from "../src/kernel/xlsx-native-import.mjs";
 import {pdfTextItemsToTable,digitizePdfTable,pdfSourceSha256} from "../src/kernel/pdf-table-import.mjs";
 import {sha256Hex} from "../src/kernel/sha256.mjs";
-const choices=new Set(["community-clinic","pedestrian-bridge"]);
+const choices=new Set(["community-clinic","pedestrian-bridge","uploaded-wbs"]);
 const state=document.getElementById("state"),mount=document.getElementById("views");
 const info=document.getElementById("import-diagnostics"),download=document.getElementById("save-draft");
 let candidate=null,pdfInput=null;
