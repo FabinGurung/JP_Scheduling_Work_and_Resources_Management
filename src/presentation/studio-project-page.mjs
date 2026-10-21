@@ -25,6 +25,21 @@ export async function bootstrapProjectRecord(doc=document){
     model.baseline_approved!==false||model.engineering_release!==false)
    throw Error("Project model does not match registered source and approval limits");
   renderGenericProject(model,mount);
+  const differences=doc.querySelector("#source-differences");
+  if(differences){
+   differences.replaceChildren();
+   if(Array.isArray(model.source_dictionary_only)){
+    for(const item of model.source_dictionary_only){
+     if(item.status!=="DICTIONARY_ONLY_NOT_SCHEDULED"||
+        !/^\d{4,5}$/.test(item.code)||
+        typeof item.name!=="string"||item.name.length>180)
+      throw Error("Malformed unscheduled dictionary item");
+     const p=doc.createElement("p");
+     p.textContent=item.code+" · "+item.name+" — DICTIONARY ONLY (no scheduled duration or dependency)";
+     differences.append(p);
+    }
+   }
+  }
   status.textContent="Loaded one canonical model · "+model.counts.activities+
     " source-supplied activities · "+model.counts.links+" dependencies · "+model.counts.checklist+
     " supplied checklist prompts · SHA "+model.input_sha256;
