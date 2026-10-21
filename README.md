@@ -1,3 +1,15 @@
+## Skyforge v1.14 — Audited roadmap, editor safety repairs (22 October 2026)
+
+**Current product roadmap:** [Skyforge live roadmap](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/roadmap.html) · **Project registry:** [all four projects](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/) · **Engine Studio:** [reusable template](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/studio/).
+
+**Completed in this arc:** synchronized the public roadmap to the actual v1.13 source, documented what is built and all D1–D6 remaining engineering debts, and archived the older SEQ/v0.x product roadmap in a collapsible section instead of presenting it as current status. Corrected two shared beta defects: a blank duration must no longer silently become a zero-duration milestone, and constellation browsing position is retained when editing/dragging rather than snapping to project origin. Draft recalculation now visibly warns that source calendars and checklist reports are not automatically imported into a revised scenario. Added regression tests that keep these requirements enforced across the shared template.
+
+**Incomplete by design:** user-led real-device mobile QA, drag-to-connect and editable WBS parent structure, cross-device persistence/governed project revision adoption, calendar/resource integration in draft edits, verified P6/Excel exports and round-trip, secure actual-cost/progress baselines and IFC geometry-linked 4D. The prior 45/49/405 Narayani source contracts and two unmatched WBS dictionary work items remain unchanged.
+
+**Status rule:** zero open GitHub issues is not evidence of zero technical debt; this roadmap is the current capability and known-debt ledger. Passing regression tests certifies reproducibility of supported mathematical contracts, not engineering approval or physical site facts.
+
+---
+
 ## Skyforge v1.13 — Universal Beta Constellation Editor, four project records (21 October 2026)
 
 **One shared main template** now powers all four project beta workspaces and the [generic import Studio](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/generic/). [Full source/QA contract](docs/research/SKYFORGE_UNIVERSAL_BETA_EDITOR_V1_13.md).
