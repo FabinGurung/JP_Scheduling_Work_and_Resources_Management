@@ -255,7 +255,7 @@ export function renderGenericProject(model,mount,options={}){
   if(a.critical)bar.dataset.critical="true";
   track.append(bar);row.append(label,track);gantt.append(row);
  }
- panels.get("gantt").append(el("p","gv-muted","Bars represent calculated event slots. They use the same activities and time coordinates as the constellation."),gantt);
+ panels.get("gantt").append(el("p","gv-muted","Bars represent recalculated event slots from the same project model. The constellation uses WBS ancestry, not this time axis."),gantt);
  const calendarPanel=panels.get("calendar");
  if(!model.calendar_events.length)calendarPanel.append(el("p","gv-warning","No calendar dates exist in this model. Abstract slots must not be displayed as real dates."));
  else{
