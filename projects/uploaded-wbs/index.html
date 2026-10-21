@@ -13,6 +13,7 @@
 .sf-source-qa .stat strong{display:block;font-size:19px;color:#167d81}
 .sf-source-qa .stat span{color:#547b82;font-size:11px}
 .sf-source-qa a{font-weight:730;color:#15787c}
+.sf-source-differences p{padding:6px 9px;margin:6px 0;border-radius:8px;border-left:3px solid #be943d;background:#fff7e9;color:#806024;font-weight:650;font-size:12px}
 @media(max-width:670px){.sf-source-qa .stat{flex:1 1 30%;text-align:center}}
 </style></head>
 <body data-studio-project="uploaded-wbs">
@@ -39,6 +40,7 @@
 <p>Imported from <b>Project Schedule Seed Data.md</b> and <b>Master Construction WBS Dictionary.md</b>. The published model is deterministically rebuilt from Git-pinned snapshots of both uploaded files. The source input and derived output hashes are verified by GitHub Actions.</p>
 <p><b>Scenario interpretation:</b> Supplied durations are hypothetical nominal day slots. No start date, local calendar, labor/resource capacity, completion, project approval or field checklist was contained in those two files. These are shown as unknown—not invented.</p>
 <p><b>Explore:</b> In <b>Constellation</b>, use the <b>Jump to a WBS branch</b> selector to travel from planning through handover; select an activity leaf to inspect its original ID and calculated network slot. The Gantt displays the same slots. The Calendar and Checklists tabs truthfully report missing source data.</p>
+<div id="source-differences" aria-label="Unscheduled WBS dictionary entries" class="sf-source-differences"></div>
 </section>
 <p id="record-status" class="sf-instance-status" role="status" aria-live="polite">Loading the immutable user-uploaded source-derived project model…</p>
 <div id="views"></div>
