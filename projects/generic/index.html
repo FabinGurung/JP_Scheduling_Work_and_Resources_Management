@@ -2,7 +2,8 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f5f8fb">
 <title>Generic Project Studio · Skyforge</title>
-<meta name="description" content="One tested project-specific WBS and schedule drives four deterministic read-only planning views.">
+<meta name="description" content="One reusable beta engine: digitize schedules, edit WBS and dependencies, drag constellation nodes, and recalculate four coordinated draft views.">
+<link rel="stylesheet" href="../../assets/studio-project.css">
 <style>
 :root{color-scheme:light}
 *{box-sizing:border-box}
@@ -127,7 +128,8 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
 <footer style="color:#668295;font-size:12px">Skyforge research workbench · read-only, public-synthetic fixtures · no permit, construction or payment release · previous Narayani field workflow remains independent.</footer>
 </main>
 <script type="module">
-import {renderGenericProject,validateGenericViewModel} from "../src/presentation/generic-views.mjs";
+import {validateGenericViewModel} from "../src/presentation/generic-views.mjs";
+import {mountBetaWorkspace} from "../src/presentation/project-beta-workspace.mjs";
 import {digitizeGenericTable,digitizeTaskSeedJSON} from "../src/kernel/generic-digitizer.mjs";
 import {projectGenericVisual} from "../src/visual/generic-project-model.mjs";
 import {digitizeXer,digitizeP6Xml} from "../src/kernel/p6-native-import.mjs";
@@ -170,7 +172,7 @@ const showDiagnostics=messages=>{
 };
 function updateDraft(value){candidate=value;download.hidden=!candidate}
 function showModel(model,message){
- validateGenericViewModel(model);renderGenericProject(model,mount);state.textContent=message;
+ validateGenericViewModel(model);mountBetaWorkspace(model,mount);state.textContent=message;
 }
 async function loadDemo(key){
  if(!choices.has(key))throw Error("Unknown synthetic fixture");
