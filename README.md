@@ -1,3 +1,17 @@
+## Skyforge v1.13 — Universal Beta Constellation Editor, four project records (21 October 2026)
+
+**One shared main template** now powers all four project beta workspaces and the [generic import Studio](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/generic/). [Full source/QA contract](docs/research/SKYFORGE_UNIVERSAL_BETA_EDITOR_V1_13.md).
+
+**Universal editable project pages:** [Community Clinic](projects/community-clinic/index.html) · [Pedestrian Bridge](projects/pedestrian-bridge/index.html) · [Original uploaded 45-task WBS](projects/uploaded-wbs/index.html) · [Narayani unified beta](projects/narayani/beta.html).
+
+The previously discussed editing tools had **not** been implemented at v1.12: those pages were calculated view-only. They now use one reusable beta UI (`src/presentation/project-beta-workspace.mjs`), one `src/presentation/generic-views.mjs` and the existing `projectGenericVisual` + `compileProjectDraft` to support **activity/WBS medallion dragging, adding/editing/deleting local draft activities, typed FS/SS/FF/SF dependency additions/removals, cycle and FK validation, recomputed Gantt/constellation, undo, restore, and source-hash-bound JSON download/import**. Dragging layout changes only coordinates, not CPM results. All edits remain explicitly **LOCAL_UNVERIFIED**, never live approved construction records.
+
+Narayani's `projects/narayani/project-model.json` is read only through a public-safe adapter, retaining 405 original reported checklist states as `PUBLIC_SAFE_REPORTED_ONLY`. The original field/dashboard, 3D view, inspections and evidence status remain at their established URLs and are untouched. When modifying the local Narayani draft, checklist reports are not carried forward as approved records.
+
+**Not implemented/claimed:** automatically writing edited drafts to Drive, collaborative edits, physically tested iPhone/Safari interactions, real-project baseline admission or cloning Narayani-only 3D/field-management screens across all public examples. The user will perform manual graphical QA after release.
+
+---
+
 ## Skyforge v1.12 — Original uploaded complete WBS, source-verified project visualization (21 October 2026)
 
 **New Level-2 project:** [Uploaded Full Construction WBS](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/uploaded-wbs/) · **Level-1 project registry:** [Projects](projects/index.html) · **Shared model workbench:** [Generic Studio](projects/generic/index.html) (choose Uploaded complete WBS) · **Full research and QA contract:** [v1.12 WBS source reconciliation](docs/research/SKYFORGE_UPLOADED_WBS_VISUALIZATION_V1_12.md).
