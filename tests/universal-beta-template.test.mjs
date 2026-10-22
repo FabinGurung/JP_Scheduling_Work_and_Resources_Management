@@ -102,7 +102,7 @@ test("Narayani's 405 reported check states remain read-only, while public scenar
  assert.equal(beta.checklist.length,0);
  assert.equal(model.checklist.length,405);
 });
-test("four canonical project records share one beta UI module; original Narayani controls remain separate",()=>{
+test("four canonical project records share the read-only engine; internal source draft validator remains offline",()=>{
  const boot=read("src/presentation/studio-project-page.mjs"),
   editor=read("src/presentation/project-beta-workspace.mjs"),
   viewer=read("src/presentation/generic-views.mjs"),
@@ -119,13 +119,16 @@ test("four canonical project records share one beta UI module; original Narayani
   assert.match(page,/studio-project\.css/);
   assert.ok(boot.includes('"'+slug+'":'));
  }
- assert.match(boot,/mountBetaWorkspace\(model,mount\)/);
+ assert.match(boot,/renderGenericProject\(model,mount\)/);
+ assert.doesNotMatch(boot,/mountBetaWorkspace|project-beta-workspace/);
  assert.match(boot,/adaptNarayaniPublicModel\(published\)/);
  assert.match(editor,/changeBetaDraft/);
  assert.match(editor,/recalculateBetaDraft/);
  assert.match(editor,/Download versioned draft/);
  assert.match(viewer,/pointermove/);
- assert.match(viewer,/onNodeMoved/);
+ assert.match(viewer,/gv-inspector-bubble/);
+ assert.match(viewer,/gv-dependency-hit/);
+ assert.doesNotMatch(viewer,/onNodeMoved|draggable\(/);
  assert.match(index,/href="\.\/narayani\/beta\.html"/);
  assert.match(builder,/"projects\/narayani\/beta\.html"/);
  assert.match(read("projects/narayani/visual.html"),/id="graph"|id=\\"graph\\"/);
