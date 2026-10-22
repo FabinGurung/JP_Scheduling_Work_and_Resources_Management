@@ -155,3 +155,25 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
  border:1px solid #eadbb7;border-left:4px solid #b88b42;border-radius:8px;
  padding:10px 12px;background:#fffaf0;color:#775d27}
 .sf-beta-scenario-warning[hidden]{display:none!important}
+
+/* v1.15 · Published Pages is a read-only WBS inspector, not an editor. */
+.gv-graph-shell{position:relative;max-width:100%;overflow:visible}
+.gv-inspector-bubble{position:absolute;z-index:20;pointer-events:none;
+ width:min(315px,calc(100% - 12px));max-width:calc(100% - 12px);
+ padding:11px 14px;border:1px solid #bcd9d8;border-radius:12px;
+ color:#234a58;background:rgba(255,255,255,.985);
+ box-shadow:0 9px 30px rgba(25,74,88,.19);font:12px/1.5 system-ui,-apple-system,sans-serif;
+ overflow-wrap:anywhere}
+.gv-inspector-bubble[hidden]{display:none!important}
+.gv-inspector-bubble strong{display:block;color:#146e78;font-size:12px;line-height:1.35;margin-bottom:5px}
+.gv-inspector-bubble span{display:block;color:#436a78;font-size:11px}
+.gv-branch-hit,.gv-dependency-hit{pointer-events:stroke;cursor:help}
+.gv-branch-hit:focus,.gv-dependency-hit:focus{stroke:rgba(25,129,124,.32)!important;outline:none}
+.gv-branch-hit[data-inspected=true]{stroke:rgba(43,138,124,.22)!important}
+.gv-dependency-hit[data-inspected=true]{stroke:rgba(188,137,45,.31)!important}
+.gv-skill-wbs,.gv-skill-root,.gv-skill-activity{cursor:help;touch-action:pan-x pan-y}
+.gv-skill-wbs[data-inspected=true] .gv-skill-halo,
+.gv-skill-root[data-inspected=true] .gv-skill-halo,
+.gv-skill-activity[data-inspected=true] .gv-skill-halo{stroke:#b98530;stroke-width:3}
+.gv-branch-hit:focus-visible,.gv-dependency-hit:focus-visible{stroke:rgba(190,135,36,.45)!important}
+.gv-skill-root:focus-visible .gv-skill-halo,.gv-skill-wbs:focus-visible .gv-skill-halo{stroke:#b98530;stroke-width:3.5}
