@@ -1,3 +1,19 @@
+## Skyforge v1.15 — Natural-language AI source editing; GitHub Pages is a read-only inspector (22 October 2026)
+
+**Authoritative design:** [AI-first source revision contract](docs/architecture/SKYFORGE_AI_FIRST_SOURCE_REVISION_V1_15.md) · **Updated current roadmap:** [public roadmap](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/roadmap.html) · [Four project records](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/) · [Universal read-only Studio viewer](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/generic/).
+
+**Owner preference implemented:** No user-facing GitHub Pages project authoring. The owner describes changes to an AI in natural language. The AI resolves the exact project/source revision, translates the instruction to a structured source-bound operation set, validates WBS FK, DAG cycles, typed FS/SS/FF/SF links, duration evidence and source SHA, then prepares a versioned candidate. GitHub records authorized public-safe source revisions, Actions verifies/builds them, and Pages displays only read-only derived models. Reproducibility is not proof of real site quantities, duration productivity, completion or approved baselines.
+
+**Viewer:** All four Level-2 project pages + Generic Studio now load `renderGenericProject` without `mountBetaWorkspace`. Floating hover/click/touch/focus tooltips reveal the full labels and provenance of project/WBS/activity nodes, teal WBS membership connections and gold typed dependency edges including lag. Navigation, tab switching, origin, WBS branch selection and dependency visibility toggle remain inspection-only. No node dragging, activity creation/deletion, dependency editor, file-upload intake or editable source export on the public Pages surface.
+
+**Offline AI contract:** `src/kernel/ai-source-revision.mjs` has typed operation validation and candidate calculation for `ADD/UPDATE/REMOVE_ACTIVITY`, `ADD/REMOVE_LINK` and `ADD/RENAME/MOVE/REMOVE_WBS`. It requires exact source SHA and returns only an unapproved proposal. This is **not** an LLM hosted in GitHub Pages or an autonomous source updater; the AI assistant in the trusted connected workflow carries out language interpretation, source reconcile, candidate creation and separately authorized GitHub source commits. Native import modules remain available to trusted tooling but public browser forms were retired.
+
+**Release safeguards:** `scripts/build-public-site.mjs` excludes the legacy editor, draft helper and AI authoring module from Pages distribution. Regression tests require no browser editing, test the AI changeset constraints and preserve the earlier 3,888 calendar oracle and source-integrity controls. Narayani's earlier field/status UI stays available and no inspection approval is fabricated.
+
+**Outstanding:** Agent-native automatic authorized source write workflow, secure Drive source reconciliation, P6/Excel certified import-export round-trips, full resource/calendar/baseline actuals, IFC/4D geometry and device-specific Safari UI acceptance. Human review remains necessary for genuine construction authority, not for every small source presentation edit.
+
+---
+
 ## Skyforge v1.14 — Audited roadmap, editor safety repairs (22 October 2026)
 
 **Current product roadmap:** [Skyforge live roadmap](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/roadmap.html) · **Project registry:** [all four projects](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/) · **Engine Studio:** [reusable template](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/studio/).
