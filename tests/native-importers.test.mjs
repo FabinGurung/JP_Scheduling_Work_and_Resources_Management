@@ -144,14 +144,12 @@ test("PDF coordinate extraction requires exact visible schedule headers and expl
  assert.ok(d.diagnostics.some(x=>x.code==="PDF_TEXT_ALIGNMENT_REVIEW_REQUIRED"));
  assert.throws(()=>pdfTextItemsToTable([[{str:"Scanned image",transform:[1,0,0,1,10,400]}]]),/OCR/);
 });
-test("browser page advertises and actually routes all native importers with PDF review gate",()=>{
+test("source format importers are available for trusted AI workflows, never as writable public-site controls",()=>{
  const html=readFileSync(new URL("../projects/generic/index.html",import.meta.url),"utf8");
- for(const marker of ["digitizeXlsx","digitizeXer","digitizeP6Xml","pdfTextItemsToTable",
- "digitizePdfTable","pdf-review","confirm-pdf",'.xer,.xml,.pdf,.csv',
- "cdn://NOT-A-REAL-ADDRESS"]) {
-  if(marker==="cdn://NOT-A-REAL-ADDRESS"){assert.doesNotMatch(html,/cdn:\/\/NOT-A-REAL-ADDRESS/)}
-  else assert.ok(html.includes(marker),"Missing native importer "+marker);
- }
- assert.match(html,/pdfjs\.org|pdf\.min\.mjs/);
- assert.match(html,/no file transmitted|never transmitted|never uploaded/);
+ const builder=readFileSync(new URL("../scripts/build-public-site.mjs",import.meta.url),"utf8");
+ assert.match(html,/read-only/i);
+ assert.doesNotMatch(html,/type="file"|confirm-pdf|digitizeXlsx|digitizeXer|digitizePdfTable|<textarea/i);
+ assert.match(builder,/privateSourceModules/);
+ for(const importer of [digitizeXlsx,digitizeXer,digitizeP6Xml,pdfTextItemsToTable,digitizePdfTable])
+  assert.equal(typeof importer,"function");
 });
