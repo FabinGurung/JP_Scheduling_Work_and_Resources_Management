@@ -38,7 +38,7 @@
 <section id="views" aria-label="Read-only synchronized WBS views"></section>
 </main>
 <script type="module">
-import {renderGenericProject,validateGenericViewModel} from "../src/presentation/generic-views.mjs";
+import {renderGenericProject,validateGenericViewModel} from "../../src/presentation/generic-views.mjs";
 const choices=new Set(["community-clinic","pedestrian-bridge","uploaded-wbs"]);
 const state=document.getElementById("state"),mount=document.getElementById("views");
 async function load(key){
