@@ -22,7 +22,7 @@ test("each synthetic project is only a data instance of the exact shared generic
  const bootstrap=read("src/presentation/studio-project-page.mjs");
  assert.match(bootstrap,/from "\.\/generic-views\.mjs"/);
  assert.match(bootstrap,/validateGenericViewModel\(model\)/);
- assert.match(bootstrap,/mountBetaWorkspace\(model,mount\)/);
+ assert.match(bootstrap,/renderGenericProject\(model,mount\)/);
  assert.match(bootstrap,/adaptNarayaniPublicModel\(published\)/);
  assert.match(bootstrap,/model\.project\.id!==ref\.projectId/);
  assert.match(bootstrap,/model\.classification!==\(ref\.governed\?/);
