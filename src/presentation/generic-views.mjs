@@ -57,7 +57,7 @@ export function renderGenericProject(model,mount,options={}){
   "Draft schedule · "+model.engine_mode+" · "+model.activities.length+" activities · "+model.links.length+" links · "+model.checklist.length+" source-supplied prompts");
  const ethics=el("p","gv-warning",
  model.classification==="LOCAL_UNVERIFIED_DRAFT_ONLY"?
- "LOCAL UNVERIFIED BETA EDIT · No source writes. Schedule slots are recalculated from local assumptions and no approval or field completion is inferred.":
+ "LOCAL UNVERIFIED PREVIEW ONLY · No approved dates, completion or source mutations. Changes are produced through the governed AI source-revision workflow.":
  model.classification==="PUBLIC_SAFE_GOVERNED_SCENARIO"?
  "NARAYANI REPORTED-ONLY SCENARIO · Original 405 check statuses are read-only reports, not engineering acceptance. Dates are an unapproved scenario. Original field controls remain on the preserved project page.":
  "SYNTHETIC TRAINING ONLY · Assumed durations; neither construction completion nor an approved baseline. Calendar dates show calculated START/FINISH events, not verified daily progress.");
@@ -85,36 +85,65 @@ export function renderGenericProject(model,mount,options={}){
  // A botanical/WBS skill constellation — entirely independent from CPM time slots.
  // Solid teal branches signify WBS membership, gold dotted lines signify dependencies.
  const tree=layoutOrganicSkillTree(model);
- // Visual coordinates may be dragged in a draft, independently of CPM dates.
- // A layout adjustment does not change source WBS membership or scheduling.
- if(options.layoutPositions&&typeof options.layoutPositions==="object"){
-  const positions=new Map([["PROJECT",tree.root],...tree.nodes.map(n=>[n.id,n]),
-   ...Object.values(tree.taskPositions).map(n=>[n.id,n])]);
-  for(const [id,pos] of Object.entries(options.layoutPositions)){
-   const point=positions.get(id);
-   if(point&&Number.isFinite(pos?.x)&&Number.isFinite(pos?.y)){
-    point.x=Math.max(20,Math.min(tree.width-20,pos.x));
-    point.y=Math.max(15,Math.min(tree.height-15,pos.y));
-   }
-  }
-  for(const line of [...tree.branches,...tree.dependencies]){
-   line.a=positions.get(line.from);line.b=positions.get(line.to);
-  }
+ // Layout is entirely derived from published WBS membership, never edited in Pages.
+ const graphShell=el("div","gv-graph-shell");
+ const bubble=el("div","gv-inspector-bubble");
+ bubble.hidden=true;
+ bubble.setAttribute("role","status");
+ bubble.setAttribute("aria-live","polite");
+ let pinned=null,activeHit=null;
+ const safeText=v=>String(v??"").slice(0,700);
+ function hideBubble(force=false){
+  if(!pinned||force){bubble.hidden=true;if(activeHit)activeHit.removeAttribute("data-inspected");activeHit=null;if(force)pinned=null}
  }
+ function showBubble(event,heading,content,element,pin=false){
+  if(pinned&&pinned!==element&&!pin)return;
+  if(activeHit&&activeHit!==element)activeHit.removeAttribute("data-inspected");
+  activeHit=element;activeHit.setAttribute("data-inspected","true");
+  bubble.replaceChildren(el("strong","",safeText(heading)),el("span","",safeText(content)));
+  bubble.hidden=false;
+  const bounds=graphShell.getBoundingClientRect();
+  const rect=element.getBoundingClientRect();
+  const x=Number.isFinite(event?.clientX)?event.clientX:rect.left+rect.width/2;
+  const y=Number.isFinite(event?.clientY)?event.clientY:rect.top+rect.height/2;
+  bubble.style.left=Math.max(8,Math.min(bounds.width-295,x-bounds.left+12))+"px";
+  bubble.style.top=Math.max(8,Math.min(bounds.height-115,y-bounds.top+12))+"px";
+  if(pin)pinned=pinned===element?null:element;
+ }
+ function inspectable(node,heading,info){
+  node.setAttribute("tabindex","0");node.setAttribute("role","button");
+  node.setAttribute("aria-label",heading+" — "+info);
+  node.addEventListener("pointerenter",e=>showBubble(e,heading,info,node));
+  node.addEventListener("pointermove",e=>{if(!pinned||pinned===node)showBubble(e,heading,info,node)});
+  node.addEventListener("pointerleave",()=>hideBubble());
+  node.addEventListener("click",e=>{e.stopPropagation();showBubble(e,heading,info,node,true)});
+  node.addEventListener("focus",e=>showBubble(e,heading,info,node));
+  node.addEventListener("blur",()=>hideBubble());
+  node.addEventListener("keydown",e=>{
+   if(e.key==="Enter"||e.key===" "){e.preventDefault();showBubble(null,heading,info,node,true)}
+   if(e.key==="Escape")hideBubble(true);
+  });
+ }
+ graphShell.addEventListener("click",e=>{if(e.target===graphShell||e.target.classList?.contains("gv-tree-viewport"))hideBubble(true)});
  const stage=svg("svg",{viewBox:"0 0 "+tree.width+" "+tree.height,width:tree.width,
   height:tree.height,role:"group",
   "aria-label":"Organic project skill tree — WBS branches grow upward from project roots"});
  stage.classList.add("gv-skill-tree");
- const branchesLayer=svg("g",{"class":"gv-skill-branches","aria-hidden":"true"});
+ const branchesLayer=svg("g",{"class":"gv-skill-branches"});
  function curve(a,b){const span=Math.abs(b.y-a.y);
   return "M"+a.x+","+a.y+" C"+a.x+","+(a.y-span*.47)+" "+b.x+","+(b.y+span*.47)+" "+b.x+","+b.y}
  for(const e of tree.branches){
   const path=svg("path",{d:curve(e.a,e.b),"class":"gv-tree-branch",fill:"none",
    stroke:"#5aafa5","stroke-width":e.from==="PROJECT"?6:3.5,"stroke-linecap":"round"});
   branchesLayer.append(path);
+  const hit=svg("path",{d:path.getAttribute("d"),fill:"none",stroke:"transparent",
+   "stroke-width":"19","class":"gv-branch-hit"});
+  inspectable(hit,"WBS scope connection: "+e.from+" → "+e.to,
+    "Hierarchy membership only; this is not a CPM dependency or a schedule edit.");
+  branchesLayer.append(hit);
  }
  stage.append(branchesLayer);
- const depLayer=svg("g",{"class":"gv-dependency-lines","aria-hidden":"true"});
+ const depLayer=svg("g",{"class":"gv-dependency-lines"});
  for(const e of tree.dependencies){
   // Cross-links float behind task leaves; the graph is not a temporal axis.
   const midY=Math.min(e.a.y,e.b.y)-78-(Math.abs(e.a.x-e.b.x)*.06);
@@ -122,6 +151,13 @@ export function renderGenericProject(model,mount,options={}){
     " "+e.b.x+","+e.b.y,fill:"none","class":"gv-dependency-line",
     stroke:"#caa45d","stroke-width":1.7,"stroke-dasharray":"5 8"});
   depLayer.append(path);
+  const hit=svg("path",{d:path.getAttribute("d"),fill:"none",stroke:"transparent",
+   "stroke-width":"23","class":"gv-dependency-hit"});
+  const from=byId.get(e.from),to=byId.get(e.to);
+  inspectable(hit,"CPM "+(e.type??"FS")+" dependency: "+e.from+" → "+e.to,
+   (from?.title??"Source activity")+" → "+(to?.title??"Target activity")+
+   " · Type "+(e.type??"FS")+" · Lag "+(e.lag??0)+" nominal slots. Read-only.");
+  depLayer.append(hit);
  }
  stage.append(depLayer);
  function medallion(p,kind,label){
@@ -144,38 +180,15 @@ export function renderGenericProject(model,mount,options={}){
   }
   return g;
  }
- stage.append(medallion(tree.root,"root",model.project.name));
- function draggable(node,point,id){
-  if(typeof options.onNodeMoved!=="function")return;
-  node.classList.add("gv-drag-enabled");
-  let start=null,moved=false;
-  node.addEventListener("pointerdown",event=>{
-   if(event.button!==0&&event.pointerType!=="touch")return;
-   start={x:event.clientX,y:event.clientY,px:point.x,py:point.y};
-   moved=false;node.setPointerCapture?.(event.pointerId);
-  });
-  node.addEventListener("pointermove",event=>{
-   if(!start)return;
-   const dx=event.clientX-start.x,dy=event.clientY-start.y;
-   if(Math.abs(dx)+Math.abs(dy)>4)moved=true;
-   if(moved)node.setAttribute("transform","translate("+
-    Math.round(Math.max(20,Math.min(tree.width-20,start.px+dx)))+" "+
-    Math.round(Math.max(15,Math.min(tree.height-15,start.py+dy)))+")");
-  });
-  node.addEventListener("pointerup",event=>{
-   if(!start)return;
-   const {x,y,px,py}=start;start=null;
-   if(moved){
-    node.dataset.justDragged="true";
-    options.onNodeMoved(id,{x:Math.round(Math.max(20,Math.min(tree.width-20,px+event.clientX-x))),
-     y:Math.round(Math.max(15,Math.min(tree.height-15,py+event.clientY-y)))});
-   }
-  });
-  node.addEventListener("pointercancel",()=>{start=null});
- }
+ const projectRoot=medallion(tree.root,"root",model.project.name);
+ inspectable(projectRoot,"Project root: "+model.project.name,
+  model.wbs.length+" WBS branches · "+model.activities.length+" activities · read-only source tree.");
+ stage.append(projectRoot);
  for(const w of tree.nodes){
   const node=medallion(w,"wbs",w.label);
-  draggable(node,w,w.id);stage.append(node);
+  inspectable(node,"WBS: "+w.label,"ID "+w.id+" · Hierarchy level "+w.depth+
+   " · Branch membership only. Source changes are made through AI.");
+  stage.append(node);
  }
  const detail=el("div","gv-detail");
  let selectedId=null;
@@ -228,18 +241,19 @@ export function renderGenericProject(model,mount,options={}){
   node.setAttribute("data-task",a.id);node.setAttribute("data-selected","false");
   node.setAttribute("tabindex","0");node.setAttribute("role","button");
   node.setAttribute("aria-label","Inspect "+a.id+": "+a.title);
-  draggable(node,p,a.id);
-  node.addEventListener("click",()=>{if(node.dataset.justDragged==="true"){node.dataset.justDragged="false";return}select(a.id);centerOn(p)});
+  inspectable(node,a.id+" · "+a.title,
+    "WBS "+a.wbs_id+" · Duration "+a.duration+" nominal slots · Start "+a.start+
+    " · Finish "+a.finish+" · "+a.duration_basis+" · Not actual site progress");
+  node.addEventListener("click",()=>{select(a.id);centerOn(p)});
   node.addEventListener("keydown",event=>{
    if(event.key==="Enter"||event.key===" "){event.preventDefault();select(a.id);centerOn(p)}
   });
   stage.append(node);
  }
- scroll.append(stage);
+ scroll.append(stage);graphShell.append(scroll,bubble);
  panels.get("graph").append(el("p","gv-muted",
-  "An upward-growing WBS skill tree, not a Gantt chart. Solid branches connect scope to activities; dotted gold arcs show separate CPM dependencies. "+
-  (options.onNodeMoved?"Drag a leaf or WBS branch to arrange your local draft; use the editor above for schedule changes.":"Select a leaf to inspect its computed dates.")),
-  toolbar,scroll,detail);
+  "Read-only WBS constellation. Hover or click nodes and edges to see their labels in place; select activities for detailed source and schedule values. Solid teal lines represent hierarchy, dotted gold lines are CPM relationships. Changes are prepared by your AI and verified before publication."),
+  toolbar,graphShell,detail);
  if(model.activities.length)select(byId.has(options.selectedId)?options.selectedId:model.activities[0].id);
  // Begin at the trunk so users can climb through the scope to its tasks.
  requestAnimationFrame(()=>{
