@@ -1,277 +1,62 @@
 <!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f5f8fb">
-<title>Generic Project Studio · Skyforge</title>
-<meta name="description" content="One reusable beta engine: digitize schedules, edit WBS and dependencies, drag constellation nodes, and recalculate four coordinated draft views.">
+<meta name="description" content="Skyforge read-only public WBS visualization. Describe changes to your AI assistant; GitHub Actions verifies the resulting source revision.">
+<title>Skyforge · Universal Read-Only Project Viewer</title>
 <link rel="stylesheet" href="../../assets/studio-project.css">
 <style>
-:root{color-scheme:light}
-*{box-sizing:border-box}
-body{margin:0;background:#f5f8fb;color:#203b4f;font:14px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
-main{max-width:1420px;margin:auto;padding:20px 16px 75px}
-.hero{background:linear-gradient(135deg,#fff 10%,#eaf8f5);border:1px solid #d5e5e9;border-radius:20px;padding:24px clamp(18px,4vw,43px)}
-.eyebrow{color:#0e7c82;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:900}
-h1{font-size:clamp(28px,4.3vw,47px);letter-spacing:-.045em;line-height:1.12;margin:9px 0}
-h2{font-size:21px;margin:6px 0 10px}
-p{margin:7px 0;color:#526f82}
-.deck{max-width:870px;font-size:16px}
-.controls{display:flex;gap:11px;flex-wrap:wrap;align-items:end;margin:16px 0}
-.controls label{display:grid;gap:4px;font-size:12px;color:#2b6375;font-weight:800;flex:1 1 190px}
-select,input[type=file]{background:#fff;border:1px solid #c5dbe3;border-radius:10px;padding:10px;color:#20495d;width:100%;max-width:390px}
-a{color:#0b747b}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.actions a{background:#fff;border:1px solid #c4dfdf;border-radius:9px;padding:8px 13px;text-decoration:none;font-weight:730;font-size:12px}
-.guide{background:#fff7e8;border-left:4px solid #c68b31;padding:12px 14px;margin:13px 0;border-radius:8px;color:#725521}
-.workspace{margin:14px 0;background:#fff;border:1px solid #d7e6eb;border-radius:17px;padding:16px;min-height:330px}
-.gv-project{background:#f4fafb;border-radius:12px;padding:14px;border:1px solid #dcebee}
-.gv-muted{color:#557384;font-size:12px}
-.gv-warning{border:1px solid #efdcbb;background:#fff7ea;color:#895d27;border-radius:9px;padding:10px;font-weight:700;font-size:12px}
-.gv-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}
-.gv-meta p{font-size:11px;overflow-wrap:anywhere;margin:3px 0}
-.gv-meta strong{color:#2e6072}
-.gv-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
-.gv-tab{cursor:pointer;font:700 13px system-ui;color:#315d6d;background:#fff;border:1px solid #cce1e4;border-radius:10px;padding:10px 15px}
-.gv-tab[aria-selected=true]{background:#e1f4ef;color:#0e7279;border-color:#54aaa9}
-.gv-panel{border:1px solid #e0eced;border-radius:12px;padding:13px;min-height:220px}
-.gv-panel[hidden]{display:none}
-.gv-scroll{overflow:auto;border:1px solid #d6e7ea;border-radius:12px;background-color:#f7fbfc;
-background-image:linear-gradient(#8bc5c520 1px,transparent 1px),linear-gradient(90deg,#8bc5c520 1px,transparent 1px);
-background-size:25px 25px}
-.gv-scroll svg{display:block;max-width:none}
-.gv-scroll g[data-task]{cursor:pointer}
-.gv-scroll g[data-selected=true] rect{fill:#e2f5f2;stroke:#16878d;stroke-width:3}
-.gv-scroll g:focus-visible rect{stroke:#c48a2e;stroke-width:4}
-.gv-detail{margin-top:12px;padding:12px 14px;border:1px solid #cae2e0;border-radius:12px;background:#f2fbf9}
-.gv-gantt{display:grid;gap:7px}
-.gv-gantt-row{display:grid;grid-template-columns:minmax(125px,28%) minmax(0,1fr);gap:9px;align-items:center;border-bottom:1px solid #e3edf0;padding:6px 0}
-.gv-gantt-label{font-size:12px;color:#2c5064}
-.gv-gantt-track{position:relative;height:24px;min-width:80px;border-radius:5px;
-background:repeating-linear-gradient(90deg,#eef6f7 0,#eef6f7 19px,#fff 20px);overflow:hidden}
-.gv-gantt-bar{position:absolute;top:5px;height:14px;background:#2e91a0;border-radius:4px;min-width:3px}
-.gv-gantt-bar[data-critical=true]{background:#ba8530}
-.gv-dates{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:8px}
-.gv-date{display:flex;align-items:center;gap:8px;background:#f7fbfc;border:1px solid #ddebee;border-radius:9px;padding:10px;font-size:12px}
-.gv-date-stamp{font-weight:800;color:#2d6574;white-space:nowrap}
-.gv-date-label{background:#e9f4f3;border-radius:4px;color:#397779;font-size:10px;padding:4px}
-.gv-check{background:#f7fbfb;border:1px solid #dce9e9;border-radius:10px;padding:12px;margin:9px 0}
-.gv-check strong{color:#2b5d6c}
-button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #b8862e;outline-offset:2px}
-@media(max-width:720px){main{padding:11px 9px 50px}.hero{padding:15px}.workspace{padding:9px}.gv-meta{grid-template-columns:1fr}
-.gv-tab{flex:1 1 42%;padding:10px}.gv-gantt-row{grid-template-columns:minmax(100px,36%) minmax(0,1fr)}.gv-gantt-label{font-size:11px}}
-
-/* Organic WBS tree: no time axis. Teal shows scope ancestry; gold shows CPM links. */
-.gv-tree-viewport{height:min(69vh,650px);min-height:420px;max-width:100%;
- scrollbar-color:#b6d8dc #eff8f8;overscroll-behavior:contain;
- background:radial-gradient(ellipse at 52% 83%,#d5ede8 0%,#f1faf9 34%,#fcffff 85%);
- touch-action:pan-x pan-y}
-.gv-tree-toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:8px 0 12px}
-.gv-tree-control{cursor:pointer;border:1px solid #b6d9d7;background:#edf9f5;
- color:#27666d;padding:9px 13px;font-size:12px;font-weight:750;border-radius:22px}
-.gv-tree-control[aria-pressed=false]{background:#fff;color:#577b86}
-.gv-tree-viewport .gv-tree-branch{filter:drop-shadow(0 0 4px #6bbdb053)}
-.gv-skill-halo{fill:#d8f2ebbd;stroke:#aedcd2;stroke-width:1.2}
-.gv-skill-core{fill:#fafffe;stroke:#5ba99f;stroke-width:2.3}
-.gv-skill-root .gv-skill-core{fill:#d4eee5;stroke:#237f78;stroke-width:3.7}
-.gv-skill-wbs .gv-skill-core{fill:#e7f5f1;stroke:#44998e;stroke-width:3}
-.gv-skill-emblem{fill:#21867c;font-size:26px;font-weight:800}
-.gv-skill-root .gv-skill-emblem{font-size:35px}
-.gv-skill-label{font:650 12px system-ui,-apple-system,sans-serif;fill:#2b5b69;
- paint-order:stroke;stroke:#fcffff;stroke-width:5;stroke-linejoin:round}
-.gv-skill-label-major{font-size:14px;font-weight:780}
-.gv-skill-activity{cursor:pointer}
-.gv-skill-activity[data-selected=true] .gv-skill-core{fill:#c7eae2;stroke:#107f7c;stroke-width:4}
-.gv-skill-activity[data-selected=true] .gv-skill-halo{fill:#c0eadc}
-.gv-skill-activity:focus-visible .gv-skill-halo{stroke:#c88b31;stroke-width:4}
-.gv-skill-branches path{stroke-dasharray:0;animation:gv-branch-grow 1s ease-out both}
-.gv-skill-activity{animation:gv-leaf-enter .7s ease-out both;transform-box:fill-box}
-@keyframes gv-branch-grow{from{opacity:.1;stroke-dasharray:2 12}to{opacity:1;stroke-dasharray:0}}
-@keyframes gv-leaf-enter{from{opacity:0}to{opacity:1}}
-@media(max-width:720px){
- .gv-tree-viewport{height:min(66vh,600px);min-height:390px}
- .gv-tree-control{flex:1 1 45%;padding:10px}
- .gv-tree-toolbar{gap:7px}
-}
-@media(prefers-reduced-motion:reduce){
- .gv-skill-branches path,.gv-skill-activity{animation:none!important}
-}
-.gv-import-diagnostics{font-size:12px;line-height:1.7;color:#8b6129;margin:9px 0}.gv-import-diagnostics p{font-size:12px;margin:4px 0}.gv-tree-control{cursor:pointer}
-.gv-pdf-review{background:#fffdf4;border:1px solid #e6cd9e;border-radius:12px;padding:13px;margin:12px 0}
-.gv-pdf-review textarea{display:block;width:100%;min-height:170px;resize:vertical;font:12px/1.4 ui-monospace,monospace;background:#fff;border:1px solid #c6d5df;color:#284b5e;border-radius:8px;padding:10px}
-.gv-pdf-review button{margin-top:8px;background:#e4f5f2;border-color:#8fc8c0}
-
-</style></head><body><main>
-<header class="hero">
- <div class="eyebrow">Skyforge · Generic project studio · Draft-only</div>
- <h1>One schedule. Four consistent views.</h1>
- <p class="deck">This studio reads the same calculated project model for an organic, upward-growing WBS skill tree, Gantt, calendar and checklist. Change the project, and the WBS and views change together—without inheriting Narayani's activity list.</p>
- <div class="guide"><b>Safety:</b> Both included projects are deliberately synthetic. Durations are assumed, all approvals remain false, and the calendar shows scheduled events rather than actual daily construction progress. A locally selected compiled model stays in your browser and is never uploaded.</div>
- <div class="controls">
-  <label for="demo">Project source fixture<select id="demo"><option value="community-clinic">Community clinic — 6 tasks</option><option value="pedestrian-bridge">Pedestrian bridge — 8 tasks</option><option value="uploaded-wbs">Uploaded complete WBS — 45 activities</option></select></label>
-  <label for="local-id">Local project ID<input id="local-id" value="LOCAL_WBS" type="text" pattern="[A-Za-z][A-Za-z0-9_-]*" maxlength="64"></label>
-  <label for="local-name">Local project description<input id="local-name" value="Unverified Local WBS" type="text" maxlength="180"></label>
-  <label for="dictionary">Optional WBS dictionary Markdown<input id="dictionary" type="file" accept=".md,.txt,text/markdown,text/plain" aria-describedby="upload-help"></label>
-  <label for="p6-hours">P6 working hours per nominal day (required for XER/XML)<input id="p6-hours" type="number" min="0.5" max="24" step="0.5" placeholder="Enter P6 hours/day; no default"></label>
-  <label for="upload">Open Excel, P6 XER/XML, PDF, CSV/TSV, or normalized JSON<input id="upload" type="file" accept=".xlsx,.xer,.xml,.pdf,.csv,.tsv,.json,.md,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" aria-describedby="upload-help"></label>
- </div>
- <p id="upload-help"><b>Generic digitalization:</b> import an explicit-schema CSV/TSV work-item table, the project WBS task-seed JSON (even if saved as .md), local unverified canonical project JSON, or previously compiled safe view model. Optionally select a matching WBS dictionary to preserve genuine phase names. Your original files stay on your device. CSV header: <code>activity_id,activity_name,wbs_id,wbs_name,parent_wbs_id,duration_slots,predecessors</code>. The predecessor cell uses quoted <code>ID:FS:0;ID:SS:2</code> syntax; empty fields are allowed for root WBS and no predecessor. Missing durations block dates. Unmapped calendar IDs block scheduling. Excel XLSX reads the explicit activity-table worksheet only; formulas and ambiguous sheets are blocked. XER/XML read P6 activity/WBS/relationship subsets and require a user-confirmed hours-per-day divisor (not imported holidays/resources/actuals). PDF.js can extract machine-readable text locally; only tables with explicit activity-column headers can be previewed and confirmed. Scans/OCR, XLS, MS Project MPP and unsupported layouts are blocked—not guessed. PDF.js uses a pinned external code-only CDN; project file bytes are never transmitted.</p>
- <section id="pdf-review" class="gv-pdf-review" hidden>
- <h2>Review extracted PDF activity table</h2>
- <p>Check every activity ID, WBS, duration and relationship. The extracted table is not accepted automatically; you may correct its CSV cells below before explicitly digitizing it.</p>
- <textarea id="pdf-csv" rows="9" spellcheck="false" aria-label="Machine-extracted PDF CSV table; review before converting"></textarea>
- <button type="button" id="confirm-pdf" class="gv-tree-control">Digitize this reviewed PDF table as UNVERIFIED</button>
- </section>
- <button id="save-draft" type="button" class="gv-tree-control" hidden>Download normalized unverified project JSON</button>
- <div id="import-diagnostics" class="gv-import-diagnostics" role="status" aria-live="polite"></div>
- <div class="actions"><a href="../how/">CPM and engine principles →</a><a href="../work-items/">Work-item library →</a><a href="https://github.com/FabinGurung/JP_Scheduling_Work_and_Resources_Management/blob/kernel-v0.2-open-source-engines/docs/research/SKYFORGE_GENERIC_PROJECT_STUDIO_V1_9.md">Reproduction and source contract →</a></div>
+.sf-view-only{max-width:1310px;margin:0 auto;padding:17px 14px 45px}
+.sf-view-only-hero{background:linear-gradient(110deg,#fff,#eaf7f4);border:1px solid #d3e6e5;padding:24px;border-radius:18px}
+.sf-view-only-hero h1{font-size:clamp(25px,4vw,43px);margin:5px 0;line-height:1.16;color:#26465b}
+.sf-view-only-hero p{font-size:13px;color:#567384;max-width:870px}
+.sf-view-only-label{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#27787b;font-weight:840}
+.sf-view-only-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.sf-view-only-links a{padding:8px 13px;border-radius:9px;background:#fff;border:1px solid #cce1e0;text-decoration:none;color:#246b73;font-size:12px;font-weight:760}
+.sf-view-choice{margin-top:17px;background:#fff;border:1px solid #d8e8e7;border-radius:13px;padding:13px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.sf-view-choice label{color:#526d79;font-size:12px;font-weight:760}
+.sf-view-choice select{font:13px system-ui;max-width:100%;padding:9px 12px;color:#225c68;border-radius:9px;border:1px solid #bddbd9;background:#fff;flex:1;min-width:190px}
+.sf-view-only .gv-project{margin-top:13px}
+@media(max-width:640px){.sf-view-only{padding:9px}.sf-view-only-hero{padding:15px}.sf-view-choice select{flex-basis:100%}}
+</style></head><body><main class="sf-view-only">
+<header class="sf-view-only-hero">
+<div class="sf-view-only-label">Skyforge Studio · Universal read-only four-view template</div>
+<h1>Describe changes to AI. Explore results here.</h1>
+<p>Constellation, Gantt, calendar and checklist all come from one validated source model. Hover, tap or select nodes and links to inspect labels and evidence. <strong>This website does not edit schedules.</strong> To change a WBS, tell your connected AI assistant the project, operations and constraints. The AI prepares a traceable source revision, engine checks reject invalid relationships or missing information, and GitHub Actions rebuilds the published views.</p>
+<div class="sf-view-only-links"><a href="../../studio/">← Studio</a>
+<a href="../">All Projects</a><a href="../../roadmap.html">Validation and roadmap</a>
+<a href="https://github.com/FabinGurung/JP_Scheduling_Work_and_Resources_Management/blob/kernel-v0.2-open-source-engines/docs/architecture/SKYFORGE_AI_FIRST_SOURCE_REVISION_V1_15.md">AI-first change contract ↗</a></div>
 </header>
-<section class="workspace"><div id="state" role="status" aria-live="polite">Loading canonical project model…</div><div id="views"></div></section>
-<footer style="color:#668295;font-size:12px">Skyforge research workbench · read-only, public-synthetic fixtures · no permit, construction or payment release · previous Narayani field workflow remains independent.</footer>
+<div class="sf-view-choice">
+<label for="demo">View a published WBS</label>
+<select id="demo" aria-label="Choose a public source-validated project">
+<option value="community-clinic">Community Clinic — 6 activities</option>
+<option value="pedestrian-bridge">Pedestrian Bridge — 8 activities</option>
+<option value="uploaded-wbs">Your uploaded full WBS — 45 activities</option>
+</select>
+</div>
+<p id="state" role="status" aria-live="polite">Loading published source…</p>
+<section id="views" aria-label="Read-only synchronized WBS views"></section>
 </main>
 <script type="module">
-import {validateGenericViewModel} from "../src/presentation/generic-views.mjs";
-import {mountBetaWorkspace} from "../src/presentation/project-beta-workspace.mjs";
-import {digitizeGenericTable,digitizeTaskSeedJSON} from "../src/kernel/generic-digitizer.mjs";
-import {projectGenericVisual} from "../src/visual/generic-project-model.mjs";
-import {digitizeXer,digitizeP6Xml} from "../src/kernel/p6-native-import.mjs";
-import {digitizeXlsx} from "../src/kernel/xlsx-native-import.mjs";
-import {pdfTextItemsToTable,digitizePdfTable,pdfSourceSha256} from "../src/kernel/pdf-table-import.mjs";
-import {sha256Hex} from "../src/kernel/sha256.mjs";
+import {renderGenericProject,validateGenericViewModel} from "../src/presentation/generic-views.mjs";
 const choices=new Set(["community-clinic","pedestrian-bridge","uploaded-wbs"]);
 const state=document.getElementById("state"),mount=document.getElementById("views");
-const info=document.getElementById("import-diagnostics"),download=document.getElementById("save-draft");
-let candidate=null,pdfInput=null;
-const projectInputs=()=>({project_id:document.getElementById("local-id").value.trim(),
- project_name:document.getElementById("local-name").value.trim()});
-const parseP6Hours=()=>{
- const input=document.getElementById("p6-hours");
- if(!input.value.trim())throw Error("P6 hours per day must be entered explicitly. The importer will not assume an 8-hour shift.");
- const n=Number(input.value);
- if(!Number.isFinite(n)||n<=0||n>24)throw Error("P6 hours per day must be 0–24, explicitly supplied");
- return n;
-};
-function applyBatch(batch,label){
- updateDraft(batch.project);showDiagnostics(batch.diagnostics);
- if(batch.planning_status==="BLOCKED_CALENDAR_MAPPING"){
-  mount.replaceChildren();state.textContent="Source digitized but calendar mapping is missing; normalized draft can be downloaded.";
-  return;
- }
- try{
-  showModel(projectGenericVisual(batch.project),label+" · UNVERIFIED draft · "+batch.project.activities.length+" tasks · source SHA "+batch.source_sha256);
- }catch(e){mount.replaceChildren();state.textContent="Source digitized, scheduling blocked: "+e.message+
-  " · download the draft to correct missing input";}
+async function load(key){
+ if(!choices.has(key))throw Error("Unregistered published project");
+ state.textContent="Loading public model "+key+"…";
+ const result=await fetch("./"+key+".json",{cache:"no-store"});
+ if(!result.ok)throw Error("Published project not available");
+ const model=await result.json();
+ validateGenericViewModel(model);
+ if(model.classification!=="PUBLIC_SYNTHETIC_DRAFT_ONLY"||
+    model.engineering_release!==false||model.baseline_approved!==false)
+  throw Error("Project approval/source classification mismatch");
+ renderGenericProject(model,mount);
+ state.textContent="Read-only model: "+model.project.name+" · "+model.counts.activities+
+  " activities · "+model.counts.links+" dependency links · SHA-256 "+model.input_sha256;
 }
-
-const showDiagnostics=messages=>{
- info.replaceChildren();
- for(const x of messages){
-  const p=document.createElement("p");
-  p.textContent=(x.severity??"NOTE")+" · "+(x.code??"NOTICE")+
-   (x.field?" · "+x.field:"")+(x.detail?" · "+x.detail:"");
-  info.append(p);
- }
-};
-function updateDraft(value){candidate=value;download.hidden=!candidate}
-function showModel(model,message){
- validateGenericViewModel(model);mountBetaWorkspace(model,mount);state.textContent=message;
-}
-async function loadDemo(key){
- if(!choices.has(key))throw Error("Unknown synthetic fixture");
- state.textContent="Loading reviewed synthetic source "+key+"…";
- const response=await fetch("./"+key+".json",{cache:"no-store"});
- if(!response.ok)throw Error("Public synthetic model unavailable");
- const value=await response.json();
- showModel(value,"Published synthetic source · "+value.project.name+" · draft model only");
- updateDraft(null);showDiagnostics([]);
-}
-document.getElementById("demo").addEventListener("change",async ev=>{
- try{await loadDemo(ev.target.value)}catch(e){state.textContent="Model blocked: "+e.message;mount.replaceChildren()}
+document.getElementById("demo").addEventListener("change",async event=>{
+ try{await load(event.target.value)}catch(error){state.textContent="Blocked: "+error.message;mount.replaceChildren()}
 });
-function onlyLocalUnverified(spec){
- if(spec?.classification!=="LOCAL_UNVERIFIED"||
-  spec.source_manifest?.some(x=>x.authority!=="UNVERIFIED_SOURCE")||
-  spec.activities?.some(x=>x.duration_basis!=="ASSUMED_DRAFT"||
-   x.quantity_basis!=null&&x.quantity_basis!=="ASSUMED_DRAFT"))
-  throw Error("Raw project JSON requires LOCAL_UNVERIFIED scope and assumption-tagged inputs; approved source admission is a separate governed workflow.");
- return spec;
-}
-document.getElementById("upload").addEventListener("change",async ev=>{
- const file=ev.target.files?.[0];if(!file)return;
- document.getElementById("pdf-review").hidden=true;pdfInput=null;
- const ext=file.name.split(".").pop().toLowerCase();
- try{
-  const max=ext==="pdf"?15_000_000:ext==="xlsx"?12_000_000:8_000_000;
-  if(file.size>max)throw Error("File exceeds "+(max/1000000)+" MB local import limit");
-  state.textContent="Reading local "+ext.toUpperCase()+" source; no upload…";
-  showDiagnostics([]);
-  const inputs={...projectInputs(),source_name:file.name};
-  if(ext==="xlsx"){
-   const batch=await digitizeXlsx({...inputs,bytes:new Uint8Array(await file.arrayBuffer())});
-   applyBatch(batch,"Native XLSX · explicit source table");
-  }else if(ext==="xer"||ext==="xml"){
-   const bytes=new Uint8Array(await file.arrayBuffer());
-   // XER frequently uses Latin-1; preserve original bytes via SHA-256 and decode explicitly.
-   const text=new TextDecoder(ext==="xer"?"windows-1252":"utf-8",{fatal:true}).decode(bytes);
-   const method=ext==="xer"?digitizeXer:digitizeP6Xml;
-   const batch=method({...inputs,text,hours_per_day:parseP6Hours(),original_sha256:sha256Hex(bytes)});
-   applyBatch(batch,"Native Primavera P6 "+ext.toUpperCase()+" · nominal day-slot scenario");
-  }else if(ext==="pdf"){
-   const bytes=new Uint8Array(await file.arrayBuffer());
-   const moduleUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs";
-   let lib;try{lib=await import(moduleUrl)}catch{throw Error("Pinned PDF.js parser could not load. PDF bytes were not uploaded; retry online or use native Excel/XER source.")}
-   lib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
-   const pdf=await lib.getDocument({data:bytes.slice(),useSystemFonts:false}).promise;
-   if(pdf.numPages>100)throw Error("PDF over 100 pages. Split the schedule source.");
-   const pages=[];
-   for(let i=1;i<=pdf.numPages;i++){
-    const page=await pdf.getPage(i),texts=await page.getTextContent();
-    pages.push(texts.items);
-   }
-   const table=pdfTextItemsToTable(pages);
-   pdfInput={...inputs,original_pdf_sha256:pdfSourceSha256(bytes)};
-   const section=document.getElementById("pdf-review");
-   document.getElementById("pdf-csv").value=table.csv;section.hidden=false;
-   state.textContent="PDF text extracted locally: "+table.rows+" candidate rows. REVIEW AND CONFIRM the table. No calculation yet.";
-   mount.replaceChildren();updateDraft(null);
-   showDiagnostics([{severity:"HOLD",code:"PDF_REVIEW_REQUIRED",detail:"Coordinates can misalign; review and confirm source columns before compiling."}]);
-  }else if(["csv","tsv"].includes(ext)){
-   const batch=digitizeGenericTable({...inputs,text:await file.text(),format:ext.toUpperCase()});
-   applyBatch(batch,"Explicit-schema "+ext.toUpperCase());
-  }else if(["json","md"].includes(ext)){
-   const raw=await file.text(),parsed=JSON.parse(raw);
-   if(parsed?.project_metadata&&Array.isArray(parsed.tasks)){
-    const dictionary=document.getElementById("dictionary").files?.[0];
-    const dictText=dictionary?await dictionary.text():null;
-    const batch=digitizeTaskSeedJSON({text:raw,...inputs,dictionary_text:dictText});
-    applyBatch(batch,"Original P6-style JSON task seed");
-   }else if(parsed.format==="SKYFORGE_GENERIC_VIEW_MODEL_V1"){
-    showModel(parsed,"Locally opened compiled read-only model; no file transmitted");
-    updateDraft(null);
-   }else if(parsed.format==="SKYFORGE_PROJECT_INPUT_V1"){
-    onlyLocalUnverified(parsed);updateDraft(parsed);
-    showModel(projectGenericVisual(parsed),"Locally calculated unverified JSON; not approved");
-   }else throw Error("Unsupported JSON contract");
-  }else throw Error("Unsupported extension. PDF scans, native MPP, XLS and ambiguous documents need a verified digital source.");
- }catch(e){
-  state.textContent="Input blocked: "+e.message;mount.replaceChildren();updateDraft(null);
- }
-});
-document.getElementById("confirm-pdf").addEventListener("click",()=>{
- if(!pdfInput)return;
- try{
-  const csv=document.getElementById("pdf-csv").value;
-  const batch=digitizePdfTable({...pdfInput,csv});
-  applyBatch(batch,"User-reviewed, machine-text PDF schedule");
-  document.getElementById("pdf-review").hidden=true;
- }catch(e){state.textContent="PDF review blocked: "+e.message}
-});
-
-download.addEventListener("click",()=>{
- if(!candidate)return;
- const bytes=JSON.stringify(candidate,null,2)+"\n";
- const blob=new Blob([bytes],{type:"application/json"});
- const url=URL.createObjectURL(blob);const a=document.createElement("a");
- a.href=url;a.download="skyforge-"+candidate.project.id+"-UNVERIFIED.json";document.body.append(a);a.click();a.remove();
- setTimeout(()=>URL.revokeObjectURL(url),1000);
-});
-loadDemo("community-clinic").catch(e=>{state.textContent="Model blocked: "+e.message;mount.replaceChildren()});
+try{await load("community-clinic")}catch(error){state.textContent="Blocked: "+error.message;mount.replaceChildren()}
 </script></body></html>
