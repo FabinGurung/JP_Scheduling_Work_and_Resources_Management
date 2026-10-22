@@ -142,13 +142,14 @@ test("blank/invalid duration is blocked, never silently converted into a milesto
  assert.equal(parseNominalDuration(" 250 "),250);
  assert.throws(()=>parseNominalDuration("99999999999999999999999999"),/safe integer/);
 });
-test("all four project editor rerenders preserve constellation position and show scenario-loss warning",()=>{
+test("legacy local draft safety remains internal while published project views are read-only",()=>{
  const viewer=read("src/presentation/generic-views.mjs"),
   editor=read("src/presentation/project-beta-workspace.mjs"),
   style=read("assets/studio-project.css");
  assert.match(editor,/initialScroll:previousScroll/);
- assert.match(viewer,/scroll\.scrollLeft=Math\.max\(0,options\.initialScroll\.left\)/);
- assert.match(viewer,/scroll\.scrollTop=Math\.max\(0,options\.initialScroll\.top\)/);
+ assert.match(viewer,/gv-inspector-bubble/);
+ assert.match(viewer,/gv-dependency-hit/);
+ assert.doesNotMatch(viewer,/onNodeMoved|setPointerCapture/);
  assert.match(editor,/parseNominalDuration\(fields\.duration\.value\)/);
  assert.match(editor,/source checklist reports and date projections/);
  assert.match(style,/\.sf-beta-scenario-warning\[hidden\]/);
