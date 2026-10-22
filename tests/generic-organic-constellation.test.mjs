@@ -42,8 +42,8 @@ test("renderer presents organic skill tree separately from unchanged computed Ga
  assert.match(js,/const tree=layoutOrganicSkillTree\(model\)/);
  assert.match(js,/const dependencyLines|gv-dependency-lines/);
  assert.match(js,/gv-tree-branches|gv-skill-branches/);
- assert.match(js,/WBS skill tree, not a Gantt chart/);
+ assert.match(js,/Read-only WBS constellation/);
  assert.match(js,/\/\/ Gantt uses the SAME start\/finish events/);
- assert.match(html,/gv-tree-viewport/);
- assert.match(html,/prefers-reduced-motion:reduce/);
+ assert.match(html,/studio-project\.css/);
+ assert.match(readFileSync(new URL("../assets/studio-project.css",import.meta.url),"utf8"),/prefers-reduced-motion:reduce/);
 });
