@@ -1,5 +1,4 @@
-import {validateGenericViewModel} from "./generic-views.mjs";
-import {mountBetaWorkspace} from "./project-beta-workspace.mjs";
+import {validateGenericViewModel,renderGenericProject} from "./generic-views.mjs";
 import {adaptNarayaniPublicModel} from "./narayani-beta-adapter.mjs";
 /** Level-2 project record bootstrap. ONE shared view engine for every published
  * synthetic instance. No copied project dates, no separate WBS implementations.
@@ -29,7 +28,7 @@ export async function bootstrapProjectRecord(doc=document){
     model.classification!==(ref.governed?"PUBLIC_SAFE_GOVERNED_SCENARIO":"PUBLIC_SYNTHETIC_DRAFT_ONLY")||
     model.baseline_approved!==false||model.engineering_release!==false)
    throw Error("Project model does not match registered source and approval limits");
-  mountBetaWorkspace(model,mount);
+  renderGenericProject(model,mount);
   const differences=doc.querySelector("#source-differences");
   if(differences){
    differences.replaceChildren();
@@ -45,7 +44,7 @@ export async function bootstrapProjectRecord(doc=document){
     }
    }
   }
-  status.textContent="Universal beta template loaded · "+model.counts.activities+
+  status.textContent="Read-only published project · source changes are made by AI-assisted revision and GitHub Actions validation · "+model.counts.activities+
     " source-supplied activities · "+model.counts.links+" dependencies · "+model.counts.checklist+
     " supplied checklist prompts · SHA "+model.input_sha256;
   return true;
