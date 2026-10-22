@@ -65,14 +65,14 @@ test("TSV warns on ignored fields rather than fabricating quantities",()=>{
  assert.equal(d.project.activities.length,1);
  assert.ok(d.diagnostics.some(x=>x.code==="IGNORED_COLUMN"&&x.field==="unrecognized_cost"));
 });
-test("static studio compiles CSV and JSON locally without network upload or approval",()=>{
+test("public Studio only reads verified models; portable import engine remains tested off the website",()=>{
  const html=readFileSync(new URL("../projects/generic/index.html",import.meta.url),"utf8");
- assert.match(html,/import \{digitizeGenericTable,digitizeTaskSeedJSON\}/);
- assert.match(html,/import \{projectGenericVisual\}/);
- assert.match(html,/download\.addEventListener\("click"/);
- assert.match(html,/LOCAL_UNVERIFIED/);
- assert.match(html,/CSV\/TSV/);
- assert.match(html,/no file transmitted/);
+ const importer=readFileSync(new URL("../src/kernel/generic-digitizer.mjs",import.meta.url),"utf8");
+ assert.match(html,/renderGenericProject\(model,mount\)/);
+ assert.match(html,/This website does not edit schedules/);
+ assert.doesNotMatch(html,/digitizeGenericTable|type="file"|<textarea|mountBetaWorkspace/);
+ assert.match(importer,/export function digitizeGenericTable/);
+ assert.match(importer,/export function digitizeTaskSeedJSON/);
  const kernel=readFileSync(new URL("../src/kernel/project-template.mjs",import.meta.url),"utf8");
  assert.doesNotMatch(kernel,/from "node:crypto"/);
 });
