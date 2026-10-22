@@ -7,7 +7,7 @@ test("primary public roadmap reports current Level-1 sisters, project beta, expl
  assert.match(page,/Live roadmap · 22 October 2026/);
  assert.match(page,/Studio and Projects/);
  assert.match(page,/four project records/i);
- for(const label of ["D1 · Mobile","D2 · Editing","D3 · Draft",
+ for(const label of ["D1 · Mobile","D2 · AI change","D3 · Governed",
  "D4 · Accurate dates","D5 · Excel","D6 · Real project"])
   assert.ok(page.includes(label),"Debt item missing "+label);
  for(const path of ["./projects/narayani/beta.html","./projects/uploaded-wbs/",
@@ -17,7 +17,7 @@ test("primary public roadmap reports current Level-1 sisters, project beta, expl
  assert.match(page,/<details class="sf-rm-archive">/);
  assert.match(page,/SEQ14 Multi-activity serial resource leveling/);
 });
-test("one shared beta renderer visibly discloses discarded source projections after draft edits",()=>{
+test("offline AI draft validation remains available but published renderer offers labels only",()=>{
  const ui=read("src/presentation/project-beta-workspace.mjs");
  assert.match(ui,/parseNominalDuration\(fields\.duration\.value\)/);
  assert.match(ui,/initialScroll:previousScroll/);
@@ -25,5 +25,8 @@ test("one shared beta renderer visibly discloses discarded source projections af
  assert.match(ui,/const scenarioWarning=/);
  assert.match(ui,/scenarioWarning\.hidden=!dirty/);
  const renderer=read("src/presentation/generic-views.mjs");
- assert.match(renderer,/if\(options\.initialScroll&&Number\.isFinite/);
+ assert.match(renderer,/gv-inspector-bubble/);
+ assert.match(renderer,/gv-dependency-hit/);
+ assert.doesNotMatch(renderer,/onNodeMoved|setPointerCapture/);
+ assert.match(read("src/presentation/studio-project-page.mjs"),/renderGenericProject\(model,mount\)/);
 });
