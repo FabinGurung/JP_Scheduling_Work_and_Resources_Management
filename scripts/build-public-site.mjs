@@ -7,10 +7,19 @@ async function cp(relative){
  const src=join(root,relative),dst=join(out,relative);
  await mkdir(dirname(dst),{recursive:true});await copyFile(src,dst);
 }
+// Browser distribution excludes obsolete editors and AI authoring logic.
+// Those modules may be used by the trusted AI/developer workflow but must not
+// become a downloadable user-facing code path on public GitHub Pages.
+const privateSourceModules=new Set([
+ "src/presentation/project-beta-workspace.mjs",
+ "src/presentation/beta-draft.mjs",
+ "src/kernel/ai-source-revision.mjs"
+]);
 async function modules(relative){
  const p=join(root,relative);
  for(const ent of await readdir(p,{withFileTypes:true})){
   const child=join(relative,ent.name);
+  if(privateSourceModules.has(child))continue;
   if(ent.isDirectory())await modules(child);
   else if(ent.isFile()&&ent.name.endsWith(".mjs"))await cp(child);
   else throw Error("Disallowed public executable path: "+child);
