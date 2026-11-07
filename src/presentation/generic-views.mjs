@@ -1,4 +1,6 @@
 import {layoutOrganicSkillTree} from "./generic-organic-layout.mjs";
+import {clampConstellationZoom,fitConstellationZoom,zoomConstellationAt,
+ MIN_CONSTELLATION_ZOOM,MAX_CONSTELLATION_ZOOM} from "./constellation-zoom.mjs";
 /** Shared renderer for ANY verified Skyforge generic public draft model.
  * Browser-only; never calls scheduling solvers and never writes source records.
  */
@@ -193,7 +195,90 @@ export function renderGenericProject(model,mount,options={}){
  const detail=el("div","gv-detail");
  let selectedId=null;
  const scroll=el("div","gv-scroll gv-tree-viewport");
+ scroll.tabIndex=0;
+ scroll.setAttribute("aria-label","Scrollable, zoomable WBS Constellation. Use plus, minus, fit, or pinch to zoom.");
  const toolbar=el("div","gv-tree-toolbar");
+ let zoom=1;
+ const zoomControls=el("div","gv-zoom-controls");
+ zoomControls.setAttribute("role","group");
+ zoomControls.setAttribute("aria-label","Constellation zoom controls");
+ const zoomOut=el("button","gv-zoom-button","−");
+ const zoomIn=el("button","gv-zoom-button","+");
+ const zoomFit=el("button","gv-zoom-button gv-zoom-fit","Fit");
+ const zoomReset=el("button","gv-zoom-button gv-zoom-reset","100%");
+ zoomOut.type=zoomIn.type=zoomFit.type=zoomReset.type="button";
+ zoomOut.setAttribute("aria-label","Zoom out of Constellation");
+ zoomIn.setAttribute("aria-label","Zoom in to Constellation");
+ zoomFit.setAttribute("aria-label","Fit whole WBS Constellation in viewport");
+ zoomReset.setAttribute("aria-label","Reset Constellation zoom to 100 percent");
+ const zoomValue=el("span","gv-zoom-value","100%");
+ zoomValue.setAttribute("role","status");
+ zoomValue.setAttribute("aria-live","polite");
+ zoomControls.append(zoomOut,zoomValue,zoomIn,zoomFit,zoomReset);
+ function applyZoom(view){
+  zoom=view.zoom;
+  // Resize the SVG's rendered CSS pixels; its source-geometry viewBox is immutable.
+  stage.setAttribute("width",String(tree.width*zoom));
+  stage.setAttribute("height",String(tree.height*zoom));
+  scroll.scrollLeft=view.scrollLeft;
+  scroll.scrollTop=view.scrollTop;
+  zoomValue.textContent=Math.round(zoom*100)+"%";
+  zoomOut.disabled=zoom<=MIN_CONSTELLATION_ZOOM+1e-9;
+  zoomIn.disabled=zoom>=MAX_CONSTELLATION_ZOOM-1e-9;
+  hideBubble(true);
+ }
+ function changeZoom(nextZoom,anchorX=scroll.clientWidth/2,anchorY=scroll.clientHeight/2){
+  const view=zoomConstellationAt({
+   oldZoom:zoom,nextZoom,scrollLeft:scroll.scrollLeft,scrollTop:scroll.scrollTop,
+   viewportWidth:Math.max(1,scroll.clientWidth),
+   viewportHeight:Math.max(1,scroll.clientHeight),
+   worldWidth:tree.width,worldHeight:tree.height,anchorX,anchorY
+  });
+  applyZoom(view);
+ }
+ zoomOut.addEventListener("click",()=>changeZoom(zoom/1.35));
+ zoomIn.addEventListener("click",()=>changeZoom(zoom*1.35));
+ zoomFit.addEventListener("click",()=>changeZoom(fitConstellationZoom(tree.width,tree.height,
+  Math.max(1,scroll.clientWidth),Math.max(1,scroll.clientHeight))));
+ zoomReset.addEventListener("click",()=>changeZoom(1));
+ // Trackpad/desktop browser pinch emits ctrl+wheel. Keep normal wheel scrolling.
+ scroll.addEventListener("wheel",event=>{
+  if(!event.ctrlKey&&!event.metaKey)return;
+  if(event.cancelable)event.preventDefault();
+  const bounds=scroll.getBoundingClientRect();
+  changeZoom(zoom*Math.exp(-event.deltaY*.009),
+   event.clientX-bounds.left,event.clientY-bounds.top);
+ },{passive:false});
+ // Native one-finger scrolling remains intact; intercept ONLY two-finger pinch.
+ let pinch=null;
+ const distance=(a,b)=>Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+ const midpoint=(a,b)=>({x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2});
+ scroll.addEventListener("touchstart",event=>{
+  if(event.touches.length!==2){pinch=null;return}
+  const [a,b]=event.touches,rect=scroll.getBoundingClientRect();
+  const mid=midpoint(a,b),x=mid.x-rect.left,y=mid.y-rect.top;
+  pinch={distance:Math.max(1,distance(a,b)),zoom,
+   worldX:(scroll.scrollLeft+x)/zoom,worldY:(scroll.scrollTop+y)/zoom};
+ },{passive:true});
+ scroll.addEventListener("touchmove",event=>{
+  if(event.touches.length!==2||!pinch)return;
+  if(event.cancelable)event.preventDefault();
+  const [a,b]=event.touches,rect=scroll.getBoundingClientRect();
+  const mid=midpoint(a,b),x=mid.x-rect.left,y=mid.y-rect.top;
+  applyZoom(zoomConstellationAt({
+   oldZoom:pinch.zoom,nextZoom:pinch.zoom*distance(a,b)/pinch.distance,
+   scrollLeft:pinch.worldX*pinch.zoom-x,
+   scrollTop:pinch.worldY*pinch.zoom-y,
+   viewportWidth:Math.max(1,scroll.clientWidth),
+   viewportHeight:Math.max(1,scroll.clientHeight),
+   worldWidth:tree.width,worldHeight:tree.height,anchorX:x,anchorY:y
+  }));
+ },{passive:false});
+ for(const type of ["touchend","touchcancel"])scroll.addEventListener(type,event=>{
+  if(event.touches.length!==2)pinch=null;
+ },{passive:true});
+ const zoomHelp=el("span","gv-zoom-help","Pinch / + / − to zoom · swipe to pan");
+ toolbar.append(zoomHelp);
  const overview=el("button","gv-tree-control","Trunk / origin");
  overview.type="button";overview.title="Return to the base of the workflow tree";
  const dependencies=el("button","gv-tree-control","Dependencies: shown");
@@ -201,8 +286,8 @@ export function renderGenericProject(model,mount,options={}){
  dependencies.title="Toggle the secondary, dotted CPM dependency connections";
  function centerOn(p){
   const v=scroll.getBoundingClientRect();
-  scroll.scrollLeft=Math.max(0,p.x-v.width*.5);
-  scroll.scrollTop=Math.max(0,p.y-v.height*.53);
+  scroll.scrollLeft=Math.max(0,p.x*zoom-v.width*.5);
+  scroll.scrollTop=Math.max(0,p.y*zoom-v.height*.53);
  }
  overview.addEventListener("click",()=>centerOn(tree.root));
  let depsVisible=true;
@@ -250,13 +335,16 @@ export function renderGenericProject(model,mount,options={}){
   });
   stage.append(node);
  }
- scroll.append(stage);graphShell.append(scroll,bubble);
+ scroll.append(stage);graphShell.append(scroll,zoomControls,bubble);
  panels.get("graph").append(el("p","gv-muted",
-  "Read-only WBS constellation. Hover or click nodes and edges to see their labels in place; select activities for detailed source and schedule values. Solid teal lines represent hierarchy, dotted gold lines are CPM relationships. Changes are prepared by your AI and verified before publication."),
+  "Read-only WBS constellation. Pinch with two fingers or use +, −, Fit and 100% controls to zoom. Swipe to pan. Tap nodes and edges for labels; select an activity for schedule detail. Solid teal lines are WBS membership; dotted gold lines are CPM dependencies. Source changes are verified outside this website."),
   toolbar,graphShell,detail);
  if(model.activities.length)select(byId.has(options.selectedId)?options.selectedId:model.activities[0].id);
  // Begin at the trunk so users can climb through the scope to its tasks.
  requestAnimationFrame(()=>{
+  // Start at a slightly wider mobile scale; retain full-size on desktop.
+  if(typeof window!=="undefined"&&window.matchMedia?.("(max-width:720px)").matches)
+   changeZoom(0.72);
   // Keep the user's viewport when the editor recalculates or drops a node.
   // New project loads still begin at the root of the organic WBS.
   if(options.initialScroll&&Number.isFinite(options.initialScroll.left)&&
