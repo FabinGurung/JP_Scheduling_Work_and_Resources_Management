@@ -122,14 +122,20 @@ export async function bootstrapWorkReadiness(doc=document){
   for(const w of model.wbs){const o=node("option","",w.title);o.value=w.id;filter.append(o)}
   const results=node("div","wr-activity-list");
   side.append(search,filter,results);
-  const detail=node("section","wr-detail");detail.setAttribute("aria-label","Work sequence detail");
+  const detail=node("section","wr-detail");detail.setAttribute("aria-label","Work sequence detail");detail.setAttribute("aria-live","polite");
   layout.append(side,detail);app.append(layout);
   const byId=new Map(model.activities.map(a=>[a.id,a]));
   const byWbs=new Map(model.wbs.map(w=>[w.id,w.title]));
   const rawHash=()=>{try{return decodeURIComponent(window.location.hash.slice(1))}catch{return ""}};
   let selected=byId.has(rawHash())?rawHash():model.activities[0].id;
   function select(id){
-   if(!byId.has(id))return;
+   const record=byId.get(id);
+   if(!record)return;
+   // A link from another WBS or a filtered-out activity must still show
+   // its selected node in the activity navigation.
+   if(filter.value&&filter.value!==record.wbs_id)filter.value="";
+   const q=search.value.trim().toLocaleLowerCase();
+   if(q&&!(record.id+" "+record.title).toLocaleLowerCase().includes(q))search.value="";
    selected=id;
    window.history.replaceState(null,"","#"+encodeURIComponent(id));
    renderList();
