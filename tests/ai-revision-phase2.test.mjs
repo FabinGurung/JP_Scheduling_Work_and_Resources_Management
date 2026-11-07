@@ -100,6 +100,6 @@ test("mobile/keyboard readiness guards exist in shared source, but device accept
  assert.ok(read("docs/WORK_READINESS_V1.md").includes("physical mobile/Safari device acceptance"));
  const builder=read("scripts/build-public-site.mjs");
  for(const f of ["src/kernel/ai-source-revision.mjs","src/kernel/ai-revision-diff.mjs","src/kernel/ai-revision-report.mjs"])
-  assert.ok(builder.includes("privateSourceModules")&&builder.includes('"'+f+'"')===false,
-   "New private agent module must not be implicitly excluded from explicit privateSourceModules list");
+  assert.ok(builder.includes('"'+f+'"'),
+   "Private offline AI module must be present in the public distribution exclusion list");
 });
