@@ -13,7 +13,9 @@ async function cp(relative){
 const privateSourceModules=new Set([
  "src/presentation/project-beta-workspace.mjs",
  "src/presentation/beta-draft.mjs",
- "src/kernel/ai-source-revision.mjs"
+ "src/kernel/ai-source-revision.mjs",
+ "src/kernel/ai-revision-diff.mjs",
+ "src/kernel/ai-revision-report.mjs"
 ]);
 async function modules(relative){
  const p=join(root,relative);
