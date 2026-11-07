@@ -14,6 +14,9 @@ test("primary public roadmap reports current Level-1 sisters, project beta, expl
   "./projects/community-clinic/","./projects/pedestrian-bridge/","./studio/"])
   assert.ok(page.includes(path),"Roadmap route missing "+path);
  assert.match(page,/No approved construction baseline|approved construction|approved completion/i);
+ assert.match(page,/All four records use the same read-only viewer/);
+ assert.match(page,/7 November 2026 repository audit/);
+ assert.doesNotMatch(page,/Beta project records \/ one editing template|same beta editor|same shared editor/);
  assert.match(page,/<details class="sf-rm-archive">/);
  assert.match(page,/SEQ14 Multi-activity serial resource leveling/);
 });
