@@ -177,3 +177,32 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
 .gv-skill-activity[data-inspected=true] .gv-skill-halo{stroke:#b98530;stroke-width:3}
 .gv-branch-hit:focus-visible,.gv-dependency-hit:focus-visible{stroke:rgba(190,135,36,.45)!important}
 .gv-skill-root:focus-visible .gv-skill-halo,.gv-skill-wbs:focus-visible .gv-skill-halo{stroke:#b98530;stroke-width:3.5}
+
+/* D1 · Read-only mobile/desktop Constellation viewport zoom; not WBS editing. */
+.gv-graph-shell{isolation:isolate}
+.gv-zoom-controls{
+ position:absolute;z-index:12;top:10px;right:10px;
+ display:flex;align-items:center;gap:4px;max-width:calc(100% - 14px);
+ padding:5px;border:1px solid #b8d8d8;border-radius:13px;
+ background:rgba(255,255,255,.97);box-shadow:0 4px 18px rgba(24,77,93,.16);
+}
+.gv-zoom-button{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-width:44px;min-height:44px;border-radius:9px;
+ padding:5px;border:1px solid #c1dcd9;background:#e9f7f3;
+ color:#155f6c;font:800 18px system-ui,-apple-system,sans-serif;
+ cursor:pointer;touch-action:manipulation;
+}
+.gv-zoom-button:hover{background:#d7f0e9}
+.gv-zoom-button:disabled{opacity:.35;cursor:not-allowed}
+.gv-zoom-fit,.gv-zoom-reset{font-size:12px}
+.gv-zoom-value{min-width:43px;text-align:center;color:#295d65;font-size:12px;font-weight:800}
+.gv-zoom-help{font-size:12px;font-weight:700;color:#336c77}
+.gv-tree-viewport{scrollbar-gutter:stable}
+@media(max-width:720px){
+ .gv-zoom-controls{top:7px;right:7px;gap:3px;padding:4px}
+ .gv-zoom-button{min-width:42px;min-height:44px}
+ .gv-zoom-value{min-width:40px}
+ .gv-zoom-help{display:block;flex-basis:100%;font-size:12px}
+}
+/* The zoom UI does not interfere with native browser/OS text enlargement. */
