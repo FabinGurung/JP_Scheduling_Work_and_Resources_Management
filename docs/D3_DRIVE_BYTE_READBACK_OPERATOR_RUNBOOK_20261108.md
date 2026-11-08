@@ -28,9 +28,9 @@ These folders currently inherit overlapping writer permissions. Merely placing a
 
 1. Real uploaded report/source artifact has a stable Google Drive ID and file `version` returned by Google, not guessed by an AI model.
 2. Google-supplied **read-only** OAuth access to that original stored file exists with `https://www.googleapis.com/auth/drive.readonly` (or a narrower supported Drive read scope). Do not reuse a Sheets-only token for Drive file-media access.
-3. Two independently operated and authenticated signing roles exist: SOURCE_READER and appropriately qualified FIELD_REVIEWER. Their private keys stay in separately controlled secret stores. A public-key registry is supplied by the trusted runtime, not the report author or ChatGPT.
-4. A source readback and independent review receipt bind the exact project `input_sha256`, activity ID, original Drive version, source evidence SHA-256 and immutable record identity. The signed payload must not be manufactured for a test pretending to be real site evidence.
-5. The original source is a Google Drive **stored file** with real downloadable bytes, 3 MB or smaller. Larger files or Google-native documents require an independently reviewed, versioned source adapter; no silent fallback.
+3. Two separate protected signing roles exist: an automated SOURCE_READER and an authorized FIELD_REVIEWER. The reporter and reviewer may be the same human only with a signed SELF_REVIEW_DISCLOSED declaration. Role keys stay in separately controlled secret stores. A public-key registry is supplied by the trusted runtime, not the report author or ChatGPT.
+4. A signed source readback and reviewer receipt bind the exact project `input_sha256`, activity ID, original Drive version, source evidence SHA-256 and immutable record identity. The signed payload must not be manufactured for a test pretending to be real site evidence.
+5. The original source is a Google Drive **stored file** with real downloadable bytes, 3 MB or smaller. Larger files or Google-native documents require an reviewed, versioned source adapter; no silent fallback.
 
 In the private trusted runner (not public GitHub Actions):
 
@@ -55,7 +55,7 @@ Even after all current checks pass, the result remains:
 
 ```text
 AUTHENTICATED SOURCE BYTES → SIGNED SOURCE READBACK
-                           → INDEPENDENT SIGNED EVIDENCE REVIEW
+                           → SIGNED REVIEW (INDEPENDENT OR DISCLOSED SELF-REVIEW)
                            → EVIDENCE ACCEPTED (NOT COMPLETION)
                            → HOLD: actual FINISH / inspection / permit
                            → HOLD: site-specific work-release authority
@@ -79,8 +79,14 @@ Once those exist, run the byte-and-signature preflight privately, reconcile the 
 Use the GitHub issues as the task authority. Never claim a construction permit, professional engineering signoff or site readiness from source-code tests.
 
 
-## 8 November 2026 reviewer designation and self-review safeguard
+## 8 November 2026 — Owner-confirmed single-account reporting and review
 
-The project owner has nominated the existing responsible-engineer collaborator as the **designated reviewer**. This nomination is not yet a verified Google OIDC subject, signing key or professional site signoff, and **the reviewer email is not to be published in this public repository**. See `docs/D3_RESPONSIBLE_ENGINEER_REVIEWER_ROLE_20261108.md`.
+The owner confirmed that the **same responsible-engineer Google account** will submit daily field observations and review them. Do not request another human reviewer solely to get reports into the intake.
 
-The source-readback receipt now requires `reporter_principal_id` and `reporter_identity_basis: TRUSTED_SOURCE_SERVICE_AUTHENTICATED_SUBJECT`, signed by the trusted source-reader service. A reviewer who is also the verified human reporter on that record is rejected even if the source-reader service is a third principal. Signed report acceptance remains insufficient to authorize starting construction. No Drive permissions or source artifacts were changed by this designation.
+The private `SOURCE_READER` remains a distinct **automated** authenticated service responsible for binding the actual reporter's Google provider subject, original Drive file ID/revision, and byte digest into a signed SOURCE_READBACK. This does not require a second human, but it **does** require separately controlled service credentials. Neither self-reported email nor a mutable Drive folder label is authenticated identity.
+
+A review signed by that same human may explicitly carry `review_mode: SELF_REVIEW_DISCLOSED`. It is admitted only as **self-reviewed evidence** (not an independent countersignature) and counts in `self_reviews`, never `independent_reviews`. Omission or falsification of this declaration fails closed. It **never** yields approved completion or `READY`.
+
+The requirement for a second human arises only where a particular regulation, contract, safety or quality hold point explicitly demands independent verification. The ability to issue a separate authorized construction release remains future work; the existing trust/signing test and Drive-byte verifier do not issue it.
+
+**No new Drive grants, keys, authentic review receipts or field-progress records were made from this owner designation.** The three Drive folders retain their original shared-writer permissions and were empty at the latest audit. See `docs/D3_RESPONSIBLE_ENGINEER_REVIEWER_ROLE_20261108.md`.
