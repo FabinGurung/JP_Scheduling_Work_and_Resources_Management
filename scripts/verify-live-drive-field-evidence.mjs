@@ -32,6 +32,7 @@ if(args.length!==4){
    source_records:receipt.source_records,
    provider_file_revisions_verified:receipt.provider_file_revisions_verified,
    independent_review_records:receipt.independent_review_records,
+   disclosed_self_review_records:receipt.disclosed_self_review_records,
    no_evidence_received:receipt.no_evidence_received,
    authority:receipt.authority,field_release_granted:false,
    ready_to_start:false,publishable:false
