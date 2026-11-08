@@ -1,37 +1,37 @@
-# Narayani — Responsible engineer/reviewer role nomination and independent report admission
+# Narayani D3 — Single-account responsible-engineer field workflow
 
-**Recorded:** 8 November 2026 · **Project:** `PRJ-000007`  
-**Status:** ROLE NOMINATED BY PROJECT OWNER; AUTHENTICATED AUTHORITY NOT YET PROVISIONED.
+**Updated:** 8 November 2026 · **Project:** `PRJ-000007`  
+**Status:** OWNER-NOMINATED DUAL ROLE; PROVIDER-AUTHENTICATED ACCESS AND SITE RELEASE NOT YET CONFIGURED.
 
-## Decision from owner
+## Owner's authoritative workflow decision
 
-The project owner identified the existing Narayani collaborator account as the **responsible engineer and the designated evidence/inspection reviewer**.
+The owner confirms that **one existing Google account** will be used to **submit daily site observations and review them as the responsible engineer**. We must support that actual operating practice, rather than assuming an extra human reviewer has already been appointed.
 
-This *role nomination* is not itself an authenticated Google identity, a verified engineering credential, signed review receipt, professional engineering decision or permission to start an activity. **The nominated Google account address is deliberately omitted from the public repository**. The exact account-to-provider-subject binding must be configured in a protected identity registry after a real Google sign-in and source-authorized account verification. A requester-supplied email string is insufficient.
+The account email is intentionally **not duplicated into this public repository**. Its Google-verified immutable provider subject must be bound in a separately protected runtime. This owner instruction does not prove a live OAuth session, registration credentials, engineering qualification or an actual signed review.
 
-## Observed Drive permissions
+## Model: one human, separate trusted service
 
-The three original pending/reviewer/audit folders still have the same four owner/writer collaborators (including the nominated reviewer). Existing inherited Drive access does not establish submitter/reviewer separation. Do not change inherited permissions or overwrite any original source to simulate this separation.
+1. The responsible engineer signs in to the controlled **private** field tool and submits an activity-linked report, dated observations and original photos or other evidence.
+2. A **separate trusted Drive read-only source-reader service** independently authenticates the submitting Google subject and original stored file/revision/bytes. Its SOURCE_READBACK receipt cryptographically signs `reporter_principal_id`, `reporter_identity_basis: TRUSTED_SOURCE_SERVICE_AUTHENTICATED_SUBJECT`, project, activity, source SHA and original evidence digest. This is a **service**, not a second human reviewer.
+3. The same responsible engineer may sign a REVIEW_DECISION receipt, declaring **`review_mode: SELF_REVIEW_DISCLOSED`** if the authenticated reporter and reviewer are the same principal. Both the original claim and reviewer verdict remain immutable/traceable.
+4. The review engine returns **`SELF_REVIEWED_NOT_INDEPENDENT_NOT_RELEASED`** (or `SELF_REVIEW_REJECTED`) and increments **self_reviews** separately from **independent_reviews**, which remains zero for that receipt.
+5. Undisclosed self-review, a fabricated distinct reviewer ID, a self-review mode on a different person, missing independent source-reader attestation, unknown signer keys, stale revisions and altered evidence fail closed.
+6. A self-reviewed observation does **not** confirm work completion or release the next task. All existing public Work Readiness pages stay UNKNOWN/NOT VERIFIED until a separately governed site-release system is authorized, implemented and validated.
 
-## Required role rules
+## Boundaries and genuine site responsibilities
 
-1. **SOURCE_READER:** A dedicated automated service with Google Drive file read access only. This service attests to original file bytes, Google Drive revision, SHA and the **authenticated human reporter identity**. It may not sign review decisions.
-2. **FIELD_REPORTER:** The authenticated person who uploaded/submitted the observation. Source reader must sign `reporter_principal_id` and `reporter_identity_basis: TRUSTED_SOURCE_SERVICE_AUTHENTICATED_SUBJECT`, derived from a trusted provider session or independently validated identity binding—not typed reporter names or mutable Drive file descriptions.
-3. **RESPONSIBLE_ENGINEER / FIELD_REVIEWER:** The designated engineer, bound to a verified Google provider subject by the protected trust registry, signs a review using independently controlled credentials.
-4. **No self-review:** Even when SOURCE_READER is a separate service, the signer of the review must not be the authenticated `reporter_principal_id` from the signed source readback. A self-reported account is rejected. If the responsible engineer needs to submit a report personally, a different authorized reviewer must be appointed for that report.
-5. **Field release:** A separate site/project authority, genuine approval evidence, actual start/finish timestamps, hold-point register, calendar/lag verification and final release event remain required. Review of a report cannot be converted into actual `READY` or `COMPLETE`.
+The system must distinguish *reviewing one's own field observations* from *issuing an authorized engineering decision or releasing work*. The owner may designate a responsible engineer for both tasks, but any hold-point that legally or contractually requires independent inspection/countersignature still requires that separate signatory; the software must not imply otherwise.
 
-## Implemented contract change
+Real READY/COMPLETE statuses still need (a) authenticated original source evidence, (b) genuine completed-work/start-finish events, (c) authentic per-activity inspection and safety hold definitions, (d) correct schedule/calendar/lag evaluation, and (e) an explicitly signed and authorized site-release event. This contract implements none of those final approval actions yet.
 
-The pre-live `SKYFORGE_SIGNED_FIELD_RECEIPT_V1` source-readback payload now **requires** `reporter_principal_id` and `reporter_identity_basis`. This tightens the schema without migrating any actual signed production receipts, because the three live intake folders contained no files when audited. Test suites use synthetic source-reader and reviewer identities; nothing implies the nominated engineer has signed a real receipt.
+## Existing access / remaining integration debt
 
-The trusted source signer and reviewer must remain distinct keys and service identities, and the human reporter and reviewer must also be distinct for each reviewed record.
+The original `00_PENDING_FIELD_REPORTS`, `10_REVIEW_DECISIONS` and `20_READBACK_AND_AUDIT` Drive folders currently have overlapping writer access. The earlier authenticated audit found **zero** direct submitted records. This role nomination does **not** modify Drive permissions, provision tokens, enroll keys, or create evidence.
 
-## What the owner needs to provide next
+Next private integration work is to configure a Google-authenticated field submission/viewer, service-protected Drive original-byte readback, engineer signoff through controlled signing infrastructure and an append-only private audit; **do not ask for OAuth tokens or signing keys in chat**.
 
-- Name or account for the **person who will submit site observations**, separate from the designated reviewer. Reports must be associated with actual authenticated people.
-- Arrange an authenticated Google identity connection for the nominated reviewer in a private reviewer/signing service, without sending OAuth tokens or private keys to ChatGPT.
-- Authorize a separate read-only Drive service to access originals. No sharing permissions have been changed as part of this role nomination.
-- Supply the first real field report in the private pending intake after access separation has been configured; source evidence should include activity ID, observed work, date and inspection references.
+The owner need not nominate another human **merely to submit and self-review field evidence**. Additional reviewers are needed only if genuine quality/safety/contractual requirements demand independence, and verified site-release authorization is a separate future gate.
 
-**Do not publish** the nominated account email, provider subject, reporter names, private original evidence, reviewer credentials or signing keys on GitHub Pages. Versioned source/approval evidence remains in restricted authoritative storage; source code and non-sensitive rules remain in GitHub. Public Pages continues to show UNKNOWN.
+## Versioning
+
+Keep a single authoritative original file ID and preserve enumerated PRE/POST evidence and append-only review history where applicable. No raw Google account address, reviewer provider subject, private notes, photos, or signing credentials go into GitHub Pages. GitHub may hold public-safe schemas, tests and generic governance documentation. All field-ready statuses remain unapproved.
