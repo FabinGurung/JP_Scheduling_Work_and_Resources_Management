@@ -56,7 +56,15 @@ test("D3 accepted independently signed report remains evidence only, not complet
  assert.equal(prior.verified_predecessor_event,false);
  assert.equal(result.readiness,"UNVERIFIED_NO_AUTHORIZED_SITE_RELEASE");
  assert.equal(result.ready_for_construction,false);
- assert.equal(result.source_evidence_authenticated,true);
+ // A source attested for the predecessor cannot make the selected successor
+ // appear to have its own authenticated activity evidence.
+ assert.equal(result.source_evidence_authenticated,false);
+ const previous=inspectAttestedWorkReadiness(m,edge.from,bundle(m,[
+  seal(source,reader.privateKey,"SOURCE_KEY"),
+  seal(review,reviewer.privateKey,"REVIEW_KEY")
+ ]),trusted,now);
+ assert.equal(previous.source_evidence_authenticated,true);
+ assert.equal(previous.ready_for_construction,false);
 });
 test("D3 no untrusted data can be silently upgraded through private inspector",()=>{
  const m=model(),id=m.activities[0].id;
