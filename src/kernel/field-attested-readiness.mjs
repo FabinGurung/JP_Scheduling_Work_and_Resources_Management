@@ -64,6 +64,6 @@ export function inspectAttestedWorkReadiness(model,activityId,bundle,trustConfig
   ready_for_construction:false,
   approved_site_progress:false,
   publishable:false,
-  source_evidence_authenticated:reviewed.totals.source_readbacks>0
+  source_evidence_authenticated:own.verified_source_readbacks>0
  };
 }
