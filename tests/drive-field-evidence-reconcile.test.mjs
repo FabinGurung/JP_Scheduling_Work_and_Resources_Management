@@ -28,7 +28,8 @@ function bundle(m,hasReview=true){
  const id=m.activities[0].id;
  const source={kind:"SOURCE_READBACK",record_id:"SRC01",project_id:m.project.id,
   activity_id:id,source_sha256:m.input_sha256,evidence_sha256:sha(bytes),
-  source_file_id:fileId,source_revision:revision,observed_at:"2026-11-08T08:00:00.000Z",
+  source_file_id:fileId,source_revision:revision,
+  reporter_principal_id:"FIELD_REPORTER_A",reporter_identity_basis:"TRUSTED_SOURCE_SERVICE_AUTHENTICATED_SUBJECT",observed_at:"2026-11-08T08:00:00.000Z",
   observation:"WORK_REPORTED_COMPLETE"};
  const review={kind:"REVIEW_DECISION",record_id:"REV01",project_id:m.project.id,
   activity_id:id,source_sha256:m.input_sha256,evidence_sha256:sha(bytes),
