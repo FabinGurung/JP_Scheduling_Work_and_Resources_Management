@@ -2,7 +2,7 @@ import {createPublicKey,verify} from "node:crypto";
 import {validateGenericViewModel} from "../presentation/generic-views.mjs";
 
 /**
- * PRIVATE trusted-runtime source/readback and independent review attestation.
+ * PRIVATE trusted-runtime source/readback and reviewer attestation.
  * It never authorizes starting/completing a construction activity.
  *
  * Caller config MUST be provisioned out of band by an authenticated service.
@@ -41,7 +41,7 @@ function verifySignedReceipt(envelope,registry,asOf){
   "reporter_principal_id","reporter_identity_basis"];
  const reviewFields=["kind","record_id","project_id","activity_id","source_sha256",
   "evidence_sha256","source_record_id","reviewer_id","reviewed_at","decision",
-  "evidence_checked","review_note_sha256"];
+  "evidence_checked","review_note_sha256","review_mode"];
  strict(payload,payload.kind==="SOURCE_READBACK"?sourceFields:reviewFields,"signed payload");
  for(const k of ["record_id","project_id","activity_id"])
   if(!valid(payload[k]))throw Error("Invalid signed evidence identity: "+k);
@@ -57,7 +57,8 @@ function verifySignedReceipt(envelope,registry,asOf){
  }else{
   if(!valid(payload.source_record_id)||payload.reviewer_id!==trusted.principal_id||
    !["ACCEPT","REJECT"].includes(payload.decision)||payload.evidence_checked!==true||
-   !SHA.test(payload.review_note_sha256??""))
+   !SHA.test(payload.review_note_sha256??"")||
+   (payload.review_mode!==undefined&&!["INDEPENDENT_REVIEW","SELF_REVIEW_DISCLOSED"].includes(payload.review_mode)))
    throw Error("Review not bound to authenticated reviewer identity and inspected evidence");
   if(timestamp(payload.reviewed_at)>asOf)throw Error("Future review timestamp");
  }
@@ -114,7 +115,7 @@ export function reconcilePrivateFieldEvidence(model,bundle,trustConfig,asOfUtc){
   allIds.add(p.record_id);
   if(p.kind==="SOURCE_READBACK")source.set(p.record_id,signed);
   else{
-   if(reviews.has(p.source_record_id))throw Error("Conflicting independent reviews of same source record");
+   if(reviews.has(p.source_record_id))throw Error("Conflicting reviewer decisions for same source record");
    reviews.set(p.source_record_id,signed);
   }
  }
@@ -122,21 +123,33 @@ export function reconcilePrivateFieldEvidence(model,bundle,trustConfig,asOfUtc){
   const original=source.get(sourceId);
   if(!original)throw Error("Reviewer decision without authenticated source readback");
   const p=signed.payload,q=original.payload;
+  // The source-reading service must remain separate from the engineer signer.
+  // A responsible engineer may attest to their OWN report only when that
+  // conflict is disclosed in the signed review payload. It is NEVER counted
+  // as an independent review or a field release.
   if(signed.principal_id===original.principal_id||
-    signed.principal_id===q.reporter_principal_id||
     signed.key_id===original.key_id||
     p.evidence_sha256!==q.evidence_sha256||
     p.activity_id!==q.activity_id||
     timestamp(p.reviewed_at)<timestamp(q.observed_at))
-   throw Error("Reviewer is not independent or evidence revision is mismatched");
+   throw Error("Reviewer/source-service roles are not independent or evidence revision is mismatched");
+  const selfReview=signed.principal_id===q.reporter_principal_id;
+  if(selfReview&&p.review_mode!=="SELF_REVIEW_DISCLOSED")
+   throw Error("Self-review requires explicit signed SELF_REVIEW_DISCLOSED mode");
+  if(!selfReview&&p.review_mode==="SELF_REVIEW_DISCLOSED")
+   throw Error("Self-review disclosure does not match authenticated reporter");
  }
  const byActivity=new Map(model.activities.map(a=>[a.id,[]]));
  for(const signed of source.values()){
   const p=signed.payload,review=reviews.get(p.record_id);
+  const self=Boolean(review&&review.principal_id===p.reporter_principal_id);
   byActivity.get(p.activity_id).push({
    observation:p.observation,
+   review_mode:!review?null:self?"SELF_REVIEW_DISCLOSED":"INDEPENDENT_REVIEW",
    state:!review?"REVIEW_PENDING":
-    review.payload.decision==="REJECT"?"REVIEW_REJECTED":
+    review.payload.decision==="REJECT"?
+      (self?"SELF_REVIEW_REJECTED":"REVIEW_REJECTED"):
+    self?"SELF_REVIEWED_NOT_INDEPENDENT_NOT_RELEASED":
     "EVIDENCE_ACCEPTED_NOT_WORK_COMPLETION"
   });
  }
@@ -144,11 +157,15 @@ export function reconcilePrivateFieldEvidence(model,bundle,trustConfig,asOfUtc){
   const records=byActivity.get(a.id);
   let state="NO_VERIFIED_EVIDENCE";
   if(records.some(r=>r.state==="REVIEW_REJECTED"))state="REVIEW_REJECTED";
+  else if(records.some(r=>r.state==="SELF_REVIEW_REJECTED"))state="SELF_REVIEW_REJECTED";
   else if(records.some(r=>r.state==="REVIEW_PENDING"))state="REVIEW_PENDING";
+  else if(records.some(r=>r.review_mode==="SELF_REVIEW_DISCLOSED"))
+   state="SELF_REVIEWED_NOT_INDEPENDENT_NOT_RELEASED";
   else if(records.length)state="EVIDENCE_ACCEPTED_NOT_WORK_COMPLETION";
   return {activity_id:a.id,review_state:state,
    verified_source_readbacks:records.length,
-   independent_reviews:records.filter(r=>r.state!=="REVIEW_PENDING").length,
+   independent_reviews:records.filter(r=>r.review_mode==="INDEPENDENT_REVIEW").length,
+   self_reviews:records.filter(r=>r.review_mode==="SELF_REVIEW_DISCLOSED").length,
    verified_complete:false,ready_to_start:false,field_release_granted:false};
  });
  return {
@@ -157,6 +174,8 @@ export function reconcilePrivateFieldEvidence(model,bundle,trustConfig,asOfUtc){
   authority:"PRIVATE_SIGNED_SOURCE_AND_REVIEW_EVIDENCE_NOT_SITE_RELEASE",
   as_of:asOfUtc,activity_states:results,
   totals:{source_readbacks:source.size,reviews:reviews.size,
+   independent_reviews:results.reduce((n,a)=>n+a.independent_reviews,0),
+   self_reviews:results.reduce((n,a)=>n+a.self_reviews,0),
    activities_with_evidence:results.filter(a=>a.verified_source_readbacks>0).length},
   field_release_granted:false,approved_site_progress:false,
   adoption:"BLOCKED_PENDING_HOLD_POINT_AUTHORITY_SIGNED_RELEASE_AND_CALENDAR_VERIFICATION",
