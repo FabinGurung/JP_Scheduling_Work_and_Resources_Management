@@ -79,3 +79,31 @@ test("D3 no untrusted data can be silently upgraded through private inspector",(
  assert.match(source,/ready_for_construction:false/);
  assert.ok(build.includes('"src/kernel/field-attested-readiness.mjs"'));
 });
+
+
+test("D3 responsible engineer's disclosed self-review remains a predecessor hold",()=>{
+ const m=model(),edge=m.links.find(x=>x.type==="FS"&&x.lag===0);
+ assert.ok(edge);
+ const source={kind:"SOURCE_READBACK",record_id:"SRC_SELF",project_id:m.project.id,
+  activity_id:edge.from,source_sha256:m.input_sha256,
+  evidence_sha256:"a".repeat(64),source_file_id:"GOOGLE_DRIVE_SOURCE_1",source_revision:"REV_A",
+  reporter_principal_id:"REVIEWER_ONE",reporter_identity_basis:"TRUSTED_SOURCE_SERVICE_AUTHENTICATED_SUBJECT",
+  observed_at:"2026-11-08T08:00:00.000Z",observation:"WORK_REPORTED_COMPLETE"};
+ const review={kind:"REVIEW_DECISION",record_id:"REV_SELF",project_id:m.project.id,
+  activity_id:edge.from,source_sha256:m.input_sha256,evidence_sha256:source.evidence_sha256,
+  source_record_id:"SRC_SELF",reviewer_id:"REVIEWER_ONE",reviewed_at:"2026-11-08T09:00:00.000Z",
+  decision:"ACCEPT",review_mode:"SELF_REVIEW_DISCLOSED",evidence_checked:true,
+  review_note_sha256:"b".repeat(64)};
+ const receipts=bundle(m,[seal(source,reader.privateKey,"SOURCE_KEY"),
+  seal(review,reviewer.privateKey,"REVIEW_KEY")]);
+ const next=inspectAttestedWorkReadiness(m,edge.to,receipts,trusted,now);
+ const dependency=next.start_prerequisites.find(x=>x.predecessor_id===edge.from);
+ assert.equal(dependency.evidence_review_state,"SELF_REVIEWED_NOT_INDEPENDENT_NOT_RELEASED");
+ assert.match(dependency.reason,/not independently corroborated/);
+ assert.ok(next.blocking_reasons.includes("SELF_REVIEW_NOT_INDEPENDENTLY_CORROBORATED"));
+ assert.equal(next.readiness,"UNVERIFIED_NO_AUTHORIZED_SITE_RELEASE");
+ assert.equal(next.ready_for_construction,false);
+ const own=inspectAttestedWorkReadiness(m,edge.from,receipts,trusted,now);
+ assert.equal(own.evidence_review_mode,"SELF_REVIEW_DISCLOSED");
+ assert.equal(own.ready_for_construction,false);
+});
