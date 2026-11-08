@@ -123,3 +123,22 @@ test("D3 new live Drive reader, signed chain and CLI must stay out of published 
  const ui=readFileSync(new URL("../src/presentation/work-readiness-page.mjs",import.meta.url),"utf8");
  assert.doesNotMatch(ui,/reconcileLiveDriveFieldEvidence|GOOGLE_OAUTH_ACCESS_TOKEN|source_file_id/);
 });
+
+
+test("D3 Drive byte proof with same human reporter/reviewer remains disclosed, not independent",async()=>{
+ const m=model(),b=bundle(m),p=provider();
+ b.receipts[0].payload.reporter_principal_id="INDEPENDENT_REVIEWER";
+ b.receipts[0]=signed(b.receipts[0].payload,reader.privateKey,"SRC_KEY");
+ b.receipts[1].payload.review_mode="SELF_REVIEW_DISCLOSED";
+ b.receipts[1]=signed(b.receipts[1].payload,reviewer.privateKey,"REV_KEY");
+ const result=await reconcileLiveDriveFieldEvidence({
+  model:m,bundle:b,trustConfig:trust,asOfUtc:now,oauthToken:token,fetchImpl:p.fetchImpl});
+ assert.equal(result.provider_file_revisions_verified,1);
+ assert.equal(result.independent_review_records,0);
+ assert.equal(result.disclosed_self_review_records,1);
+ assert.equal(result.activity_states[0].review_state,"SELF_REVIEWED_NOT_INDEPENDENT_NOT_RELEASED");
+ assert.equal(result.ready_to_start,false);
+ assert.equal(result.verified_complete,false);
+ assert.equal(result.field_release_granted,false);
+ assert.equal(result.publishable,false);
+});
