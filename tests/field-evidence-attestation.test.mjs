@@ -143,3 +143,60 @@ test("D3 reviewer cannot approve their own uploaded report even when source read
  assert.throws(()=>reconcilePrivateFieldEvidence(m,
   wrap(m,[seal(missingReporter),seal(review)]),trust,date),/source readback/);
 });
+
+
+test("D3 single-account engineer may disclose self-review while it remains non-independent and never READY",()=>{
+ const m=model(),{source,review}=sample(m);
+ const sameHuman={...source,reporter_principal_id:"INDEPENDENT_ENGINEER"};
+ const disclosed={...review,review_mode:"SELF_REVIEW_DISCLOSED"};
+ const result=reconcilePrivateFieldEvidence(m,wrap(m,[
+  seal(sameHuman),seal(disclosed)
+ ]),trust,date);
+ const state=result.activity_states.find(x=>x.activity_id===source.activity_id);
+ assert.equal(state.review_state,"SELF_REVIEWED_NOT_INDEPENDENT_NOT_RELEASED");
+ assert.equal(state.self_reviews,1);
+ assert.equal(state.independent_reviews,0);
+ assert.equal(result.totals.self_reviews,1);
+ assert.equal(result.totals.independent_reviews,0);
+ assert.equal(result.totals.reviews,1);
+ assert.equal(state.verified_complete,false);
+ assert.equal(state.ready_to_start,false);
+ assert.equal(result.approved_site_progress,false);
+ assert.equal(result.field_release_granted,false);
+ assert.equal(result.publishable,false);
+});
+test("D3 self-review mode must be signed and true to reporter identity; cannot impersonate independent review",()=>{
+ const m=model(),{source,review}=sample(m);
+ const selfReport={...source,reporter_principal_id:"INDEPENDENT_ENGINEER"};
+ const noDisclosure={...review};
+ assert.throws(()=>reconcilePrivateFieldEvidence(m,wrap(m,[
+  seal(selfReport),seal(noDisclosure)
+ ]),trust,date),/Self-review requires explicit/);
+ const fakeIndependent={...review,review_mode:"INDEPENDENT_REVIEW"};
+ assert.throws(()=>reconcilePrivateFieldEvidence(m,wrap(m,[
+  seal(selfReport),seal(fakeIndependent)
+ ]),trust,date),/Self-review requires explicit/);
+ const falseDisclosure={...review,review_mode:"SELF_REVIEW_DISCLOSED"};
+ assert.throws(()=>reconcilePrivateFieldEvidence(m,wrap(m,[
+  seal(source),seal(falseDisclosure)
+ ]),trust,date),/does not match authenticated reporter/);
+ const changed=seal({...review,review_mode:"SELF_REVIEW_DISCLOSED"});
+ changed.payload.review_mode="INDEPENDENT_REVIEW";
+ assert.throws(()=>reconcilePrivateFieldEvidence(m,wrap(m,[
+  seal(selfReport),changed
+ ]),trust,date),/signature verification failed/);
+ const invalid={...review,review_mode:"SELF_REVIEW_APPROVED_RELEASE"};
+ assert.throws(()=>reconcilePrivateFieldEvidence(m,wrap(m,[
+  seal(selfReport),seal(invalid)
+ ]),trust,date),/Review not bound/);
+});
+test("D3 self-rejected report remains explicitly rejected and not independently reviewed",()=>{
+ const m=model(),{source,review}=sample(m);
+ const selfReport={...source,reporter_principal_id:"INDEPENDENT_ENGINEER"};
+ const rejected={...review,decision:"REJECT",review_mode:"SELF_REVIEW_DISCLOSED"};
+ const result=reconcilePrivateFieldEvidence(m,wrap(m,[seal(selfReport),seal(rejected)]),trust,date);
+ assert.equal(result.activity_states[0].review_state,"SELF_REVIEW_REJECTED");
+ assert.equal(result.totals.self_reviews,1);
+ assert.equal(result.totals.independent_reviews,0);
+ assert.equal(result.activity_states[0].ready_to_start,false);
+});
