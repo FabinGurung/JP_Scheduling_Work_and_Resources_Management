@@ -37,6 +37,7 @@ test("D3 accepted independently signed report remains evidence only, not complet
   kind:"SOURCE_READBACK",record_id:"SRC_ONE",project_id:m.project.id,activity_id:edge.from,
   source_sha256:m.input_sha256,evidence_sha256:"a".repeat(64),
   source_file_id:"GOOGLE_DRIVE_SOURCE_1",source_revision:"REV_A",
+  reporter_principal_id:"FIELD_REPORTER_A",reporter_identity_basis:"TRUSTED_SOURCE_SERVICE_AUTHENTICATED_SUBJECT",
   observed_at:"2026-11-08T08:00:00.000Z",observation:"WORK_REPORTED_COMPLETE"
  };
  const review={
