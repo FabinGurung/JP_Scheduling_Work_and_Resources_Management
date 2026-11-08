@@ -37,7 +37,8 @@ function verifySignedReceipt(envelope,registry,asOf){
  const expectedRole=payload.kind==="SOURCE_READBACK"?"SOURCE_READER":"FIELD_REVIEWER";
  if(trusted.role!==expectedRole)throw Error("Signing role not authorized for evidence action");
  const sourceFields=["kind","record_id","project_id","activity_id","source_sha256",
-  "evidence_sha256","source_file_id","source_revision","observed_at","observation"];
+  "evidence_sha256","source_file_id","source_revision","observed_at","observation",
+  "reporter_principal_id","reporter_identity_basis"];
  const reviewFields=["kind","record_id","project_id","activity_id","source_sha256",
   "evidence_sha256","source_record_id","reviewer_id","reviewed_at","decision",
   "evidence_checked","review_note_sha256"];
@@ -48,6 +49,8 @@ function verifySignedReceipt(envelope,registry,asOf){
   throw Error("Signed receipt lacks content digest");
  if(payload.kind==="SOURCE_READBACK"){
   if(!valid(payload.source_file_id)||!valid(payload.source_revision)||
+   !valid(payload.reporter_principal_id)||
+   payload.reporter_identity_basis!=="TRUSTED_SOURCE_SERVICE_AUTHENTICATED_SUBJECT"||
    !["WORK_STARTED","WORK_REPORTED_COMPLETE","WORK_BLOCKED","NEEDS_CLARIFICATION"].includes(payload.observation))
    throw Error("Malformed source readback evidence");
   if(timestamp(payload.observed_at)>asOf)throw Error("Future source observation");
@@ -120,6 +123,7 @@ export function reconcilePrivateFieldEvidence(model,bundle,trustConfig,asOfUtc){
   if(!original)throw Error("Reviewer decision without authenticated source readback");
   const p=signed.payload,q=original.payload;
   if(signed.principal_id===original.principal_id||
+    signed.principal_id===q.reporter_principal_id||
     signed.key_id===original.key_id||
     p.evidence_sha256!==q.evidence_sha256||
     p.activity_id!==q.activity_id||
