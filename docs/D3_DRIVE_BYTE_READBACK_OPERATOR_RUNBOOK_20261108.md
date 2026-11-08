@@ -77,3 +77,10 @@ Once those exist, run the byte-and-signature preflight privately, reconcile the 
 - No live signed Drive receipt has been generated, inspected or approved. Passing Node tests, source digest checks or Pages deployment is engineering software QA only.
 
 Use the GitHub issues as the task authority. Never claim a construction permit, professional engineering signoff or site readiness from source-code tests.
+
+
+## 8 November 2026 reviewer designation and self-review safeguard
+
+The project owner has nominated the existing responsible-engineer collaborator as the **designated reviewer**. This nomination is not yet a verified Google OIDC subject, signing key or professional site signoff, and **the reviewer email is not to be published in this public repository**. See `docs/D3_RESPONSIBLE_ENGINEER_REVIEWER_ROLE_20261108.md`.
+
+The source-readback receipt now requires `reporter_principal_id` and `reporter_identity_basis: TRUSTED_SOURCE_SERVICE_AUTHENTICATED_SUBJECT`, signed by the trusted source-reader service. A reviewer who is also the verified human reporter on that record is rejected even if the source-reader service is a third principal. Signed report acceptance remains insufficient to authorize starting construction. No Drive permissions or source artifacts were changed by this designation.
