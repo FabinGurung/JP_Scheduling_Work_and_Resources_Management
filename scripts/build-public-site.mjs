@@ -18,7 +18,9 @@ const privateSourceModules=new Set([
  "src/kernel/ai-revision-report.mjs",
  "src/kernel/field-readiness-gates.mjs",
  "src/kernel/field-evidence-attestation.mjs",
- "src/kernel/field-attested-readiness.mjs"
+ "src/kernel/field-attested-readiness.mjs",
+ "src/kernel/drive-evidence-readback.mjs",
+ "src/kernel/drive-field-evidence-reconcile.mjs"
 ]);
 async function modules(relative){
  const p=join(root,relative);
