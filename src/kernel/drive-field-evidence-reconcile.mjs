@@ -43,12 +43,13 @@ export async function reconcileLiveDriveFieldEvidence({
   as_of:asOfUtc,
   source_records:signed.totals.source_readbacks,
   provider_file_revisions_verified:readbacks,
-  independent_review_records:signed.totals.reviews,
+  independent_review_records:signed.totals.independent_reviews,
+  disclosed_self_review_records:signed.totals.self_reviews,
   activity_states:signed.activity_states,
   no_evidence_received:signed.totals.source_readbacks===0,
   authority:"PRIVATE_READONLY_INTEGRITY_ONLY_NO_SITE_RELEASE",
   verified_complete:false,ready_to_start:false,field_release_granted:false,
   approved_site_progress:false,publishable:false,
-  adoption:"BLOCKED_PENDING_INDEPENDENT_SITE_COMPLETION_HOLDS_AND_RELEASE"
+  adoption:"BLOCKED_PENDING_SITE_COMPLETION_HOLDS_AND_RELEASE"
  };
 }
