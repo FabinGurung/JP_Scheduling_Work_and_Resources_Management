@@ -128,13 +128,13 @@ test("D3 signed source reader is private and excluded from the public Pages allo
 });
 
 
-test("D3 reviewer cannot approve their own uploaded report even when source reader uses a different service account",()=>{
+test("D3 reviewer cannot disguise their own report as an independent review through a separate source service",()=>{
  const m=model(),{source,review}=sample(m);
  // The trusted source service has a distinct principal, but its signed payload
  // identifies the human reporter as the same independent-review principal.
  const selfSubmitted={...source,reporter_principal_id:"INDEPENDENT_ENGINEER"};
  assert.throws(()=>reconcilePrivateFieldEvidence(m,
-  wrap(m,[seal(selfSubmitted),seal(review)]),trust,date),/not independent/);
+  wrap(m,[seal(selfSubmitted),seal(review)]),trust,date),/Self-review requires explicit/);
  const forgedReporter={...source,reporter_identity_basis:"SELF_DECLARED"};
  assert.throws(()=>reconcilePrivateFieldEvidence(m,
   wrap(m,[seal(forgedReporter),seal(review)]),trust,date),/source readback/);
