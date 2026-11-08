@@ -24,8 +24,8 @@ Do not copy private Drive paths, reporter names, file IDs, review notes, private
 2. Source readbacks (`SOURCE_READBACK`) carry immutable evidence SHA-256, source item/revision, explicit observation type and UTC time.
 3. Review decisions (`REVIEW_DECISION`) carry an evidence digest, source record reference, decision, reviewer identity, review note digest and UTC time.
 4. Every receipt must have a valid Ed25519 signature over a domain-separated, exact payload. The corresponding public key must appear in the **out-of-band** trust registry and have the correct SOURCE_READER or FIELD_REVIEWER role.
-5. The reviewer principal and key must differ from the source reader. Evidence SHA, project, activity and source model SHA must reconcile exactly. Future timestamp, unknown key, stale source, duplicate/conflicting review and unexpected approval fields fail closed.
-6. The result is deliberately a **private** evidence-reconciliation summary with states `NO_VERIFIED_EVIDENCE`, `REVIEW_PENDING`, `REVIEW_REJECTED` or `EVIDENCE_ACCEPTED_NOT_WORK_COMPLETION`.
+5. The reviewer signing key and principal must differ from the automated source-reader service. If the responsible engineer was also the authenticated human reporter, the signed review must explicitly declare SELF_REVIEW_DISCLOSED and is NOT independent. Evidence SHA, project, activity and source model SHA must reconcile exactly. Future timestamp, unknown key, stale source, duplicate/conflicting review and unexpected approval fields fail closed.
+6. The result is deliberately a **private** evidence-reconciliation summary with states `NO_VERIFIED_EVIDENCE`, `REVIEW_PENDING`, `REVIEW_REJECTED`, `SELF_REVIEW_REJECTED`, `SELF_REVIEWED_NOT_INDEPENDENT_NOT_RELEASED` or `EVIDENCE_ACCEPTED_NOT_WORK_COMPLETION`.
 7. `src/kernel/field-attested-readiness.mjs` projects the signed-readback review state across actual modeled START predecessors, while listing finish-only constraints separately. Accepted evidence is **not** assumed to prove actual work completion; nonzero lag and missing hold registers remain explicit blockers.
 8. Even an accepted, independently signed source record NEVER makes the outcome `READY`: `verified_complete:false`, `ready_to_start:false`, `field_release_granted:false`, `publishable:false` and `approved_site_progress:false` remain enforced.
 
@@ -48,7 +48,7 @@ No actual signing key files or real receipt examples are stored in this reposito
 ## Future steps before actual work readiness
 
 1. **Real intake:** Authenticate Google Drive reader service, read exact original file ID and version/bytes, compute source-content digest and source readback signed by a key controlled by that service.
-2. **Real independence:** Separate reviewer role/access from reporting source; preserve immutable reviewer decisions and the independently managed signing key.
+2. **Role protection:** Keep the automated source-reader signing role distinct from the responsible engineer's reviewer signing role. The owner has chosen one human to submit and review: require an authenticated reporter identity and explicitly signed SELF_REVIEW_DISCLOSED mode. Only request an additional independent person for a task when its actual regulation, contract or hold point requires countersignature.
 3. **Completion signoff:** Add signed work-completion evidence, exact START/FINISH event times and authorized engineering inspection acceptance, not just acceptance of a report.
 4. **Hold registry:** Define per-activity method statements, safety/quality/permit holds from authentic project requirements. Absence of holds cannot be interpreted as no holds required.
 5. **Clock and lag:** Reconcile local work calendars, lag/lead dates, data date and signed work-event evidence.
@@ -58,3 +58,9 @@ No actual signing key files or real receipt examples are stored in this reposito
 ## Versioning, publication, and limits
 
 Preserve PRE and POST Git snapshots and append-only source event history. Do not overwrite the source live ID merely to change published HTML. The Pages build explicitly excludes `src/kernel/field-evidence-attestation.mjs` and `src/kernel/field-attested-readiness.mjs`; only the unapproved read-only project projection is published. Unit tests verify signature tampering, role separation, stale source, evidence chain, and the no-release boundary. Passing Actions tests is code QA, not an engineering/construction approval.
+
+## 8 November 2026 single-account owner decision
+
+The responsible engineer will both **submit** the site observations and **review** them using the same privately authenticated Google account. The public repository does not expose that account email. The cryptographic contract now distinguishes `SELF_REVIEW_DISCLOSED` from independent review, maintains separate counters, and never upgrades self-reviewed evidence to construction permission. The dedicated policy is `docs/D3_RESPONSIBLE_ENGINEER_REVIEWER_ROLE_20261108.md`.
+
+No real human provider subject, private key, service-account authentication or engineering approval has been provisioned by this owner instruction. The original intake folders remain shared-writer and empty at the last authenticated inspection.
