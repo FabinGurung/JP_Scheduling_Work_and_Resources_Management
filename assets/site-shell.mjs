@@ -184,8 +184,8 @@ function createShell(){
  for(const [label,target] of tabs){
   const a=entry(navigation,label,target);
   const key=pageKey();
-  const isProject=key.startsWith("projects/")||key.startsWith("studio/projects/");
-  const isStudio=key.startsWith("studio/")&&!key.startsWith("studio/projects/");
+  const isProject=key.startsWith("projects/");
+  const isStudio=key.startsWith("studio/");
   const isReference=key.startsWith("more/")||key.startsWith("knowledge/")||
    key.startsWith("how/")||key.startsWith("work-items/")||
    key.startsWith("machine/")||["planner.html","kernel-lab.html","advanced.html","roadmap.html"].includes(key);
@@ -249,6 +249,6 @@ function createShell(){
  // reference pages; never let it float across project cards or form controls.
  const compactWorkspace=pageKey().startsWith("projects/")||pageKey().startsWith("more/");
  if(!compactWorkspace)roamController=createPipRoam(pip,header,reduced);
- else pip.setAttribute("aria-hidden","true");
+ else{pip.setAttribute("aria-hidden","true");motion.hidden=true;motion.disabled=true;}
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",createShell,{once:true});else createShell();
