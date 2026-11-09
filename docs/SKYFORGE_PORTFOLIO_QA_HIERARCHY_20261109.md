@@ -36,7 +36,7 @@ The source Enterprise Drive folders retain their existing enumeration (`03`, `04
 
 **Important:** Portfolio instance IDs `PORT-000001..PORT-000011` are UI/registry IDs, not replacements for authoritative `PRJ-...` project IDs. No new original project folders, Sheets, contracts, completion proofs or work items were invented.
 
-## Full GitHub Pages route tree (all 41 HTML pages)
+## Full GitHub Pages route tree (44 HTML outputs: 41 unified pages and 3 redirect-only stubs)
 
 ```text
 https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/
@@ -139,7 +139,7 @@ https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/
     └── adapters/
 ```
 
-The `src/` branch contains additional browser-safe modules. The **private** AI source-editing, cryptographic attestation, Drive OAuth and approval simulation modules are deliberately omitted by `scripts/build-public-site.mjs`. The 41-page count refers to HTML documents only, not downloadable JSON, CSS, JS, CSV or SVG.
+The `src/` branch contains additional browser-safe modules. The **private** AI source-editing, cryptographic attestation, Drive OAuth and approval simulation modules are deliberately omitted by `scripts/build-public-site.mjs`. Build-time source-route enumeration produces 44 HTML outputs. The GitHub Actions QA log reports 41 **unified/skinned** pages; 3 redirect-only HTML stubs are intentionally excluded from that unified count. Neither count includes downloadable JSON, CSS, JS, CSV or SVG.
 
 ## GitHub Actions tree and execution
 
@@ -208,7 +208,7 @@ flowchart TD
   G --> CI["Site · Validate and Deploy"]
   CI --> T["Tests · calendar · deterministic WBS · source digests"]
   T --> Build{"All tests + source/public allowlist pass?"}
-  Build -->|Yes| Pages["Deploy 41 HTML pages + reviewed public assets"]
+  Build -->|Yes| Pages["Deploy 41 unified pages + 3 redirect-only HTML outputs + reviewed assets"]
   Build -->|No| Hold["HOLD · no publication"]
   S["Narayani Drive sync · owner paused"] -. disabled .-> CI
   Man["Manual synthetic machine evidence"] --> Art["Private CI artifact; not Pages"]
