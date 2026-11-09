@@ -1,3 +1,13 @@
+## Current Skyforge navigation · 9 November 2026
+
+**Canonical project directory:** https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/ — **22 project identities across 4 companies**, with Google Drive project-folder naming as the authority. Company pages: `projects/jp/`, `projects/fishtail/`, `projects/rohini/`, `projects/paila/`. Each source-grounded project has its own read-only page; **21 schedules are intentionally empty** until their own WBS is reviewed. Narayani's existing 45-activity public-safe scenario is preserved.
+
+**System navigation:** Overview → Projects → Studio → Reference. The former `projects/portfolio/` and its 11 legacy routes redirect to current company paths; the source-only historic registry remains archived. The old long More dropdown is removed.
+
+**Review:** [Company-first source and navigation QA](docs/PROJECTS_COMPANY_FIRST_QA_20261109.md) · [Paila folder move/renumber lineage](docs/audit/20261109_PAILA_POINTER_FOLDER_LINEAGE.md). Private Google sign-in, evidence signing and authorized field releases are **paused by the owner**.
+
+---
+
 ## Skyforge v1.15 — Natural-language AI source editing; GitHub Pages is a read-only inspector (22 October 2026)
 
 **Authoritative design:** [AI-first source revision contract](docs/architecture/SKYFORGE_AI_FIRST_SOURCE_REVISION_V1_15.md) · **Updated current roadmap:** [public roadmap](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/roadmap.html) · [Four project records](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/) · [Universal read-only Studio viewer](https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/generic/).
