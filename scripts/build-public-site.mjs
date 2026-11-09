@@ -68,7 +68,7 @@ const expectedRoutes=[
 ];
 const projectPages=expectedRoutes.map(route=>"projects/"+route+"/index.html");
 const catalogText=await readFile(join(root,"projects/registry.json"),"utf8");
-const sourceBlob=createHash("sha1").update("blob "+Buffer.byteLength(catalogText)+"\\0").update(catalogText).digest("hex");
+const sourceBlob=createHash("sha1").update("blob "+Buffer.byteLength(catalogText)+"\0").update(catalogText).digest("hex");
 if(sourceBlob!=="90e23cfd3611d442b47e1504fb613df1caa44740")
  throw Error("Drive-first project catalog changed without reviewed source acceptance");
 const catalog=JSON.parse(catalogText);
