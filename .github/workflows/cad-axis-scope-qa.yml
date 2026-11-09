@@ -1,0 +1,30 @@
+name: CAD → Scheduling Axis Lineage QA
+on:
+  pull_request:
+    branches: [kernel-v0.2-open-source-engines]
+    paths:
+      - 'src/kernel/cad-axis-scope.mjs'
+      - 'src/kernel/schedule-project.mjs'
+      - 'tests/cad-axis-scope.test.mjs'
+      - 'schemas/construction-work.schema.json'
+      - 'contracts/cad-axis-scheduling.v1.json'
+      - '.github/workflows/cad-axis-scope-qa.yml'
+  push:
+    branches:
+      - feature/cad-axis-schedule-scope-20261109
+permissions:
+  contents: read
+jobs:
+  validate-cad-activity-contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate published CAD-source scope and preservation
+        run: |
+          node --check src/kernel/cad-axis-scope.mjs
+          node --check src/kernel/schedule-project.mjs
+          node --test tests/cad-axis-scope.test.mjs
+          npm test
