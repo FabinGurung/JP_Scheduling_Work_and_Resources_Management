@@ -67,11 +67,11 @@ const expectedRoutes=[
  "jp/astam-village-naren-gurung"
 ];
 const projectPages=expectedRoutes.map(route=>"projects/"+route+"/index.html");
-const catalogText=await readFile(join(root,"projects/registry.json"),"utf8");
-const sourceBlob=createHash("sha1").update("blob "+Buffer.byteLength(catalogText)+"\0").update(catalogText).digest("hex");
+const projectCatalogText=await readFile(join(root,"projects/registry.json"),"utf8");
+const sourceBlob=createHash("sha1").update("blob "+Buffer.byteLength(projectCatalogText)+"\0").update(projectCatalogText).digest("hex");
 if(sourceBlob!=="90e23cfd3611d442b47e1504fb613df1caa44740")
  throw Error("Drive-first project catalog changed without reviewed source acceptance");
-const catalog=JSON.parse(catalogText);
+const catalog=JSON.parse(projectCatalogText);
 const retired=JSON.parse(await readFile(join(root,"projects/portfolio/registry.json"),"utf8"));
 if(retired.format!=="SKYFORGE_DEPRECATED_REGISTRY_POINTER_V1"||
  retired.canonical!=="../registry.json"||
@@ -89,7 +89,7 @@ if(retired.format!=="SKYFORGE_DEPRECATED_REGISTRY_POINTER_V1"||
    p.schedule_status!=="EMPTY_NO_VERIFIED_PROJECT_WBS")||
   !companyKeys.includes(p.company)||
   (p.source_authority==="DRIVE_PROJECT_FOLDER_NAME"&&!p.source_folder_title))||
- ["drive.google.com","docs.google.com","https://","http://","@","SLACK::","GOOGLE_OAUTH_ACCESS_TOKEN"].some(x=>catalogText.includes(x)))
+ ["drive.google.com","docs.google.com","https://","http://","@","SLACK::","GOOGLE_OAUTH_ACCESS_TOKEN"].some(x=>projectCatalogText.includes(x)))
  throw Error("Public project source identity, authority or privacy mismatch");
 
 const approved=["index.html","advanced.html","planner.html","kernel-lab.html","roadmap.html","project-controls-demo.json",
