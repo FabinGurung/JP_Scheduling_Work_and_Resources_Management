@@ -263,7 +263,8 @@ async function styleAllowlistedPages(dir=""){
   if(!entry.isFile()||!entry.name.endsWith(".html"))continue;
   const absolute=join(out,relative);
   let markup=await readFile(absolute,"utf8");
-  if(/http-equiv=["']refresh/i.test(markup)){redirectOnly.push(relative);continue} // Preserve redirect-only stubs.
+  if(/http-equiv=["']refresh/i.test(markup))redirectOnly.push(relative);
+  if(/http-equiv=["']refresh/i.test(markup))continue; // No unnecessary UI on redirects.
   const depth=relative.split("/").length-1;
   const prefix=/<base\s+href=/i.test(markup)?"./":"../".repeat(depth)||"./";
   if(!markup.includes("site-shell.css")){
