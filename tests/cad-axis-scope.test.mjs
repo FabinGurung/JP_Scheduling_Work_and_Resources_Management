@@ -1,0 +1,40 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {validateCadActivityScope,requireCadScopeForScheduling,CAD_LINEAGE_SCHEMA} from '../src/kernel/cad-axis-scope.mjs';
+import {scheduleProject} from '../src/kernel/schedule-project.mjs';
+const c=JSON.parse(readFileSync(new URL('../contracts/cad-axis-scheduling.v1.json',import.meta.url),'utf8'));
+const source={contract:CAD_LINEAGE_SCHEMA,cadRepository:'FabinGurung/JP_Computer-Aided-Drawings',cadRevision:'AAD-QA-NOT_REAL',floorId:'gf',sourceFileSha256:'a'.repeat(64),memberIds:['SC-A1'],axisRefs:['A1'],axisStatus:'SOURCE_MODEL_REGISTERED_VERIFIED',coordinateRegistrationVerified:true,memberScopeVerified:true,sourceReviewerId:'SYNTHETIC-QA-ONLY'};
+const activity={id:'A',duration:3,sourceSystem:'CAD',cadScope:source};
+test('CAD registered source identity cannot be confused with construction sign-off',()=>{
+ assert.equal(c.status,'SOURCE_SCOPE_GUARD_ACTIVE__NO_CAD_ACTIVITIES_ADMITTED');
+ assert.equal(c.admittedProjectCadActivities,0);
+ assert.equal(c.acceptedForDraftScheduling,'SOURCE_MODEL_REGISTERED_VERIFIED');
+ assert.equal(validateCadActivityScope(activity).ok,true);
+ assert.equal(validateCadActivityScope({...activity,cadScope:{...source,axisStatus:'SOURCE_MARKS_REGISTERED_REVIEW_ONLY'}}).ok,false);
+ assert.equal(validateCadActivityScope({...activity,cadScope:{...source,axisStatus:'DISPLAY_REVIEW_ONLY'}}).ok,false);
+ assert.equal(validateCadActivityScope({...activity,cadScope:{...source,sourceFileSha256:'bad'}}).ok,false);
+ assert.equal(validateCadActivityScope({...activity,cadScope:{...source,coordinateRegistrationVerified:false}}).ok,false);
+ assert.equal(validateCadActivityScope({...activity,cadScope:{...source,axisRefs:['A1','A1']}}).ok,false);
+ assert.equal(validateCadActivityScope({...activity,cadScope:{...source,memberIds:[]}}).ok,false);
+});
+test('CPM rejects CAD source-only axis claims before allocating dates',()=>{
+ const config={activities:[activity],relationships:[]};
+ const out=scheduleProject(config,'SHARED_CPM');
+ assert.equal(out.planning_status,'CALCULATED_DRAFT_NOT_BASELINE');
+ assert.equal(out.engineering_release,false);
+ assert.equal(out.approved_baseline,false);
+ assert.equal(out.cad_axis_scope.cadActivityScopes[0].axisRefs[0],'A1');
+ assert.equal(out.cad_axis_scope.siteStartAuthorized,false);
+ assert.throws(()=>scheduleProject({activities:[{...activity,cadScope:{...source,axisStatus:'SOURCE_MARKS_REGISTERED_REVIEW_ONLY'}}],relationships:[]},'SHARED_CPM'),/CAD_SCOPE_HOLD/);
+ assert.throws(()=>scheduleProject({activities:[{...activity,cadScope:null}],relationships:[]},'SHARED_CPM'),/CAD_SCOPE_HOLD/);
+ const ordinary=scheduleProject({activities:[{id:'B',duration:2}],relationships:[]},'SHARED_CPM');
+ assert.equal('cad_axis_scope' in ordinary,false);
+});
+test('CAD project scoping preserves all source element and axis IDs without deriving activities from empty crosses',()=>{
+ const v=requireCadScopeForScheduling([activity]);
+ assert.deepEqual(v.cadActivityScopes[0].memberIds,['SC-A1']);
+ assert.deepEqual(v.cadActivityScopes[0].axisRefs,['A1']);
+ assert.equal(v.engineeringApproved,false);
+ assert.equal(v.siteStartAuthorized,false);
+});
