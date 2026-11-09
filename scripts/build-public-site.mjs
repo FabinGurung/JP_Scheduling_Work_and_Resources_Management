@@ -32,8 +32,7 @@ async function modules(relative){
   else throw Error("Disallowed public executable path: "+child);
  }
 }
-// Bounded enterprise portfolio source review. No arbitrary project routes or
-// unrelated WBS can become public through a registry-only change.
+// Canonical company-first public catalog; old /portfolio URLs stay redirect-only.
 const portfolioSlugs=Object.freeze([
  "15-narayani-parajuli","17-samirman-gubhaju","14-kharika-poudel",
  "13-hari-baral","16-yamuna-pun-adai","30-dipti-sabitri-giri",
@@ -41,35 +40,61 @@ const portfolioSlugs=Object.freeze([
  "14-ashok-adhikari","jawalakhel-pilates-interior"
 ]);
 const portfolioPages=portfolioSlugs.map(slug=>"projects/portfolio/"+slug+"/index.html");
-const portfolioText=await readFile(join(root,"projects/portfolio/registry.json"),"utf8");
-const portfolio=JSON.parse(portfolioText);
-const enterpriseIds=portfolio.enterprises?.map(x=>x.id);
-const registeredIds=portfolio.projects?.map(x=>x.instance_id);
-const rejectedStrings=["drive.google.com","docs.google.com","https://","http://","@","SLACK::","GOOGLE_OAUTH_ACCESS_TOKEN","PRIVATE_FILE_A"];
-if(portfolio.format!=="SKYFORGE_ENTERPRISE_PORTFOLIO_REGISTRY_V1"||
- portfolio.classification!=="PUBLIC_PROJECT_NAMES_ONLY_NO_PRIVATE_DRIVE_LINKS"||
- portfolio.mode!=="READ_ONLY_IDENTITY_STAGING"||
- portfolio.project_template!=="SINGLE_SHARED_SKYFORGE_VIEWER"||
- portfolio.projects?.length!==11||portfolio.enterprises?.length!==4||
- new Set(registeredIds).size!==11||
- enterpriseIds.join(",")!=="ENT-01,ENT-02,ENT-03,ENT-04"||
- portfolioSlugs.some((slug,i)=>portfolio.projects[i]?.slug!==slug||
-  portfolio.projects[i]?.instance_id!=="PORT-"+String(i+1).padStart(6,"0"))||
- portfolio.projects.some((p,i)=>
-  !enterpriseIds.includes(p.enterprise_id)||
-  p.field_status!=="NOT_VERIFIED"||
-  p.approval_state!=="NO_AUTHORIZED_SITE_RELEASE"||
-  (i>0&&(p.schedule_state!=="SOURCE_NOT_ADMITTED_NO_WBS"||
-    p.published_view_path!==null||p.published_readiness_path!==null))||
-  (i===0&&(p.existing_project_id!=="PRJ-000007"||
-    p.published_view_path!=="../narayani/beta.html"||
-    p.published_readiness_path!=="../narayani/readiness.html")))||
- rejectedStrings.some(x=>portfolioText.includes(x)))
- throw Error("Portfolio source is unreviewed, falsely source-admitted or leaks private identifiers");
+const companyKeys=["jp","fishtail","rohini","paila"];
+const companyPages=companyKeys.map(key=>"projects/"+key+"/index.html");
+const expectedRoutes=[
+ "fishtail/narayani-parajuli-residence",
+ "fishtail/17-samir-man-gubhaju",
+ "fishtail/14-kharika-paudel",
+ "fishtail/13-hari-baral",
+ "fishtail/yamuna-pun-residence",
+ "fishtail/sabitri-giri-residence",
+ "fishtail/sharada-adhikari-residence",
+ "rohini/bishal-paija-residence",
+ "rohini/14-basanti-poudel-baral",
+ "rohini/ashok-adhikari",
+ "paila/jawalakhel-interior-design",
+ "fishtail/subin-supplier-residence",
+ "fishtail/hari-thapa-residence",
+ "fishtail/harisharan-residence",
+ "fishtail/aviskar-hospital",
+ "fishtail/vyas-retreat-hotel-waterproofing",
+ "rohini/14-amrit-rawat",
+ "rohini/14-ramachandra-devkota-one-storey",
+ "rohini/14-amrit-hardware",
+ "rohini/kumari-gurung-residence",
+ "rohini/harka-bahadur-sherchan-renovation",
+ "jp/astam-village-naren-gurung"
+];
+const projectPages=expectedRoutes.map(route=>"projects/"+route+"/index.html");
+const catalogText=await readFile(join(root,"projects/registry.json"),"utf8");
+const sourceBlob=createHash("sha1").update("blob "+Buffer.byteLength(catalogText)+"\\0").update(catalogText).digest("hex");
+if(sourceBlob!=="90e23cfd3611d442b47e1504fb613df1caa44740")
+ throw Error("Drive-first project catalog changed without reviewed source acceptance");
+const catalog=JSON.parse(catalogText);
+const retired=JSON.parse(await readFile(join(root,"projects/portfolio/registry.json"),"utf8"));
+if(retired.format!=="SKYFORGE_DEPRECATED_REGISTRY_POINTER_V1"||
+ retired.canonical!=="../registry.json"||
+ catalog.format!=="SKYFORGE_PROJECT_CATALOG_V2"||
+ catalog.root!=="PROJECTS_DIRECT_ENTERPRISE_GROUPING"||
+ catalog.publishing!=="PUBLIC_PROJECT_NAMES_ONLY_NO_DRIVE_IDS_OR_PRIVATE_DATA"||
+ catalog.enterprises?.length!==4||catalog.projects?.length!==22||
+ catalog.enterprises.map(x=>x.key).join(",")!==companyKeys.join(",")||
+ catalog.projects.map(p=>p.company+"/"+p.slug).join(",")!==expectedRoutes.join(",")||
+ catalog.projects.some((p,i)=>
+  p.id!=="PORT-"+String(i+1).padStart(6,"0")||
+  p.approval_status!=="NO_REAL_WORK_APPROVAL"||
+  (i===0?(p.schedule_status!=="NARAYANI_PUBLIC_SAFE_DRAFT"||
+   p.source_project_id!=="PRJ-000007"):
+   p.schedule_status!=="EMPTY_NO_VERIFIED_PROJECT_WBS")||
+  !companyKeys.includes(p.company)||
+  (p.source_authority==="DRIVE_PROJECT_FOLDER_NAME"&&!p.source_folder_title))||
+ ["drive.google.com","docs.google.com","https://","http://","@","SLACK::","GOOGLE_OAUTH_ACCESS_TOKEN"].some(x=>catalogText.includes(x)))
+ throw Error("Public project source identity, authority or privacy mismatch");
 
 const approved=["index.html","advanced.html","planner.html","kernel-lab.html","roadmap.html","project-controls-demo.json",
- "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","assets/skyforge-unified.css","assets/studio-project.css","assets/work-readiness.css","assets/portfolio.css","more/legacy-home.html",
- "knowledge/index.html","knowledge/task.html","work-items/index.html","projects/generic/index.html","studio/index.html","projects/index.html","projects/portfolio/index.html","projects/portfolio/registry.json",...portfolioPages,"projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
+ "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","assets/skyforge-unified.css","assets/studio-project.css","assets/work-readiness.css","assets/portfolio.css","assets/project-catalog.css","more/legacy-home.html","more/index.html",
+ "knowledge/index.html","knowledge/task.html","work-items/index.html","projects/generic/index.html","studio/index.html","projects/index.html","projects/registry.json",...companyPages,...projectPages,"projects/portfolio/index.html","projects/portfolio/registry.json",...portfolioPages,"projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
 for(const f of approved)await cp(f);
 await modules("src");
 // Separate, reviewed, PUBLIC work-item catalog only. No private project source files.
@@ -303,9 +328,9 @@ for(const relative of skinned){
 }
 const essential=["index.html","projects/narayani/visual.html","projects/narayani/index.html",
 "advanced.html","planner.html","kernel-lab.html","roadmap.html","machine/index.html",
-"machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","work-items/index.html","projects/generic/index.html","studio/index.html","projects/index.html","projects/portfolio/index.html",...portfolioPages,"projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","more/legacy-home.html"];
+"machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","work-items/index.html","projects/generic/index.html","studio/index.html","projects/index.html",...companyPages,...projectPages,"more/index.html","projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","more/legacy-home.html"];
 if(essential.some(p=>!skinned.includes(p)))throw Error("Site shell incomplete: "+essential.filter(p=>!skinned.includes(p)));
-if(skinned.length!==41||redirectOnly.length!==3)
+if(skinned.length!==56||redirectOnly.length!==15)
  throw Error("Unexpected Pages HTML inventory: "+skinned.length+" unified; "+redirectOnly.length+" redirects");
 console.log("SKYFORGE HTML INVENTORY PASS:",skinned.length+redirectOnly.length,"HTML outputs =",skinned.length,"unified +",redirectOnly.length,"redirect-only stubs");
 console.log("SKYFORGE SHARED SHELL PASS:",skinned.length,"public pages unified; legacy pages preserved under More.");
