@@ -180,25 +180,20 @@ function createShell(){
  const wrap=document.createElement("div");wrap.className="sf-inner";header.append(wrap);
  const brand=entry(wrap,"✦ SKYFORGE","index.html");brand.className="sf-mark";brand.setAttribute("aria-label","Skyforge home");
  const navigation=document.createElement("nav");navigation.className="sf-menu";navigation.setAttribute("aria-label","Site engineer views");
- const tabs=[["Overview","index.html"],["Studio","studio/index.html"],["Projects","projects/index.html"]];
+ const tabs=[["Overview","index.html"],["Projects","projects/index.html"],["Studio","studio/index.html"],["Reference","more/index.html"]];
  for(const [label,target] of tabs){
   const a=entry(navigation,label,target);
-  if((home&&label==="Overview")||(pageKey()==="studio/index.html"&&label==="Studio")||
-   ((pageKey()==="projects/index.html"||pageKey().startsWith("projects/community-clinic/")||
-    pageKey().startsWith("projects/pedestrian-bridge/")||
-    pageKey().startsWith("projects/uploaded-wbs/")||
-    pageKey().startsWith("projects/narayani/")||
-    pageKey().startsWith("studio/projects/"))&&label==="Projects"))a.setAttribute("aria-current","page");
+  const key=pageKey();
+  const isProject=key.startsWith("projects/")||key.startsWith("studio/projects/");
+  const isStudio=key.startsWith("studio/")&&!key.startsWith("studio/projects/");
+  const isReference=key.startsWith("more/")||key.startsWith("knowledge/")||
+   key.startsWith("how/")||key.startsWith("work-items/")||
+   key.startsWith("machine/")||["planner.html","kernel-lab.html","advanced.html","roadmap.html"].includes(key);
+  if((home&&label==="Overview")||(isProject&&label==="Projects")||
+     (isStudio&&label==="Studio")||(isReference&&label==="Reference"))
+   a.setAttribute("aria-current","page");
  }
- const more=document.createElement("details");more.className="sf-more";
- const summary=document.createElement("summary");summary.textContent="More ▾";summary.setAttribute("aria-label","More pages and advanced tools");more.append(summary);
- const menu=document.createElement("div");menu.className="sf-dropdown";
- menu.append(Object.assign(document.createElement("div"),{className:"sf-dropdown-heading",textContent:"Reference & project history"}));
- for(const [label,target] of [["Narayani Constellation","projects/narayani/visual.html#constellation"],["Narayani Gantt","projects/narayani/visual.html#gantt"],["Narayani Calendar","projects/narayani/visual.html#calendar"],["Narayani Checklist","projects/narayani/visual.html#checklist"],["How this engine works","how/index.html"],["Work-item library","work-items/index.html"],["Download Anki cards","how/skyforge-anki.csv"],["Full classic WBS","projects/narayani/index.html"],["Construction methods","knowledge/index.html"],["Development roadmap","roadmap.html"],["Legacy field homepage","more/legacy-home.html"]])entry(menu,label,target);
- menu.append(Object.assign(document.createElement("div"),{className:"sf-divider"}));
- menu.append(Object.assign(document.createElement("div"),{className:"sf-dropdown-heading",textContent:"Planner & engineering tools"}));
- for(const [label,target] of [["Project digitization workbench","projects/generic/index.html"],["Resource planner","planner.html"],["Scheduling engine lab","kernel-lab.html"],["Machine evidence","machine/index.html"],["Original technical dashboard","advanced.html"],["WBS machine Gantt","machine/wbs-sample/index.html"],["Upstream reference","knowledge/task.html?key=waterproofing"]])entry(menu,label,target);
- more.append(menu);navigation.append(more);wrap.append(navigation);
+ wrap.append(navigation);
  // Pip is a decorative scheduling metaphor, not a source of actual-progress data.
  // Keep the character inside this dedicated rail; never cover buttons, calendars or WBS content.
  const reduced=window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches===true;
@@ -250,8 +245,10 @@ function createShell(){
  wrap.append(motion);
  document.body.prepend(header);
  mountContextGuide(profile);
- roamController=createPipRoam(pip,header,reduced);
- document.addEventListener("click",event=>{if(more.open&&!more.contains(event.target))more.open=false});
- document.addEventListener("keydown",event=>{if(event.key==="Escape")more.open=false});
+ // Keep the mascot in its own decorative rail on project directories and
+ // reference pages; never let it float across project cards or form controls.
+ const compactWorkspace=pageKey().startsWith("projects/")||pageKey().startsWith("more/");
+ if(!compactWorkspace)roamController=createPipRoam(pip,header,reduced);
+ else pip.setAttribute("aria-hidden","true");
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",createShell,{once:true});else createShell();
