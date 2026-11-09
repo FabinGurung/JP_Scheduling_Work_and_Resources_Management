@@ -254,7 +254,7 @@ await writeFile(join(out,"projects/generic/manifest.json"),genericManifestText);
 await cp("machine/index.html");
 // One shared futuristic navigation/theme on every PUBLIC, allowlisted page.
 // Machine outputs and old dashboards remain intact, available only through More.
-const skinned=[];
+const skinned=[],redirectOnly=[];
 async function styleAllowlistedPages(dir=""){
  const full=join(out,dir);
  for(const entry of await readdir(full,{withFileTypes:true})){
@@ -263,7 +263,7 @@ async function styleAllowlistedPages(dir=""){
   if(!entry.isFile()||!entry.name.endsWith(".html"))continue;
   const absolute=join(out,relative);
   let markup=await readFile(absolute,"utf8");
-  if(/http-equiv=["']refresh/i.test(markup))continue; // No unnecessary UI on redirects.
+  if(/http-equiv=["']refresh/i.test(markup)){redirectOnly.push(relative);continue} // Preserve redirect-only stubs.
   const depth=relative.split("/").length-1;
   const prefix=/<base\s+href=/i.test(markup)?"./":"../".repeat(depth)||"./";
   if(!markup.includes("site-shell.css")){
@@ -304,5 +304,8 @@ const essential=["index.html","projects/narayani/visual.html","projects/narayani
 "advanced.html","planner.html","kernel-lab.html","roadmap.html","machine/index.html",
 "machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","work-items/index.html","projects/generic/index.html","studio/index.html","projects/index.html","projects/portfolio/index.html",...portfolioPages,"projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","more/legacy-home.html"];
 if(essential.some(p=>!skinned.includes(p)))throw Error("Site shell incomplete: "+essential.filter(p=>!skinned.includes(p)));
+if(skinned.length!==41||redirectOnly.length!==3)
+ throw Error("Unexpected Pages HTML inventory: "+skinned.length+" unified; "+redirectOnly.length+" redirects");
+console.log("SKYFORGE HTML INVENTORY PASS:",skinned.length+redirectOnly.length,"HTML outputs =",skinned.length,"unified +",redirectOnly.length,"redirect-only stubs");
 console.log("SKYFORGE SHARED SHELL PASS:",skinned.length,"public pages unified; legacy pages preserved under More.");
 console.log("Public Pages allowlist PASS: no repository-wide upload, no private engineering files");
