@@ -72,6 +72,6 @@ test("light theme must not change the JSON safety gates or static Pages allowlis
  assert.match(model,/NO_APPROVED_ACTIVITY_COMPLETION/);
  assert.match(model,/PRIVATE_PROJECT_FILE_INDEX/);
  assert.match(shell,/Site engineer views/);
- assert.match(shell,/Planner & engineering tools/);
+ assert.match(read("more/index.html"),/Engineering tools/);
  assert.doesNotMatch(shell,/status\(a\)|model\.activities|engineering_release=true/);
 });
