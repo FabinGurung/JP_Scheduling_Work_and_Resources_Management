@@ -3,20 +3,22 @@ import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 const read=p=>readFileSync(new URL("../"+p,import.meta.url),"utf8");
 const records=["community-clinic","pedestrian-bridge"];
-test("Level 0 links Studio and Projects as sibling Level-1 departments, records are Level 2",()=>{
- const home=read("index.html"),studio=read("studio/index.html"),projects=read("projects/index.html"),shell=read("assets/site-shell.mjs");
+test("Level 0 navigation presents Projects and Studio as clear siblings; demo records remain preserved",()=>{
+ const home=read("index.html"),studio=read("studio/index.html"),
+  projects=read("projects/index.html"),shell=read("assets/site-shell.mjs");
  assert.match(home,/href="\.\/studio\/"/);
- assert.match(studio,/Level 1/);
- assert.match(projects,/Level 1 \/ Projects/);
- assert.match(projects,/Level 2/);
  assert.match(home,/href="\.\/projects\/"/);
+ assert.match(studio,/Level 1/);
  assert.match(studio,/href="\.\.\/projects\/"/);
+ assert.match(projects,/project-catalog\.mjs/);
+ assert.match(projects,/aria-label="Company project directory"/);
  for(const name of ["community-clinic","pedestrian-bridge","narayani"]){
-  assert.ok(projects.includes('href="./'+name+(name==="narayani"?'/beta.html':'/')+'"'));
   assert.ok(studio.includes('href="../projects/'+name+(name==="narayani"?'/beta.html':'/')+'"'));
   assert.ok(shell.includes('studio/projects/'+name+'/index.html'));
  }
- assert.match(shell,/const tabs=\[\["Overview","index.html"\],\["Studio","studio\/index.html"\],\["Projects","projects\/index.html"\]\]/);
+ assert.ok(shell.includes('const tabs=[["Overview","index.html"],["Projects","projects/index.html"],["Studio","studio/index.html"],["Reference","more/index.html"]]'));
+ assert.doesNotMatch(shell,/More ▾/);
+ assert.match(read("more/index.html"),/Methods, tools and archives/);
 });
 test("each synthetic project is only a data instance of the exact shared generic-views renderer",()=>{
  const bootstrap=read("src/presentation/studio-project-page.mjs");
