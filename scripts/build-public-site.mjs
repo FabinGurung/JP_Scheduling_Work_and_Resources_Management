@@ -70,7 +70,7 @@ const projectPages=expectedRoutes.map(route=>"projects/"+route+"/index.html");
 const projectCatalogText=await readFile(join(root,"projects/registry.json"),"utf8");
 const sourceBlob=createHash("sha1").update("blob "+Buffer.byteLength(projectCatalogText)+"\0").update(projectCatalogText).digest("hex");
 if(sourceBlob!=="90e23cfd3611d442b47e1504fb613df1caa44740")
- throw Error("Drive-first project projectCatalog changed without reviewed source acceptance");
+ throw Error("Drive-first project catalog changed without reviewed source acceptance");
 const projectCatalog=JSON.parse(projectCatalogText);
 const retired=JSON.parse(await readFile(join(root,"projects/portfolio/registry.json"),"utf8"));
 if(retired.format!=="SKYFORGE_DEPRECATED_REGISTRY_POINTER_V1"||
