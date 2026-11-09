@@ -24,7 +24,7 @@ const matchLabel={
  POSSIBLE_DIFFERENT_PERSON_DO_NOT_MERGE:"Possible different person — identity hold",
  PROJECT_SOURCE_NOT_ACCESSIBLE:"Operational project source inaccessible"
 };
-function assertRegistry(data){
+export function validatePortfolioRegistry(data){
  if(data?.format!=="SKYFORGE_ENTERPRISE_PORTFOLIO_REGISTRY_V1"||
   data.classification!=="PUBLIC_PROJECT_NAMES_ONLY_NO_PRIVATE_DRIVE_LINKS"||
   data.mode!=="READ_ONLY_IDENTITY_STAGING"||
@@ -168,7 +168,7 @@ export async function bootstrapPortfolio(){
   const response=await fetch(registryUrl,{cache:"no-store"});
   if(!response.ok)throw Error("Portfolio identity registry not available");
   const data=await response.json();
-  assertRegistry(data);
+  validatePortfolioRegistry(data);
   const slug=document.body?.dataset?.portfolioRecord;
   mount.replaceChildren();
   if(slug)renderRecord(mount,data,slug);
