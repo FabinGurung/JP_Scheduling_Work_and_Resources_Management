@@ -9,7 +9,7 @@
 - **Earlier verified relocation (9 Nov 2026):** Folder moved from the common parent into the existing `01_JP` storage folder. Google Drive returned the same folder ID, and a subsequent metadata read confirmed the destination parent.
 - **Current name before this milestone:** `01_JP/13_Paila_Pilates`.
 - **Approved new name:** `01_JP/08 Paila Pilates`, the next available immediate-child enterprise number after `07 JP Enterprise`. The change is a **display-name / sequence update only**, not a new enterprise identity or new source.
-- **POST verification:** To be completed by Google Drive `files.get` metadata after rename; log the actual readback in the closing commit. The source folder ID, contents and parent must not change.
+- **POST verification:** Google Drive rename succeeded and a separate metadata readback returned the same original folder ID, name `08 Paila Pilates`, MIME type folder, and the same `01_JP` parent (`13aseDFRfY_SI_YC6X71K_EZ_XjnAorFp`). Only the display name and enumeration changed; no child files were copied or removed, and no sharing-permission action was performed.
 
 ## Drive rules
 - `01_JP` is a **storage** root, not the scheduling relational database. Keep relationships, aliases and audit in GitHub machine data and source registers, using stable IDs.
