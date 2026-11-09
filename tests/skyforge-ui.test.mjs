@@ -74,15 +74,25 @@ test("level-0 homepage now enters one Studio; original governed Narayani and his
  assert.match(legacy,/<base href="\.\.\/"/);
 });
 
-test("shared Skyforge galaxy navigation is a single reusable source injected into all allowlisted pages",()=>{
- const shell=read("assets/site-shell.mjs"),css=read("assets/site-shell.css"),build=read("scripts/build-public-site.mjs");
- for(const label of ["Overview","Studio","Projects","Narayani Constellation","Narayani Gantt","Narayani Calendar","Narayani Checklist","More ▾"])assert.ok(shell.includes(label),"Missing link "+label);
- for(const page of ["legacy-home.html","planner.html","kernel-lab.html","machine/index.html","advanced.html","roadmap.html","knowledge/index.html"])assert.ok(shell.includes(page),"Missing More entry "+page);
+test("shared Skyforge navigation has four clear destinations and one organized Reference hub",()=>{
+ const shell=read("assets/site-shell.mjs"),css=read("assets/site-shell.css"),
+  build=read("scripts/build-public-site.mjs"),more=read("more/index.html");
+ for(const label of ["Overview","Projects","Studio","Reference"])
+  assert.ok(shell.includes(label),"Missing global destination "+label);
+ for(const page of ["projects/index.html","studio/index.html","more/index.html"])
+  assert.ok(shell.includes(page),"Missing global route "+page);
+ assert.doesNotMatch(shell,/More ▾|sf-dropdown-heading|const more=document.createElement/);
+ for(const page of ["legacy-home.html","planner.html","kernel-lab.html","machine/index.html","advanced.html","roadmap.html","knowledge/index.html"])
+  assert.ok(more.includes(page),"Missing Reference section link "+page);
+ assert.match(more,/Learn &amp; references/);
+ assert.match(more,/Engineering tools/);
+ assert.match(more,/Existing project &amp; sample views/);
+ assert.match(shell,/compactWorkspace=pageKey\(\)\.startsWith\("projects\/"\)/);
  assert.match(css,/sf-global/);
  assert.match(css,/prefers-reduced-motion/);
  assert.match(build,/styleAllowlistedPages/);
  assert.match(build,/SKYFORGE SHARED SHELL PASS/);
- assert.match(build,/more\/legacy-home\.html/);
  const visual=read("src/presentation/narayani-visual.mjs");
- for(const link of ['["gantt","calendar","universe"].includes(requested)','requested==="checklist"','["constellation","universe","gantt","calendar"].includes(target)'])assert.ok(visual.includes(link),"Missing view routing "+link);
+ for(const link of ['["gantt","calendar","universe"].includes(requested)','requested==="checklist"','["constellation","universe","gantt","calendar"].includes(target)'])
+  assert.ok(visual.includes(link),"Missing preserved Narayani view routing "+link);
 });
