@@ -39,6 +39,89 @@
     },
     "source_status": {
       "type": "string"
+    },
+    "sourceSystem": {
+      "type": "string",
+      "enum": [
+        "CAD",
+        "WBS",
+        "FIELD",
+        "OTHER"
+      ]
+    },
+    "cadScope": {
+      "type": "object",
+      "description": "CAD-source member/axis scope; does not authorize work start",
+      "required": [
+        "contract",
+        "cadRepository",
+        "cadRevision",
+        "floorId",
+        "sourceFileSha256",
+        "memberIds",
+        "axisRefs",
+        "axisStatus",
+        "coordinateRegistrationVerified",
+        "memberScopeVerified",
+        "sourceReviewerId"
+      ],
+      "properties": {
+        "contract": {
+          "const": "jp-cad://control-tower/view-lineage/1.0"
+        },
+        "cadRepository": {
+          "const": "FabinGurung/JP_Computer-Aided-Drawings"
+        },
+        "cadRevision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "floorId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceFileSha256": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        },
+        "memberIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "axisRefs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]+[1-9][0-9]*$"
+          }
+        },
+        "axisStatus": {
+          "type": "string",
+          "enum": [
+            "AXES_NOT_ADMITTED",
+            "SOURCE_MARKS_REGISTERED_REVIEW_ONLY",
+            "DISPLAY_REVIEW_ONLY",
+            "SOURCE_MODEL_REGISTERED_VERIFIED"
+          ]
+        },
+        "coordinateRegistrationVerified": {
+          "type": "boolean"
+        },
+        "memberScopeVerified": {
+          "type": "boolean"
+        },
+        "sourceReviewerId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
     }
   },
   "allOf": [
@@ -56,6 +139,23 @@
             "type": "null"
           }
         }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "sourceSystem": {
+            "const": "CAD"
+          }
+        },
+        "required": [
+          "sourceSystem"
+        ]
+      },
+      "then": {
+        "required": [
+          "cadScope"
+        ]
       }
     }
   ]

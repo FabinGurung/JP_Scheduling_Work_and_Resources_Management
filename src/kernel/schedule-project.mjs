@@ -1,3 +1,4 @@
+import {requireCadScopeForScheduling} from './cad-axis-scope.mjs';
 import {scheduleNetwork} from "./cpm.mjs";
 import {scheduleCalendarNetwork} from "./calendar-scheduler.mjs";
 import {levelResourceDependentNetwork} from "./resource-leveler.mjs";
@@ -8,6 +9,7 @@ import {levelResourceDependentNetwork} from "./resource-leveler.mjs";
  */
 export function scheduleProject(input,mode="AUTO"){
  if(!input||typeof input!=="object"||!Array.isArray(input.activities)||!input.activities.length)throw Error("Project activities required");
+ const cadScope=requireCadScopeForScheduling(input.activities);
  if(!["AUTO","SHARED_CPM","CALENDAR_CPM","RESOURCE_LEVELING"].includes(mode))throw Error("Unsupported project scheduling mode");
  if(mode==="AUTO"){
   if(input.resources?.length||input.assignments?.length||input.materialReceipts?.length)
@@ -22,5 +24,5 @@ export function scheduleProject(input,mode="AUTO"){
  const output=mode==="CALENDAR_CPM"?scheduleCalendarNetwork(input):
    mode==="RESOURCE_LEVELING"?levelResourceDependentNetwork(input):scheduleNetwork(input);
  return {engine_mode:mode,planning_status:"CALCULATED_DRAFT_NOT_BASELINE",engineering_release:false,
-  approved_baseline:false,output};
+  approved_baseline:false,output,...(cadScope.cadActivityScopes.length?{cad_axis_scope:cadScope}:{})};
 }

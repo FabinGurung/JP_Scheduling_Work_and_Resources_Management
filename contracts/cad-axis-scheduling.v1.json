@@ -1,0 +1,42 @@
+{
+  "schema": "jp-scheduling://cad-axis-scope/1",
+  "revision": "V000001",
+  "date": "2026-11-09",
+  "status": "SOURCE_SCOPE_GUARD_ACTIVE__NO_CAD_ACTIVITIES_ADMITTED",
+  "owner": "JP_Scheduling_Work_and_Resources_Management",
+  "source": {
+    "cadRepository": "FabinGurung/JP_Computer-Aided-Drawings",
+    "cadContract": "https://github.com/FabinGurung/JP_Computer-Aided-Drawings/blob/main/public/data/cad/view-control-tower.v1.json",
+    "memoryPalace": "https://fabingurung.github.io/JP_Computer-Aided-Drawings/memory-wall/",
+    "controlTower": "https://fabingurung.github.io/JP_Computer-Aided-Drawings/templates/project-workspace/control-tower/"
+  },
+  "requiredForCadActivity": [
+    "contract",
+    "cadRepository",
+    "cadRevision",
+    "floorId",
+    "sourceFileSha256",
+    "memberIds",
+    "axisRefs",
+    "axisStatus",
+    "coordinateRegistrationVerified",
+    "memberScopeVerified",
+    "sourceReviewerId"
+  ],
+  "acceptedForDraftScheduling": "SOURCE_MODEL_REGISTERED_VERIFIED",
+  "neverAcceptForGeometryBackedWork": [
+    "AXES_NOT_ADMITTED",
+    "SOURCE_MARKS_REGISTERED_REVIEW_ONLY",
+    "DISPLAY_REVIEW_ONLY"
+  ],
+  "sourceSnapshots": {
+    "narayani-parajuli": "GF_ORIGINAL_DXF_SOURCE_MARKS_WITH_UPPER_FLOOR_AND_SUPPORT_HOLD",
+    "harisharan-adhikari": "18_REPORT_MAPPED_MARKS_NOT_ISSUED_STRUCTURAL",
+    "ashok-adhikari": "DISPLAY_ONLY_REVIEW"
+  },
+  "admittedProjectCadActivities": 0,
+  "admittedSourceQuantities": 0,
+  "datesAdmittedFromCad": false,
+  "issueForConstruction": false,
+  "rule": "Schedule may model a task only after source geometry identity and dependencies are separately admitted. An axis mark alone never proves field readiness, completion, procurement or permission to start."
+}
