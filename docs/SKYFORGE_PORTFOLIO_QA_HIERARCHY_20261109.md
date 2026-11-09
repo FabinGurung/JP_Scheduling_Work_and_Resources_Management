@@ -1,3 +1,7 @@
+> **HISTORICAL SNAPSHOT · SUPERSEDED ON 9 NOVEMBER 2026.** This document accurately describes the earlier 11-project /portfolio/ milestone, but it is **not** the current navigation, source registry or Paila folder name. Current: [Drive-first 22-project company directory QA](PROJECTS_COMPANY_FIRST_QA_20261109.md). Previous links now redirect; old V1 registry is archived and non-authoritative. The newer Paila name is `01_JP/08 Paila Pilates` under the unchanged Drive folder ID.
+
+---
+
 # Skyforge — 4-enterprise project portfolio, Pages/Actions tree and QA
 
 **Audit date:** 9 November 2026 (Asia/Kathmandu)  
