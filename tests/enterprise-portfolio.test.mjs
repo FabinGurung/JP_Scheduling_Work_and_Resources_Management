@@ -1,109 +1,102 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {validatePortfolioRegistry} from "../src/presentation/portfolio-page.mjs";
+import {validateProjectCatalog} from "../src/presentation/project-catalog.mjs";
 const read=p=>readFileSync(new URL("../"+p,import.meta.url),"utf8");
-const registry=()=>JSON.parse(read("projects/portfolio/registry.json"));
-const slugs=[
- "15-narayani-parajuli","17-samirman-gubhaju","14-kharika-poudel",
- "13-hari-baral","16-yamuna-pun-adai","30-dipti-sabitri-giri",
- "31-sharada-adhikari","14-bishal-paiza","14-basanta-boral-poudel",
- "14-ashok-adhikari","jawalakhel-pilates-interior"
-];
-test("11 numbered portfolio project pages and 4 enterprise groups reuse only one source-honest UI renderer",()=>{
- const p=registry();
- assert.doesNotThrow(()=>validatePortfolioRegistry(p));
- assert.equal(p.enterprises.length,4);
- assert.equal(p.projects.length,11);
- assert.deepEqual(p.projects.map(x=>x.slug),slugs);
- assert.deepEqual(p.enterprises.map(e=>p.projects.filter(x=>x.enterprise_id===e.id).length),
-  [0,7,3,1]);
- assert.deepEqual(p.projects.map(x=>x.instance_id),slugs.map((_,i)=>"PORT-"+String(i+1).padStart(6,"0")));
- const shell=read("projects/portfolio/index.html");
- assert.match(shell,/portfolio-page\.mjs/);
- for(const item of p.projects){
-  const page=read("projects/portfolio/"+item.slug+"/index.html");
-  assert.ok(page.includes('data-portfolio-record="'+item.slug+'"'));
-  assert.match(page,/src\/presentation\/portfolio-page\.mjs/);
-  assert.match(page,/assets\/portfolio\.css/);
-  assert.doesNotMatch(page,/approved_site_progress|saveApprovedBaseline\(|scheduleProject\(/);
- }
- const script=read("src/presentation/portfolio-page.mjs");
- assert.match(script,/validatePortfolioRegistry/);
- assert.match(script,/renderIndex\(mount,data\)/);
- assert.match(script,/renderRecord\(mount,data,slug\)/);
- assert.match(script,/source-status|schedule_state|SOURCE_NOT_ADMITTED_NO_WBS/);
- assert.doesNotMatch(script,/localStorage|method:\s*["']POST["']|approved_work_complete|scheduleCalendarNetwork\(/i);
+const catalog=()=>JSON.parse(read("projects/registry.json"));
+test("canonical Projects directory has four enterprise groups and 22 independently numbered project identities",()=>{
+ const c=catalog();
+ assert.equal(validateProjectCatalog(c),true);
+ assert.deepEqual(c.enterprises.map(e=>e.title),
+  ["JP Enterprise","Fishtail Builders","Rohini Engineering and Builders","Paila Pilates"]);
+ assert.deepEqual(c.enterprises.map(e=>c.projects.filter(p=>p.company===e.key).length),
+  [1,12,8,1]);
+ assert.equal(c.projects.length,22);
+ assert.deepEqual(c.projects.map(p=>p.id),
+  c.projects.map((_,i)=>"PORT-"+String(i+1).padStart(6,"0")));
+ assert.equal(c.enterprises[3].drive_folder_title,"08 Paila Pilates");
+ assert.equal(c.projects[0].source_folder_title,"Narayani_Parajuli_Residence");
+ assert.equal(c.projects[1].source_folder_title,"PRJ-000002__FBL-001__17_Samir_Man_Gubhaju");
+ assert.equal(c.projects[2].source_folder_title,"PRJ-000020__FBL-019__14_Kharika_Paudel");
+ assert.equal(c.projects[7].title,"Bishal Paija Residence");
+ assert.equal(c.projects[8].title,"14 Basanti Poudel Baral");
+ assert.equal(c.projects[5].title,"Sabitri Giri Residence");
 });
-test("source name cross-check preserves identity uncertainty rather than merging similar surnames",()=>{
- const p=registry().projects;
- const byId=new Map(p.map(x=>[x.instance_id,x]));
- assert.equal(byId.get("PORT-000001").existing_project_id,"PRJ-000007");
- assert.equal(byId.get("PORT-000002").existing_project_id,"PRJ-000002");
- assert.equal(byId.get("PORT-000003").existing_project_id,"PRJ-000020");
- assert.equal(byId.get("PORT-000004").existing_project_id,"PRJ-000003");
- assert.match(byId.get("PORT-000002").drive_folder_name,/Samir_Man/);
- assert.match(byId.get("PORT-000003").drive_folder_name,/Paudel/);
- assert.match(byId.get("PORT-000008").drive_folder_name,/Paija/);
- assert.equal(byId.get("PORT-000009").source_match_status,"POSSIBLE_DIFFERENT_PERSON_DO_NOT_MERGE");
- assert.equal(byId.get("PORT-000006").source_match_status,"MULTI_NAME_IDENTITY_UNVERIFIED");
- assert.equal(byId.get("PORT-000011").source_match_status,"PROJECT_SOURCE_NOT_ACCESSIBLE");
- assert.match(registry().enterprises[1].requested_enterprise_alias,/Histel/);
- assert.match(registry().enterprises[1].name,/Fishtail/);
- for(const item of p.slice(1)){
-  assert.equal(item.existing_project_id!==null&&item.published_view_path!==null,false);
-  assert.equal(item.schedule_state,"SOURCE_NOT_ADMITTED_NO_WBS");
-  assert.equal(item.published_view_path,null);
-  assert.equal(item.published_readiness_path,null);
+test("all 22 company pages use the exact same rendering code and do not clone other WBS activities",()=>{
+ const c=catalog(),ui=read("src/presentation/project-catalog.mjs");
+ assert.match(ui,/validateProjectCatalog/);
+ assert.match(ui,/renderProject\(mount,data,p/);
+ assert.match(ui,/renderCompany\(mount,data,e/);
+ assert.match(ui,/renderIndex\(mount,data/);
+ assert.doesNotMatch(ui,/createApprovedWork|compileProjectDraft|scheduleProject|saveApprovedBaseline|localStorage/);
+ const dirs=new Set();
+ for(const e of c.enterprises){
+  const html=read("projects/"+e.key+"/index.html");
+  assert.match(html,/src\/presentation\/project-catalog\.mjs/);
+  assert.ok(html.includes('data-project-company="'+e.key+'"'));
+ }
+ for(const p of c.projects){
+  const path="projects/"+p.company+"/"+p.slug+"/index.html";
+  assert.ok(!dirs.has(path));dirs.add(path);
+  const html=read(path);
+  assert.ok(html.includes('data-project-id="'+p.id+'"'));
+  assert.match(html,/src\/presentation\/project-catalog\.mjs/);
+  assert.doesNotMatch(html,/scheduleProject|drive\.google\.com|docs\.google\.com|approved_work_complete/);
  }
 });
-test("portfolio and sources never claim field completion, approved dates or fabricated source links",()=>{
- const p=registry();
- const json=read("projects/portfolio/registry.json");
- assert.match(json,/PUBLIC_PROJECT_NAMES_ONLY_NO_PRIVATE_DRIVE_LINKS/);
- assert.doesNotMatch(json,/drive\.google\.com|docs\.google\.com|https?:\/\/|@|GOOGLE_OAUTH_ACCESS_TOKEN/);
- for(const item of p.projects){
-  assert.equal(item.approval_state,"NO_AUTHORIZED_SITE_RELEASE");
-  assert.equal(item.field_status,"NOT_VERIFIED");
+test("Narayani links to its existing public-safe four-view record; all 21 remaining schedules are empty",()=>{
+ const c=catalog();
+ assert.equal(c.projects[0].source_project_id,"PRJ-000007");
+ assert.equal(c.projects[0].schedule_status,"NARAYANI_PUBLIC_SAFE_DRAFT");
+ for(const p of c.projects.slice(1))assert.equal(p.schedule_status,"EMPTY_NO_VERIFIED_PROJECT_WBS");
+ for(const p of c.projects){
+  assert.equal(p.approval_status,"NO_REAL_WORK_APPROVAL");
+  if(p.source_authority==="DRIVE_PROJECT_FOLDER_NAME")assert.ok(p.source_folder_title);
  }
- const entry=p.projects[0];
- assert.equal(entry.schedule_state,"PUBLIC_SAFE_SCENARIO_EXISTING");
- assert.equal(entry.published_view_path,"../narayani/beta.html");
- assert.equal(entry.published_readiness_path,"../narayani/readiness.html");
- const source=read("src/presentation/studio-project-page.mjs");
- assert.match(source,/ONE shared view engine|ONE shared view engine|ONE shared/);
- assert.match(source,/validateGenericViewModel\(model\)/);
- assert.match(source,/renderGenericProject\(model,mount\)/);
- assert.doesNotMatch(read("src/presentation/portfolio-page.mjs"),/projectGenericVisual|compileProjectDraft/);
+ assert.equal(c.projects[10].source_authority,"OWNER_REQUESTED_POINTER_ONLY");
+ const ui=read("src/presentation/project-catalog.mjs");
+ assert.match(ui,/narayani\/beta\.html/);
+ assert.match(ui,/narayani\/readiness\.html/);
+ assert.match(ui,/No project-specific activity IDs/);
+ assert.match(ui,/EMPTY_NO_VERIFIED_PROJECT_WBS/);
 });
-test("public Pages builder strictly verifies source and publishes all 11 portfolio shells",()=>{
- const build=read("scripts/build-public-site.mjs");
- assert.match(build,/Portfolio source is unreviewed/);
- assert.match(build,/portfolio\.projects\.length|portfolio\.projects\?\.length/);
- assert.match(build,/portfolioSlugs\.map/);
- assert.match(build,/\.\.\.portfolioPages/);
- assert.match(build,/"projects\/portfolio\/registry\.json"/);
- assert.match(build,/"assets\/portfolio\.css"/);
- assert.match(read("projects/index.html"),/href="\.\/portfolio\/"/);
- const published=[];
- for(const x of registry().projects){
-  assert.ok(build.includes('"'+x.slug+'"'));
-  published.push("projects/portfolio/"+x.slug+"/index.html");
+test("old portfolio URLs are redirects and historic 11-instance registry remains in non-public archive",()=>{
+ const c=catalog();
+ const pointer=JSON.parse(read("projects/portfolio/registry.json"));
+ assert.equal(pointer.status,"MOVED_NOT_AUTHORITATIVE");
+ assert.equal(pointer.canonical,"../registry.json");
+ const archive=JSON.parse(read("docs/archive/20261109_SKYFORGE_PORTFOLIO_V1_REGISTRY.json"));
+ assert.equal(archive.projects.length,11);
+ assert.match(read("projects/portfolio/index.html"),/http-equiv="refresh"/);
+ for(const p of c.projects.slice(0,11)){
+  const old=read("projects/portfolio/"+p.legacy_portfolio_slug+"/index.html");
+  assert.match(old,/http-equiv="refresh"/);
+  assert.ok(old.includes("../../"+p.company+"/"+p.slug+"/"));
  }
- assert.equal(new Set(published).size,11);
 });
-test("tampering with registry cannot admit other projects, duplicate identities, or claim READY",()=>{
- const p=registry();
- const dup=structuredClone(p);
- dup.projects[1].instance_id=dup.projects[0].instance_id;
- assert.throws(()=>validatePortfolioRegistry(dup),/identity/);
- const bad=structuredClone(p);
- bad.projects[1].schedule_state="PUBLIC_SAFE_SCENARIO_EXISTING";
- assert.throws(()=>validatePortfolioRegistry(bad),/schedule authority/);
- const fake=structuredClone(p);
- fake.projects[1].published_view_path="../narayani/beta.html";
- assert.throws(()=>validatePortfolioRegistry(fake),/unrelated schedule/);
- const approval=structuredClone(p);
- approval.projects[1].approval_state="READY";
- assert.throws(()=>validatePortfolioRegistry(approval),/identity/);
+test("builder pins Drive-first catalog, excludes original Drive IDs and publishes authoritative company routes",()=>{
+ const build=read("scripts/build-public-site.mjs"),reg=read("projects/registry.json");
+ assert.match(build,/const companyKeys=/);
+ assert.match(build,/const expectedRoutes=/);
+ assert.match(build,/const projectPages=/);
+ assert.match(build,/Drive-first project catalog changed without reviewed source acceptance/);
+ assert.match(build,/\.\.\.projectPages/);
+ assert.match(build,/"projects\/registry\.json"/);
+ assert.match(build,/"assets\/project-catalog\.css"/);
+ assert.match(build,/"more\/index\.html"/);
+ assert.match(reg,/PUBLIC_PROJECT_NAMES_ONLY_NO_DRIVE_IDS_OR_PRIVATE_DATA/);
+ assert.doesNotMatch(reg,/drive\.google\.com|docs\.google\.com|https?:\/\/|@|GOOGLE_OAUTH_ACCESS_TOKEN/);
+ assert.match(read("projects/index.html"),/project-catalog\.mjs/);
+ assert.match(read("assets/site-shell.mjs"),/\["Projects","projects\/index\.html"\]/);
+});
+test("tampering with WBS, project identities and approval claims fails closed",()=>{
+ const c=catalog();
+ const dup=structuredClone(c);dup.projects[1].id=dup.projects[0].id;
+ assert.throws(()=>validateProjectCatalog(dup),/integrity/);
+ const fake=structuredClone(c);fake.projects[1].schedule_status="NARAYANI_PUBLIC_SAFE_DRAFT";
+ assert.throws(()=>validateProjectCatalog(fake),/integrity/);
+ const ready=structuredClone(c);ready.projects[2].approval_status="READY";
+ assert.throws(()=>validateProjectCatalog(ready),/integrity/);
+ const bogus=structuredClone(c);bogus.projects[0].source_folder_title="";
+ assert.throws(()=>validateProjectCatalog(bogus),/folder/);
 });
