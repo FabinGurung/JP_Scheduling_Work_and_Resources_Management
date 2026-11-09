@@ -82,7 +82,7 @@ test("shared Skyforge navigation has four clear destinations and one organized R
  for(const page of ["projects/index.html","studio/index.html","more/index.html"])
   assert.ok(shell.includes(page),"Missing global route "+page);
  assert.doesNotMatch(shell,/More ▾|sf-dropdown-heading|const more=document.createElement/);
- for(const page of ["legacy-home.html","planner.html","kernel-lab.html","machine/","advanced.html","roadmap.html","knowledge/index.html"])
+ for(const page of ["legacy-home.html","planner.html","kernel-lab.html","machine/","advanced.html","roadmap.html","knowledge/"])
   assert.ok(more.includes(page),"Missing Reference section link "+page);
  assert.match(more,/Learn &amp; references/);
  assert.match(more,/Engineering tools/);
