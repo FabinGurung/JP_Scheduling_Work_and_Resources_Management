@@ -70,18 +70,18 @@ const projectPages=expectedRoutes.map(route=>"projects/"+route+"/index.html");
 const projectCatalogText=await readFile(join(root,"projects/registry.json"),"utf8");
 const sourceBlob=createHash("sha1").update("blob "+Buffer.byteLength(projectCatalogText)+"\0").update(projectCatalogText).digest("hex");
 if(sourceBlob!=="90e23cfd3611d442b47e1504fb613df1caa44740")
- throw Error("Drive-first project catalog changed without reviewed source acceptance");
-const catalog=JSON.parse(projectCatalogText);
+ throw Error("Drive-first project projectCatalog changed without reviewed source acceptance");
+const projectCatalog=JSON.parse(projectCatalogText);
 const retired=JSON.parse(await readFile(join(root,"projects/portfolio/registry.json"),"utf8"));
 if(retired.format!=="SKYFORGE_DEPRECATED_REGISTRY_POINTER_V1"||
  retired.canonical!=="../registry.json"||
- catalog.format!=="SKYFORGE_PROJECT_CATALOG_V2"||
- catalog.root!=="PROJECTS_DIRECT_ENTERPRISE_GROUPING"||
- catalog.publishing!=="PUBLIC_PROJECT_NAMES_ONLY_NO_DRIVE_IDS_OR_PRIVATE_DATA"||
- catalog.enterprises?.length!==4||catalog.projects?.length!==22||
- catalog.enterprises.map(x=>x.key).join(",")!==companyKeys.join(",")||
- catalog.projects.map(p=>p.company+"/"+p.slug).join(",")!==expectedRoutes.join(",")||
- catalog.projects.some((p,i)=>
+ projectCatalog.format!=="SKYFORGE_PROJECT_CATALOG_V2"||
+ projectCatalog.root!=="PROJECTS_DIRECT_ENTERPRISE_GROUPING"||
+ projectCatalog.publishing!=="PUBLIC_PROJECT_NAMES_ONLY_NO_DRIVE_IDS_OR_PRIVATE_DATA"||
+ projectCatalog.enterprises?.length!==4||projectCatalog.projects?.length!==22||
+ projectCatalog.enterprises.map(x=>x.key).join(",")!==companyKeys.join(",")||
+ projectCatalog.projects.map(p=>p.company+"/"+p.slug).join(",")!==expectedRoutes.join(",")||
+ projectCatalog.projects.some((p,i)=>
   p.id!=="PORT-"+String(i+1).padStart(6,"0")||
   p.approval_status!=="NO_REAL_WORK_APPROVAL"||
   (i===0?(p.schedule_status!=="NARAYANI_PUBLIC_SAFE_DRAFT"||
