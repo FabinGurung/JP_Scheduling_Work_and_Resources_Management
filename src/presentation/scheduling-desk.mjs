@@ -66,7 +66,9 @@ function createHeader(mount,model){
  const header=put(mount,"header","desk-hero");
  const crumb=put(header,"div","desk-breadcrumb");
  link(crumb,"Projects","../");put(crumb,"span","","/");
- link(crumb,"Narayani project","../../projects/fishtail/narayani-parajuli-residence/");
+ if(model.project.id==="PRJ-000007")
+  link(crumb,"Narayani project","../../projects/fishtail/narayani-parajuli-residence/");
+ else link(crumb,"Source examples","../../more/#historical");
  put(crumb,"span","","/ Scheduling desk");
  put(header,"h1","",model.project.name+" · Scheduling desk");
  put(header,"p","","Activity IDs, WBS membership, scenario durations and dates are shown alongside the aligned Gantt. This is a read-only planning scenario, not an approved baseline or actual site record.");
