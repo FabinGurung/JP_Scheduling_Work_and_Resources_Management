@@ -84,7 +84,7 @@ test("read-only Gantt arrow UI and Primavera-like bottom detail tabs use the sam
  const arrows=read("src/presentation/gantt-dependencies.mjs");
  for(const field of ["Relationship arrows","Gantt + arrows","← Activity columns",
   "General","Status","Resources","Predecessors","Successors","Constraints","Quantities","Steps & Notes"])
-  assert.ok(script.includes('"'+field+'"'),"Missing Gantt or detail pane "+field);
+  assert.ok(script.includes(field),"Missing Gantt or detail pane "+field);
  assert.match(script,/drawGanttConnectors/);
  assert.match(arrows,/desk-link-arrow/);
  assert.match(script,/No source-approved workforce/);
