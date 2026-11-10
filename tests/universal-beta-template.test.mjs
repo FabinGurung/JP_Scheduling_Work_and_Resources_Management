@@ -130,7 +130,7 @@ test("four canonical project records share the read-only engine; internal source
  assert.match(viewer,/gv-dependency-hit/);
  assert.doesNotMatch(viewer,/onNodeMoved|draggable\(/);
  assert.match(index,/project-catalog\.mjs/);
- assert.match(read("src/presentation/project-catalog.mjs"),/narayani\/beta\.html/);
+ assert.match(read("src/presentation/project-catalog.mjs"),/narayani\/desk\.html#activities/);
  assert.match(builder,/"projects\/narayani\/beta\.html"/);
  assert.match(read("projects/narayani/visual.html"),/id="graph"|id=\\"graph\\"/);
 });
