@@ -1,0 +1,1464 @@
+{
+  "format": "SKYFORGE_PRODUCTIVITY_STARTERS_V2",
+  "version": "2026-11-11-reference-1",
+  "authority": "REFERENCE_SCENARIOS_NOT_CONSTRUCTION_BASELINE",
+  "source_v1": "work-items/productivity-norms.v1.json",
+  "basis_explanation": "Official coefficients copied from cited work category where directly matched; official analogs and author-declared numerical calibration SEEDS are NOT government-issued rates. Never confuse these with actual site rates.",
+  "sources": [
+    {
+      "id": "NEP-DWRI-2081",
+      "title": "Government of Nepal, Rate Analysis Norms for Works 2081",
+      "url": "https://wriddkathmandu.bagamati.gov.np/upload/1a68c67a86f780513d61357d9d6149fd/files/Norms_for_Rate_Analysis_2081_DWRI.pdf",
+      "authority": "PUBLISHED_GOVERNMENT_COEFFICIENTS",
+      "description": "M-day resources per defined item and measured unit, not calendar day guarantees"
+    },
+    {
+      "id": "NEP-DUDBC",
+      "title": "DUDBC Building Works Rate Analysis (Government Gandaki Province)",
+      "url": "https://idoparwat.gandaki.gov.np/post/dudbc-norms",
+      "authority": "GOVERNMENT_BUILDING_NORMS_INDEX",
+      "description": "Use exact original building item and method before treating as direct"
+    },
+    {
+      "id": "NEP-LABOR-STUDY",
+      "title": "Nepal field study of building labour productivity",
+      "url": "https://www.researchgate.net/publication/329566858_LABOR_PRODUCTIVITY_ASSESSMENT_OF_ARMED_POLICE_FORCE_NEPAL_BUILDING",
+      "authority": "SECONDARY_OBSERVED_BENCHMARK",
+      "description": "A mason or rebar worker output is not full site-crew productivity"
+    },
+    {
+      "id": "CPWD-DAR-2023",
+      "title": "CPWD Delhi Analysis of Rates 2023",
+      "url": "https://cpwd.gov.in/Publication/CPWD_DAR_Vol_I_14092023-Civil.pdf",
+      "authority": "INDICATIVE_CROSS_BORDER_REFERENCE",
+      "description": "CPWD disclaimer says coefficients vary with technology, skills and local conditions; no automatic Nepal adoption"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "soil_exc",
+      "unit": "m³",
+      "skilled_days_per_unit": 0,
+      "helper_days_per_unit": 0.7,
+      "kind": "OFFICIAL_DIRECT",
+      "source_id": "NEP-DUDBC",
+      "source_item": "DUDBC soft soil trench excavation B1",
+      "notes": "Hand digging ≤1.5m depth/short lead; confirm soil group",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 8,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "backfill",
+      "unit": "m³",
+      "skilled_days_per_unit": 0,
+      "helper_days_per_unit": 0.5,
+      "kind": "OFFICIAL_DIRECT",
+      "source_id": "NEP-DUDBC",
+      "source_item": "DUDBC compacted backfill B2",
+      "notes": "Not verified for imported material/5km haul",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 10,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "imported_fill",
+      "unit": "m³",
+      "skilled_days_per_unit": 0.04,
+      "helper_days_per_unit": 0.24,
+      "kind": "CALIBRATION_SEED",
+      "source_id": "CPWD-DAR-2023",
+      "source_item": "DERIVED planning seed only",
+      "notes": "Allow separate 5km haul truck, delivery cycle, compaction and tested densities",
+      "machine_type": "Compactor",
+      "machine_hours_per_unit": 0.4,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 1,
+        "hours": 8
+      },
+      "default_quantity": 15,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "stone_soling",
+      "unit": "m³",
+      "skilled_days_per_unit": 0,
+      "helper_days_per_unit": 1.5,
+      "kind": "OFFICIAL_DIRECT",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §7.1 stone foundation levelling",
+      "notes": "Sand blinding omitted; stone source not grade acceptance",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 4,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "pcc_136",
+      "unit": "m³",
+      "skilled_days_per_unit": 0.13,
+      "helper_days_per_unit": 1.4,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §8 equivalent PCC reference",
+      "notes": "1:3:6 is NOT independently established equivalent to reference strength",
+      "machine_type": "Concrete mixer",
+      "machine_hours_per_unit": 0.4,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 1,
+        "hours": 8
+      },
+      "default_quantity": 7,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "m20_placement",
+      "unit": "m³",
+      "skilled_days_per_unit": 0.5,
+      "helper_days_per_unit": 3.5,
+      "kind": "OFFICIAL_DIRECT",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §8 M20 mechanical placement",
+      "notes": "Excludes rebar, formwork, curing and inspection",
+      "machine_type": "Concrete mixer",
+      "machine_hours_per_unit": 0.4,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 1,
+        "hours": 8
+      },
+      "default_quantity": 6,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "m20_footing",
+      "unit": "m³",
+      "skilled_days_per_unit": 0.5,
+      "helper_days_per_unit": 3.5,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §8 M20 placement + seed footing factor",
+      "notes": "Element factor 1.15 is a planning calibration, NOT a published footing norm",
+      "machine_type": "Concrete mixer",
+      "machine_hours_per_unit": 0.4,
+      "calibration_factor": 1.15,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 1,
+        "hours": 8
+      },
+      "default_quantity": 8,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "m20_column",
+      "unit": "m³",
+      "skilled_days_per_unit": 0.5,
+      "helper_days_per_unit": 3.5,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §8 M20 placement + seed column factor",
+      "notes": "1.35 manual-congestion factor is provisional, not an official column concrete rate",
+      "machine_type": "Concrete mixer",
+      "machine_hours_per_unit": 0.4,
+      "calibration_factor": 1.35,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 1,
+        "hours": 8
+      },
+      "default_quantity": 3,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "m20_beam",
+      "unit": "m³",
+      "skilled_days_per_unit": 0.5,
+      "helper_days_per_unit": 3.5,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §8 M20 placement + beam factor",
+      "notes": "1.20 provisional handling factor; pump/crane not included",
+      "machine_type": "Concrete mixer",
+      "machine_hours_per_unit": 0.4,
+      "calibration_factor": 1.2,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 1,
+        "hours": 8
+      },
+      "default_quantity": 5,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "m20_slab",
+      "unit": "m³",
+      "skilled_days_per_unit": 0.5,
+      "helper_days_per_unit": 3.5,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §8 M20 placement + slab factor",
+      "notes": "Reference M20; 1.05 slab factor provisional",
+      "machine_type": "Concrete mixer",
+      "machine_hours_per_unit": 0.4,
+      "calibration_factor": 1.05,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 1,
+        "hours": 8
+      },
+      "default_quantity": 12,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "m20_stair",
+      "unit": "m³",
+      "skilled_days_per_unit": 0.5,
+      "helper_days_per_unit": 3.5,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §8 M20 placement + stair factor",
+      "notes": "1.40 stair geometry factor provisional",
+      "machine_type": "Concrete mixer",
+      "machine_hours_per_unit": 0.4,
+      "calibration_factor": 1.4,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 1,
+        "hours": 8
+      },
+      "default_quantity": 3,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "m20_small_band",
+      "unit": "m³",
+      "skilled_days_per_unit": 0.5,
+      "helper_days_per_unit": 3.5,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §8 M20 placement + small-band factor",
+      "notes": "1.50 small-pour factor provisional",
+      "machine_type": "Concrete mixer",
+      "machine_hours_per_unit": 0.4,
+      "calibration_factor": 1.5,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 1,
+        "hours": 8
+      },
+      "default_quantity": 2,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "form_column",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.275,
+      "helper_days_per_unit": 0.24,
+      "kind": "OFFICIAL_DIRECT",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §9.3 B(i), plywood column shuttering ≤3m, per 10m²",
+      "notes": "2.75 skilled +2.4 helpers per 10m²; staging and reuse as specified",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 20,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "form_footing",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.15,
+      "helper_days_per_unit": 0.2,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §9.1 foundation shuttering / §9.3 columns",
+      "notes": "Foundation 1.5 skilled-days/10m²; helper 2/10m² is a provisional seed, NOT government printed",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 30,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "form_beam",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.31,
+      "helper_days_per_unit": 0.28,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §9 formwork: beam-adapted planning factor",
+      "notes": "Both coefficients inferred from similar column work; field-calibrate supports/height",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 25,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "form_slab",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.4,
+      "helper_days_per_unit": 0.6,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §9 slab/box-culvert steel form up to 2m",
+      "notes": "4 skilled+6 helpers per 10m²; culvert steel-shoring analogue, not exact building slab",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 35,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "form_stair",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.45,
+      "helper_days_per_unit": 0.45,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §9 formwork geometry analog, stair calibration",
+      "notes": "Curves, runs, landing and slopes vary; assumed per 10m² equivalent",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 18,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "brick_1_4",
+      "unit": "m³",
+      "skilled_days_per_unit": 1.5,
+      "helper_days_per_unit": 2.2,
+      "kind": "OFFICIAL_DIRECT",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §6.1 chimney-burnt brick, cement sand 1:4 or 1:6",
+      "notes": "560 nominal bricks per 1m³ in source; wall thickness conversion is geometric only",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 10,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "stone_masonry",
+      "unit": "m³",
+      "skilled_days_per_unit": 1.4,
+      "helper_days_per_unit": 2.8,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §7 rubble masonry 1:3",
+      "notes": "Applies only if mortar method/stone type matches",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 8,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "plaster_inside",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.12,
+      "helper_days_per_unit": 0.16,
+      "kind": "OFFICIAL_DIRECT",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §13.1 C 12.5mm 1:4 plaster /100m²",
+      "notes": "Material and scaffolding/cure waiting separate",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 100,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "plaster_outside",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.14,
+      "helper_days_per_unit": 0.19,
+      "kind": "OFFICIAL_DIRECT",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §13.5 20mm 1:4 plaster /100m²",
+      "notes": "Height, façade access, weather delays separate",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 100,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "paint_2coat",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.12,
+      "helper_days_per_unit": 0.08,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §14 primer + 2-coat painting aggregate",
+      "notes": "Additive 0.12 skilled + .08 helper md/m² across all coats; drying intervals separate",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 120,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "weather_coat",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.12,
+      "helper_days_per_unit": 0.1,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §14 paint 2-coat analog",
+      "notes": "Exterior weather coating system differs; seed helpers .10 and drying/wet weather separate",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 120,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "wall_putty",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.055,
+      "helper_days_per_unit": 0.035,
+      "kind": "CALIBRATION_SEED",
+      "source_id": "CPWD-DAR-2023",
+      "source_item": "CPWD finishing trade method analogue",
+      "notes": "0.055 skilled/0.035 helper days per m² are explicit starting assumptions, NOT official CPWD item coefficients",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 80,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "ceiling_putty",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.075,
+      "helper_days_per_unit": 0.045,
+      "kind": "CALIBRATION_SEED",
+      "source_id": "CPWD-DAR-2023",
+      "source_item": "CPWD finishing trade method analogue",
+      "notes": "Ceiling overhead allowance modelled; not an official coefficient",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 65,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "floor_screed",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.11,
+      "helper_days_per_unit": 0.2,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §12 floor bedding / PCC analog",
+      "notes": "38-60mm screed thickness/raking affects labour; field seed derived from flooring analog",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 45,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "floor_punning",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.1,
+      "helper_days_per_unit": 0.1,
+      "kind": "OFFICIAL_DIRECT",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §12.19 fine cement 3mm punning, 1+1 m-day per 10m²",
+      "notes": "Only cement punning application, includes no extra drying/curing time",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 35,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "wall_tiles",
+      "unit": "m²",
+      "skilled_days_per_unit": 1.3,
+      "helper_days_per_unit": 0.45,
+      "kind": "OFFICIAL_DIRECT",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §12.25 glazed ceramic wall tile 10m²",
+      "notes": "Very conservative government rate-analysis norm; 13 skilled + 4.5 helpers per 10m²",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 30,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "floor_vitrified_tile",
+      "unit": "m²",
+      "skilled_days_per_unit": 1.3,
+      "helper_days_per_unit": 0.45,
+      "kind": "OFFICIAL_DIRECT",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §12.27 10mm vitrified tiles per 10m²",
+      "notes": "13 skilled + 4.5 helpers per 10m², including mortar bedding/grout material",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 40,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "granite_floor",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.2,
+      "helper_days_per_unit": 2.15,
+      "kind": "OFFICIAL_DIRECT",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §12.21 16mm granite floor per 10m²",
+      "notes": "2 skilled +21.5 helper worker-days/10m²; differs from staircase granite",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 25,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "stone_cladding",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.22,
+      "helper_days_per_unit": 0.55,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §12.10 flat stone floor analog",
+      "notes": "Floor setting benchmark is not vertical anchored cladding—needs engineer fixing review",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 20,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "skirting_marble",
+      "unit": "m",
+      "skilled_days_per_unit": 0.25,
+      "helper_days_per_unit": 0.35,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §12.32(A), marble stair nosing 10m",
+      "notes": "Skirting length proxy; not a matching timber/ceramic skirting item",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 30,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "wood_frame",
+      "unit": "m",
+      "skilled_days_per_unit": 0.255,
+      "helper_days_per_unit": 0.0255,
+      "kind": "OFFICIAL_ANALOG",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §11.1 making/fixing sal wood frames 34 skilled +3.4 helpers per m³",
+      "notes": "75×100 mm section converted to 0.0075 m³ per linear metre; rebates, wastage, fittings may vary",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 25,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "wood_shutter",
+      "unit": "each",
+      "skilled_days_per_unit": 10,
+      "helper_days_per_unit": 1,
+      "kind": "OFFICIAL_DIRECT",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI 2081 §11.2 sal wood shutter 38mm, 1.07m ×1.982m",
+      "notes": "This very high published labour includes making shutter; not only fitting ready-made leaf",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 2,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "upvc_window",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.3,
+      "helper_days_per_unit": 0.2,
+      "kind": "CALIBRATION_SEED",
+      "source_id": "CPWD-DAR-2023",
+      "source_item": "CPWD fenestration labour analog",
+      "notes": "Modelled installation seed for fabricated UPVC glazing, not cited CPWD coefficient",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 15,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "upvc_door",
+      "unit": "each",
+      "skilled_days_per_unit": 0.8,
+      "helper_days_per_unit": 0.65,
+      "kind": "CALIBRATION_SEED",
+      "source_id": "CPWD-DAR-2023",
+      "source_item": "CPWD door fitting method analog",
+      "notes": "Provisional ready-made UPVC door installation only; fabrication separate",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 4,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "wood_polish",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.12,
+      "helper_days_per_unit": 0.04,
+      "kind": "CALIBRATION_SEED",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI §14 painting analog",
+      "notes": "Multiple coat wood-polish seed, drying and grain preparation separately",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 20,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "waterproof",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.15,
+      "helper_days_per_unit": 0.15,
+      "kind": "CALIBRATION_SEED",
+      "source_id": "CPWD-DAR-2023",
+      "source_item": "DWRI §10 roof treatment / CPWD finishing analog",
+      "notes": "Provisional coating application only; membrane system, cure and mandatory pond/flood test NOT INCLUDED",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 40,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "stone_trims",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.3,
+      "helper_days_per_unit": 0.6,
+      "kind": "CALIBRATION_SEED",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI §12.10/12.21 stone installation analog",
+      "notes": "Stone cutting, anchors and safety access must be reviewed",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 20,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "steel_rebar",
+      "unit": "kg",
+      "skilled_days_per_unit": 0.012000480019200769,
+      "helper_days_per_unit": 0.012000480019200769,
+      "kind": "CALIBRATION_SEED",
+      "source_id": "NEP-LABOR-STUDY",
+      "source_item": "APF Nepal field study quotes DUDBC skilled rebar benchmark 83.33 kg/worker-day",
+      "notes": "Helper crew 83.33 kg/helper-day is user-calibration SEED only; not DUDBC helper norm",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 500,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "metal_railing",
+      "unit": "m",
+      "skilled_days_per_unit": 0.45,
+      "helper_days_per_unit": 0.32,
+      "kind": "CALIBRATION_SEED",
+      "source_id": "CPWD-DAR-2023",
+      "source_item": "CPWD metalwork method analog",
+      "notes": "Provisional linear-metre installation seed; factory fabrication and coating separate",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 18,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "metal_rolling",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.45,
+      "helper_days_per_unit": 0.38,
+      "kind": "CALIBRATION_SEED",
+      "source_id": "CPWD-DAR-2023",
+      "source_item": "CPWD metal/rolling door analog",
+      "notes": "Provisional rate; automation/motor alignment separate",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 15,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "metal_stair",
+      "unit": "kg",
+      "skilled_days_per_unit": 0.03,
+      "helper_days_per_unit": 0.025,
+      "kind": "CALIBRATION_SEED",
+      "source_id": "CPWD-DAR-2023",
+      "source_item": "CPWD structural steelworks analog",
+      "notes": "Fabrication plus installation draft kg coefficient; weld NDT/paint/lifts separately",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 350,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "metal_gate",
+      "unit": "each",
+      "skilled_days_per_unit": 2,
+      "helper_days_per_unit": 2,
+      "kind": "CALIBRATION_SEED",
+      "source_id": "CPWD-DAR-2023",
+      "source_item": "CPWD structural metalwork analog",
+      "notes": "Provisional single pedestrian gate only; boundary gate area, motor and support vary",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 2,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "cornice_linear",
+      "unit": "m",
+      "skilled_days_per_unit": 0.24,
+      "helper_days_per_unit": 0.25,
+      "kind": "CALIBRATION_SEED",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI §13 plaster profile / CPWD ornamental finishing analog",
+      "notes": "Decorative geometry seed; verify width/cross section",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 28,
+      "execution": "SEPARATE"
+    },
+    {
+      "id": "cornice_area",
+      "unit": "m²",
+      "skilled_days_per_unit": 0.36,
+      "helper_days_per_unit": 0.3,
+      "kind": "CALIBRATION_SEED",
+      "source_id": "NEP-DWRI-2081",
+      "source_item": "DWRI §13 plaster/ornamental finishing analog",
+      "notes": "Provisional area unit; profile and finish require actual drawings",
+      "machine_type": null,
+      "machine_hours_per_unit": null,
+      "calibration_factor": 1,
+      "default_crew": {
+        "skilled": 1,
+        "helper": 1,
+        "machines": 0,
+        "hours": 8
+      },
+      "default_quantity": 25,
+      "execution": "SEPARATE"
+    }
+  ],
+  "items": [
+    {
+      "key": "BOQ:1",
+      "reference_profile": "soil_exc",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:2",
+      "reference_profile": "backfill",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:3",
+      "reference_profile": "imported_fill",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:4",
+      "reference_profile": "stone_soling",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:5",
+      "reference_profile": "pcc_136",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:6",
+      "reference_profile": "m20_placement",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:7",
+      "reference_profile": "form_column",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:8",
+      "reference_profile": "stone_masonry",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:8.1",
+      "reference_profile": "brick_1_4",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:9",
+      "reference_profile": "plaster_inside",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:10",
+      "reference_profile": "plaster_outside",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:11",
+      "reference_profile": "paint_2coat",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:12",
+      "reference_profile": "weather_coat",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:13",
+      "reference_profile": "ceiling_putty",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:14",
+      "reference_profile": "wall_putty",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:15",
+      "reference_profile": "floor_screed",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:16",
+      "reference_profile": "floor_punning",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:17",
+      "reference_profile": "floor_vitrified_tile",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:17.1",
+      "reference_profile": null,
+      "scope": "MATERIAL_ONLY_NO_LABOUR_DURATION"
+    },
+    {
+      "key": "BOQ:18",
+      "reference_profile": "granite_floor",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:19",
+      "reference_profile": "wood_frame",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:19.1",
+      "reference_profile": "wood_frame",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:19.2",
+      "reference_profile": "wood_shutter",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:20",
+      "reference_profile": "upvc_window",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:21",
+      "reference_profile": "upvc_door",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:22",
+      "reference_profile": "wood_polish",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:23",
+      "reference_profile": "waterproof",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:24",
+      "reference_profile": "skirting_marble",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:25",
+      "reference_profile": "stone_cladding",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:26",
+      "reference_profile": "steel_rebar",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:27",
+      "reference_profile": "metal_railing",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:28",
+      "reference_profile": "metal_railing",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:29",
+      "reference_profile": "metal_rolling",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:30",
+      "reference_profile": "metal_stair",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:31",
+      "reference_profile": "metal_gate",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:32",
+      "reference_profile": "cornice_linear",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "BOQ:33",
+      "reference_profile": "cornice_area",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:1.0",
+      "reference_profile": null,
+      "scope": "PARENT_WBS_AGGREGATE_NOT_SCHEDULE_ACTIVITY"
+    },
+    {
+      "key": "WBS:1.1",
+      "reference_profile": "soil_exc",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:2.0",
+      "reference_profile": "backfill",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:3.0",
+      "reference_profile": "imported_fill",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:4.0",
+      "reference_profile": "stone_soling",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:5.0",
+      "reference_profile": "pcc_136",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:6.0",
+      "reference_profile": null,
+      "scope": "PARENT_WBS_AGGREGATE_NOT_SCHEDULE_ACTIVITY"
+    },
+    {
+      "key": "WBS:6.1",
+      "reference_profile": "m20_footing",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:6.2",
+      "reference_profile": "m20_column",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:6.3",
+      "reference_profile": "m20_beam",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:6.4",
+      "reference_profile": "m20_slab",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:6.5",
+      "reference_profile": "m20_stair",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:6.6",
+      "reference_profile": "m20_small_band",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:6.7",
+      "reference_profile": "m20_small_band",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:6.8",
+      "reference_profile": "m20_small_band",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:7.0",
+      "reference_profile": null,
+      "scope": "PARENT_WBS_AGGREGATE_NOT_SCHEDULE_ACTIVITY"
+    },
+    {
+      "key": "WBS:7.1",
+      "reference_profile": "form_footing",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:7.2",
+      "reference_profile": "form_column",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:7.3",
+      "reference_profile": "form_beam",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:7.4",
+      "reference_profile": "form_slab",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:7.5",
+      "reference_profile": "form_stair",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:7.6",
+      "reference_profile": "form_beam",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:7.7",
+      "reference_profile": "form_beam",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:7.8",
+      "reference_profile": "form_beam",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:8.0",
+      "reference_profile": "brick_1_4",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:9.0",
+      "reference_profile": null,
+      "scope": "PARENT_WBS_AGGREGATE_NOT_SCHEDULE_ACTIVITY"
+    },
+    {
+      "key": "WBS:9.1",
+      "reference_profile": "plaster_inside",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:10.0",
+      "reference_profile": "plaster_outside",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:11.0",
+      "reference_profile": "paint_2coat",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:12.0",
+      "reference_profile": "weather_coat",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:13.0",
+      "reference_profile": "ceiling_putty",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:14.0",
+      "reference_profile": "wall_putty",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:15.0",
+      "reference_profile": "floor_screed",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:16.0",
+      "reference_profile": "floor_punning",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:17.0",
+      "reference_profile": "floor_vitrified_tile",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:18.0",
+      "reference_profile": "granite_floor",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:19.0",
+      "reference_profile": null,
+      "scope": "PARENT_WBS_AGGREGATE_NOT_SCHEDULE_ACTIVITY"
+    },
+    {
+      "key": "WBS:20.0",
+      "reference_profile": "upvc_window",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:21.0",
+      "reference_profile": "upvc_door",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:22.0",
+      "reference_profile": "wood_polish",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:23.0",
+      "reference_profile": "waterproof",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:24.0",
+      "reference_profile": "skirting_marble",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:25.0",
+      "reference_profile": "stone_cladding",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:26.0",
+      "reference_profile": "steel_rebar",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:27.0",
+      "reference_profile": "metal_railing",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:28.0",
+      "reference_profile": "metal_railing",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:29.0",
+      "reference_profile": "metal_rolling",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:30.0",
+      "reference_profile": "metal_stair",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:31.0",
+      "reference_profile": "metal_gate",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:32.0",
+      "reference_profile": "cornice_linear",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    },
+    {
+      "key": "WBS:33.0",
+      "reference_profile": "cornice_area",
+      "scope": "REFERENCE_STARTER_NOT_SITE_APPROVAL"
+    }
+  ],
+  "ui_example": {
+    "default_key": "WBS:6.1",
+    "crew": {
+      "skilled": 1,
+      "helper": 1,
+      "machines": 1,
+      "hours": 8
+    },
+    "mode": "m³",
+    "sample_quantity": 5
+  },
+  "coverage": {
+    "item_count": 88,
+    "with_planning_start": 82,
+    "non_activity": 6
+  },
+  "excludes_site_authority": true
+}
