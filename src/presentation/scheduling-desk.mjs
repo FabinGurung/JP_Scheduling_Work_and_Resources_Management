@@ -321,23 +321,87 @@ function renderSouth(container,model,state){
  const activity=model.activities.find(a=>a.id===state.selected);
  if(!activity)return;
  const head=put(container,"div","desk-ribbon desk-south");
- put(head,"span","","SOUTH · Selected activity inspector and source status");
- const details=put(container,"div","desk-details");
- const left=put(details,"section");
- put(left,"h2","",activity.id+" · "+activity.title);
- const list=put(left,"dl","desk-kv");
- for(const [a,b] of [["WBS",activity.wbs_id],["Original duration",activity.duration+" nominal workdays"],
-  ["Start",nice(activity.start_date)],["Finish boundary",nice(activity.finish_date)],
-  ["Status","PLANNING ONLY"],["Source ID",model.project.id]]){
-   put(list,"dt","",a);put(list,"dd","",b);
+ put(head,"span","","SOUTH · Primavera-style Activity Details · "+activity.id+" · "+activity.title);
+ const tabs=put(container,"nav","desk-detail-tabs");tabs.setAttribute("role","tablist");
+ tabs.setAttribute("aria-label","Selected activity details");
+ const views=["General","Status","Resources","Predecessors","Successors","Constraints","Quantities","Steps & Notes"];
+ const panel=put(container,"section","desk-detail-body");
+ function kv(parent,records){
+  const dl=put(parent,"dl","desk-kv");
+  for(const [key,value] of records){
+   put(dl,"dt","",key);
+   put(dl,"dd","",String(value));
+  }
  }
- const right=put(details,"section");
- put(right,"h2","","Predecessors, successors and holds");
- const rel=linkContext(model,activity.id);
- put(right,"p","","Predecessors: "+(rel.predecessors.map(x=>x.from+" ("+(x.type||"FS")+")").join(", ")||"None declared"));
- put(right,"p","","Successors: "+(rel.successors.map(x=>x.to+" ("+(x.type||"FS")+")").join(", ")||"None declared"));
- put(right,"p","","Actual start: NOT VERIFIED · Actual finish: NOT VERIFIED · Construction release: NOT AUTHORIZED");
- put(right,"p","","Source SHA-256: "+model.input_sha256);
+ function listRelations(parent,title,rows){
+  put(parent,"h3","",title);
+  if(!rows.length)put(parent,"p","","No declared relationship in the published source for this activity.");
+  const list=put(parent,"div","desk-relations-list");
+  for(const edge of rows){
+   const card=put(list,"article","desk-relation-detail");
+   put(card,"strong","",edge.other.id+" · "+edge.other.title);
+   put(card,"span","", (edge.type||"FS")+" · Lag "+(edge.lag||0)+" nominal workdays");
+   put(card,"small","","Actual predecessor/successor completion: NOT VERIFIED");
+  }
+ }
+ const context=linkContext(model,activity.id);
+ function showDetail(name){
+  state.detailTab=name;
+  panel.replaceChildren();
+  for(const button of tabs.querySelectorAll("button"))
+   button.setAttribute("aria-selected",String(button.dataset.detail===name));
+  put(panel,"h2","",activity.id+" · "+activity.title);
+  if(name==="General"){
+   kv(panel,[["Activity ID",activity.id],["Activity name",activity.title],["WBS",activity.wbs_id],
+    ["Original duration",activity.duration+" nominal workday slots"],["Activity type",activity.duration===0?"Milestone":"Planning activity"],
+    ["Scenario start",nice(activity.start_date)],["Scenario finish*",nice(activity.finish_date)],
+    ["Project",model.project.id],["Schedule basis",model.planning_status||"Source-pinned scenario"]]);
+  }else if(name==="Status"){
+   kv(panel,[["Activity status","NOT ACTUALLY VERIFIED"],["Actual start","No verified report"],
+    ["Actual finish","No verified report"],["Remaining duration","Not verified"],
+    ["Physical % complete","Not admitted"],["Approved baseline","NO"],
+    ["Activity completion release","NOT AUTHORIZED"]]);
+   put(panel,"p","desk-detail-warning","Do not infer actual progress from an unapproved source-planning bar.");
+  }else if(name==="Resources"){
+   put(panel,"p","desk-detail-warning","No source-approved workforce, equipment, cost or resource assignment has been admitted for this activity.");
+   kv(panel,[["Assigned people","No reviewed roster"],["Primary resource","Not verified"],
+    ["Tools and equipment","Not verified"],["Crew-hours","Not verified"],
+    ["Resource units / time","Not verified"],["Actual productivity","Not measured"],
+    ["Cost and materials","Not verified"]]);
+   const a=put(panel,"a","","Open shared BOQ / work-rate calculator →");
+   a.href=new URL("../../work-items/productivity.html",import.meta.url).href;
+   put(panel,"p","desk-muted","Use the reference coefficients only as provisional BOQ comparisons; never treat them as approved assignments or change this source schedule automatically.");
+  }else if(name==="Predecessors"){
+   listRelations(panel,"Previous work to inspect",context.predecessors);
+  }else if(name==="Successors"){
+   listRelations(panel,"Follow-on work to inspect",context.successors);
+  }else if(name==="Constraints"){
+   kv(panel,[["Start constraint","No authoritative constraint imported"],
+    ["Finish constraint","No authoritative constraint imported"],
+    ["Total float","Not established by project-approved schedule"],
+    ["Site condition / access","Not verified"],["Permit release","Not verified"],
+    ["Inspection / test hold","Not verified"]]);
+  }else if(name==="Quantities"){
+   put(panel,"p","desk-detail-warning","No source-verified BOQ quantities, measured quantities, rates or item-specific resource crews are joined to this activity yet.");
+   kv(panel,[["BOQ item key","Not mapped"],["Contract unit","Not mapped"],
+    ["Required quantity","Not measured"],["Planned output / day","Not admitted"],
+    ["Achieved output / day","Not measured"],["Efficiency vs benchmark","Not measured"]]);
+  }else{
+   put(panel,"p","","Step-by-step checklists and site-preparation reports are preserved only as historical, reported-only source records.");
+   kv(panel,[["Inspection signoff","NOT VERIFIED"],["Reported checklist states","Reported, not approved"],
+    ["Source SHA-256",model.input_sha256],["Work release","NOT AUTHORIZED"]]);
+   if(model.project.id==="PRJ-000007"){
+    const link=put(panel,"a","","Original Narayani reported-only checklist archive →");
+    link.href=new URL("../../projects/narayani/visual.html#checklist",import.meta.url).href;
+   }
+  }
+ }
+ for(const name of views){
+  const button=put(tabs,"button","desk-detail-tab",name);
+  button.type="button";button.dataset.detail=name;button.setAttribute("role","tab");
+  button.addEventListener("click",()=>showDetail(name));
+ }
+ showDetail(views.includes(state.detailTab)?state.detailTab:"General");
 }
 export function renderSchedulingDesk(model,mount,options={}){
  inspectDeskModel(model);
