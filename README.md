@@ -1,3 +1,13 @@
+## 11 November 2026 — Live crew-output baselines and Primavera relation arrows
+
+The [Work-Rate Memory Wall](https://fabingurung.github.io/jp-scheduling-resources-management/work-items/productivity.html) now supplies **82 numerical starter scenarios** across the 88 supplied BOQ/WBS IDs; six are aggregation or supply-only records and intentionally cannot have a stand-alone labour duration. A clear grade separates *official norm*, *official analogy* and *author-entered calibration seed*. Select footing, column, slab, masonry, plaster, shuttering, rebar or tiles; change skilled workers, helpers, machine count and hours; the page calculates quantity per hour/day and active workdays, with brick area conversion for wall thickness and an optional observed-site efficiency comparison. Calculations do not save or modify the project schedule.
+
+The [Narayani Gantt](https://fabingurung.github.io/jp-scheduling-resources-management/projects/narayani/desk.html#activities) now renders FS/SS/FF/SF-compatible relationship arrow geometry for published links, with selected/all/hidden modes, table/chart mobile jump buttons and an eight-tab bottom **Activity Details** section (General, Status, Resources, Predecessors, Successors, Constraints, Quantities, Steps & Notes). Original Narayani source provides 49 **FS** links, not fabricated SS/FF/SF records. Any missing resources/actuals remain openly unverified.
+
+**Sources and QA:** [11 November source and interface audit](docs/PRODUCTIVITY_STARTERS_GANTT_ARROWS_QA_20261111.md). **Pre-snapshot:** `snapshot/pre-productivity-and-gantt-connectors-20261111`. Owner has paused authentication and actual site approvals; all displayed dates and outputs are planning references.
+
+---
+
 ## Skyforge Scheduling Desk & Work-Rate Reference · 10 November 2026
 
 **Canonical repository (renamed without changing GitHub ID):** `FabinGurung/jp-scheduling-resources-management`. Production branch remains `kernel-v0.2-open-source-engines`.
