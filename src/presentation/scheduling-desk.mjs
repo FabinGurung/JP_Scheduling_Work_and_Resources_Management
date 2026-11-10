@@ -441,6 +441,7 @@ export function renderSchedulingDesk(model,mount,options={}){
  function choose(mode){
   if(!modes.includes(mode))mode="activities";
   for(const key of modes){panelMap.get(key).hidden=key!==mode;btnMap.get(key).setAttribute("aria-selected",String(key===mode));}
+  if(mode==="activities")table.render(); // Recompute arrow coordinates after unhiding the Gantt panel.
   if(mode==="dependencies")renderDependencyPanel(panelMap.get(mode),model,state,select);
   if(options.updateHash!==false)history.replaceState(null,"","#"+mode);
  }
