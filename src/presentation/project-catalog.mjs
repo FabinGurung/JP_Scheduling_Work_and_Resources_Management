@@ -151,43 +151,49 @@ function sourceMeta(mount,p,e){
  const dl=add(box,"dl");
  for(const [a,b] of data){add(dl,"dt","",a);add(dl,"dd","",b)}
 }
-function emptySurface(mount,heading,body,approvedLink){
+function emptySurface(mount,heading,body){
  const box=add(mount,"section","pj-workspace");
  add(box,"h2","",heading);
- if(approvedLink){
-  add(box,"p","pj-muted","The existing Narayani public-safe planning model is available in its original shared engine viewer. It is not live construction approval.");
-  anchor(box,"Open Narayani source-bound viewer →","narayani/beta.html","pj-open");
-  if(heading.startsWith("Before"))anchor(box,"Check predecessor/successor plan →","narayani/readiness.html","pj-open");
- }else{
-  const v=add(box,"div","pj-empty");add(v,"h3","","No verified project inputs");add(v,"p","",body);
- }
+ const v=add(box,"div","pj-empty");
+ add(v,"h3","","No verified project inputs");
+ add(v,"p","",body);
  return box;
 }
 function renderProject(mount,registry,p,e){
  const has=p.schedule_status==="NARAYANI_PUBLIC_SAFE_DRAFT";
  const hero=introduction(mount,p.title,
-  "The same reusable project workspace, registered under "+e.title+". Scheduling and inspection data are never copied from another project.",
+  "One source-owned project workspace under "+e.title+". Dates, activities and relationships belong to this project only.",
   [["Overview","../"],["Projects","./"],[e.title,companyPath(e.key)],[p.title,null]]);
  const buttons=add(hero,"nav","pj-toolbar");
  buttons.setAttribute("aria-label","Project-level navigation");
  anchor(buttons,"← "+e.title,companyPath(e.key));
  anchor(buttons,"All projects","./");
- if(has){
-  anchor(buttons,"Open Constellation / Gantt / Calendar","narayani/beta.html");
-  anchor(buttons,"Before · Current · After","narayani/readiness.html");
- }
+ if(has)anchor(buttons,"Open the scheduling desk →","narayani/desk.html");
  const status=add(mount,"div","pj-status "+(has?"pj-live":"pj-hold"),
-  has?"EXISTING PUBLIC-SAFE PLANNING SCENARIO · NOT APPROVED":"EMPTY PROJECT · WBS NOT LOADED");
+  has?"PUBLIC-SAFE PLANNING SCENARIO · NOT APPROVED":"EMPTY PROJECT · WBS NOT LOADED");
  status.setAttribute("role","status");
  sourceMeta(mount,p,e);
- const grid=add(mount,"div","pj-workspaces");
- emptySurface(grid,"WBS & Constellation","No project-specific activity IDs or original work-breakdown structure provided.",has);
- emptySurface(grid,"Gantt & Calendar","No verified project durations, calendars, actual dates or milestones provided.",has);
- emptySurface(grid,"Before / Current / After","No approved predecessor/successor relationships or hold points admitted.",has);
- emptySurface(grid,"Checklists & field progress","No verified inspections, field reports, signoff or work release.",false);
+ if(has){
+  const work=add(mount,"section","pj-source-meta");
+  add(work,"h2","","Scheduling desk · one shared set of source activities");
+  add(work,"p","pj-muted","Use the activity register, Primavera-style Gantt, 12-month Gregorian calendar, and focused predecessor/successor view. The former constellation and 405 reported-only checklist entries remain in Reference history, not in the site planning menu.");
+  const links=add(work,"nav","pj-toolbar");
+  links.setAttribute("aria-label","Scheduling desk views");
+  anchor(links,"Activity table + Gantt →","narayani/desk.html#activities");
+  anchor(links,"Year / month calendar →","narayani/desk.html#calendar");
+  anchor(links,"Before / Current / After →","narayani/desk.html#dependencies");
+  const note=add(work,"div","pj-note");
+  note.textContent="The source scenario is NOT an approved baseline, actual progress or permission to start construction.";
+ }else{
+  const grid=add(mount,"div","pj-workspaces");
+  emptySurface(grid,"WBS / Activity register","No verified project activity IDs, WBS or scope decomposition admitted.");
+  emptySurface(grid,"Gantt and calendar","No project-specific durations, project calendar or approved scenario start/end dates admitted.");
+  emptySurface(grid,"Predecessors / successors","No source-authored dependency links to calculate or authorize.");
+  emptySurface(grid,"Site observations / work release","No authenticated actual progress, inspections or release evidence. Owner has paused private admission.");
+ }
  add(mount,"p","pj-note",has?
-  "The Narayani scenario is a public-safe planning model. Its dates and reported-only checks do not authorize work on site.":
-  "Empty by design: an unverified WBS must not be generated from project names, generic construction assumptions or another building's schedule.");
+  "The Narayani 45-activity scenario remains read-only and reported-only. Its dates and original checklist observations do not authorize work on site.":
+  "Empty by design. Never copy an unrelated project's dates or assume benchmark production rates are site-approved durations.");
 }
 export async function bootstrapProjectCatalog(doc=document){
  const mount=doc.getElementById("project-catalog");
