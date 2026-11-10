@@ -1,3 +1,15 @@
+## Skyforge Scheduling Desk & Work-Rate Reference · 10 November 2026
+
+**Canonical repository (renamed without changing GitHub ID):** `FabinGurung/jp-scheduling-resources-management`. Production branch remains `kernel-v0.2-open-source-engines`.
+
+- **Primary public scheduling desk:** `projects/narayani/desk.html#activities` for a wide *eight-column activity register* plus aligned Primavera-inspired Gantt. Other desk routes: `#calendar` for a real January–December Gregorian calendar; `#dependencies` for a focused Before/Current/After view. The display is a **public-safe, unapproved scenario**, not live site progress.
+- **Source-led productivity library:** `work-items/productivity.html` / `work-items/productivity-norms.v1.json` (88 explicitly listed BOQ/WBS entries, 11 conditional rate classes, 30 reference-linked items, 58 intentionally unquantified). Site quantities, actual crew measurements, weather, safety holds and approval are not inferred. User confirms applicability before hypothetical crew computations.
+- **Projects:** `projects/` remains the single canonical company-first 22-project directory. The 21 company projects without an admitted WBS remain empty; do NOT clone Narayani planning dates or activities.
+- **History:** constellation and 405 reported-only checklist entries remain available in the preserved original viewer for legacy QA, but not in the new primary work desk. All project ID and source digests remain unchanged.
+- **Design and source audit:** [Scheduling Desk & Productivity QA](docs/SCHEDULING_DESK_AND_WORK_RATES_QA_20261110.md). Private sign-in, signed evidence admission and field construction release are **paused** at owner request. No site-ready/approved claims.
+
+---
+
 ## Current Skyforge navigation · 9 November 2026
 
 **Canonical project directory:** https://fabingurung.github.io/JP_Scheduling_Work_and_Resources_Management/projects/ — **22 project identities across 4 companies**, with Google Drive project-folder naming as the authority. Company pages: `projects/jp/`, `projects/fishtail/`, `projects/rohini/`, `projects/paila/`. Each source-grounded project has its own read-only page; **21 schedules are intentionally empty** until their own WBS is reviewed. Narayani's existing 45-activity public-safe scenario is preserved.
