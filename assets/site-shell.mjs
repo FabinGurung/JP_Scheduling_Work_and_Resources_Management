@@ -247,7 +247,7 @@ function createShell(){
  mountContextGuide(profile);
  // Keep the mascot in its own decorative rail on project directories and
  // reference pages; never let it float across project cards or form controls.
- const compactWorkspace=pageKey().startsWith("projects/")||pageKey().startsWith("more/");
+ const compactWorkspace=pageKey().startsWith("projects/")||pageKey().startsWith("more/")||pageKey().startsWith("work-items/");
  if(!compactWorkspace)roamController=createPipRoam(pip,header,reduced);
  else{pip.setAttribute("aria-hidden","true");motion.hidden=true;motion.disabled=true;}
 }
