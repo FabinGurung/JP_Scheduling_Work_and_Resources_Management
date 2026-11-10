@@ -107,9 +107,26 @@ if(productivity.format!=="SKYFORGE_PRODUCTIVITY_REFERENCE_V1"||
  ["docs.google.com","drive.google.com","SLACK::","GOOGLE_OAUTH_ACCESS_TOKEN","BEGIN PRIVATE KEY"].some(x=>productivityText.includes(x)))
  throw Error("Invalid or unsafe public work productivity reference");
 
+// Published public starter coefficients: never auto-admit to a project WBS or actuals.
+// Source digest rotation requires peer review of every norm-vs-analog assumption.
+const starterText=await readFile(join(root,"work-items/productivity-starters.v2.json"),"utf8");
+const starterBlob=createHash("sha1").update("blob "+Buffer.byteLength(starterText)+"\0").update(starterText).digest("hex");
+if(starterBlob!=="7622251da134559d99938748d983ed99abf877be")
+ throw Error("Provisional productivity starter sources changed without reviewed pin");
+const starter=JSON.parse(starterText);
+if(starter.format!=="SKYFORGE_PRODUCTIVITY_STARTERS_V2"||
+ starter.authority!=="REFERENCE_SCENARIOS_NOT_CONSTRUCTION_BASELINE"||
+ starter.excludes_site_authority!==true||
+ starter.items?.length!==88||starter.profiles?.length!==46||
+ starter.coverage?.with_planning_start!==82||starter.coverage?.non_activity!==6||
+ starter.items.some((x,i)=>x.key!==productivity.items[i].key)||
+ starter.profiles.some(x=>!["OFFICIAL_DIRECT","OFFICIAL_ANALOG","CALIBRATION_SEED"].includes(x.kind))||
+ ["docs.google.com","drive.google.com","SLACK::","GOOGLE_OAUTH_ACCESS_TOKEN","BEGIN PRIVATE KEY"].some(x=>starterText.includes(x)))
+ throw Error("Unreviewed source profile, fabricated authority or private starter record");
+
 const approved=["index.html","advanced.html","planner.html","kernel-lab.html","roadmap.html","project-controls-demo.json",
- "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","assets/skyforge-unified.css","assets/studio-project.css","assets/work-readiness.css","assets/portfolio.css","assets/project-catalog.css","assets/scheduling-desk.css","assets/productivity-norms.css","more/legacy-home.html","more/index.html",
- "knowledge/index.html","knowledge/task.html","work-items/index.html","work-items/productivity.html","work-items/productivity-norms.v1.json","projects/generic/index.html","studio/index.html","projects/index.html","projects/registry.json",...companyPages,...projectPages,"projects/portfolio/index.html","projects/portfolio/registry.json",...portfolioPages,"projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
+ "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","assets/skyforge-unified.css","assets/studio-project.css","assets/work-readiness.css","assets/portfolio.css","assets/project-catalog.css","assets/scheduling-desk.css","assets/productivity-norms.css","assets/productivity-starters.css","more/legacy-home.html","more/index.html",
+ "knowledge/index.html","knowledge/task.html","work-items/index.html","work-items/productivity.html","work-items/productivity-norms.v1.json","work-items/productivity-starters.v2.json","projects/generic/index.html","studio/index.html","projects/index.html","projects/registry.json",...companyPages,...projectPages,"projects/portfolio/index.html","projects/portfolio/registry.json",...portfolioPages,"projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
 for(const f of approved)await cp(f);
 await modules("src");
 // Separate, reviewed, PUBLIC work-item catalog only. No private project source files.
