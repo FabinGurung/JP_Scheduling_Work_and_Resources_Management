@@ -53,7 +53,7 @@ test("Gregorian dates and 3 modes use true months and source-exclusive finish bo
  for(const col of ["Activity ID","Activity name","WBS","Original duration","Start","Finish*","Status","Predecessors"])
   assert.ok(ui.includes('"'+col+'"'));
  for(const token of ["NORTH · View controls","WEST · Activity data","EAST · Aligned Gantt timeline",
-  "SOUTH · Selected activity inspector","WEST · Prerequisites / Before","EAST · Follow-on / After"])
+  "SOUTH · Primavera-style Activity Details","WEST · Prerequisites / Before","EAST · Follow-on / After"])
   assert.ok(ui.includes(token));
  assert.doesNotMatch(ui,/layoutOrganicSkillTree|renderConstellation|renderChecklist|localStorage/);
 });
