@@ -1,3 +1,4 @@
+import {drawGanttConnectors} from "./gantt-dependencies.mjs";
 import {adaptNarayaniPublicModel} from "./narayani-beta-adapter.mjs";
 import {validateGenericViewModel} from "./generic-views.mjs";
 /* One read-only operational scheduling desk for 4 source-validated published
@@ -115,8 +116,23 @@ function setupActivityTable(container,model,state,showDetails){
   const opt=put(scale,"option","",n);opt.value=v;
  }
  const counter=put(controls,"small","","");
+ const arrowsLabel=put(controls,"label","","Relationship arrows");
+ const arrows=put(arrowsLabel,"select");arrows.setAttribute("aria-label","Gantt relationship arrows");
+ for(const [id,title] of [["selected","Selected activity"],["all","All visible links"],["none","Hide arrows"]]){
+  const option=put(arrows,"option","",title);option.value=id;
+ }
+ arrows.value="selected";
  const wrap=put(container,"div","desk-table-scroll");
  wrap.tabIndex=0;wrap.setAttribute("aria-label","Scrollable activity table and aligned Gantt");
+ const jumping=put(container,"div","desk-mobile-jumps");
+ const toTable=put(jumping,"button","","← Activity columns");
+ toTable.type="button";toTable.addEventListener("click",()=>wrap.scrollTo({left:0,behavior:"smooth"}));
+ const toGantt=put(jumping,"button","","Gantt + arrows →");
+ toGantt.type="button";toGantt.addEventListener("click",()=>{
+  const head=wrap.querySelector(".desk-chart-head");
+  if(head)wrap.scrollTo({left:Math.max(0,head.offsetLeft-115),behavior:"smooth"});
+ });
+ put(jumping,"span","","Swipe sideways for eight columns and the bar chart.");
  const note=put(container,"div","desk-axis","","");
  note.textContent="Table: eight required fields BEFORE the bar timeline. 'Finish*' is the source's exclusive scenario finish boundary; actual dates, remaining duration and total float are not verified.";
  const reference=new Map(model.activities.map(a=>[a.id,a]));
@@ -124,6 +140,7 @@ function setupActivityTable(container,model,state,showDetails){
  const win=scheduleWindow(model);
  let filtered=[];
  function render(){
+  const previousLeft=wrap.scrollLeft,previousTop=wrap.scrollTop;
   wrap.replaceChildren();
   const table=put(wrap,"table","desk-table");
   const head=put(table,"thead");const tr=put(head,"tr");
@@ -180,9 +197,17 @@ function setupActivityTable(container,model,state,showDetails){
    row.addEventListener("click",choose);
    row.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();choose();}});
   }
+  wrap.scrollLeft=previousLeft;wrap.scrollTop=previousTop;
+  if(axis&&filtered.length&&typeof requestAnimationFrame==="function"){
+   requestAnimationFrame(()=>{
+    if(!body.isConnected)return;
+    const summary=drawGanttConnectors({table,body,axis,win,model,filtered,selected:state.selected,scope:arrows.value});
+    counter.textContent=filtered.length+" of "+model.activities.length+" activities · "+summary.visible+" arrows";
+   });
+  }
  }
  search.addEventListener("input",render);wbs.addEventListener("change",render);
- scale.addEventListener("change",render);
+ scale.addEventListener("change",render);arrows.addEventListener("change",render);
  render();
  return {render};
 }
