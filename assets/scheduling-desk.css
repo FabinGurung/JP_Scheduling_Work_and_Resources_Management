@@ -1,0 +1,89 @@
+/* Skyforge Scheduling Desk v2: source-bound Primavera-style operational reading */
+:root{--desk-bg:#eef5f6;--desk-ink:#243e4d;--desk-muted:#607c88;--desk-blue:#137e85;--desk-line:#d4e4e5;--desk-white:#fff;--desk-amber:#ad7f33}
+.desk-main{font:13px/1.48 system-ui,-apple-system,"Segoe UI",sans-serif;max-width:1860px;padding:18px clamp(10px,2vw,28px) 65px;margin:auto;color:var(--desk-ink)}
+.desk-main *{box-sizing:border-box}
+.desk-hero{border:1px solid var(--desk-line);background:var(--desk-white);border-radius:14px;padding:18px 20px;margin-bottom:12px}
+.desk-hero h1{font-size:clamp(22px,2.8vw,32px);margin:4px 0;letter-spacing:-.03em}
+.desk-hero p{color:var(--desk-muted);max-width:1080px;margin:6px 0}
+.desk-breadcrumb{display:flex;flex-wrap:wrap;gap:9px;font-size:12px;font-weight:650}
+.desk-main a{color:#067d83;text-decoration:none;font-weight:700}
+.desk-main a:hover{text-decoration:underline}
+.desk-source{border:1px solid #ead39c;background:#fff8e8;color:#705627;border-radius:9px;padding:10px 13px;margin:10px 0;font-size:12px}
+.desk-modes{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.desk-modes button{font:inherit;color:#285469;background:#fff;border:1px solid #c6dddf;border-radius:8px;padding:9px 14px;cursor:pointer;min-height:42px;font-weight:760}
+.desk-modes button[aria-selected="true"]{color:#fff;background:#126f78;border-color:#126f78}
+.desk-modes button:focus-visible,.desk-main a:focus-visible,.desk-main select:focus-visible,.desk-main input:focus-visible,.desk-main button:focus-visible{outline:3px solid #f2b84e;outline-offset:2px}
+.desk-surface{border:1px solid var(--desk-line);background:#fff;border-radius:12px;margin-bottom:12px;overflow:hidden}
+.desk-ribbon{padding:9px 13px;color:#456579;background:#e8f2f3;border-bottom:1px solid var(--desk-line);font-size:11px;font-weight:820;letter-spacing:.075em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.desk-ribbon.desk-south{border-top:1px solid var(--desk-line);border-bottom:0}
+.desk-controls{padding:10px 13px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;border-bottom:1px solid #e1eeee}
+.desk-controls label{display:flex;gap:5px;align-items:center;font-size:12px;font-weight:730;color:#4e697c}
+.desk-controls select,.desk-controls input{font:inherit;background:#fff;border:1px solid #c5dcdd;padding:7px 9px;border-radius:7px;min-height:38px}
+.desk-controls input[type=search]{width:min(300px,100%)}
+.desk-controls small{color:var(--desk-muted)}
+.desk-table-scroll{overflow:auto;max-height:min(69vh,800px);scrollbar-color:#9bbdbb #f2f7f7}
+.desk-table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font-variant-numeric:tabular-nums;table-layout:fixed}
+.desk-table th,.desk-table td{border-right:1px solid #e6eeee;border-bottom:1px solid #e2eded;padding:9px 9px;text-align:left;vertical-align:middle;line-height:1.25}
+.desk-table thead th{background:#eaf4f4;color:#3e5f6d;position:sticky;top:0;z-index:5;font-size:11px;font-weight:840;height:53px}
+.desk-table tbody tr{height:51px;cursor:pointer}
+.desk-table tbody tr:nth-child(even){background:#f8fbfb}
+.desk-table tbody tr[aria-selected=true]{background:#e4f5ef}
+.desk-table tbody tr:focus-visible{outline:2px solid #187f80;outline-offset:-2px}
+.desk-table td{font-size:12px}
+.desk-table .desk-col-id{width:96px;min-width:96px;font-weight:820}
+.desk-table .desk-col-title{width:248px;min-width:248px;max-width:248px;white-space:normal}
+.desk-table .desk-col-wbs{width:103px;min-width:103px}
+.desk-table .desk-col-dur{width:95px;min-width:95px}
+.desk-table .desk-col-date{width:115px;min-width:115px}
+.desk-table .desk-col-status{width:107px;min-width:107px}
+.desk-table .desk-col-prev{width:132px;min-width:132px;overflow:hidden;text-overflow:ellipsis}
+.desk-table .desk-timeline{padding:0!important;position:relative}
+.desk-table .desk-chart-head{position:relative;overflow:hidden;height:53px;padding:0!important;white-space:nowrap}
+.desk-scale{position:absolute;top:0;bottom:0;border-right:1px solid #b7d4d4;padding:8px 7px;font-size:11px;white-space:nowrap;overflow:hidden}
+.desk-scale:nth-child(even){background:#e3f0f1}
+.desk-chart-track{height:50px;position:relative;background:repeating-linear-gradient(90deg,#f0f7f7 0,#f0f7f7 1px,transparent 1px,transparent 100px)}
+.desk-bar{position:absolute;top:17px;height:15px;border-radius:3px;background:#168b92;min-width:4px}
+.desk-bar.desk-milestone{width:10px!important;height:10px;top:19px;transform:rotate(45deg);background:#c99a36}
+.desk-bar.desk-selected{outline:2px solid #e2a43b;outline-offset:2px}
+.desk-axis{display:flex;align-items:center;gap:10px;color:#667f8a;font-size:11px;padding:11px 14px;background:#f7fafa}
+.desk-details{padding:15px 19px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.desk-details h2{font-size:17px;margin:0 0 9px}
+.desk-details p{font-size:12px;color:var(--desk-muted);margin:4px 0}
+.desk-kv{display:grid;grid-template-columns:115px minmax(0,1fr);gap:6px 9px;margin:8px 0}
+.desk-kv dt{font-size:11px;color:#67818a;font-weight:760}
+.desk-kv dd{font-size:12px;margin:0;overflow-wrap:anywhere}
+.desk-link-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:16px}
+.desk-link-card{background:#f8fbfb;border:1px solid var(--desk-line);border-radius:10px;padding:13px;min-width:0}
+.desk-link-card h3{font-size:15px;margin:0 0 9px}
+.desk-link-card p{font-size:12px;color:var(--desk-muted)}
+.desk-link-row{border-bottom:1px solid #e0eaea;padding:9px 0}
+.desk-link-row strong{display:block;font-size:12px}
+.desk-link-row small{display:block;color:var(--desk-muted);font-size:11px}
+.desk-calendar-header{padding:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.desk-calendar-header h2{font-size:19px;margin:0 auto 0 0}
+.desk-calendar-header button{border:1px solid #c6dada;background:#fff;border-radius:8px;padding:8px 12px;min-height:39px;font:inherit;font-weight:760;cursor:pointer}
+.desk-months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:15px}
+.desk-month{border:1px solid var(--desk-line);border-radius:11px;overflow:hidden}
+.desk-month h3{text-align:center;font-size:14px;background:#edf5f4;padding:10px;margin:0}
+.desk-week-days,.desk-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.desk-week-days span{font-size:10px;text-align:center;background:#f7fbfa;color:#647d83;padding:5px 0;font-weight:850}
+.desk-day{border:0;border-top:1px solid #eef1f1;border-right:1px solid #eef1f1;min-height:53px;padding:6px 3px 3px;background:#fff;color:#2e5564;font:inherit;text-align:center;cursor:pointer}
+.desk-day:disabled{cursor:default;background:#fafbfb}
+.desk-day[data-count]:not([data-count="0"]){background:#eaf7f4}
+.desk-day[aria-pressed=true]{background:#c9ece5;outline:2px solid #0b7d86;outline-offset:-2px}
+.desk-day strong{display:block;font-size:12px}
+.desk-day small{font-size:9px;color:#4f737b;display:block}
+.desk-day-list{padding:15px;border-top:1px solid var(--desk-line);background:#f9fbfb}
+.desk-day-list h3{margin:0 0 9px;font-size:16px}
+.desk-day-list p{font-size:12px}
+.desk-worklist{display:flex;gap:10px;flex-wrap:wrap}
+.desk-worklist button{border:1px solid #d6e5e3;background:#fff;padding:8px 10px;border-radius:8px;text-align:left;cursor:pointer}
+.desk-worklist button strong{display:block;font-size:12px}
+.desk-worklist button small{display:block;font-size:11px}
+.desk-empty{padding:18px;color:#697f86;font-size:13px}
+.desk-workflow-guide{padding:15px;border:1px solid #ddebea;background:#f5fafa;border-radius:9px;margin:12px 0}
+.desk-workflow-guide strong{color:#2c6571}
+.desk-workflow-guide p{margin:6px 0;font-size:12px;color:#58727e}
+@media(max-width:1100px){.desk-months{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.desk-main{padding:9px 8px 40px}.desk-details,.desk-link-grid{grid-template-columns:1fr}.desk-months{grid-template-columns:1fr}.desk-col-title{max-width:175px!important;min-width:175px!important}.desk-table-scroll{max-height:64vh}.desk-hero{padding:15px}.desk-controls input[type=search]{width:100%}}
+@media(prefers-reduced-motion:reduce){.desk-main *{scroll-behavior:auto}}
