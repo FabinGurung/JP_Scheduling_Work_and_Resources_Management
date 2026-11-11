@@ -12,7 +12,7 @@ const allowed=Object.freeze({
  "pedestrian-bridge":{file:"../../projects/generic/pedestrian-bridge.json",project:"DEMO_BRIDGE"}
 });
 const modes=["activities","calendar"];
-const validISO=s=>typeof s==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&Number.isFinite(Date.parse(s+"T00:00:00Z"));
+const validISO=s=>typeof s==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&Number.isFinite(Date.parse(s+"T00:00:00Z"))&&new Date(s+"T00:00:00Z").toISOString().slice(0,10)===s;
 const utc=s=>new Date(s+"T00:00:00Z").getTime();
 const addDays=(day,n)=>new Date(utc(day)+n*86400000).toISOString().slice(0,10);
 const nice=s=>validISO(s)?new Date(utc(s)).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"2-digit",timeZone:"UTC"}):"—";
@@ -219,7 +219,7 @@ function setupActivityTable(container,model,state,showDetails){
   const index=filtered.findIndex(a=>a.id===state.selected);
   if(index>=0){
    const row=wrap.querySelectorAll("tbody tr")[index];
-   if(row)wrap.scrollTop=Math.max(0,row.offsetTop-94);
+   if(row)wrap.scrollTop=Math.max(0,wrap.scrollTop+row.getBoundingClientRect().top-wrap.getBoundingClientRect().top-74);
   }
  }
  return {render,revealSelected};
