@@ -141,9 +141,30 @@ if(resourceDraft.format!=="SKYFORGE_UNAPPROVED_RESOURCE_SCENARIOS_V1"||
  ["docs.google.com","drive.google.com","SLACK::","GOOGLE_OAUTH_ACCESS_TOKEN","BEGIN PRIVATE KEY"].some(x=>resourceDraftText.includes(x)))
  throw Error("Unapproved or private Narayani resource record cannot publish");
 
+// Reviewed reference materials only: NOT actual project procurement or approved BOQ.
+const materialText=await readFile(join(root,"work-items/material-references.v1.json"),"utf8");
+const materialBlob=createHash("sha1").update("blob "+Buffer.byteLength(materialText)+"\0").update(materialText).digest("hex");
+if(materialBlob!=="61b95922ffce38f506a0da6f1bfbdeddac5165c3")
+ throw Error("Reviewed material reference changed without source evidence / pin rotation");
+const material=JSON.parse(materialText);
+if(material.format!=="SKYFORGE_WORK_MATERIAL_REFERENCE_V1"||
+ material.authority!=="READ_ONLY_REFERENCE_NOT_PROJECT_BOQ"||
+ material.no_actual_or_approved_project_quantities!==true||
+ material.materials?.length!==27||material.recipes?.length!==26||
+ material.work_items?.length!==88||material.project_activities?.length!==45||
+ material.project_activities.some(a=>a.materials_release!==false||a.actual_quantities!==null)||
+ material.work_items.some(a=>a.measured_quantity!==null||a.no_approved_material_takeoff!==true)||
+ ["docs.google.com","drive.google.com","SLACK::","GOOGLE_OAUTH_ACCESS_TOKEN","BEGIN PRIVATE KEY"].some(x=>materialText.includes(x)))
+ throw Error("Unverified, private or site-approved material quantity cannot publish");
+const masterSeed=JSON.parse(await readFile(join(root,"machine/source-snapshots/wbs_schedule_sample/schedule_seed.json"),"utf8"));
+if(masterSeed.tasks?.length!==45||
+ material.project_activities.some((a,i)=>a.activity_id!==masterSeed.tasks[i].task_id||
+ a.activity_title!==masterSeed.tasks[i].name))
+ throw Error("Public material reference does not match immutable 45-task WBS source");
+
 const approved=["index.html","advanced.html","planner.html","kernel-lab.html","roadmap.html","project-controls-demo.json",
- "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","assets/skyforge-unified.css","assets/studio-project.css","assets/work-readiness.css","assets/portfolio.css","assets/project-catalog.css","assets/scheduling-desk.css","assets/productivity-norms.css","assets/productivity-starters.css","more/legacy-home.html","more/index.html",
- "knowledge/index.html","knowledge/task.html","work-items/index.html","work-items/productivity.html","work-items/productivity-norms.v1.json","work-items/productivity-starters.v2.json","work-items/narayani-resource-scenarios.v1.json","projects/generic/index.html","studio/index.html","projects/index.html","projects/registry.json",...companyPages,...projectPages,"projects/portfolio/index.html","projects/portfolio/registry.json",...portfolioPages,"projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
+ "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","assets/skyforge-unified.css","assets/studio-project.css","assets/work-readiness.css","assets/portfolio.css","assets/project-catalog.css","assets/scheduling-desk.css","assets/productivity-norms.css","assets/productivity-starters.css","assets/material-planner.css","more/legacy-home.html","more/index.html",
+ "knowledge/index.html","knowledge/task.html","work-items/index.html","work-items/productivity.html","work-items/materials.html","work-items/productivity-norms.v1.json","work-items/productivity-starters.v2.json","work-items/material-references.v1.json","work-items/narayani-resource-scenarios.v1.json","projects/generic/index.html","studio/index.html","projects/index.html","projects/registry.json",...companyPages,...projectPages,"projects/portfolio/index.html","projects/portfolio/registry.json",...portfolioPages,"projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
 for(const f of approved)await cp(f);
 await modules("src");
 // Separate, reviewed, PUBLIC work-item catalog only. No private project source files.
@@ -377,9 +398,9 @@ for(const relative of skinned){
 }
 const essential=["index.html","projects/narayani/visual.html","projects/narayani/index.html",
 "advanced.html","planner.html","kernel-lab.html","roadmap.html","machine/index.html",
-"machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","work-items/index.html","work-items/productivity.html","projects/generic/index.html","studio/index.html","projects/index.html",...companyPages,...projectPages,"more/index.html","projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","more/legacy-home.html"];
+"machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","work-items/index.html","work-items/productivity.html","work-items/materials.html","projects/generic/index.html","studio/index.html","projects/index.html",...companyPages,...projectPages,"more/index.html","projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","more/legacy-home.html"];
 if(essential.some(p=>!skinned.includes(p)))throw Error("Site shell incomplete: "+essential.filter(p=>!skinned.includes(p)));
-if(skinned.length!==61||redirectOnly.length!==15)
+if(skinned.length!==62||redirectOnly.length!==15)
  throw Error("Unexpected Pages HTML inventory: "+skinned.length+" unified; "+redirectOnly.length+" redirects");
 console.log("SKYFORGE HTML INVENTORY PASS:",skinned.length+redirectOnly.length,"HTML outputs =",skinned.length,"unified +",redirectOnly.length,"redirect-only stubs");
 console.log("SKYFORGE SHARED SHELL PASS:",skinned.length,"public pages unified; legacy pages preserved under More.");
