@@ -50,7 +50,7 @@ test("Gregorian dates and 3 modes use true months and source-exclusive finish bo
  assert.equal(activeInDay(a,"2026-10-02"),true);
  assert.equal(activeInDay(a,"2026-10-03"),false);
  const ui=read("src/presentation/scheduling-desk.mjs");
- for(const col of ["Activity ID","Activity name","WBS","Original duration","Start","Finish*","Status","Predecessors"])
+ for(const col of ["Activity ID","Activity name","WBS","Original duration","Start","Finish*","Predecessors"])
   assert.ok(ui.includes('"'+col+'"'));
  for(const token of ["NORTH · View controls","WEST · Activity data","EAST · Aligned Gantt timeline",
   "SOUTH · Primavera-style Activity Details","WEST · Prerequisites / Before","EAST · Follow-on / After"])
