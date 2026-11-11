@@ -11,7 +11,7 @@ const allowed=Object.freeze({
  "community-clinic":{file:"../../projects/generic/community-clinic.json",project:"DEMO_CLINIC"},
  "pedestrian-bridge":{file:"../../projects/generic/pedestrian-bridge.json",project:"DEMO_BRIDGE"}
 });
-const modes=["activities","calendar","dependencies"];
+const modes=["activities","calendar"];
 const validISO=s=>typeof s==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&Number.isFinite(Date.parse(s+"T00:00:00Z"));
 const utc=s=>new Date(s+"T00:00:00Z").getTime();
 const addDays=(day,n)=>new Date(utc(day)+n*86400000).toISOString().slice(0,10);
@@ -215,7 +215,14 @@ function setupActivityTable(container,model,state,showDetails){
  arrows.addEventListener("change",()=>{allToggle.checked=arrows.value==="all";render();});
  allToggle.addEventListener("change",()=>{arrows.value=allToggle.checked?"all":"selected";render();});
  render();
- return {render};
+ function revealSelected(){
+  const index=filtered.findIndex(a=>a.id===state.selected);
+  if(index>=0){
+   const row=wrap.querySelectorAll("tbody tr")[index];
+   if(row)wrap.scrollTop=Math.max(0,row.offsetTop-94);
+  }
+ }
+ return {render,revealSelected};
 }
 /** Both the aligned Gantt bars and the Gregorian calendar come from the exact
  * same immutable, source-validated activity start/finish date fields. The
@@ -358,46 +365,6 @@ function renderYearCalendar(container,model,state,select,openActivities){
  render();
  return {followSelected,render,renderDay};
 }
-function renderRelatives(container,title,items,callback){
- const card=put(container,"section","desk-link-card");
- put(card,"h3","",title+" ("+items.length+")");
- if(!items.length)put(card,"p","","None recorded in the published schedule network.");
- for(const edge of items){
-  const r=put(card,"div","desk-link-row");
-  const b=put(r,"button","desk-rel-button",edge.other.id+" · "+edge.other.title);
-  b.type="button";b.style.cssText="border:0;background:transparent;text-align:left;color:#067d83;cursor:pointer;font:inherit;font-weight:750;padding:2px 0";
-  b.addEventListener("click",()=>callback(edge.other.id));
-  put(r,"small","","Relation: "+(edge.type||"FS")+" · Lag "+(edge.lag||0)+" · Actual completion NOT VERIFIED");
- }
- return card;
-}
-function renderDependencyPanel(container,model,state,select){
- container.replaceChildren();
- const controls=put(container,"div","desk-controls");
- const label=put(controls,"label","","Activity");
- const picker=put(label,"select");
- picker.setAttribute("aria-label","Selected activity for predecessor and successor inspection");
- for(const a of model.activities){
-  const o=put(picker,"option","",a.id+" · "+a.title);
-  o.value=a.id;
- }
- picker.value=state.selected;
- picker.addEventListener("change",()=>select(picker.value));
- put(controls,"small","","Choose an activity to show direct before/current/after work. No dependencies are auto-released.");
- const cards=put(container,"div","desk-link-grid");
- const links=linkContext(model,state.selected),activity=model.activities.find(a=>a.id===state.selected);
- renderRelatives(cards,"WEST · Prerequisites / Before",links.predecessors,select);
- const current=put(cards,"section","desk-link-card");
- put(current,"h3","","CENTRE · Current activity");
- put(current,"strong","",activity.id+" · "+activity.title);
- put(current,"p","","WBS "+activity.wbs_id+" · "+(Number.isFinite(activity.duration)?activity.duration+" scenario workdays":"Duration not available"));
- put(current,"p","","Start "+nice(activity.start_date)+" · Finish boundary "+nice(activity.finish_date));
- put(current,"p","", "STATUS: NOT VERIFIED · No actual completion, hold-point clearance or authorized release.");
- renderRelatives(cards,"EAST · Follow-on / After",links.successors,select);
- const guide=put(container,"div","desk-workflow-guide");
- put(guide,"strong","","SOUTH · Construction release is a separate decision");
- put(guide,"p","","A valid FS/SS/FF/SF link governs planning relationships. It cannot certify concrete strength, accepted inspections, field completion, handovers or permits. All successors remain unapproved until authenticated actual and hold-point evidence is separately admitted.");
-}
 function renderSouth(container,model,state,options={}){
  container.replaceChildren();
  const activity=model.activities.find(a=>a.id===state.selected);
@@ -515,11 +482,12 @@ export function renderSchedulingDesk(model,mount,options={}){
  createHeader(mount,model);
  const ribbon=put(mount,"div","desk-ribbon");
  put(ribbon,"span","","NORTH · View controls");
- put(ribbon,"span","","ONE source-bound model · NO write actions");
- const modesNav=put(mount,"div","desk-modes");
- modesNav.setAttribute("role","tablist");modesNav.setAttribute("aria-label","Scheduling desk views");
+ put(ribbon,"span","","ONE authoritative source model · no duplicate calendar entry · NO write actions");
+ const modesNav=put(mount,"nav","desk-modes");
+ modesNav.setAttribute("role","tablist");
+ modesNav.setAttribute("aria-label","Two scheduling desk views");
  const panelMap=new Map(),btnMap=new Map();
- for(const [mode,title] of [["activities","Activities + Gantt"],["calendar","Year calendar"],["dependencies","Before / Current / After"]]){
+ for(const [mode,title] of [["activities","Activities + Gantt"],["calendar","Year calendar"]]){
   const b=put(modesNav,"button","",title);b.type="button";b.setAttribute("role","tab");
   b.addEventListener("click",()=>choose(mode));
   btnMap.set(mode,b);
@@ -527,33 +495,55 @@ export function renderSchedulingDesk(model,mount,options={}){
   panel.setAttribute("role","tabpanel");
   panel.dataset.deskView=mode;panel.hidden=true;panelMap.set(mode,panel);
  }
- const state={selected:model.activities[0].id,year:+(scheduleWindow(model)?.start||"2026-01-01").slice(0,4),
-  day:scheduleWindow(model)?.start||"2026-01-01"};
+ const window=scheduleWindow(model);
+ const firstActivity=model.activities[0];
+ const firstDay=validISO(firstActivity.start_date)?firstActivity.start_date:
+    window?.start||"2026-01-01";
+ const state={selected:firstActivity.id,year:Number(firstDay.slice(0,4)),
+  day:firstDay,activeMode:"activities",detailTab:"General"};
  const first=panelMap.get("activities");
- put(first,"div","desk-ribbon","","");
- first.querySelector(".desk-ribbon").textContent="WEST · Activity data (8 columns)  |  EAST · Aligned Gantt timeline";
+ const firstRibbon=put(first,"div","desk-ribbon");
+ firstRibbon.textContent="WEST · Seven activity fields  |  EAST · Aligned Gantt  |  SOUTH · Resource, predecessor and successor details";
  const south=put(first,"div","desk-south-wrap");
  const details=put(first,"div");
  const table=setupActivityTable(south,model,state,()=>{renderSouth(details,model,state,options);});
  renderSouth(details,model,state,options);
- renderYearCalendar(panelMap.get("calendar"),model,state,(id)=>select(id));
+ const calendar=renderYearCalendar(panelMap.get("calendar"),model,state,
+  id=>select(id),()=>choose("activities"));
  function select(id){
-  if(!model.activities.some(a=>a.id===id))throw Error("Unknown selected activity");
+  if(!model.activities.some(a=>a.id===id))throw Error("Unknown selected source activity");
   state.selected=id;
-  table.render();renderSouth(details,model,state,options);
-  renderDependencyPanel(panelMap.get("dependencies"),model,state,select);
+  table.render();
+  renderSouth(details,model,state,options);
+  if(state.activeMode==="calendar")calendar.render();
  }
- renderDependencyPanel(panelMap.get("dependencies"),model,state,select);
- function choose(mode){
-  if(!modes.includes(mode))mode="activities";
-  for(const key of modes){panelMap.get(key).hidden=key!==mode;btnMap.get(key).setAttribute("aria-selected",String(key===mode));}
-  if(mode==="activities")table.render(); // Recompute arrow coordinates after unhiding the Gantt panel.
-  if(mode==="dependencies")renderDependencyPanel(panelMap.get(mode),model,state,select);
-  if(options.updateHash!==false)history.replaceState(null,"","#"+mode);
+ function choose(requested){
+  const legacy=requested==="dependencies";
+  const mode=modes.includes(requested)?requested:"activities";
+  if(legacy)state.detailTab="Predecessors";
+  const previous=state.activeMode;
+  state.activeMode=mode;
+  for(const key of modes){
+   panelMap.get(key).hidden=key!==mode;
+   btnMap.get(key).setAttribute("aria-selected",String(key===mode));
+  }
+  if(mode==="activities"){
+   table.render(); // source selection remains synchronized between views
+   renderSouth(details,model,state,options);
+   if(previous==="calendar")table.revealSelected();
+  }else{
+   calendar.followSelected({scroll:true});
+  }
+  if(options.updateHash!==false&&typeof history!=="undefined")
+   history.replaceState(null,"","#"+mode);
  }
- choose(modes.includes(location.hash.slice(1))?location.hash.slice(1):"activities");
- window.addEventListener("hashchange",()=>choose(modes.includes(location.hash.slice(1))?location.hash.slice(1):"activities"));
- return {select,choose,state};
+ const requestedHash=typeof location!=="undefined"?location.hash.slice(1):"activities";
+ choose(requestedHash);
+ if(typeof window!=="undefined")window.addEventListener("hashchange",()=>{
+  const next=location.hash.slice(1);
+  choose(next);
+ });
+ return {select,choose,state,calendar};
 }
 export async function bootSchedulingDesk(doc=document){
  const mount=doc.getElementById("scheduling-desk");
