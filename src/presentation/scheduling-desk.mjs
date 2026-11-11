@@ -217,70 +217,146 @@ function setupActivityTable(container,model,state,showDetails){
  render();
  return {render};
 }
-function prepareEvents(model){
- const events=new Map();
+/** Both the aligned Gantt bars and the Gregorian calendar come from the exact
+ * same immutable, source-validated activity start/finish date fields. The
+ * finish_date is an EXCLUSIVE finish boundary, never a day of ongoing work. */
+export function calendarDaySnapshot(model,day,selectedId=null){
+ if(!validISO(day))throw Error("Calendar date must be ISO YYYY-MM-DD");
+ const working=[],boundary=[];
  for(const a of model.activities){
-  for(const [date,kind] of [[a.start_date,"START"],[a.finish_date,"FINISH BOUNDARY"]]){
-   if(!validISO(date))continue;
-   if(!events.has(date))events.set(date,[]);
-   events.get(date).push({a,kind});
-  }
+  const active=activeInDay(a,day);
+  const begins=a.start_date===day,finishes=a.finish_date===day;
+  if(active)working.push(a);
+  if(begins)boundary.push({activity:a,type:"START"});
+  if(finishes)boundary.push({activity:a,type:"FINISH_BOUNDARY"});
  }
- return events;
+ const all=new Map([...working,...boundary.map(x=>x.activity)].map(x=>[x.id,x]));
+ return {
+  day,working,events:boundary,items:[...all.values()],
+  activeCount:working.length,boundaryCount:boundary.length,
+  selectedWorking:working.some(a=>a.id===selectedId),
+  selectedBoundary:boundary.some(e=>e.activity.id===selectedId),
+  selectedScheduled:all.has(selectedId)
+ };
 }
-function renderYearCalendar(container,model,state,select){
- const events=prepareEvents(model);
+function renderYearCalendar(container,model,state,select,openActivities){
  const top=put(container,"div","desk-calendar-header");
  const title=put(top,"h2","","");
- const prev=put(top,"button","","← Previous year");
- const next=put(top,"button","","Next year →");
+ const prev=put(top,"button","","← Previous year");prev.type="button";
+ const next=put(top,"button","","Next year →");next.type="button";
  const year=put(top,"span","desk-status","");
+ const picked=put(container,"section","desk-calendar-selected");
+ picked.setAttribute("aria-label","Selected activity shared by Gantt and calendar");
+ const pickedLabel=put(picked,"div","desk-calendar-picked-info");
+ const actions=put(picked,"div","desk-calendar-picked-actions");
+ const locate=put(actions,"button","","Jump to selected activity");locate.type="button";
+ const goToTable=put(actions,"button","","Open selected in Gantt + details →");goToTable.type="button";
+ goToTable.addEventListener("click",openActivities);
+ const legend=put(container,"p","desk-calendar-legend");
+ legend.textContent="Daily cells show active planning work, start/finish boundary events and the selected activity. These are scenario dates, not site attendance or approved workdays.";
  const months=put(container,"div","desk-months");
  const dayDetail=put(container,"section","desk-day-list");
- dayDetail.setAttribute("aria-label","Selected calendar date detail");
+ dayDetail.setAttribute("aria-label","Selected calendar day and scheduled activities");
+ function selectedActivity(){return model.activities.find(a=>a.id===state.selected);}
+ function selectedDay(){
+  const a=selectedActivity();
+  return validISO(a?.start_date)?a.start_date:
+   validISO(a?.finish_date)?a.finish_date:
+   validISO(state.day)?state.day:state.year+"-01-01";
+ }
+ function updateSelected(){
+  pickedLabel.replaceChildren();
+  const a=selectedActivity();
+  if(!a){put(pickedLabel,"strong","","No selected activity");return;}
+  put(pickedLabel,"strong","",a.id+" · "+a.title);
+  put(pickedLabel,"span","","Source-derived date: "+nice(a.start_date)+
+   " → "+nice(a.finish_date)+" (exclusive finish boundary)");
+  put(pickedLabel,"small","","Selecting an activity in the Gantt chooses the SAME work here. One input model; no duplicate calendar entry.");
+ }
  function renderDay(day){
   dayDetail.replaceChildren();
+  if(!validISO(day))return;
+  const snap=calendarDaySnapshot(model,day,state.selected);
   put(dayDetail,"h3","",fmtDay(day));
+  put(dayDetail,"p","",snap.activeCount+" activities scheduled across this day · "+
+    snap.boundaryCount+" source start/finish boundary events. "+
+    (snap.selectedScheduled?"Selected activity is visible on this day.":""));
   const worklist=put(dayDetail,"div","desk-worklist");
-  const active=model.activities.filter(a=>activeInDay(a,day));
-  const event=events.get(day)||[];
-  const unique=[...new Map([...active,...event.map(x=>x.a)].map(a=>[a.id,a])).values()];
-  if(!unique.length)put(dayDetail,"p","","No scheduled scenario activity for this day.");
-  for(const a of unique){
+  if(!snap.items.length)put(dayDetail,"p","","No source-scheduled activities for this date.");
+  for(const a of snap.items){
    const b=put(worklist,"button");
-   b.type="button";put(b,"strong","",a.id+" · "+a.title);
-   const kinds=event.filter(x=>x.a.id===a.id).map(x=>x.kind).join(" / ");
-   put(b,"small","",kinds||"Scenario active · not actual progress");
+   b.type="button";b.setAttribute("aria-pressed",String(a.id===state.selected));
+   put(b,"strong","",a.id+" · "+a.title);
+   const kinds=snap.events.filter(x=>x.activity.id===a.id).map(x=>x.type).join(" / ");
+   put(b,"small","",kinds||"Scheduled scenario · not actual site progress");
    b.addEventListener("click",()=>select(a.id));
   }
  }
- function render(){
+ function render({scrollMonth=false}={}){
   months.replaceChildren();
   title.textContent="January–December "+state.year;
-  year.textContent="Gregorian dates · planning scenario, not actual site attendance";
+  year.textContent="One source schedule · read-only Gregorian calendar";
+  updateSelected();
   for(let month=0;month<12;month++){
    const cell=put(months,"section","desk-month");
+   cell.dataset.month=String(month);cell.dataset.year=String(state.year);
    put(cell,"h3","",new Date(Date.UTC(state.year,month,1)).toLocaleDateString("en-GB",{month:"long",timeZone:"UTC"}));
    const week=put(cell,"div","desk-week-days");
    for(const d of ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"])put(week,"span","",d);
    const days=put(cell,"div","desk-days");
    const first=(new Date(Date.UTC(state.year,month,1)).getUTCDay()+6)%7;
-   for(let i=0;i<first;i++){const blank=put(days,"button","desk-day");blank.disabled=true;blank.setAttribute("aria-hidden","true");}
+   for(let i=0;i<first;i++){
+    const blank=put(days,"button","desk-day");blank.disabled=true;
+    blank.setAttribute("aria-hidden","true");
+   }
    for(let d=1;d<=monthDays(state.year,month);d++){
     const date=new Date(Date.UTC(state.year,month,d)).toISOString().slice(0,10);
-    const count=events.get(date)?.length||0;
-    const b=put(days,"button","desk-day");
-    b.setAttribute("data-count",String(count));b.setAttribute("aria-pressed",String(state.day===date));
-    b.setAttribute("aria-label",fmtDay(date)+", "+count+" scenario boundary events");
+    const snap=calendarDaySnapshot(model,date,state.selected);
+    const b=put(days,"button","desk-day");b.type="button";
+    b.dataset.count=String(snap.activeCount);
+    b.dataset.selectedWork=String(snap.selectedWorking);
+    b.dataset.selectedBoundary=String(snap.selectedBoundary);
+    b.setAttribute("aria-pressed",String(state.day===date));
+    b.setAttribute("aria-label",fmtDay(date)+", "+snap.activeCount+
+     " scheduled activities, "+snap.boundaryCount+" boundary events"+
+     (snap.selectedScheduled?", selected activity here":""));
     put(b,"strong","",String(d));
-    if(count)put(b,"small","",count+" event"+(count===1?"":"s"));
-    b.addEventListener("click",()=>{state.day=date;render();renderDay(date)});
+    if(snap.activeCount)put(b,"small","",snap.activeCount+" work");
+    if(snap.boundaryCount)put(b,"small","desk-calendar-event-count",snap.boundaryCount+" event"+(snap.boundaryCount===1?"":"s"));
+    if(snap.selectedWorking)put(b,"small","desk-calendar-selected-mark","● Selected");
+    if(snap.selectedBoundary&&!snap.selectedWorking)put(b,"small","desk-calendar-boundary-mark","◆ Selected");
+    b.addEventListener("click",()=>{
+     state.day=date;render();renderDay(date);
+    });
    }
   }
+  renderDay(state.day);
+  if(scrollMonth&&typeof requestAnimationFrame==="function")
+   requestAnimationFrame(()=>{
+    if(!container.isConnected||container.hidden)return;
+    const month=Number(state.day.slice(5,7))-1;
+    const section=[...months.children].find(x=>Number(x.dataset.month)===month);
+    if(section&&typeof section.scrollIntoView==="function")
+     section.scrollIntoView({behavior:"smooth",block:"start"});
+   });
  }
- prev.addEventListener("click",()=>{state.year--;state.day=state.year+"-01-01";render();renderDay(state.day)});
- next.addEventListener("click",()=>{state.year++;state.day=state.year+"-01-01";render();renderDay(state.day)});
- render();renderDay(state.day);
+ function followSelected({scroll=true}={}){
+  const day=selectedDay();
+  state.year=Number(day.slice(0,4));
+  state.day=day;
+  render({scrollMonth:scroll});
+ }
+ function changeYear(delta){
+  const nextYear=state.year+delta;
+  if(nextYear<1970||nextYear>2100)return;
+  state.year=nextYear;state.day=String(nextYear)+"-01-01";
+  render();
+ }
+ locate.addEventListener("click",()=>followSelected({scroll:true}));
+ prev.addEventListener("click",()=>changeYear(-1));
+ next.addEventListener("click",()=>changeYear(1));
+ render();
+ return {followSelected,render,renderDay};
 }
 function renderRelatives(container,title,items,callback){
  const card=put(container,"section","desk-link-card");
