@@ -52,7 +52,7 @@ test("Gregorian dates and two linked views use true months and source-exclusive 
  const ui=read("src/presentation/scheduling-desk.mjs");
  for(const col of ["Activity ID","Activity name","WBS","Original duration","Start","Finish*","Predecessors"])
   assert.ok(ui.includes('"'+col+'"'));
- for(const token of ["NORTH · View controls","WEST · Activity data","EAST · Aligned Gantt timeline",
+ for(const token of ["NORTH · View controls","WEST · Seven activity fields","EAST · Aligned Gantt",
   "SOUTH · Primavera-style Activity Details","Predecessors","Successors"])
   assert.ok(ui.includes(token));
  assert.doesNotMatch(ui,/layoutOrganicSkillTree|renderConstellation|renderChecklist|localStorage/);
@@ -87,5 +87,5 @@ test("four published desk entrypoints and pinned productivity memory wall are al
   assert.match(read(file),/src\/presentation\/scheduling-desk\.mjs/);
  assert.match(read("src/presentation/project-catalog.mjs"),/narayani\/desk\.html#activities/);
  assert.match(read("src/presentation/project-catalog.mjs"),/narayani\/desk\.html#calendar/);
- assert.match(read("src/presentation/project-catalog.mjs"),/narayani\/desk\.html#dependencies/);
+ assert.doesNotMatch(read("src/presentation/project-catalog.mjs"),/anchor\(links,"Before \/ Current \/ After/);
 });
