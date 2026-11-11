@@ -1,0 +1,39 @@
+/* Skyforge read-only materials planning and procurement reference */
+.mt-shell{max-width:1450px;margin:auto;padding:14px 17px 70px;font:14px/1.45 system-ui,-apple-system,sans-serif;color:#254653;box-sizing:border-box}
+.mt-shell *{box-sizing:border-box}
+.mt-card{border:1px solid #d6e7e6;border-radius:14px;background:#fff;padding:20px;margin-bottom:13px}
+.mt-hero{background:linear-gradient(120deg,#fff 20%,#eafaf6 100%)}
+.mt-hero h1{font-size:clamp(26px,3.5vw,38px);letter-spacing:-.04em;margin:9px 0}
+.mt-hero p{max-width:900px;color:#53727c}
+.mt-eyebrow{font-size:12px;font-weight:850;letter-spacing:.09em;color:#087981;text-transform:uppercase}
+.mt-shell a{color:#027b82;font-weight:760;text-decoration:none}
+.mt-shell input,.mt-shell select,.mt-shell button{font:inherit}
+.mt-shell select,.mt-shell input{border:1px solid #bbd4d2;border-radius:9px;min-height:45px;padding:9px 10px;background:#fff;color:#245466;max-width:100%;width:100%}
+.mt-shell :is(select,input,a,button):focus-visible{outline:3px solid #e4b44a;outline-offset:2px}
+.mt-links{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0 2px}
+.mt-links a{border:1px solid #b9d9d4;background:#fff;padding:9px 12px;border-radius:9px;min-height:39px}
+.mt-back{display:inline-block;margin-bottom:12px;font-size:12px}
+.mt-warning{background:#fff7e4;border-left:4px solid #ca962c;padding:12px;border-radius:7px;color:#795b34!important;font-size:12px}
+.mt-card h2{font-size:20px;margin:0 0 12px}
+.mt-card h3{font-size:15px;margin:12px 0}
+.mt-picker{display:grid;grid-template-columns:230px minmax(270px,1.4fr) minmax(230px,1fr);gap:10px}
+.mt-picker label,.mt-quantity-fields label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:800;color:#406979;min-width:0}
+.mt-quantity-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:end;margin-top:15px}
+.mt-quantity-fields output{display:flex;align-items:center;min-height:45px;color:#26777e;font-size:18px;font-weight:850}
+.mt-source-note{font-size:12px;color:#697f83}
+.mt-scroll{overflow-x:auto;max-width:100%}
+.mt-table{width:100%;min-width:680px;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.mt-table th{color:#305e6a;background:#eaf5f4;font-size:12px;padding:12px;text-align:left}
+.mt-table td{padding:11px 12px;border-bottom:1px solid #dce8e6;color:#385968}
+.mt-table tr:nth-child(even){background:#f7fbfa}
+.mt-table td:nth-child(2){font-weight:900;color:#08747d}
+.mt-table tr:last-child td{border-bottom:0}
+.mt-small{font-size:12px;color:#68808c}
+.mt-assumptions{padding:12px 14px;background:#f0f8f7;border:1px solid #d5e8e5;border-radius:10px;margin-bottom:14px}
+.mt-assumptions strong{color:#166e78}
+.mt-assumptions p{margin:7px 0 0;color:#507481;font-size:12px}
+.mt-source-row{border-top:1px solid #e0eeee;padding:11px 2px;display:grid;grid-template-columns:1fr 130px;gap:5px 14px}
+.mt-source-row strong{font-size:13px}.mt-source-row a{font-size:12px;text-align:right}
+.mt-source-row small{font-size:11px;color:#6b828c;grid-column:1/-1}
+@media(max-width:950px){.mt-picker{grid-template-columns:1fr 1fr}.mt-picker label:nth-child(2){grid-column:1/-1;order:-1}.mt-quantity-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.mt-shell{padding:9px 8px 50px}.mt-card{padding:14px;margin-bottom:9px}.mt-hero h1{font-size:27px}.mt-picker{grid-template-columns:1fr}.mt-picker label:nth-child(2){grid-column:auto;order:0}.mt-quantity-fields{grid-template-columns:1fr 1fr}.mt-source-row{grid-template-columns:1fr}.mt-source-row a{text-align:left}.mt-warning{padding:9px}}
