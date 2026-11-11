@@ -87,7 +87,7 @@ test("read-only Gantt arrow UI and Primavera-like bottom detail tabs use the sam
   assert.ok(script.includes(field),"Missing Gantt or detail pane "+field);
  assert.match(script,/drawGanttConnectors/);
  assert.match(arrows,/desk-link-arrow/);
- assert.match(script,/No source-approved workforce/);
+ assert.match(script,/VERIFIED project resource assignments: none admitted/);
  assert.match(script,/No source-verified BOQ quantities/);
  assert.match(script,/No verified report/);
  assert.doesNotMatch(arrows,/setInterval|postMessage|fetch\(/);
