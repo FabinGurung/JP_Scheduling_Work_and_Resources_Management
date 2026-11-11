@@ -12,7 +12,7 @@ export function validateMaterialCatalog(cat,boq,seed){
  cat.recipes?.length!==26||cat.work_items?.length!==88||
  cat.project_activities?.length!==45||!Array.isArray(cat.sources)||
  cat.sources.length!==3||boq?.items?.length!==88||
- seed?.tasks?.length!==45)throw Error("Unreviewed material reference catalog");
+ (seed!=null&&seed.tasks?.length!==45))throw Error("Unreviewed material reference catalog");
  const materialIds=new Set(cat.materials.map(x=>x.id)),recipes=new Set(cat.recipes.map(x=>x.id));
  if(materialIds.size!==27||recipes.size!==26||new Set(cat.work_items.map(x=>x.key)).size!==88||
  new Set(cat.project_activities.map(x=>x.activity_id)).size!==45)throw Error("Material ID or count mismatch");
@@ -24,7 +24,7 @@ export function validateMaterialCatalog(cat,boq,seed){
  }
  for(let i=0;i<45;i++){
   const p=cat.project_activities[i];
-  if(p.activity_id!==seed.tasks[i].task_id||p.activity_title!==seed.tasks[i].name||
+  if((seed!=null&&(p.activity_id!==seed.tasks[i].task_id||p.activity_title!==seed.tasks[i].name))||
    p.materials_release!==false||p.actual_quantities!==null||
    p.recipe_ids.some(id=>!recipes.has(id)))throw Error("Project material scope does not match source WBS");
  }
