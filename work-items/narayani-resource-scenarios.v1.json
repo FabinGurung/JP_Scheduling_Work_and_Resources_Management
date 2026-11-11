@@ -1,0 +1,1106 @@
+{
+  "format": "SKYFORGE_UNAPPROVED_RESOURCE_SCENARIOS_V1",
+  "classification": "REFERENCE_CREW_SUGGESTIONS_NOT_SOURCE_ASSIGNMENTS",
+  "source_project": "PRJ-000007",
+  "source_seed_git_blob": "40f2d8e35bf1fd71c5acb84a64272115cacadb99",
+  "basis": "Manual preliminary illustrative role-and-unit roster for each public synthetic WBS task. Not imported from actual project resource assignments, procurement, verified budgets or site attendance.",
+  "source": "machine/source-snapshots/wbs_schedule_sample/schedule_seed.json",
+  "no_approved_site_assignment": true,
+  "no_bill_quantities": true,
+  "activities": [
+    {
+      "activity_id": "T1010",
+      "activity_title": "Initial Client Consultation & Requirements Gathering",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Project manager",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Architect / design coordinator",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T1020",
+      "activity_title": "Site Feasibility Study & Surveying",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Surveyor",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Survey assistant",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Total station",
+          "quantity": 1,
+          "unit": "set",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T1030",
+      "activity_title": "Budget Estimation & Project Charter Approval",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Cost estimator",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Project manager",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "M1040",
+      "activity_title": "Milestone: Project Kickoff",
+      "activity_type": "Milestone",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T2010",
+      "activity_title": "Conceptual Design & Client Review",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Architect",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Drafting technician",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T2020",
+      "activity_title": "Schematic Design (SD) Development",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Architect",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Drafting technician",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T2030",
+      "activity_title": "Design Development (DD) & Structural Engineering",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Architect",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Structural engineer",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "CAD/BIM technician",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T2040",
+      "activity_title": "MEP System Engineering Design",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "MEP engineer",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "CAD/BIM technician",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T2050",
+      "activity_title": "Construction Documents (CD) Finalization",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Architect",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Structural engineer",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "MEP coordinator",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "M2060",
+      "activity_title": "Milestone: Design Freeze & Drawings Baseline",
+      "activity_type": "Milestone",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T3010",
+      "activity_title": "Environmental & Zoning Clearances",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Permit / compliance coordinator",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Planning consultant",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T3020",
+      "activity_title": "Submit Legalized Drawings for Governmental Review",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Architect / permit applicant",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Document coordinator",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T3030",
+      "activity_title": "Address Regulatory Revisions & Resubmit",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Architect",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Permit / compliance coordinator",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T3040",
+      "activity_title": "Obtain Building & Utility Permits",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Permit / compliance coordinator",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "M3050",
+      "activity_title": "Milestone: Permits Secured",
+      "activity_type": "Milestone",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T4010",
+      "activity_title": "Contractor Mobilization & Temporary Facilities Setup",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Site engineer",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Site supervisor",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Skilled construction worker",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Helper / general worker",
+          "quantity": 4,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T4020",
+      "activity_title": "Site Clearing, Grubbing & Demolition",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Site supervisor",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Demolition / clearing worker",
+          "quantity": 3,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Helper / general worker",
+          "quantity": 3,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T4030",
+      "activity_title": "Establish Site Survey Control & Set Out Building Grid",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Surveyor",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Survey assistant",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Total station",
+          "quantity": 1,
+          "unit": "set",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T5010",
+      "activity_title": "Bulk Excavation & Earthwork",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Site supervisor",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Excavator operator",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Helper / general worker",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Excavator",
+          "quantity": 1,
+          "unit": "machine",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T5030",
+      "activity_title": "Formwork, Rebar, and Pour Footings / Pile Caps",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Site engineer",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Formwork carpenter",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Reinforcement fixer",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Concrete crew helper",
+          "quantity": 4,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Concrete mixer",
+          "quantity": 1,
+          "unit": "machine",
+          "type": "EQUIPMENT"
+        },
+        {
+          "name": "Concrete vibrator",
+          "quantity": 1,
+          "unit": "machine",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T5040",
+      "activity_title": "Below-Grade Waterproofing & Drainage",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Waterproofing technician",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Helper / general worker",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Application tool set",
+          "quantity": 1,
+          "unit": "set",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T5050",
+      "activity_title": "Pour Slab-on-Grade (SOG)",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Site engineer",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Concrete skilled worker",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Concrete crew helper",
+          "quantity": 4,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Concrete mixer",
+          "quantity": 1,
+          "unit": "machine",
+          "type": "EQUIPMENT"
+        },
+        {
+          "name": "Concrete vibrator",
+          "quantity": 1,
+          "unit": "machine",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "M5060",
+      "activity_title": "Milestone: Substructure Complete",
+      "activity_type": "Milestone",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T6010",
+      "activity_title": "Erect Columns & Shear Walls",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Site engineer",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Formwork carpenter",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Reinforcement fixer",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Concrete crew helper",
+          "quantity": 4,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Concrete vibrator",
+          "quantity": 1,
+          "unit": "machine",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T6020",
+      "activity_title": "Form, Reinforce, and Pour Suspended Slabs",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Site engineer",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Formwork carpenter",
+          "quantity": 3,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Reinforcement fixer",
+          "quantity": 3,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Concrete crew helper",
+          "quantity": 6,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Concrete mixer",
+          "quantity": 1,
+          "unit": "machine",
+          "type": "EQUIPMENT"
+        },
+        {
+          "name": "Concrete vibrator",
+          "quantity": 1,
+          "unit": "machine",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T6030",
+      "activity_title": "Roof Structural Framing",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Site engineer",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Steel / timber erector",
+          "quantity": 3,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Rigging helper",
+          "quantity": 3,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Lifting equipment",
+          "quantity": 1,
+          "unit": "machine",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "M6040",
+      "activity_title": "Milestone: Superstructure Complete (Topping Out)",
+      "activity_type": "Milestone",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T7010",
+      "activity_title": "Exterior Masonry / Facade Framing",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Mason / façade worker",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Masonry helper",
+          "quantity": 3,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Access scaffold",
+          "quantity": 1,
+          "unit": "set",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T7020",
+      "activity_title": "Roof Waterproofing & Covering",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Roof waterproofing applicator",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Helper / general worker",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Application tool set",
+          "quantity": 1,
+          "unit": "set",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T7030",
+      "activity_title": "Install Windows, Glazing & Exterior Doors",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Window / door installer",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Helper / general worker",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Installation tool set",
+          "quantity": 1,
+          "unit": "set",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "M7040",
+      "activity_title": "Milestone: Building Dried-In (Weather-tight)",
+      "activity_type": "Milestone",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T8010",
+      "activity_title": "HVAC Ductwork & Equipment Rough-in",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "HVAC installer",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "HVAC helper",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Duct installation tool set",
+          "quantity": 1,
+          "unit": "set",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T8020",
+      "activity_title": "Plumbing Water & Waste Lines Rough-in",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Plumber",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Plumbing helper",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Plumbing installation tool set",
+          "quantity": 1,
+          "unit": "set",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T8030",
+      "activity_title": "Electrical Conduit & Wiring Rough-in",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Electrician",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Electrical helper",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Electrical test instrument set",
+          "quantity": 1,
+          "unit": "set",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T8040",
+      "activity_title": "MEP Rough-in Inspections",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "MEP inspection engineer",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Site engineer",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Inspection/testing instrument set",
+          "quantity": 1,
+          "unit": "set",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T9010",
+      "activity_title": "Insulation & Drywall Installation",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Drywall installer",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Helper / general worker",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Installation tool set",
+          "quantity": 1,
+          "unit": "set",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T9020",
+      "activity_title": "Taping, Mudding & Primary Painting",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Plaster / finishing worker",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Painter",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Helper / general worker",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T9030",
+      "activity_title": "Hard Flooring & Tile Installation",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Tile / floor layer",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Tile helper",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Tile cutting machine",
+          "quantity": 1,
+          "unit": "machine",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T9040",
+      "activity_title": "MEP Trim (Fixtures, Switches, Registers)",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Plumber / fixture installer",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Electrician",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "HVAC finisher",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Helper / general worker",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T9060",
+      "activity_title": "Final Coat Painting & Soft Flooring",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Painter",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Floor finishing worker",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Helper / general worker",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T10010",
+      "activity_title": "MEP Systems Testing & Commissioning",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Commissioning engineer",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "MEP testing technician",
+          "quantity": 2,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Testing instrument set",
+          "quantity": 1,
+          "unit": "set",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T10020",
+      "activity_title": "Final Governmental Inspections & Occupancy Certificate",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Site engineer",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Permit / compliance coordinator",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T10030",
+      "activity_title": "Snagging / Punch List Walkthrough with Client",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Site engineer",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Client representative",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Finishing supervisor",
+          "quantity": 1,
+          "unit": "person",
+          "type": "LABOR"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "T10040",
+      "activity_title": "Final Deep Cleaning of Site",
+      "activity_type": "Task",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [
+        {
+          "name": "Cleaning worker",
+          "quantity": 4,
+          "unit": "person",
+          "type": "LABOR"
+        },
+        {
+          "name": "Cleaning equipment set",
+          "quantity": 1,
+          "unit": "set",
+          "type": "EQUIPMENT"
+        }
+      ],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    },
+    {
+      "activity_id": "M10050",
+      "activity_title": "Milestone: Substantial Completion & Key Submission",
+      "activity_type": "Milestone",
+      "assignment_status": "PROPOSED_REFERENCE_ONLY",
+      "resources": [],
+      "measured_materials_status": "NOT_REPORTED_BY_SOURCE"
+    }
+  ]
+}
