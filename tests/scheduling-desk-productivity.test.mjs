@@ -40,7 +40,7 @@ test("crew bottleneck computes daily output without authorizing any actual site 
  assert.equal(partial.status,"PARTIAL_LABOUR_BASIS");
  assert.throws(()=>calculateWorkRate({...props,unit:"m³",applicabilityConfirmed:true}),/unit/);
 });
-test("Gregorian dates and 3 modes use true months and source-exclusive finish boundaries",()=>{
+test("Gregorian dates and two linked views use true months and source-exclusive finish boundaries",()=>{
  assert.equal(monthDays(2027,1),28);
  assert.equal(monthDays(2028,1),29);
  assert.equal(monthDays(2026,3),30);
@@ -53,7 +53,7 @@ test("Gregorian dates and 3 modes use true months and source-exclusive finish bo
  for(const col of ["Activity ID","Activity name","WBS","Original duration","Start","Finish*","Predecessors"])
   assert.ok(ui.includes('"'+col+'"'));
  for(const token of ["NORTH · View controls","WEST · Activity data","EAST · Aligned Gantt timeline",
-  "SOUTH · Primavera-style Activity Details","WEST · Prerequisites / Before","EAST · Follow-on / After"])
+  "SOUTH · Primavera-style Activity Details","Predecessors","Successors"])
   assert.ok(ui.includes(token));
  assert.doesNotMatch(ui,/layoutOrganicSkillTree|renderConstellation|renderChecklist|localStorage/);
 });
