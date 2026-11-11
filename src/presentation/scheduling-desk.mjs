@@ -1,11 +1,12 @@
 import {drawGanttConnectors} from "./gantt-dependencies.mjs";
+import {validateDraftResourceRoster,resourceRowsForSelected} from "../reference/selected-resource-drafts.mjs";
 import {adaptNarayaniPublicModel} from "./narayani-beta-adapter.mjs";
 import {validateGenericViewModel} from "./generic-views.mjs";
 /* One read-only operational scheduling desk for 4 source-validated published
  * examples. The organic constellation and generic checklist are legacy only.
  * A view never changes an original activity or invents a construction release. */
 const allowed=Object.freeze({
- "narayani":{file:"../../projects/narayani/project-model.json",governed:true,project:"PRJ-000007"},
+ "narayani":{file:"../../projects/narayani/project-model.json",governed:true,project:"PRJ-000007",resource_drafts:"../../work-items/narayani-resource-scenarios.v1.json"},
  "uploaded-wbs":{file:"../../projects/generic/uploaded-wbs.json",project:"UPLOADED_WBS_V1"},
  "community-clinic":{file:"../../projects/generic/community-clinic.json",project:"DEMO_CLINIC"},
  "pedestrian-bridge":{file:"../../projects/generic/pedestrian-bridge.json",project:"DEMO_BRIDGE"}
@@ -118,10 +119,14 @@ function setupActivityTable(container,model,state,showDetails){
  const counter=put(controls,"small","","");
  const arrowsLabel=put(controls,"label","","Relationship arrows");
  const arrows=put(arrowsLabel,"select");arrows.setAttribute("aria-label","Gantt relationship arrows");
- for(const [id,title] of [["selected","Selected activity"],["all","All visible links"],["none","Hide arrows"]]){
+ for(const [id,title] of [["selected","Selected activity"],["all","All relationship lines"],["none","Hide relationship lines"]]){
   const option=put(arrows,"option","",title);option.value=id;
  }
  arrows.value="selected";
+ const allLabel=put(controls,"label","desk-all-links-toggle","Show all visible links");
+ const allToggle=put(allLabel,"input");
+ allToggle.type="checkbox";allToggle.checked=false;
+ allToggle.setAttribute("aria-label","Show all dependency relationship lines at once");
  const wrap=put(container,"div","desk-table-scroll");
  wrap.tabIndex=0;wrap.setAttribute("aria-label","Scrollable activity table and aligned Gantt");
  const jumping=put(container,"div","desk-mobile-jumps");
@@ -132,9 +137,9 @@ function setupActivityTable(container,model,state,showDetails){
   const head=wrap.querySelector(".desk-chart-head");
   if(head)wrap.scrollTo({left:Math.max(0,head.offsetLeft-115),behavior:"smooth"});
  });
- put(jumping,"span","","Swipe sideways for eight columns and the bar chart.");
+ put(jumping,"span","","Swipe sideways for seven fields and the aligned bar chart.");
  const note=put(container,"div","desk-axis","","");
- note.textContent="Table: eight required fields BEFORE the bar timeline. 'Finish*' is the source's exclusive scenario finish boundary; actual dates, remaining duration and total float are not verified.";
+ note.textContent="Table: seven planning fields before the bar timeline; repetitive Status is in Activity Details only. Finish* is the exclusive scenario finish boundary; actual completion is not verified.";
  const reference=new Map(model.activities.map(a=>[a.id,a]));
  const wbsMap=new Map(model.wbs.map(p=>[p.id,p.title]));
  const win=scheduleWindow(model);
@@ -148,7 +153,7 @@ function setupActivityTable(container,model,state,showDetails){
    ["Activity ID","desk-col-id"],["Activity name","desk-col-title"],
    ["WBS","desk-col-wbs"],["Original duration","desk-col-dur"],
    ["Start","desk-col-date"],["Finish*","desk-col-date"],
-   ["Status","desk-col-status"],["Predecessors","desk-col-prev"]
+   ["Predecessors","desk-col-prev"]
   ];
   for(const [label,cls] of columns)put(tr,"th",cls,label);
   const axis=win?timeAxis(win,scale.value):null;
@@ -176,7 +181,6 @@ function setupActivityTable(container,model,state,showDetails){
    td(row,"desk-col-dur",Number.isFinite(a.duration)?a.duration+" working days":"Not supplied");
    td(row,"desk-col-date",nice(a.start_date));
    td(row,"desk-col-date",nice(a.finish_date));
-   td(row,"desk-col-status",labelStatus());
    const pres=model.links.filter(e=>e.to===a.id).map(e=>e.from);
    td(row,"desk-col-prev",pres.length?pres.join(", "):"—");
    const chart=td(row,"desk-timeline");
@@ -207,7 +211,9 @@ function setupActivityTable(container,model,state,showDetails){
   }
  }
  search.addEventListener("input",render);wbs.addEventListener("change",render);
- scale.addEventListener("change",render);arrows.addEventListener("change",render);
+ scale.addEventListener("change",render);
+ arrows.addEventListener("change",()=>{allToggle.checked=arrows.value==="all";render();});
+ allToggle.addEventListener("change",()=>{arrows.value=allToggle.checked?"all":"selected";render();});
  render();
  return {render};
 }
@@ -316,7 +322,7 @@ function renderDependencyPanel(container,model,state,select){
  put(guide,"strong","","SOUTH · Construction release is a separate decision");
  put(guide,"p","","A valid FS/SS/FF/SF link governs planning relationships. It cannot certify concrete strength, accepted inspections, field completion, handovers or permits. All successors remain unapproved until authenticated actual and hold-point evidence is separately admitted.");
 }
-function renderSouth(container,model,state){
+function renderSouth(container,model,state,options={}){
  container.replaceChildren();
  const activity=model.activities.find(a=>a.id===state.selected);
  if(!activity)return;
@@ -428,13 +434,13 @@ export function renderSchedulingDesk(model,mount,options={}){
  first.querySelector(".desk-ribbon").textContent="WEST · Activity data (8 columns)  |  EAST · Aligned Gantt timeline";
  const south=put(first,"div","desk-south-wrap");
  const details=put(first,"div");
- const table=setupActivityTable(south,model,state,()=>{renderSouth(details,model,state);});
- renderSouth(details,model,state);
+ const table=setupActivityTable(south,model,state,()=>{renderSouth(details,model,state,options);});
+ renderSouth(details,model,state,options);
  renderYearCalendar(panelMap.get("calendar"),model,state,(id)=>select(id));
  function select(id){
   if(!model.activities.some(a=>a.id===id))throw Error("Unknown selected activity");
   state.selected=id;
-  table.render();renderSouth(details,model,state);
+  table.render();renderSouth(details,model,state,options);
   renderDependencyPanel(panelMap.get("dependencies"),model,state,select);
  }
  renderDependencyPanel(panelMap.get("dependencies"),model,state,select);
