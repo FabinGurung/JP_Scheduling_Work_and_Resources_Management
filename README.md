@@ -1,3 +1,15 @@
+## 11 November 2026 · Gantt mobile QA: status-free table, all relationship lines and per-activity resources
+
+**Open the [Narayani activity desk](https://fabingurung.github.io/jp-scheduling-resources-management/projects/narayani/desk.html#activities).** In response to owner-provided iPhone QA screenshots, the main Gantt table has seven useful columns (Activity ID, name, WBS, duration, start, finish, predecessors); **Status is not a repetitive table column**, but the separate lower Status details tab remains for source inspection.
+
+The Gantt relationship lines (also called **dependency links**) now have a clearly visible **Show all visible links** checkbox: unchecked = selected activity; checked = all links connecting currently visible activities. The existing Selected / All / Hide dropdown remains synchronized with that toggle. Only source-authored links are displayed; the Narayani model has 49 FS links. No schedule or construction status is mutated.
+
+Under **Activity Details → Resources**, each Narayani activity has a table of **resource name, type, proposed quantity and unit** sourced from a separate draft roster of **116 explicitly provisional role/equipment entries** across the 45 original source activity IDs; all seven zero-duration milestones have no independent crew. The underlying source has **zero verified resource assignments or measured material BOQ quantities**. The draft roster is illustrative, traceable, privacy-limited, and **not a site staffing roster or construction authorization**. The other company projects remain source-empty as before.
+
+**Source reconciliation and mobile checklist:** [Seven-field Gantt + Resource QA](docs/GANTT_ALL_LINKS_AND_RESOURCE_ROSTER_QA_20261111.md). **Snapshots:** `snapshot/pre-gantt-resource-ux-20261111` (baseline) and `snapshot/post-gantt-resource-ux-20261111` (post-successful QA).
+
+---
+
 ## 11 November 2026 — Live crew-output baselines and Primavera relation arrows
 
 The [Work-Rate Memory Wall](https://fabingurung.github.io/jp-scheduling-resources-management/work-items/productivity.html) now supplies **82 numerical starter scenarios** across the 88 supplied BOQ/WBS IDs; six are aggregation or supply-only records and intentionally cannot have a stand-alone labour duration. A clear grade separates *official norm*, *official analogy* and *author-entered calibration seed*. Select footing, column, slab, masonry, plaster, shuttering, rebar or tiles; change skilled workers, helpers, machine count and hours; the page calculates quantity per hour/day and active workdays, with brick area conversion for wall thickness and an optional observed-site efficiency comparison. Calculations do not save or modify the project schedule.
@@ -12,7 +24,7 @@ The [Narayani Gantt](https://fabingurung.github.io/jp-scheduling-resources-manag
 
 **Canonical repository (renamed without changing GitHub ID):** `FabinGurung/jp-scheduling-resources-management`. Production branch remains `kernel-v0.2-open-source-engines`.
 
-- **Primary public scheduling desk:** `projects/narayani/desk.html#activities` for a wide *eight-column activity register* plus aligned Primavera-inspired Gantt. Other desk routes: `#calendar` for a real January–December Gregorian calendar; `#dependencies` for a focused Before/Current/After view. The display is a **public-safe, unapproved scenario**, not live site progress.
+- **Primary public scheduling desk:** `projects/narayani/desk.html#activities` for the historical original *eight-column release*, superseded by the seven-field, Status-free Gantt table on 11 November. Other desk routes: `#calendar` for a real January–December Gregorian calendar; `#dependencies` for a focused Before/Current/After view. The display is a **public-safe, unapproved scenario**, not live site progress.
 - **Source-led productivity library:** `work-items/productivity.html` / `work-items/productivity-norms.v1.json` (88 explicitly listed BOQ/WBS entries, 11 conditional rate classes, 30 reference-linked items, 58 intentionally unquantified). Site quantities, actual crew measurements, weather, safety holds and approval are not inferred. User confirms applicability before hypothetical crew computations.
 - **Projects:** `projects/` remains the single canonical company-first 22-project directory. The 21 company projects without an admitted WBS remain empty; do NOT clone Narayani planning dates or activities.
 - **History:** constellation and 405 reported-only checklist entries remain available in the preserved original viewer for legacy QA, but not in the new primary work desk. All project ID and source digests remain unchanged.
