@@ -136,9 +136,9 @@ export function renderMaterialPlanner(data,boq,seed,container){
 export async function bootMaterialPlanner(doc=document){
  const mount=doc.getElementById("materials-planner");if(!mount)return false;
  try{
-  const [a,b,c]=await Promise.all(Object.values(source).map(url=>fetch(url,{cache:"no-store"})));
-  if(!a.ok||!b.ok||!c.ok)throw Error("Published source reference unavailable");
-  renderMaterialPlanner(await a.json(),await b.json(),await c.json(),mount);
+  const [a,b]=await Promise.all([source.materials,source.boq].map(url=>fetch(url,{cache:"no-store"})));
+  if(!a.ok||!b.ok)throw Error("Published source reference unavailable");
+  renderMaterialPlanner(await a.json(),await b.json(),null,mount);
   return true;
  }catch(err){mount.replaceChildren();add(mount,"p","mt-warning","MATERIAL REFERENCE HELD: "+err.message);return false}
 }
