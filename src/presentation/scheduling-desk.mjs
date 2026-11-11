@@ -495,10 +495,10 @@ export function renderSchedulingDesk(model,mount,options={}){
   panel.setAttribute("role","tabpanel");
   panel.dataset.deskView=mode;panel.hidden=true;panelMap.set(mode,panel);
  }
- const window=scheduleWindow(model);
+ const windowInfo=scheduleWindow(model);
  const firstActivity=model.activities[0];
  const firstDay=validISO(firstActivity.start_date)?firstActivity.start_date:
-    window?.start||"2026-01-01";
+    windowInfo?.start||"2026-01-01";
  const state={selected:firstActivity.id,year:Number(firstDay.slice(0,4)),
   day:firstDay,activeMode:"activities",detailTab:"General"};
  const first=panelMap.get("activities");
