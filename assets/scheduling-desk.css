@@ -137,3 +137,51 @@
  .desk-resources-table{font-size:11px}
  .desk-resources-table th,.desk-resources-table td{padding:9px}
 }
+
+
+/* Two-mode Schedule Desk: the calendar is a date projection of Gantt activities,
+ * never a second schedule entry surface. */
+.desk-calendar-selected{
+ display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+ gap:12px;padding:13px 15px;border-block:1px solid #d6e8e3;
+ background:#edf8f5;
+}
+.desk-calendar-picked-info{flex:1 1 290px;min-width:0;display:flex;flex-direction:column;gap:4px}
+.desk-calendar-picked-info strong{font-size:14px;color:#1f5c69;overflow-wrap:anywhere}
+.desk-calendar-picked-info span{font-size:12px;color:#4c717a}
+.desk-calendar-picked-info small{font-size:11px;color:#667f86}
+.desk-calendar-picked-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.desk-calendar-picked-actions button{
+ border:1px solid #b7d9d4;background:#fff;color:#116d75;
+ border-radius:8px;font:inherit;font-weight:780;font-size:12px;
+ min-height:40px;padding:8px 11px;cursor:pointer;
+}
+.desk-calendar-picked-actions button:last-child{background:#14777b;color:#fff}
+.desk-calendar-legend{font-size:12px;color:#4d6d76;padding:0 15px;margin:12px 0 3px}
+.desk-month{scroll-margin-top:148px}
+.desk-day{min-height:67px}
+.desk-day[data-count]:not([data-count="0"]){background:#e9f7ef}
+.desk-day[data-selected-work="true"]{
+ background:#d0f0e7!important;
+ box-shadow:inset 0 0 0 2px #2e8f8a;
+}
+.desk-day[data-selected-boundary="true"]:not([data-selected-work="true"]){
+ background:#fff2d9;box-shadow:inset 0 0 0 2px #d5a142;
+}
+.desk-day[aria-pressed=true]{outline:2px solid #137980;outline-offset:-3px}
+.desk-day small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.desk-calendar-selected-mark{color:#116f66!important;font-weight:850}
+.desk-calendar-boundary-mark{color:#8f641d!important;font-weight:850}
+.desk-calendar-event-count{color:#806631!important}
+.desk-worklist button[aria-pressed=true]{border:2px solid #208b84;background:#e4f5ef}
+@media(max-width:760px){
+ .desk-calendar-header{align-items:start}
+ .desk-calendar-header h2{width:100%;margin:0;flex-basis:100%}
+ .desk-calendar-selected{padding:12px 10px}
+ .desk-calendar-picked-actions{width:100%}
+ .desk-calendar-picked-actions button{flex:1 1 130px}
+ .desk-calendar-legend{padding:0 11px}
+ .desk-month{scroll-margin-top:145px}
+ .desk-day{min-height:68px;padding:4px 1px}
+ .desk-day small{font-size:8px}
+}
