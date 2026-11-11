@@ -1,4 +1,5 @@
 import {drawGanttConnectors} from "./gantt-dependencies.mjs";
+import {applySaturdayHouseScenario,isHouseWorkDay,REFERENCE_HOUSE_CALENDAR} from "../reference/house-saturday-calendar.mjs";
 import {validateDraftResourceRoster,resourceRowsForSelected} from "../reference/selected-resource-drafts.mjs";
 import {adaptNarayaniPublicModel} from "./narayani-beta-adapter.mjs";
 import {validateGenericViewModel} from "./generic-views.mjs";
@@ -51,7 +52,7 @@ export function monthDays(year,monthIndex){
 }
 export function activeInDay(activity,day){
  return validISO(activity.start_date)&&validISO(activity.finish_date)&&
- activity.start_date<=day&&day<activity.finish_date;
+ activity.start_date<=day&&day<activity.finish_date&&isHouseWorkDay(day);
 }
 export function scheduleWindow(model){
  inspectDeskModel(model);
@@ -260,7 +261,7 @@ function renderYearCalendar(container,model,state,select,openActivities){
  const goToTable=put(actions,"button","","Open selected in Gantt + details →");goToTable.type="button";
  goToTable.addEventListener("click",openActivities);
  const legend=put(container,"p","desk-calendar-legend");
- legend.textContent="Daily cells show activity date-range spans, start/finish boundaries and the selected activity. A span does not prove work on Sundays, holidays or any particular day. These are source scenario dates.";
+ legend.textContent="Saturday is a non-working day for this reference calendar. Each activity uses the same source work slots in the Gantt and calendar; non-Saturday date spans remain unapproved and are not proof of site attendance.";
  const months=put(container,"div","desk-months");
  const dayDetail=put(container,"section","desk-day-list");
  dayDetail.setAttribute("aria-label","Selected calendar day and scheduled activities");
@@ -320,6 +321,7 @@ function renderYearCalendar(container,model,state,select,openActivities){
     const date=new Date(Date.UTC(state.year,month,d)).toISOString().slice(0,10);
     const snap=calendarDaySnapshot(model,date,state.selected);
     const b=put(days,"button","desk-day");b.type="button";
+    if(!isHouseWorkDay(date)){b.dataset.holiday="saturday";b.title="Saturday · weekly holiday · no scheduled shift";}
     b.dataset.count=String(snap.activeCount);
     b.dataset.selectedWork=String(snap.selectedWorking);
     b.dataset.selectedBoundary=String(snap.selectedBoundary);
@@ -328,6 +330,7 @@ function renderYearCalendar(container,model,state,select,openActivities){
      " activity date ranges, "+snap.boundaryCount+" boundary events"+
      (snap.selectedScheduled?", selected activity here":""));
     put(b,"strong","",String(d));
+    if(!isHouseWorkDay(date))put(b,"small","desk-calendar-holiday","Holiday");
     if(snap.activeCount)put(b,"small","",snap.activeCount+" planned");
     if(snap.boundaryCount)put(b,"small","desk-calendar-event-count",snap.boundaryCount+" event"+(snap.boundaryCount===1?"":"s"));
     if(snap.selectedWorking)put(b,"small","desk-calendar-selected-mark","● Selected");
@@ -482,7 +485,7 @@ export function renderSchedulingDesk(model,mount,options={}){
  createHeader(mount,model);
  const ribbon=put(mount,"div","desk-ribbon");
  put(ribbon,"span","","NORTH · View controls");
- put(ribbon,"span","","ONE authoritative source model · no duplicate calendar entry · NO write actions");
+ put(ribbon,"span","","ONE source-pinned schedule · SATURDAY HOLIDAY · 8h reference shift · 2 skilled + 3 helpers (draft) · NO write actions");
  const modesNav=put(mount,"nav","desk-modes");
  modesNav.setAttribute("role","tablist");
  modesNav.setAttribute("aria-label","Two scheduling desk views");
@@ -543,7 +546,7 @@ export function renderSchedulingDesk(model,mount,options={}){
   const next=location.hash.slice(1);
   choose(next);
  });
- return {select,choose,state,calendar};
+ return {select,choose,state,calendar,calendarPolicy:REFERENCE_HOUSE_CALENDAR};
 }
 export async function bootSchedulingDesk(doc=document){
  const mount=doc.getElementById("scheduling-desk");
@@ -554,8 +557,10 @@ export async function bootSchedulingDesk(doc=document){
   const res=await fetch(new URL(config.file,import.meta.url),{cache:"no-store"});
   if(!res.ok)throw Error("Verified public source model unavailable: "+res.status);
   const raw=await res.json();
-  const model=config.governed?adaptNarayaniPublicModel(raw):raw;
-  if(model.project.id!==config.project)throw Error("Wrong project source");
+  const sourceModel=config.governed?adaptNarayaniPublicModel(raw):raw;
+  if(sourceModel.project.id!==config.project)throw Error("Wrong project source");
+  inspectDeskModel(sourceModel);
+  const model=applySaturdayHouseScenario(sourceModel,{anchor:config.governed?"2026-10-19":null});
   inspectDeskModel(model);
   const opts={};
   if(config.resource_drafts){
