@@ -1,0 +1,2360 @@
+{
+  "format": "SKYFORGE_WORK_MATERIAL_REFERENCE_V1",
+  "version": "2026-11-12",
+  "authority": "READ_ONLY_REFERENCE_NOT_PROJECT_BOQ",
+  "owner_policy": {
+    "saturday_off": true,
+    "working_weekdays": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "hours_per_day": 8,
+    "skilled_workers": 2,
+    "unskilled_helpers": 3,
+    "machine_hours_per_day_default": 2,
+    "other_equipment_hours_per_day_default": 3
+  },
+  "source_boq_reference": "work-items/productivity-norms.v1.json",
+  "source_project_reference": "machine/source-snapshots/wbs_schedule_sample/schedule_seed.json",
+  "description": "Material assemblies for all 88 owner-supplied work IDs and 45 public synthetic Narayani schedule activities; no invented material quantities for activities lacking measured work scope or detailed drawings. Only some reference assemblies can be numerically computed.",
+  "no_actual_or_approved_project_quantities": true,
+  "sources": [
+    {
+      "id": "NEP-DWRI-2081",
+      "title": "Government of Nepal, DWRI Rate Analysis Norms for Works 2081",
+      "url": "https://giwmscdntwo.gov.np/media/pdf_upload/Norms%20for%20Rate%20Analysis%202081_1%20%281%29_4cwx9ez.pdf",
+      "provenance": "OFFICIAL_MATERIAL_COEFFICIENTS",
+      "reference": "§6.1(A-II/A-IV); §13.1(C)"
+    },
+    {
+      "id": "NEP-NBC-205-2024",
+      "title": "Government of Nepal, NBC 205:2024, Low Rise RCC Detailing Guideline",
+      "url": "https://giwmscdnone.gov.np/media/pdf_upload/NBC%20205-2024%20READY-TO-USE%20DETAILING%20GUIDELINE_0khcwpn.pdf",
+      "provenance": "M20_NOMINAL_RATIO_AND_DESIGN_CONSTRAINT",
+      "reference": "Chapter 5 and §7.3"
+    },
+    {
+      "id": "CIVIL-CALC-ESTIMATE",
+      "title": "Engineer Nepal, Concrete Mix Materials reference estimation",
+      "url": "https://engineernepal.com/en/tools/concrete-mix",
+      "provenance": "ESTIMATING_HEURISTIC_NOT_SITE_STANDARD",
+      "reference": "Dry volume 1.54; density 1440 kg/m³; 50 kg/bag; wastage site-dependent"
+    }
+  ],
+  "materials": [
+    {
+      "id": "cement",
+      "name": "Cement (50 kg bag)",
+      "unit": "bag",
+      "category": "BINDER"
+    },
+    {
+      "id": "sand",
+      "name": "Clean fine aggregate / sand",
+      "unit": "m³",
+      "category": "AGGREGATE"
+    },
+    {
+      "id": "coarse",
+      "name": "Graded coarse aggregate — size per approved mix",
+      "unit": "m³",
+      "category": "AGGREGATE"
+    },
+    {
+      "id": "bricks",
+      "name": "First-class bricks — specified type",
+      "unit": "no.",
+      "category": "MASONRY"
+    },
+    {
+      "id": "water",
+      "name": "Mixing water (not curing allowance)",
+      "unit": "L",
+      "category": "WATER"
+    },
+    {
+      "id": "rebar",
+      "name": "Fe500 reinforcement from approved BBS",
+      "unit": "kg",
+      "category": "STEEL"
+    },
+    {
+      "id": "wire",
+      "name": "Rebar binding wire",
+      "unit": "kg",
+      "category": "STEEL"
+    },
+    {
+      "id": "cover",
+      "name": "Approved concrete cover spacers / chairs",
+      "unit": "no.",
+      "category": "STEEL"
+    },
+    {
+      "id": "form",
+      "name": "Formwork face / shuttering surface",
+      "unit": "m²",
+      "category": "TEMPORARY_WORKS"
+    },
+    {
+      "id": "props",
+      "name": "Formwork supports / props",
+      "unit": "no.",
+      "category": "TEMPORARY_WORKS"
+    },
+    {
+      "id": "soil",
+      "name": "Approved backfill / imported soil",
+      "unit": "m³",
+      "category": "EARTHWORK"
+    },
+    {
+      "id": "stone",
+      "name": "Approved soling stone / boulders",
+      "unit": "m³",
+      "category": "EARTHWORK"
+    },
+    {
+      "id": "tiles",
+      "name": "Specified floor/wall tiles (cuts + allowance)",
+      "unit": "m²",
+      "category": "FINISHING"
+    },
+    {
+      "id": "granite",
+      "name": "Specified cut granite",
+      "unit": "m²",
+      "category": "FINISHING"
+    },
+    {
+      "id": "stoneclad",
+      "name": "Stone cladding and approved anchors",
+      "unit": "m²",
+      "category": "FINISHING"
+    },
+    {
+      "id": "paint",
+      "name": "Approved paint product / primer",
+      "unit": "L",
+      "category": "FINISHING"
+    },
+    {
+      "id": "putty",
+      "name": "Specified putty product",
+      "unit": "kg",
+      "category": "FINISHING"
+    },
+    {
+      "id": "waterproof",
+      "name": "Waterproof membrane / coating system",
+      "unit": "m²",
+      "category": "WATERPROOFING"
+    },
+    {
+      "id": "upvc",
+      "name": "Fabricated UPVC unit / fittings",
+      "unit": "no.",
+      "category": "JOINERY"
+    },
+    {
+      "id": "timber",
+      "name": "Sal timber / specified timber",
+      "unit": "m³",
+      "category": "JOINERY"
+    },
+    {
+      "id": "hardware",
+      "name": "Door/window hinges, fasteners, seals",
+      "unit": "set",
+      "category": "JOINERY"
+    },
+    {
+      "id": "metal",
+      "name": "Specified fabricated steelwork",
+      "unit": "kg",
+      "category": "METAL"
+    },
+    {
+      "id": "plumbing",
+      "name": "Approved pipes, fittings and fixtures",
+      "unit": "set",
+      "category": "MEP"
+    },
+    {
+      "id": "electrical",
+      "name": "Approved conduit, cable, fittings",
+      "unit": "set",
+      "category": "MEP"
+    },
+    {
+      "id": "hvac",
+      "name": "Specified HVAC parts, duct, insulation",
+      "unit": "set",
+      "category": "MEP"
+    },
+    {
+      "id": "drywall",
+      "name": "Gypsum board and fixing components",
+      "unit": "m²",
+      "category": "FINISHING"
+    },
+    {
+      "id": "cleaning",
+      "name": "Approved cleaning consumables",
+      "unit": "set",
+      "category": "SITE"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "concrete_M20",
+      "title": "M20 nominal concrete • 1:1.5:3",
+      "work_unit": "m³",
+      "source_id": "NEP-NBC-205-2024",
+      "grade": "GEOMETRIC_ESTIMATE",
+      "description": "Approximate 1 m³ wet concrete converted to loose dry ingredients with 1.54 model factor; exact approved batch/design mix is authoritative.",
+      "lines": [
+        {
+          "material_id": "cement",
+          "quantity_per_unit": 8.064,
+          "unit": "bag",
+          "basis": "CALCULATED_APPROX",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        },
+        {
+          "material_id": "sand",
+          "quantity_per_unit": 0.42,
+          "unit": "m³",
+          "basis": "CALCULATED_APPROX",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        },
+        {
+          "material_id": "coarse",
+          "quantity_per_unit": 0.84,
+          "unit": "m³",
+          "basis": "CALCULATED_APPROX",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        }
+      ],
+      "note": "Footing, column, beam and slab mix proportions are NOT interchangeable with their approved design mix; steel/rebar and formwork are separate.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "concrete_M10",
+      "title": "PCC 1:3:6 nominal M10 proxy",
+      "work_unit": "m³",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "GEOMETRIC_ESTIMATE",
+      "description": "Cement:sand:aggregate 1:3:6 with 1.54 dry factor; plain-concrete estimate only, NOT structural RCC.",
+      "lines": [
+        {
+          "material_id": "cement",
+          "quantity_per_unit": 4.4352,
+          "unit": "bag",
+          "basis": "CALCULATED_APPROX",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        },
+        {
+          "material_id": "sand",
+          "quantity_per_unit": 0.462,
+          "unit": "m³",
+          "basis": "CALCULATED_APPROX",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        },
+        {
+          "material_id": "coarse",
+          "quantity_per_unit": 0.924,
+          "unit": "m³",
+          "basis": "CALCULATED_APPROX",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        }
+      ],
+      "note": "Grade and water content need the actual drawing/specification.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "brick_1_4",
+      "title": "Machine-made brick masonry • mortar 1:4",
+      "work_unit": "m³",
+      "source_id": "NEP-DWRI-2081",
+      "grade": "PUBLISHED_ITEM",
+      "description": "Nepal government DWRI Rate Analysis Norms 2081, §6.1 (A II), per 1 m³ of machine-made brickwork in 1:4 mortar.",
+      "lines": [
+        {
+          "material_id": "bricks",
+          "quantity_per_unit": 530,
+          "unit": "no.",
+          "basis": "PUBLISHED_ITEM",
+          "source_id": null
+        },
+        {
+          "material_id": "cement",
+          "quantity_per_unit": 2,
+          "unit": "bag",
+          "basis": "PUBLISHED_ITEM",
+          "source_id": null
+        },
+        {
+          "material_id": "sand",
+          "quantity_per_unit": 0.27,
+          "unit": "m³",
+          "basis": "PUBLISHED_ITEM",
+          "source_id": null
+        },
+        {
+          "material_id": "water",
+          "quantity_per_unit": 50,
+          "unit": "L",
+          "basis": "PUBLISHED_ITEM",
+          "source_id": null
+        }
+      ],
+      "note": "Government item is for machine-made bricks; site brick size/half- vs full-brick method must match. Curing water excluded.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "brick_1_6",
+      "title": "Machine-made brick masonry • mortar 1:6",
+      "work_unit": "m³",
+      "source_id": "NEP-DWRI-2081",
+      "grade": "PUBLISHED_ITEM",
+      "description": "Nepal government DWRI Rate Analysis Norms 2081, §6.1 (A IV), per 1 m³ with 1:6 mortar.",
+      "lines": [
+        {
+          "material_id": "bricks",
+          "quantity_per_unit": 530,
+          "unit": "no.",
+          "basis": "PUBLISHED_ITEM",
+          "source_id": null
+        },
+        {
+          "material_id": "cement",
+          "quantity_per_unit": 1.4,
+          "unit": "bag",
+          "basis": "PUBLISHED_ITEM",
+          "source_id": null
+        },
+        {
+          "material_id": "sand",
+          "quantity_per_unit": 0.3,
+          "unit": "m³",
+          "basis": "PUBLISHED_ITEM",
+          "source_id": null
+        },
+        {
+          "material_id": "water",
+          "quantity_per_unit": 35,
+          "unit": "L",
+          "basis": "PUBLISHED_ITEM",
+          "source_id": null
+        }
+      ],
+      "note": "Alternate ratio only if actual wall specification requires 1:6; avoid using for a 1:4 wall.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "plaster_12_5",
+      "title": "12.5 mm wall plaster • mortar 1:4",
+      "work_unit": "m²",
+      "source_id": "NEP-DWRI-2081",
+      "grade": "PUBLISHED_ITEM",
+      "description": "Nepal DWRI 2081 §13.1(C), published per 100 m², converted to 1 m².",
+      "lines": [
+        {
+          "material_id": "cement",
+          "quantity_per_unit": 0.1076,
+          "unit": "bag",
+          "basis": "PUBLISHED_ITEM",
+          "source_id": null
+        },
+        {
+          "material_id": "sand",
+          "quantity_per_unit": 0.0146,
+          "unit": "m³",
+          "basis": "PUBLISHED_ITEM",
+          "source_id": null
+        },
+        {
+          "material_id": "water",
+          "quantity_per_unit": 1,
+          "unit": "L",
+          "basis": "PUBLISHED_ITEM",
+          "source_id": null
+        }
+      ],
+      "note": "Preparation, repair and curing water excluded; uses actual wall area measured for plaster.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "plaster_20",
+      "title": "20 mm external plaster • mortar 1:4",
+      "work_unit": "m²",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "CALIBRATION_SEED",
+      "description": "Geometric derivation 0.020 m thickness × 1.33 dry mortar factor; ratio 1:4; not an independently certified 20mm material norm.",
+      "lines": [
+        {
+          "material_id": "cement",
+          "quantity_per_unit": 0.153216,
+          "unit": "bag",
+          "basis": "CALCULATED_APPROX",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        },
+        {
+          "material_id": "sand",
+          "quantity_per_unit": 0.02128,
+          "unit": "m³",
+          "basis": "CALCULATED_APPROX",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        }
+      ],
+      "note": "External scaffolding, curing water, losses and approved additives are separate.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "formwork",
+      "title": "Formwork / shuttering contact face",
+      "work_unit": "m²",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "GEOMETRIC_ESTIMATE",
+      "description": "One m² of contact surface requires at least one m² of shuttering face, before cutting, overlaps and panel reuse.",
+      "lines": [
+        {
+          "material_id": "form",
+          "quantity_per_unit": 1,
+          "unit": "m²",
+          "basis": "GEOMETRIC_LOWER_BOUND",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        },
+        {
+          "material_id": "props",
+          "quantity_per_unit": null,
+          "unit": "no.",
+          "basis": "DESIGN_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Sheet procurement, reuse cycles, tie rods, staging, wedges and supports require formwork design and cut list.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "rebar",
+      "title": "Fe500 reinforcement placement",
+      "work_unit": "kg",
+      "source_id": "NEP-NBC-205-2024",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Required Fe500 kg is taken from drawing-approved bar-bending schedule, NOT cubic metres of concrete.",
+      "lines": [
+        {
+          "material_id": "rebar",
+          "quantity_per_unit": 1,
+          "unit": "kg",
+          "basis": "DIRECT_MEASURED_INPUT",
+          "source_id": null
+        },
+        {
+          "material_id": "wire",
+          "quantity_per_unit": null,
+          "unit": "kg",
+          "basis": "BBS_AND_WORK_METHOD_REQUIRED",
+          "source_id": null
+        },
+        {
+          "material_id": "cover",
+          "quantity_per_unit": null,
+          "unit": "no.",
+          "basis": "DESIGN_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Do NOT infer diameter, development length or binding wire quantity from concrete volume.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "stone_soling",
+      "title": "Boulder soling with sand blinding",
+      "work_unit": "m³",
+      "source_id": "NEP-DWRI-2081",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Measured stone volume is work input; additional sand-blinding thickness/volume is unknown.",
+      "lines": [
+        {
+          "material_id": "stone",
+          "quantity_per_unit": 1,
+          "unit": "m³",
+          "basis": "DIRECT_MEASURED_INPUT",
+          "source_id": null
+        },
+        {
+          "material_id": "sand",
+          "quantity_per_unit": null,
+          "unit": "m³",
+          "basis": "DRAWING_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Approved stone grading, packing and actual sand consumption must be verified.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "fill_imported",
+      "title": "Imported fill / compacted backfill",
+      "work_unit": "m³",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Measured compacted volume is the input; loose volume and haulage depend on compaction/bulking.",
+      "lines": [
+        {
+          "material_id": "soil",
+          "quantity_per_unit": null,
+          "unit": "m³",
+          "basis": "COMPACTION_TEST_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "40% excavated soil reuse is a hypothesis, not an admitted stockpile/compaction volume.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "tiles",
+      "title": "Floor or wall tile installation",
+      "work_unit": "m²",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "CALIBRATION_SEED",
+      "description": "Tile order area estimated with provisional 5% cutting/waste allowance.",
+      "lines": [
+        {
+          "material_id": "tiles",
+          "quantity_per_unit": 1.05,
+          "unit": "m²",
+          "basis": "CALIBRATION_SEED",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        }
+      ],
+      "note": "Adhesive, grout, bedding mortar, tile grade and cuts require product and method selection.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "granite",
+      "title": "Granite flooring / stair finishing",
+      "work_unit": "m²",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "CALIBRATION_SEED",
+      "description": "Provisional 5% cutting allowance for granite finished area.",
+      "lines": [
+        {
+          "material_id": "granite",
+          "quantity_per_unit": 1.05,
+          "unit": "m²",
+          "basis": "CALIBRATION_SEED",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        }
+      ],
+      "note": "Riser/tread/edge profiles, stone thickness, adhesive and joint details are not inferable.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "stone_cladding",
+      "title": "Stone cladding / selected anchors",
+      "work_unit": "m²",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "CALIBRATION_SEED",
+      "description": "Provisional cladding purchase area allowance 8%, not a certified cladding takeoff.",
+      "lines": [
+        {
+          "material_id": "stoneclad",
+          "quantity_per_unit": 1.08,
+          "unit": "m²",
+          "basis": "CALIBRATION_SEED",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        }
+      ],
+      "note": "Fixing anchors, adhesives, support and height calculations require approved drawings.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "paint",
+      "title": "Primer plus paint system",
+      "work_unit": "m²",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Paint coverage is brand/coating/thickness dependent; no unqualified litre-per-m² figure is assumed.",
+      "lines": [
+        {
+          "material_id": "paint",
+          "quantity_per_unit": null,
+          "unit": "L",
+          "basis": "MANUFACTURER_COVERAGE_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Primer and each coat should be separate verified purchase lines.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "putty",
+      "title": "Wall/ceiling putty finish",
+      "work_unit": "m²",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Putty kg/m² depends on product TDS, coating thickness, smoothness and substrate.",
+      "lines": [
+        {
+          "material_id": "putty",
+          "quantity_per_unit": null,
+          "unit": "kg",
+          "basis": "MANUFACTURER_TDS_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Not enough source evidence for a defensible numeric quantity.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "waterproof",
+      "title": "Waterproofing system",
+      "work_unit": "m²",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Membrane/coating specification, lap, primer and system manufacturer's rates required.",
+      "lines": [
+        {
+          "material_id": "waterproof",
+          "quantity_per_unit": null,
+          "unit": "m²",
+          "basis": "SYSTEM_DESIGN_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Ponding test, detailing/turnups, curing and sealants are mandatory separate checks by method.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "floor_screed",
+      "title": "Floor screed / concrete bedding",
+      "work_unit": "m²",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Material takeoff depends on thickness 38–60mm and correct design mix.",
+      "lines": [
+        {
+          "material_id": "cement",
+          "quantity_per_unit": null,
+          "unit": "bag",
+          "basis": "THICKNESS_AND_SPEC_REQUIRED",
+          "source_id": null
+        },
+        {
+          "material_id": "sand",
+          "quantity_per_unit": null,
+          "unit": "m³",
+          "basis": "THICKNESS_AND_SPEC_REQUIRED",
+          "source_id": null
+        },
+        {
+          "material_id": "coarse",
+          "quantity_per_unit": null,
+          "unit": "m³",
+          "basis": "THICKNESS_AND_SPEC_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Choose a specific depth and approved mortar/concrete mix before deriving quantities.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "wood_frame",
+      "title": "Sal wood frame work",
+      "work_unit": "m",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "GEOMETRIC_ESTIMATE",
+      "description": "Nominal 75×100 mm frame cross-section, 0.0075 m³ timber per running metre before losses.",
+      "lines": [
+        {
+          "material_id": "timber",
+          "quantity_per_unit": 0.0075,
+          "unit": "m³",
+          "basis": "GEOMETRIC_ESTIMATE",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        },
+        {
+          "material_id": "hardware",
+          "quantity_per_unit": null,
+          "unit": "set",
+          "basis": "DOOR_SCHEDULE_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Joinery sizes and actual cutting schedule control procurement.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "wood_shutter",
+      "title": "Wooden door shutter fitting",
+      "work_unit": "each",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Door leaf dimensions, number and ironmongery must come from approved door schedule.",
+      "lines": [
+        {
+          "material_id": "timber",
+          "quantity_per_unit": null,
+          "unit": "m³",
+          "basis": "DOOR_SCHEDULE_REQUIRED",
+          "source_id": null
+        },
+        {
+          "material_id": "hardware",
+          "quantity_per_unit": null,
+          "unit": "set",
+          "basis": "DOOR_SCHEDULE_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "upvc",
+      "title": "UPVC windows / doors",
+      "work_unit": "each",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Fabricated unit and fittings require opening dimensions and schedule; no generic area per unit.",
+      "lines": [
+        {
+          "material_id": "upvc",
+          "quantity_per_unit": 1,
+          "unit": "no.",
+          "basis": "DIRECT_MEASURED_INPUT",
+          "source_id": null
+        },
+        {
+          "material_id": "hardware",
+          "quantity_per_unit": null,
+          "unit": "set",
+          "basis": "DOOR_WINDOW_SCHEDULE_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "steelworks",
+      "title": "Metal railing/gate/stair structure",
+      "work_unit": "kg",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Steel kg only from approved fabricated steel schedule, excluding welding rods and coating.",
+      "lines": [
+        {
+          "material_id": "metal",
+          "quantity_per_unit": 1,
+          "unit": "kg",
+          "basis": "DIRECT_MEASURED_INPUT",
+          "source_id": null
+        }
+      ],
+      "note": "",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "plumbing",
+      "title": "Plumbing installation",
+      "work_unit": "set",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Pipe, fitting and fixtures per isometric/drawings; counts not inferred from schedule duration.",
+      "lines": [
+        {
+          "material_id": "plumbing",
+          "quantity_per_unit": null,
+          "unit": "set",
+          "basis": "APPROVED_MEP_BOQ_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "electrical",
+      "title": "Electrical installation",
+      "work_unit": "set",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Conduit, wire gauge, lengths and equipment according to engineered drawings.",
+      "lines": [
+        {
+          "material_id": "electrical",
+          "quantity_per_unit": null,
+          "unit": "set",
+          "basis": "APPROVED_MEP_BOQ_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "hvac",
+      "title": "HVAC installation",
+      "work_unit": "set",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Duct areas/insulation, unit models and runs require MEP design.",
+      "lines": [
+        {
+          "material_id": "hvac",
+          "quantity_per_unit": null,
+          "unit": "set",
+          "basis": "APPROVED_MEP_BOQ_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "drywall",
+      "title": "Gypsum wall / ceiling boards",
+      "work_unit": "m²",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "CALIBRATION_SEED",
+      "description": "Provisional 10% cutting allowance, exclude framing/fasteners/insulation.",
+      "lines": [
+        {
+          "material_id": "drywall",
+          "quantity_per_unit": 1.1,
+          "unit": "m²",
+          "basis": "CALIBRATION_SEED",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        }
+      ],
+      "note": "",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "cleaning",
+      "title": "Final cleaning consumables",
+      "work_unit": "set",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Consumables depend on site condition, no verified work-unit coefficient.",
+      "lines": [
+        {
+          "material_id": "cleaning",
+          "quantity_per_unit": null,
+          "unit": "set",
+          "basis": "SITE_SURVEY_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    }
+  ],
+  "work_items": [
+    {
+      "key": "BOQ:1",
+      "title": "Foundation trench excavation",
+      "unit": "m³",
+      "recipe_ids": [],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:2",
+      "title": "Backfilling foundation trench and tie-beam excavation",
+      "unit": "m³",
+      "recipe_ids": [
+        "fill_imported"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:3",
+      "title": "Imported earth filling to plinth",
+      "unit": "m³",
+      "recipe_ids": [
+        "fill_imported"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:4",
+      "title": "Boulder soling and sand blinding",
+      "unit": "m³",
+      "recipe_ids": [
+        "stone_soling"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:5",
+      "title": "Foundation PCC 1:3:6 machine mixed",
+      "unit": "m³",
+      "recipe_ids": [
+        "concrete_M10"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:6",
+      "title": "Machine mixed vibrated M20 concrete",
+      "unit": "m³",
+      "recipe_ids": [
+        "concrete_M20"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:7",
+      "title": "Centering and shuttering RCC works",
+      "unit": "m²",
+      "recipe_ids": [
+        "formwork"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:8",
+      "title": "Stone masonry work",
+      "unit": "m³",
+      "recipe_ids": [
+        "stone_soling"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:8.1",
+      "title": "First-class chimney burnt brick masonry in mortar",
+      "unit": "m³",
+      "recipe_ids": [
+        "brick_1_4"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:9",
+      "title": "12.5 mm internal wall plaster 1:4",
+      "unit": "m²",
+      "recipe_ids": [
+        "plaster_12_5"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:10",
+      "title": "20 mm external wall plaster 1:4",
+      "unit": "m²",
+      "recipe_ids": [
+        "plaster_20"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:11",
+      "title": "Internal emulsion paint primer plus at least two coats",
+      "unit": "m²",
+      "recipe_ids": [
+        "paint"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:12",
+      "title": "Weather coat exterior primer plus two coats",
+      "unit": "m²",
+      "recipe_ids": [
+        "paint"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:13",
+      "title": "Ceiling putty",
+      "unit": "m²",
+      "recipe_ids": [
+        "putty"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:14",
+      "title": "Internal wall putty",
+      "unit": "m²",
+      "recipe_ids": [
+        "putty"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:15",
+      "title": "Floor screeding 38-60 mm 1:2:4",
+      "unit": "m²",
+      "recipe_ids": [
+        "floor_screed"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:16",
+      "title": "3 mm cement floor punning 1:1 plus neat-cement float",
+      "unit": "m²",
+      "recipe_ids": [
+        "floor_screed"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:17",
+      "title": "Tiling works",
+      "unit": "m²",
+      "recipe_ids": [
+        "tiles"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:17.1",
+      "title": "Tile material",
+      "unit": "m²",
+      "recipe_ids": [],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:18",
+      "title": "Granite works",
+      "unit": "m²",
+      "recipe_ids": [
+        "granite"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:19",
+      "title": "Sal wood door-frame installation 75×100 mm",
+      "unit": "m",
+      "recipe_ids": [
+        "wood_frame"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:19.1",
+      "title": "Sal wood door frame supply",
+      "unit": "m",
+      "recipe_ids": [
+        "wood_frame"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:19.2",
+      "title": "Door shutter installation",
+      "unit": "each",
+      "recipe_ids": [
+        "wood_shutter"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:20",
+      "title": "UPVC windows",
+      "unit": "m²",
+      "recipe_ids": [
+        "upvc"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:21",
+      "title": "UPVC doors",
+      "unit": "each",
+      "recipe_ids": [
+        "upvc"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:22",
+      "title": "Chapra polish on wooden doors",
+      "unit": "m²",
+      "recipe_ids": [
+        "paint"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:23",
+      "title": "Waterproofing works",
+      "unit": "m²",
+      "recipe_ids": [
+        "waterproof"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:24",
+      "title": "Skirting works",
+      "unit": "m",
+      "recipe_ids": [
+        "granite"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:25",
+      "title": "Stone cladding works",
+      "unit": "m²",
+      "recipe_ids": [
+        "stone_cladding"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:26",
+      "title": "Fe 500 reinforcement cutting, bending, placing, tying",
+      "unit": "kg",
+      "recipe_ids": [
+        "rebar"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:27",
+      "title": "Building railing installation",
+      "unit": "m",
+      "recipe_ids": [
+        "steelworks"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:28",
+      "title": "Boundary railing installation",
+      "unit": "m",
+      "recipe_ids": [
+        "steelworks"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:29",
+      "title": "Rolling shutters",
+      "unit": "m²",
+      "recipe_ids": [
+        "steelworks"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:30",
+      "title": "Metal staircase fabrication and installation",
+      "unit": "kg",
+      "recipe_ids": [
+        "steelworks"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:31",
+      "title": "Boundary gate",
+      "unit": "each",
+      "recipe_ids": [
+        "steelworks"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:32",
+      "title": "Cornice work measured by running metre",
+      "unit": "m",
+      "recipe_ids": [
+        "floor_screed"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "BOQ:33",
+      "title": "Cornice work measured by area",
+      "unit": "m²",
+      "recipe_ids": [
+        "floor_screed"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:1.0",
+      "title": "Earthwork excavation foundation trench",
+      "unit": "m³",
+      "recipe_ids": [],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:1.1",
+      "title": "Foundation trench: F1–F7 and CF1–CF3",
+      "unit": "m³",
+      "recipe_ids": [],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:2.0",
+      "title": "Backfilling works",
+      "unit": "m³",
+      "recipe_ids": [
+        "fill_imported"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:3.0",
+      "title": "Room/plinth earth filling",
+      "unit": "m³",
+      "recipe_ids": [
+        "fill_imported"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:4.0",
+      "title": "Boulder soling",
+      "unit": "m³",
+      "recipe_ids": [
+        "stone_soling"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:5.0",
+      "title": "Foundation PCC 1:3:6",
+      "unit": "m³",
+      "recipe_ids": [
+        "concrete_M10"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:6.0",
+      "title": "RCC M20 structural works",
+      "unit": "m³",
+      "recipe_ids": [],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:6.1",
+      "title": "RCC isolated footing bases",
+      "unit": "m³",
+      "recipe_ids": [
+        "concrete_M20"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:6.2",
+      "title": "RCC columns",
+      "unit": "m³",
+      "recipe_ids": [
+        "concrete_M20"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:6.3",
+      "title": "RCC beams: tie/plinth/floor",
+      "unit": "m³",
+      "recipe_ids": [
+        "concrete_M20"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:6.4",
+      "title": "RCC slabs: floor/roof",
+      "unit": "m³",
+      "recipe_ids": [
+        "concrete_M20"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:6.5",
+      "title": "RCC staircase waist slab/steps/landings",
+      "unit": "m³",
+      "recipe_ids": [
+        "concrete_M20"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:6.6",
+      "title": "RCC sill band",
+      "unit": "m³",
+      "recipe_ids": [
+        "concrete_M20"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:6.7",
+      "title": "RCC lintel band",
+      "unit": "m³",
+      "recipe_ids": [
+        "concrete_M20"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:6.8",
+      "title": "RCC parapet wall band",
+      "unit": "m³",
+      "recipe_ids": [
+        "concrete_M20"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:7.0",
+      "title": "Shuttering/Formwork",
+      "unit": "m²",
+      "recipe_ids": [],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:7.1",
+      "title": "Formwork footing base",
+      "unit": "m²",
+      "recipe_ids": [
+        "formwork"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:7.2",
+      "title": "Formwork column",
+      "unit": "m²",
+      "recipe_ids": [
+        "formwork"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:7.3",
+      "title": "Formwork beam",
+      "unit": "m²",
+      "recipe_ids": [
+        "formwork"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:7.4",
+      "title": "Formwork slab",
+      "unit": "m²",
+      "recipe_ids": [
+        "formwork"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:7.5",
+      "title": "Formwork staircase",
+      "unit": "m²",
+      "recipe_ids": [
+        "formwork"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:7.6",
+      "title": "Formwork sill band",
+      "unit": "m²",
+      "recipe_ids": [
+        "formwork"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:7.7",
+      "title": "Formwork lintel band",
+      "unit": "m²",
+      "recipe_ids": [
+        "formwork"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:7.8",
+      "title": "Formwork parapet wall band",
+      "unit": "m²",
+      "recipe_ids": [
+        "formwork"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:8.0",
+      "title": "Chimney-burnt brick masonry 1:4/1:6",
+      "unit": "m³",
+      "recipe_ids": [
+        "brick_1_4"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:9.0",
+      "title": "Plaster works (scope heading)",
+      "unit": "m²",
+      "recipe_ids": [],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:9.1",
+      "title": "12.5 mm internal wall plaster 1:4",
+      "unit": "m²",
+      "recipe_ids": [
+        "plaster_12_5"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:10.0",
+      "title": "20 mm external wall plaster 1:4",
+      "unit": "m²",
+      "recipe_ids": [
+        "plaster_20"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:11.0",
+      "title": "Internal emulsion painting",
+      "unit": "m²",
+      "recipe_ids": [
+        "paint"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:12.0",
+      "title": "Exterior weather coat painting",
+      "unit": "m²",
+      "recipe_ids": [
+        "paint"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:13.0",
+      "title": "Ceiling putty",
+      "unit": "m²",
+      "recipe_ids": [
+        "putty"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:14.0",
+      "title": "Internal wall putty",
+      "unit": "m²",
+      "recipe_ids": [
+        "putty"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:15.0",
+      "title": "38–60 mm floor screeding",
+      "unit": "m²",
+      "recipe_ids": [
+        "floor_screed"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:16.0",
+      "title": "Cement punning",
+      "unit": "m²",
+      "recipe_ids": [
+        "floor_screed"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:17.0",
+      "title": "Tile flooring and wall tiling",
+      "unit": "m²",
+      "recipe_ids": [
+        "tiles"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:18.0",
+      "title": "Granite treads/sills/counters",
+      "unit": "m²",
+      "recipe_ids": [
+        "granite"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:19.0",
+      "title": "Sal woodwork door frames/shutters",
+      "unit": "each",
+      "recipe_ids": [],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:20.0",
+      "title": "UPVC windows",
+      "unit": "m²",
+      "recipe_ids": [
+        "upvc"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:21.0",
+      "title": "UPVC doors",
+      "unit": "each",
+      "recipe_ids": [
+        "upvc"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:22.0",
+      "title": "Chapra polish",
+      "unit": "m²",
+      "recipe_ids": [
+        "paint"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:23.0",
+      "title": "Waterproofing toilets/terraces/wet areas",
+      "unit": "m²",
+      "recipe_ids": [
+        "waterproof"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:24.0",
+      "title": "Skirting works",
+      "unit": "m",
+      "recipe_ids": [
+        "granite"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:25.0",
+      "title": "Stone cladding",
+      "unit": "m²",
+      "recipe_ids": [
+        "stone_cladding"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:26.0",
+      "title": "Fe 500 rebar fabricating/tying",
+      "unit": "kg",
+      "recipe_ids": [
+        "rebar"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:27.0",
+      "title": "Building railings",
+      "unit": "m",
+      "recipe_ids": [
+        "steelworks"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:28.0",
+      "title": "Boundary railings",
+      "unit": "m",
+      "recipe_ids": [
+        "steelworks"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:29.0",
+      "title": "Rolling shutters",
+      "unit": "m²",
+      "recipe_ids": [
+        "steelworks"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:30.0",
+      "title": "Metal stairs",
+      "unit": "kg",
+      "recipe_ids": [
+        "steelworks"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:31.0",
+      "title": "Boundary gate",
+      "unit": "each",
+      "recipe_ids": [
+        "steelworks"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:32.0",
+      "title": "Cornice measured in running metres",
+      "unit": "m",
+      "recipe_ids": [
+        "floor_screed"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    },
+    {
+      "key": "WBS:33.0",
+      "title": "Cornice measured in square metres",
+      "unit": "m²",
+      "recipe_ids": [
+        "floor_screed"
+      ],
+      "type": "BOQ_WBS_SOURCE_KEY",
+      "measured_quantity": null,
+      "no_approved_material_takeoff": true
+    }
+  ],
+  "project_activities": [
+    {
+      "activity_id": "T1010",
+      "activity_title": "Initial Client Consultation & Requirements Gathering",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T1020",
+      "activity_title": "Site Feasibility Study & Surveying",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T1030",
+      "activity_title": "Budget Estimation & Project Charter Approval",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "M1040",
+      "activity_title": "Milestone: Project Kickoff",
+      "recipe_ids": [],
+      "activity_type": "Milestone",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T2010",
+      "activity_title": "Conceptual Design & Client Review",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T2020",
+      "activity_title": "Schematic Design (SD) Development",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T2030",
+      "activity_title": "Design Development (DD) & Structural Engineering",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T2040",
+      "activity_title": "MEP System Engineering Design",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T2050",
+      "activity_title": "Construction Documents (CD) Finalization",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "M2060",
+      "activity_title": "Milestone: Design Freeze & Drawings Baseline",
+      "recipe_ids": [],
+      "activity_type": "Milestone",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T3010",
+      "activity_title": "Environmental & Zoning Clearances",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T3020",
+      "activity_title": "Submit Legalized Drawings for Governmental Review",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T3030",
+      "activity_title": "Address Regulatory Revisions & Resubmit",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T3040",
+      "activity_title": "Obtain Building & Utility Permits",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "M3050",
+      "activity_title": "Milestone: Permits Secured",
+      "recipe_ids": [],
+      "activity_type": "Milestone",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T4010",
+      "activity_title": "Contractor Mobilization & Temporary Facilities Setup",
+      "recipe_ids": [
+        "cleaning"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T4020",
+      "activity_title": "Site Clearing, Grubbing & Demolition",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T4030",
+      "activity_title": "Establish Site Survey Control & Set Out Building Grid",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T5010",
+      "activity_title": "Bulk Excavation & Earthwork",
+      "recipe_ids": [
+        "fill_imported"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T5030",
+      "activity_title": "Formwork, Rebar, and Pour Footings / Pile Caps",
+      "recipe_ids": [
+        "concrete_M20",
+        "rebar",
+        "formwork"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T5040",
+      "activity_title": "Below-Grade Waterproofing & Drainage",
+      "recipe_ids": [
+        "waterproof",
+        "fill_imported"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T5050",
+      "activity_title": "Pour Slab-on-Grade (SOG)",
+      "recipe_ids": [
+        "concrete_M20",
+        "rebar",
+        "formwork"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "M5060",
+      "activity_title": "Milestone: Substructure Complete",
+      "recipe_ids": [],
+      "activity_type": "Milestone",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T6010",
+      "activity_title": "Erect Columns & Shear Walls",
+      "recipe_ids": [
+        "concrete_M20",
+        "rebar",
+        "formwork"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T6020",
+      "activity_title": "Form, Reinforce, and Pour Suspended Slabs",
+      "recipe_ids": [
+        "concrete_M20",
+        "rebar",
+        "formwork"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T6030",
+      "activity_title": "Roof Structural Framing",
+      "recipe_ids": [
+        "steelworks"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "M6040",
+      "activity_title": "Milestone: Superstructure Complete (Topping Out)",
+      "recipe_ids": [],
+      "activity_type": "Milestone",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T7010",
+      "activity_title": "Exterior Masonry / Facade Framing",
+      "recipe_ids": [
+        "brick_1_4"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T7020",
+      "activity_title": "Roof Waterproofing & Covering",
+      "recipe_ids": [
+        "waterproof"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T7030",
+      "activity_title": "Install Windows, Glazing & Exterior Doors",
+      "recipe_ids": [
+        "upvc",
+        "wood_frame",
+        "wood_shutter"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "M7040",
+      "activity_title": "Milestone: Building Dried-In (Weather-tight)",
+      "recipe_ids": [],
+      "activity_type": "Milestone",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T8010",
+      "activity_title": "HVAC Ductwork & Equipment Rough-in",
+      "recipe_ids": [
+        "hvac"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T8020",
+      "activity_title": "Plumbing Water & Waste Lines Rough-in",
+      "recipe_ids": [
+        "plumbing"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T8030",
+      "activity_title": "Electrical Conduit & Wiring Rough-in",
+      "recipe_ids": [
+        "electrical"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T8040",
+      "activity_title": "MEP Rough-in Inspections",
+      "recipe_ids": [
+        "electrical",
+        "plumbing"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T9010",
+      "activity_title": "Insulation & Drywall Installation",
+      "recipe_ids": [
+        "drywall"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T9020",
+      "activity_title": "Taping, Mudding & Primary Painting",
+      "recipe_ids": [
+        "plaster_12_5",
+        "putty",
+        "paint"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T9030",
+      "activity_title": "Hard Flooring & Tile Installation",
+      "recipe_ids": [
+        "tiles",
+        "granite"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T9040",
+      "activity_title": "MEP Trim (Fixtures, Switches, Registers)",
+      "recipe_ids": [
+        "plumbing",
+        "electrical",
+        "hvac"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T9060",
+      "activity_title": "Final Coat Painting & Soft Flooring",
+      "recipe_ids": [
+        "paint",
+        "tiles"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T10010",
+      "activity_title": "MEP Systems Testing & Commissioning",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T10020",
+      "activity_title": "Final Governmental Inspections & Occupancy Certificate",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T10030",
+      "activity_title": "Snagging / Punch List Walkthrough with Client",
+      "recipe_ids": [],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "T10040",
+      "activity_title": "Final Deep Cleaning of Site",
+      "recipe_ids": [
+        "cleaning"
+      ],
+      "activity_type": "Task",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    },
+    {
+      "activity_id": "M10050",
+      "activity_title": "Milestone: Substantial Completion & Key Submission",
+      "recipe_ids": [],
+      "activity_type": "Milestone",
+      "project_quantity_status": "NOT_VERIFIED",
+      "source": "ORIGINAL_45_ACTIVITY_SYNTHETIC_WBS",
+      "actual_quantities": null,
+      "materials_release": false
+    }
+  ],
+  "counts": {
+    "work_items": 88,
+    "project_activities": 45,
+    "recipes": 26,
+    "numerical_recipes": 16
+  }
+}
