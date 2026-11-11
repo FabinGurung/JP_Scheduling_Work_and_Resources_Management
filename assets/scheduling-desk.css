@@ -119,3 +119,21 @@
  .desk-mobile-jumps span{flex-basis:100%}
  .desk-table-scroll{scrollbar-gutter:stable}
 }
+
+
+/* Compact relation toggles and inspectable draft resource quantities. */
+.desk-all-links-toggle{display:inline-flex!important;align-items:center;gap:8px;min-height:40px;padding:6px 10px;background:#f4faf9;border:1px solid #cce0df;border-radius:8px;cursor:pointer}
+.desk-all-links-toggle input{height:18px;width:18px;min-height:18px;margin:0;accent-color:#197d85;cursor:pointer}
+.desk-resources-scroll{overflow-x:auto;max-width:100%;border:1px solid #dae8e7;border-radius:9px;margin:10px 0}
+.desk-resources-table{width:100%;min-width:590px;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.desk-resources-table th{text-align:left;background:#edf6f5;color:#426472;padding:10px 12px;border-bottom:1px solid #d3e3e1}
+.desk-resources-table td{padding:10px 12px;border-bottom:1px solid #e2eded;color:#32505c}
+.desk-resources-table td:nth-child(3){font-weight:850;color:#086d76;text-align:right}
+.desk-resources-table th:nth-child(3){text-align:right}
+.desk-resources-table tr:nth-child(even){background:#f7fbfa}
+.desk-crew-total{font-size:12px!important;font-weight:780;color:#235f67!important}
+@media(max-width:760px){
+ .desk-all-links-toggle{width:100%;justify-content:flex-start}
+ .desk-resources-table{font-size:11px}
+ .desk-resources-table th,.desk-resources-table td{padding:9px}
+}
