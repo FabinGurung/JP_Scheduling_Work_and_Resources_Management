@@ -23,7 +23,7 @@ export function renderStarterWall(base,start,mount){
  calculator.id="live-crew-plan";
  const reference=add(shell,"aside","wr-source-detail");
  let selected=start.ui_example.default_key||"WBS:6.1";
- let state={quantity:5,skilled:1,helper:1,machines:1,hours:8,efficiency:100,actualQuantity:null,thicknessMm:230};
+ let state={quantity:5,skilled:2,helper:3,machines:1,hours:8,machineHoursPerDay:2,efficiency:100,actualQuantity:null,thicknessMm:230};
  const label=add(calculator,"div","wr-eyebrow","Active work scenario (read-only, locally calculated)");
  const heading=add(calculator,"h2","","");
  const band=add(calculator,"div","wr-benchmark-badge","");
@@ -54,9 +54,9 @@ export function renderStarterWall(base,start,mount){
   selected=id;
   const {item,profile}=selectStarter(start,base,id);
   if(profile){
-   state={quantity:profile.default_quantity,skilled:profile.default_crew.skilled,
-    helper:profile.default_crew.helper,machines:profile.default_crew.machines,
-    hours:profile.default_crew.hours,efficiency:100,actualQuantity:null,
+   state={quantity:profile.default_quantity,skilled:2,
+    helper:3,machines:profile.default_crew.machines,
+    hours:8,machineHoursPerDay:2,efficiency:100,actualQuantity:null,
     thicknessMm:230};
   }
   heading.textContent=item.key+" · "+item.title;
@@ -119,6 +119,7 @@ export function renderStarterWall(base,start,mount){
   control(controls,"Helpers / unskilled",state.helper,0,100,1,"helper");
   if(profile.machine_type)control(controls,profile.machine_type+" (machines)",state.machines,0,50,1,"machines");
   control(controls,"Work hours per day",state.hours,1,16,1,"hours");
+  if(profile.machine_type)control(controls,"Machine operating hours/day",state.machineHoursPerDay,0,16,1,"machineHoursPerDay");
   control(controls,"Efficiency factor (%)",state.efficiency,10,180,5,"efficiency");
   if(profile.id==="brick_1_4")control(controls,"Wall thickness (mm)",state.thicknessMm,75,600,5,"thicknessMm");
   const act=add(controls,"label","wr-crew-field");
@@ -143,7 +144,7 @@ export function renderStarterWall(base,start,mount){
    if(info.status!=="ILLUSTRATIVE_ONLY"){
     add(results,"div","wr-data-warning","Add the required workers and machines to calculate this task.");return;
    }
-   metric(results,"Output / workday",num(info.units_per_workday)+" "+profile.unit,"At "+state.hours+" work hours and "+state.efficiency+"% factor");
+   metric(results,"Output / workday",num(info.units_per_workday)+" "+profile.unit,"With 2 skilled + 3 helpers default; "+state.hours+" labour hours; "+state.machineHoursPerDay+" machine hours/day");
    metric(results,"Output / hour",num(info.units_per_hour)+" "+profile.unit,"Nominal average during working hours");
    metric(results,"Active duration",num(info.active_workdays)+" days","Round to "+info.rounded_full_workdays+" complete workdays; excludes holds");
    if(info.sqft_per_workday!==undefined)
@@ -154,7 +155,7 @@ export function renderStarterWall(base,start,mount){
     metric(results,"Your site performance",num(info.actual_efficiency_percent)+"%","Actual output ÷ this provisional benchmark");
    add(extra,"strong","","Live crew equation");
    add(extra,"p","","Output per day = MIN(skilled workers ÷ skilled worker-days/unit, helpers ÷ helper-days/unit, machinery hours available ÷ machine-hours/unit) × hours adjustment × efficiency ÷ element factor.");
-   add(extra,"p","","Increasing only ONE labour category may not increase output if helpers or machinery have already become the bottleneck.");
+   add(extra,"p","","Increasing only ONE labour category may not increase output if helpers or machinery have already become the bottleneck. Saturday is the reference weekly holiday; it is excluded from working-day date projections.");
    add(extra,"p","","Active duration = "+num(state.quantity)+" "+profile.unit+" ÷ "+num(info.units_per_workday)+" "+profile.unit+"/day = "+num(info.active_workdays)+" workdays; this is not a construction calendar finish.");
   }catch(err){add(results,"div","wr-data-warning","Calculation held: "+err.message);}
  }
