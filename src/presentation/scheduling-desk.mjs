@@ -1,13 +1,14 @@
 import {drawGanttConnectors} from "./gantt-dependencies.mjs";
 import {applySaturdayHouseScenario,isHouseWorkDay,REFERENCE_HOUSE_CALENDAR} from "../reference/house-saturday-calendar.mjs";
 import {validateDraftResourceRoster,resourceRowsForSelected} from "../reference/selected-resource-drafts.mjs";
+import {validateMaterialCatalog,projectMaterialScopes} from "../reference/material-planner.mjs";
 import {adaptNarayaniPublicModel} from "./narayani-beta-adapter.mjs";
 import {validateGenericViewModel} from "./generic-views.mjs";
 /* One read-only operational scheduling desk for 4 source-validated published
  * examples. The organic constellation and generic checklist are legacy only.
  * A view never changes an original activity or invents a construction release. */
 const allowed=Object.freeze({
- "narayani":{file:"../../projects/narayani/project-model.json",governed:true,project:"PRJ-000007",resource_drafts:"../../work-items/narayani-resource-scenarios.v1.json"},
+ "narayani":{file:"../../projects/narayani/project-model.json",governed:true,project:"PRJ-000007",resource_drafts:"../../work-items/narayani-resource-scenarios.v1.json",materials:"../../work-items/material-references.v1.json",material_boq:"../../work-items/productivity-norms.v1.json"},
  "uploaded-wbs":{file:"../../projects/generic/uploaded-wbs.json",project:"UPLOADED_WBS_V1"},
  "community-clinic":{file:"../../projects/generic/community-clinic.json",project:"DEMO_CLINIC"},
  "pedestrian-bridge":{file:"../../projects/generic/pedestrian-bridge.json",project:"DEMO_BRIDGE"}
@@ -416,10 +417,16 @@ function renderSouth(container,model,state,options={}){
    put(panel,"p","desk-detail-warning","Do not infer actual progress from an unapproved source-planning bar.");
   }else if(name==="Resources"){
    const resourceInfo=resourceRowsForSelected(model,options.resourceRoster??null,activity.id);
-   put(panel,"p","desk-detail-warning","VERIFIED project resource assignments: none admitted. The separate draft roster below is an illustrative staffing/equipment suggestion per active work shift, NOT assigned persons, actual resource demand or approved site quantities.");
+   put(panel,"p","desk-detail-warning","VERIFIED site assignments and measured BOQ quantities: NONE admitted. The five-person house baseline and source-graded material assemblies below are PLANNING REFERENCES, not issued-for-construction orders.");
+   const baseline=put(panel,"section","desk-reference-baseline");
+   put(baseline,"h3","","Standard house reference crew · not a verified assignment");
+   const summary=put(baseline,"p","","2 skilled workers + 3 unskilled helpers · 8-hour Sunday–Friday working day · Saturday holiday. Concrete mixer (when required): 1 machine, up to 2 operating hours/day; vibrator/other portable equipment: up to 3 operating hours/day as-needed. Equipment hours are not eight-hour continuous shifts.");
+   summary.setAttribute("role","note");
    if(resourceInfo.draft_rows.length){
-    put(panel,"h3","","Draft labour and equipment · "+activity.id);
-    const holder=put(panel,"div","desk-resources-scroll");
+    const legacy=put(panel,"details","desk-extra-crew");
+    put(legacy,"summary","","Older activity-specific crew suggestions · inspect only (can exceed 2+3 baseline)");
+    put(legacy,"h3","","Unapproved specialist roster · "+activity.id);
+    const holder=put(legacy,"div","desk-resources-scroll");
     const table=put(holder,"table","desk-resources-table");
     const heading=put(table,"thead"),h=put(heading,"tr");
     for(const column of ["Resource name","Type","Proposed quantity","Unit","Evidence"])
@@ -432,8 +439,8 @@ function renderSouth(container,model,state,options={}){
     }
     const personCount=resourceInfo.draft_rows.filter(r=>r.unit==="person").reduce((total,r)=>total+r.quantity,0);
     const equipment=resourceInfo.draft_rows.filter(r=>r.unit!=="person");
-    const summary=put(panel,"p","desk-crew-total");
-    summary.textContent="Draft shift mix: "+personCount+" people; "+
+    const previousSummary=put(legacy,"p","desk-crew-total");
+    previousSummary.textContent="Previous alternative crew sketch: "+personCount+" people; "
       equipment.map(r=>r.quantity+" "+r.name+" ("+r.unit+")").join(", ")+
       (equipment.length?".": " no separate equipment specified.");
    }else if(resourceInfo.zero_duration_milestone){
@@ -441,6 +448,31 @@ function renderSouth(container,model,state,options={}){
    }else{
     put(panel,"p","","No source-matched draft roster is available for this project/activity.");
    }
+   if(model.project.id==="PRJ-000007"&&options.materialCatalog){
+    const scope=projectMaterialScopes(options.materialCatalog,activity.id);
+    put(panel,"h3","","Materials · reference items for "+activity.id);
+    const intro=put(panel,"p","desk-muted","Work quantities are NOT imported for this activity. Listed numbers are per stated work unit, not quantities ordered for the site.");
+    const materialLink=put(panel,"a","desk-material-link","Open Materials Planner and enter measured work quantity →");
+    materialLink.href=new URL("../../work-items/materials.html?activity="+encodeURIComponent(activity.id),import.meta.url).href;
+    if(scope.recipes.length){
+     const div=put(panel,"div","desk-resources-scroll");
+     const table=put(div,"table","desk-resources-table");
+     const th=put(put(table,"thead"),"tr");
+     for(const text of ["Assembly","Material","Reference per work unit","Unit","Project total"])
+      put(th,"th","",text);
+     const body=put(table,"tbody");
+     for(const recipe of scope.recipes){
+      for(const line of recipe.lines){
+       const mat=options.materialCatalog.materials.find(m=>m.id===line.material_id);
+       const row=put(body,"tr");
+       const value=line.quantity_per_unit===null?"Requires BBS / approved drawing / product spec":
+        Number(line.quantity_per_unit.toFixed(3)).toString();
+       for(const item of [recipe.title+" / "+recipe.work_unit,mat?.name||line.material_id,
+         value,line.unit,"NOT VERIFIED"])put(row,"td","",item);
+      }
+     }
+    }else put(panel,"p","","No physical material assembly defined for this project WBS activity; do not assign a fabricated quantity.");
+   }else if(model.project.id==="PRJ-000007")put(panel,"p","desk-detail-warning","Reference material catalog unavailable: no project total can be calculated.");
    kv(panel,[["Site-assigned crew","NOT VERIFIED"],["Measured materials and BOQ quantities","NOT IMPORTED"],
     ["Crew availability calendar","NOT VERIFIED"],["Unit basis","Per illustrative working shift; not total project demand"],
     ["Actual output or resource usage","NOT MEASURED"]]);
@@ -574,6 +606,16 @@ export async function bootSchedulingDesk(doc=document){
     opts.resourceRoster=null;
     opts.resourceLoadIssue=error.message;
    }
+  }
+  if(config.materials&&config.material_boq){
+   try{
+    const [materialRes,boqRes]=await Promise.all([config.materials,config.material_boq]
+     .map(path=>fetch(new URL(path,import.meta.url),{cache:"no-store"})));
+    if(!materialRes.ok||!boqRes.ok)throw Error("Public material catalog is missing");
+    const materialCatalog=await materialRes.json(),base=await boqRes.json();
+    validateMaterialCatalog(materialCatalog,base,null);
+    opts.materialCatalog=materialCatalog;
+   }catch(error){opts.materialCatalog=null;opts.materialLoadIssue=error.message;}
   }
   renderSchedulingDesk(model,mount,opts);
   return true;
