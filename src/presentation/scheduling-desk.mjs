@@ -369,14 +369,38 @@ function renderSouth(container,model,state,options={}){
     ["Activity completion release","NOT AUTHORIZED"]]);
    put(panel,"p","desk-detail-warning","Do not infer actual progress from an unapproved source-planning bar.");
   }else if(name==="Resources"){
-   put(panel,"p","desk-detail-warning","No source-approved workforce, equipment, cost or resource assignment has been admitted for this activity.");
-   kv(panel,[["Assigned people","No reviewed roster"],["Primary resource","Not verified"],
-    ["Tools and equipment","Not verified"],["Crew-hours","Not verified"],
-    ["Resource units / time","Not verified"],["Actual productivity","Not measured"],
-    ["Cost and materials","Not verified"]]);
-   const a=put(panel,"a","","Open shared BOQ / work-rate calculator →");
+   const resourceInfo=resourceRowsForSelected(model,options.resourceRoster??null,activity.id);
+   put(panel,"p","desk-detail-warning","VERIFIED project resource assignments: none admitted. The separate draft roster below is an illustrative staffing/equipment suggestion per active work shift, NOT assigned persons, actual resource demand or approved site quantities.");
+   if(resourceInfo.draft_rows.length){
+    put(panel,"h3","","Draft labour and equipment · "+activity.id);
+    const holder=put(panel,"div","desk-resources-scroll");
+    const table=put(holder,"table","desk-resources-table");
+    const heading=put(table,"thead"),h=put(heading,"tr");
+    for(const column of ["Resource name","Type","Proposed quantity","Unit","Evidence"])
+     put(h,"th","",column);
+    const body=put(table,"tbody");
+    for(const resource of resourceInfo.draft_rows){
+     const row=put(body,"tr");
+     for(const value of [resource.name,resource.type==="LABOR"?"Labour":"Equipment",
+       String(resource.quantity),resource.unit,"Illustrative · NOT assigned"])put(row,"td","",value);
+    }
+    const personCount=resourceInfo.draft_rows.filter(r=>r.unit==="person").reduce((total,r)=>total+r.quantity,0);
+    const equipment=resourceInfo.draft_rows.filter(r=>r.unit!=="person");
+    const summary=put(panel,"p","desk-crew-total");
+    summary.textContent="Draft shift mix: "+personCount+" people; "+
+      equipment.map(r=>r.quantity+" "+r.name+" ("+r.unit+")").join(", ")+
+      (equipment.length?".": " no separate equipment specified.");
+   }else if(resourceInfo.zero_duration_milestone){
+    put(panel,"p","","Zero-duration milestone: no independent draft work crew. Review the prerequisites and evidence for its release.");
+   }else{
+    put(panel,"p","","No source-matched draft roster is available for this project/activity.");
+   }
+   kv(panel,[["Site-assigned crew","NOT VERIFIED"],["Measured materials and BOQ quantities","NOT IMPORTED"],
+    ["Crew availability calendar","NOT VERIFIED"],["Unit basis","Per illustrative working shift; not total project demand"],
+    ["Actual output or resource usage","NOT MEASURED"]]);
+   const a=put(panel,"a","","Open shared work-output calculator →");
    a.href=new URL("../../work-items/productivity.html",import.meta.url).href;
-   put(panel,"p","desk-muted","Use the reference coefficients only as provisional BOQ comparisons; never treat them as approved assignments or change this source schedule automatically.");
+   put(panel,"p","desk-muted","These names and numbers come from an explicitly separate unapproved reference crew roster. They do not overwrite source WBS activities, schedules, budget quantities or Google Drive records.");
   }else if(name==="Predecessors"){
    listRelations(panel,"Previous work to inspect",context.predecessors);
   }else if(name==="Successors"){
@@ -467,7 +491,20 @@ export async function bootSchedulingDesk(doc=document){
   const model=config.governed?adaptNarayaniPublicModel(raw):raw;
   if(model.project.id!==config.project)throw Error("Wrong project source");
   inspectDeskModel(model);
-  renderSchedulingDesk(model,mount);
+  const opts={};
+  if(config.resource_drafts){
+   try{
+    const resourceResult=await fetch(new URL(config.resource_drafts,import.meta.url),{cache:"no-store"});
+    if(!resourceResult.ok)throw Error("Public draft crew roster unavailable");
+    const resourceRoster=await resourceResult.json();
+    validateDraftResourceRoster(resourceRoster,model);
+    opts.resourceRoster=resourceRoster;
+   }catch(error){
+    opts.resourceRoster=null;
+    opts.resourceLoadIssue=error.message;
+   }
+  }
+  renderSchedulingDesk(model,mount,opts);
   return true;
  }catch(e){mount.replaceChildren();put(mount,"div","desk-source","SCHEDULING DESK HELD: "+e.message);return false;}
 }
