@@ -260,7 +260,7 @@ function renderYearCalendar(container,model,state,select,openActivities){
  const goToTable=put(actions,"button","","Open selected in Gantt + details →");goToTable.type="button";
  goToTable.addEventListener("click",openActivities);
  const legend=put(container,"p","desk-calendar-legend");
- legend.textContent="Daily cells show active planning work, start/finish boundary events and the selected activity. These are scenario dates, not site attendance or approved workdays.";
+ legend.textContent="Daily cells show activity date-range spans, start/finish boundaries and the selected activity. A span does not prove work on Sundays, holidays or any particular day. These are source scenario dates.";
  const months=put(container,"div","desk-months");
  const dayDetail=put(container,"section","desk-day-list");
  dayDetail.setAttribute("aria-label","Selected calendar day and scheduled activities");
@@ -285,7 +285,7 @@ function renderYearCalendar(container,model,state,select,openActivities){
   if(!validISO(day))return;
   const snap=calendarDaySnapshot(model,day,state.selected);
   put(dayDetail,"h3","",fmtDay(day));
-  put(dayDetail,"p","",snap.activeCount+" activities scheduled across this day · "+
+  put(dayDetail,"p","",snap.activeCount+" activity date ranges spanning this day · "+
     snap.boundaryCount+" source start/finish boundary events. "+
     (snap.selectedScheduled?"Selected activity is visible on this day.":""));
   const worklist=put(dayDetail,"div","desk-worklist");
@@ -325,10 +325,10 @@ function renderYearCalendar(container,model,state,select,openActivities){
     b.dataset.selectedBoundary=String(snap.selectedBoundary);
     b.setAttribute("aria-pressed",String(state.day===date));
     b.setAttribute("aria-label",fmtDay(date)+", "+snap.activeCount+
-     " scheduled activities, "+snap.boundaryCount+" boundary events"+
+     " activity date ranges, "+snap.boundaryCount+" boundary events"+
      (snap.selectedScheduled?", selected activity here":""));
     put(b,"strong","",String(d));
-    if(snap.activeCount)put(b,"small","",snap.activeCount+" work");
+    if(snap.activeCount)put(b,"small","",snap.activeCount+" planned");
     if(snap.boundaryCount)put(b,"small","desk-calendar-event-count",snap.boundaryCount+" event"+(snap.boundaryCount===1?"":"s"));
     if(snap.selectedWorking)put(b,"small","desk-calendar-selected-mark","● Selected");
     if(snap.selectedBoundary&&!snap.selectedWorking)put(b,"small","desk-calendar-boundary-mark","◆ Selected");
