@@ -56,7 +56,8 @@ test("Narayani links to its existing public-safe four-view record; all 21 remain
  assert.equal(c.projects[10].source_authority,"OWNER_REQUESTED_POINTER_ONLY");
  const ui=read("src/presentation/project-catalog.mjs");
  assert.match(ui,/narayani\/desk\.html#activities/);
- assert.match(ui,/narayani\/desk\.html#dependencies/);
+ assert.match(ui,/narayani\/desk\.html#calendar/);
+ assert.doesNotMatch(ui,/anchor\(links,"Before \/ Current \/ After/);
  assert.match(ui,/No verified project activity IDs/);
  assert.match(ui,/EMPTY_NO_VERIFIED_PROJECT_WBS/);
 });
