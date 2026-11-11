@@ -35,16 +35,16 @@ const numeric=(v,name,min=0,max=1e8)=>{
  if(typeof v!=="number"||!Number.isFinite(v)||v<min||v>max)throw Error("Invalid "+name);
  return v;
 };
-export function estimateStarterOutput(profile,{quantity,skilled,helper,machines=0,hours=8,efficiency=100,actualQuantity=null,thicknessMm=null}){
+export function estimateStarterOutput(profile,{quantity,skilled,helper,machines=0,hours=8,machineHoursPerDay=hours,efficiency=100,actualQuantity=null,thicknessMm=null}){
  numeric(quantity,"quantity",0);numeric(skilled,"skilled crew",0,1000);numeric(helper,"helpers",0,1000);
- numeric(machines,"machine count",0,100);numeric(hours,"hours",1,16);numeric(efficiency,"efficiency percent",1,200);
+ numeric(machines,"machine count",0,100);numeric(hours,"hours",1,16);numeric(machineHoursPerDay,"machine operating hours",0,16);numeric(efficiency,"efficiency percent",1,200);
  if(actualQuantity!==null)numeric(actualQuantity,"actual measured quantity");
  if(!profile||!(profile.skilled_days_per_unit>=0)&&!(profile.helper_days_per_unit>=0))
   throw Error("No numeric starting point");
  const sk=profile.skilled_days_per_unit===0?Infinity:skilled/profile.skilled_days_per_unit;
  const hl=profile.helper_days_per_unit===0?Infinity:helper/profile.helper_days_per_unit;
  const machine=profile.machine_hours_per_unit===null?Infinity:
-  machines*hours/profile.machine_hours_per_unit;
+  machines*machineHoursPerDay/profile.machine_hours_per_unit;
  const ideal=Math.min(sk,hl,machine);
  const unitsPerDay=(Number.isFinite(ideal)?ideal:0)*(hours/8)*
    (efficiency/100)/profile.calibration_factor;
@@ -60,7 +60,7 @@ export function estimateStarterOutput(profile,{quantity,skilled,helper,machines=
   rounded_full_workdays:workdays===null?null:Math.ceil(workdays),skilled_worker_days:quantity*profile.skilled_days_per_unit,
   helper_worker_days:quantity*profile.helper_days_per_unit,
   equipment_limit_per_workday:profile.machine_hours_per_unit===null?null:
-    machine*(hours/profile.machine_hours_per_unit)/profile.calibration_factor,
+    machine*(machineHoursPerDay/profile.machine_hours_per_unit)/profile.calibration_factor,
   evidence_kind:profile.kind,not_actual_or_approved:true,
   actual_efficiency_percent:actualQuantity===null||day<=0?null:actualQuantity/day*100
  };
