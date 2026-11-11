@@ -1,3 +1,13 @@
+## 12 November 2026 · Two views, one scheduling model
+
+**[Narayani Scheduling Desk](https://fabingurung.github.io/jp-scheduling-resources-management/projects/narayani/desk.html#activities)** now has exactly **two primary views**: **Activities + Gantt** and **Year calendar**. The redundant **Before / Current / After** primary panel was removed; its actual predecessor/successor relationships remain visible in the bottom **Activity Details → Predecessors / Successors** tabs, alongside Resources, Quantities and other records. Old `#dependencies` bookmarks redirect to the Gantt with Predecessors selected.
+
+The two views share the **same source-pinned activity dates and selected activity ID**. Switching from Gantt to calendar navigates directly to the selected activity's month, highlights the dates covered by its bar and shows start/finish boundary markers. Selecting an activity in the calendar returns to the same Gantt record and bottom details. **No independent calendar dates are entered**. When a reviewed source revision is republished, both views derive the new dates from the same JSON without duplicating them. GitHub Pages remains read-only, without live date-editing or site-work approval.
+
+**[12 November architectural and device QA](docs/TWO_VIEW_SOURCE_CALENDAR_SYNC_QA_20261112.md)** explains the exclusive finish boundary and the difference between a bar spanning a date and verified working time, as well as cross-year/leap-day regression tests.
+
+---
+
 ## 11 November 2026 · Gantt mobile QA: status-free table, all relationship lines and per-activity resources
 
 **Open the [Narayani activity desk](https://fabingurung.github.io/jp-scheduling-resources-management/projects/narayani/desk.html#activities).** In response to owner-provided iPhone QA screenshots, the main Gantt table has seven useful columns (Activity ID, name, WBS, duration, start, finish, predecessors); **Status is not a repetitive table column**, but the separate lower Status details tab remains for source inspection.
