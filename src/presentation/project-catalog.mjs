@@ -176,12 +176,11 @@ function renderProject(mount,registry,p,e){
  if(has){
   const work=add(mount,"section","pj-source-meta");
   add(work,"h2","","Scheduling desk · one shared set of source activities");
-  add(work,"p","pj-muted","Use the activity register, Primavera-style Gantt, 12-month Gregorian calendar, and focused predecessor/successor view. The former constellation and 405 reported-only checklist entries remain in Reference history, not in the site planning menu.");
+  add(work,"p","pj-muted","The Gantt activity register and 12-month calendar are synchronized to ONE schedule. Select an activity in the Gantt; its Predecessors, Successors and Resources are in the lower Activity Details pane. The former constellation and 405 reported-only checklist entries remain in Reference history.");
   const links=add(work,"nav","pj-toolbar");
   links.setAttribute("aria-label","Scheduling desk views");
   anchor(links,"Activity table + Gantt →","narayani/desk.html#activities");
   anchor(links,"Year / month calendar →","narayani/desk.html#calendar");
-  anchor(links,"Before / Current / After →","narayani/desk.html#dependencies");
   const note=add(work,"div","pj-note");
   note.textContent="The source scenario is NOT an approved baseline, actual progress or permission to start construction.";
  }else{
