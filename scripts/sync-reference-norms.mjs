@@ -1,6 +1,9 @@
 import {readFile,writeFile,mkdir} from "node:fs/promises";
 import {createHash} from "node:crypto";
 import {resolve,join} from "node:path";
+import {validateProductivityCatalog} from "../src/reference/productivity-norms.mjs";
+import {validateStarterCatalog} from "../src/reference/productivity-starters.mjs";
+import {validateMaterialCatalog} from "../src/reference/material-planner.mjs";
 
 const root=resolve(new URL("..",import.meta.url).pathname);
 const file=p=>join(root,p);
@@ -202,7 +205,12 @@ export async function executeCLI(mode){
   materials:b[0],assemblies:b[1],lines:b[2],work:b[3],
   activity:b[4],waste:b[5],sources:b[6]
  });
- // Validate everything before touching the public output and never publish raw sheet data.
+ // The Sheets rows are source inputs, not automatically approved engineering data.
+ // Re-run the SAME runtime validators used by the public Pages before publishing.
+ validateProductivityCatalog(result.base);
+ validateStarterCatalog(result.starter,result.base);
+ const originalTaskSeed=await read("machine/source-snapshots/wbs_schedule_sample/schedule_seed.json");
+ validateMaterialCatalog(result.material,result.base,originalTaskSeed);
  const payload=[
  ["dist/work-items/productivity-starters.v2.json",result.starter],
  ["dist/work-items/productivity-norms.v1.json",result.base],
