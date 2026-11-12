@@ -6,7 +6,7 @@ on:
       - .github/workflows/skyforge-reference-sync.yml
   workflow_dispatch:
   schedule:
-    - cron: '23 */6 * * *'
+    - cron: '23 * * * *'
   workflow_run:
     workflows: ["Skyforge · Validate Kernel Source"]
     types: [completed]
