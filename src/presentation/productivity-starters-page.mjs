@@ -22,8 +22,9 @@ export function renderStarterWall(base,start,mount){
  const calculator=add(shell,"section","wr-calculator");
  calculator.id="live-crew-plan";
  const reference=add(shell,"aside","wr-source-detail");
+ const policy=start.crew_policy||{skilled_people:2,unskilled_helpers:3,labour_hours_per_day:8,mixer_hours_per_day:2};
  let selected=start.ui_example.default_key||"WBS:6.1";
- let state={quantity:5,skilled:2,helper:3,machines:1,hours:8,machineHoursPerDay:2,efficiency:100,actualQuantity:null,thicknessMm:230};
+ let state={quantity:5,skilled:policy.skilled_people,helper:policy.unskilled_helpers,machines:1,hours:policy.labour_hours_per_day,machineHoursPerDay:policy.mixer_hours_per_day,efficiency:100,actualQuantity:null,thicknessMm:230};
  const label=add(calculator,"div","wr-eyebrow","Active work scenario (read-only, locally calculated)");
  const heading=add(calculator,"h2","","");
  const band=add(calculator,"div","wr-benchmark-badge","");
@@ -54,9 +55,9 @@ export function renderStarterWall(base,start,mount){
   selected=id;
   const {item,profile}=selectStarter(start,base,id);
   if(profile){
-   state={quantity:profile.default_quantity,skilled:2,
-    helper:3,machines:profile.default_crew.machines,
-    hours:8,machineHoursPerDay:2,efficiency:100,actualQuantity:null,
+   state={quantity:profile.default_quantity,skilled:policy.skilled_people,
+    helper:policy.unskilled_helpers,machines:profile.default_crew.machines,
+    hours:policy.labour_hours_per_day,machineHoursPerDay:policy.mixer_hours_per_day,efficiency:100,actualQuantity:null,
     thicknessMm:230};
   }
   heading.textContent=item.key+" · "+item.title;
@@ -144,7 +145,7 @@ export function renderStarterWall(base,start,mount){
    if(info.status!=="ILLUSTRATIVE_ONLY"){
     add(results,"div","wr-data-warning","Add the required workers and machines to calculate this task.");return;
    }
-   metric(results,"Output / workday",num(info.units_per_workday)+" "+profile.unit,"With 2 skilled + 3 helpers default; "+state.hours+" labour hours; "+state.machineHoursPerDay+" machine hours/day");
+   metric(results,"Output / workday",num(info.units_per_workday)+" "+profile.unit,"Reference crew: "+policy.skilled_people+" skilled + "+policy.unskilled_helpers+" helpers; "+state.hours+" labour hours; "+state.machineHoursPerDay+" machine hours/day");
    metric(results,"Output / hour",num(info.units_per_hour)+" "+profile.unit,"Nominal average during working hours");
    metric(results,"Active duration",num(info.active_workdays)+" days","Round to "+info.rounded_full_workdays+" complete workdays; excludes holds");
    if(info.sqft_per_workday!==undefined)
