@@ -24,7 +24,7 @@ test("calendar shows EVERY active scenario day of a Gantt bar, not just start an
  assert.deepEqual(jan1.working.map(a=>a.id),["A","B"]);
  assert.equal(jan1.boundaryCount,1);
  const jan2=calendarDaySnapshot(model,"2027-01-02","M");
- assert.equal(jan2.activeCount,1);
+ assert.equal(jan2.activeCount,0); // Saturday is a non-working day
  assert.equal(jan2.boundaryCount,3); // B finish + milestone start/finish
  assert.equal(jan2.selectedBoundary,true);
  assert.equal(jan2.selectedWorking,false);
