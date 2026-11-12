@@ -75,6 +75,25 @@ jobs:
         env:
           NARAYANI_AUTHENTICATED_SYNC: ${{ vars.NARAYANI_SYNC_ENABLED }}
         run: npm run site:build
+      - name: Show truthful reference-register publication status
+        run: node scripts/sync-reference-norms.mjs --legacy-status
+      - name: Authenticate private reference Sheets read access only when enabled
+        if: ${{ vars.SKYFORGE_REFERENCE_SYNC_ENABLED == 'true' }}
+        id: skyforge-reference-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.SKYFORGE_REFERENCE_WIF_PROVIDER }}
+          service_account: ${{ secrets.SKYFORGE_REFERENCE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/spreadsheets.readonly
+          create_credentials_file: false
+      - name: Replace public norm snapshots with source-controlled Google Sheet values
+        if: ${{ vars.SKYFORGE_REFERENCE_SYNC_ENABLED == 'true' }}
+        env:
+          GOOGLE_OAUTH_ACCESS_TOKEN: ${{ steps.skyforge-reference-auth.outputs.access_token }}
+          SKYFORGE_WORK_RATES_SHEET_ID: ${{ secrets.SKYFORGE_WORK_RATES_SHEET_ID }}
+          SKYFORGE_MATERIALS_SHEET_ID: ${{ secrets.SKYFORGE_MATERIALS_SHEET_ID }}
+        run: node scripts/sync-reference-norms.mjs --pull-sheets
       - name: Verify output never exposes fixture or private records
         run: |
           test ! -e dist/machine/requests/demo-foundation.json
