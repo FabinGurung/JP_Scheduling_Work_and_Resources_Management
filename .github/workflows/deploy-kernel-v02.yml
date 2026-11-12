@@ -1,4 +1,5 @@
 name: Skyforge · Validate Kernel Source
+# A successful kernel validation triggers the separately authenticated main-branch Sheets publisher.
 on:
   push:
     branches:
