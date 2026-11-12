@@ -144,13 +144,13 @@ if(resourceDraft.format!=="SKYFORGE_UNAPPROVED_RESOURCE_SCENARIOS_V1"||
 // Reviewed reference materials only: NOT actual project procurement or approved BOQ.
 const materialText=await readFile(join(root,"work-items/material-references.v1.json"),"utf8");
 const materialBlob=createHash("sha1").update("blob "+Buffer.byteLength(materialText)+"\0").update(materialText).digest("hex");
-if(materialBlob!=="61b95922ffce38f506a0da6f1bfbdeddac5165c3")
+if(materialBlob!=="3da5f0cc1427db3b46631478c091bfad96efed39")
  throw Error("Reviewed material reference changed without source evidence / pin rotation");
 const material=JSON.parse(materialText);
 if(material.format!=="SKYFORGE_WORK_MATERIAL_REFERENCE_V1"||
  material.authority!=="READ_ONLY_REFERENCE_NOT_PROJECT_BOQ"||
  material.no_actual_or_approved_project_quantities!==true||
- material.materials?.length!==27||material.recipes?.length!==26||
+ material.materials?.length!==27||material.recipes?.length!==33||
  material.work_items?.length!==88||material.project_activities?.length!==45||
  material.project_activities.some(a=>a.materials_release!==false||a.actual_quantities!==null)||
  material.work_items.some(a=>a.measured_quantity!==null||a.no_approved_material_takeoff!==true)||
