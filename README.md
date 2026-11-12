@@ -1,3 +1,13 @@
+## 12 November 2026 · Saturday holiday + Materials Planner (public reference only)
+
+**[Materials Planner](https://fabingurung.github.io/jp-scheduling-resources-management/work-items/materials.html)** has been added beside the [Work Output Planner](https://fabingurung.github.io/jp-scheduling-resources-management/work-items/productivity.html) under **Reference**. There are **36 source-graded material assemblies** (27 material names), mapped to **88 original BOQ/WBS IDs** and **45 existing public Narayani task IDs**. A measured quantity in its correct unit yields reference cement, sand, aggregate, brick, steel, plaster or finish materials where a source coefficient exists. Project-specific totals and unknown BBS/material profiles stay explicitly **unverified**, not fabricated. Activity Details → **Resources** lists material names/per-unit reference and links to the calculator; the prior 116-line specialist crew mock is preserved behind a disclosure.
+
+**Saturday is now the reference house weekly holiday** (Sunday–Friday workweek); the published read-only Gantt and calendar derive the **same projected start/finish dates** from the original immutable source workday slots, retaining the original dates for traceability. Working-slot durations remain source-authored; *elapsed calendar days* change with Saturday excluded. The owner-selected **five-person baseline is 2 skilled + 3 unskilled helpers for an illustrative 8h shift**. Mixer hours and other equipment budgets are separately modeled (draft starting allocations 2h and 3h respectively, not continuous 8h use). Actual crew schedules, approved concrete mix, verified BOQ, procurement and site authorization have **not** been admitted.
+
+**Audit, primary sources and common UI terminology:** [Saturday-off + Materials QA](docs/SATURDAY_HOUSE_CALENDAR_MATERIALS_QA_20261112.md). The original source/Drive authority is preserved. Previous versions remain in Git snapshots. The public Pages viewer is read-only.
+
+---
+
 ## 12 November 2026 · Two views, one scheduling model
 
 **[Narayani Scheduling Desk](https://fabingurung.github.io/jp-scheduling-resources-management/projects/narayani/desk.html#activities)** now has exactly **two primary views**: **Activities + Gantt** and **Year calendar**. The redundant **Before / Current / After** primary panel was removed; its actual predecessor/successor relationships remain visible in the bottom **Activity Details → Predecessors / Successors** tabs, alongside Resources, Quantities and other records. Old `#dependencies` bookmarks redirect to the Gantt with Predecessors selected.
