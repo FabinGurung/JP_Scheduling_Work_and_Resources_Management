@@ -8,7 +8,7 @@ const source={
 const el=(name,cls="",t)=>{const x=document.createElement(name);if(cls)x.className=cls;if(t!==undefined)x.textContent=String(t);return x;};
 const add=(to,name,cls,t)=>{const n=el(name,cls,t);to.append(n);return n;};
 const fmt=n=>Number.isFinite(n)?new Intl.NumberFormat("en-GB",{maximumFractionDigits:3}).format(n):"—";
-const grades={PUBLISHED_ITEM:"Official published item",GEOMETRIC_ESTIMATE:"Geometric estimating method",CALIBRATION_SEED:"Provisional purchase allowance",DESIGN_INPUT_REQUIRED:"Drawing / specification required"};
+const grades={PUBLISHED_ITEM:"Official published item",OFFICIAL_ANALOG:"Official material analog (verify class)",GEOMETRIC_ESTIMATE:"Geometric estimating method",CALIBRATION_SEED:"Provisional purchase allowance",DESIGN_INPUT_REQUIRED:"Drawing / specification required"};
 const qs=new URLSearchParams(typeof location==="undefined"?"":location.search);
 export function renderMaterialPlanner(data,boq,seed,container){
  validateMaterialCatalog(data,boq,seed);
