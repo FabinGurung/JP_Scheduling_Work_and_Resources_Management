@@ -283,7 +283,7 @@
       "title": "Machine-made brick masonry • mortar 1:4",
       "work_unit": "m³",
       "source_id": "NEP-DWRI-2081",
-      "grade": "PUBLISHED_ITEM",
+      "grade": "OFFICIAL_ANALOG",
       "description": "Nepal government DWRI Rate Analysis Norms 2081, §6.1 (A II), per 1 m³ of machine-made brickwork in 1:4 mortar.",
       "lines": [
         {
@@ -315,7 +315,7 @@
           "source_id": null
         }
       ],
-      "note": "Government item is for machine-made bricks; site brick size/half- vs full-brick method must match. Curing water excluded.",
+      "note": "Government item is for machine-made bricks; site brick size/half- vs full-brick method must match. Curing water excluded. Reference 530 machine-made bricks/m³ may NOT match supplied chimney-burnt brick sizes; verify before adopting.",
       "no_approved_quantity": true,
       "no_design_approval": true
     },
@@ -883,6 +883,167 @@
       "note": "",
       "no_approved_quantity": true,
       "no_design_approval": true
+    },
+    {
+      "id": "upvc_area",
+      "title": "UPVC window measured by opening area",
+      "work_unit": "m²",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Required material identified, not quantitatively admitted without the relevant project design/supplier specification.",
+      "lines": [
+        {
+          "material_id": "upvc",
+          "quantity_per_unit": null,
+          "unit": "no.",
+          "basis": "APPROVED_SHOP_DRAWING_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Opening width/height and unit count from window schedule; never infer number of fabricated windows solely from area.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "skirting_linear",
+      "title": "Skirting measured by length",
+      "work_unit": "m",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Required material identified, not quantitatively admitted without the relevant project design/supplier specification.",
+      "lines": [
+        {
+          "material_id": "granite",
+          "quantity_per_unit": null,
+          "unit": "m²",
+          "basis": "APPROVED_SHOP_DRAWING_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Skirting height, type, thickness and wastage missing: calculate area only after skirting detail.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "rail_linear",
+      "title": "Metal railing measured by length",
+      "work_unit": "m",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Required material identified, not quantitatively admitted without the relevant project design/supplier specification.",
+      "lines": [
+        {
+          "material_id": "metal",
+          "quantity_per_unit": null,
+          "unit": "kg",
+          "basis": "APPROVED_SHOP_DRAWING_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Kg/m depends on approved section geometry and shop fabrication specification.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "rolling_area",
+      "title": "Rolling shutter measured by opening area",
+      "work_unit": "m²",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Required material identified, not quantitatively admitted without the relevant project design/supplier specification.",
+      "lines": [
+        {
+          "material_id": "metal",
+          "quantity_per_unit": null,
+          "unit": "kg",
+          "basis": "APPROVED_SHOP_DRAWING_REQUIRED",
+          "source_id": null
+        },
+        {
+          "material_id": "hardware",
+          "quantity_per_unit": null,
+          "unit": "set",
+          "basis": "APPROVED_SHOP_DRAWING_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Slat thickness, side guides, motor, unit count and area-based rates require supplier quote.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "gate_unit",
+      "title": "Boundary gate per assembly",
+      "work_unit": "each",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Required material identified, not quantitatively admitted without the relevant project design/supplier specification.",
+      "lines": [
+        {
+          "material_id": "metal",
+          "quantity_per_unit": null,
+          "unit": "kg",
+          "basis": "APPROVED_SHOP_DRAWING_REQUIRED",
+          "source_id": null
+        },
+        {
+          "material_id": "hardware",
+          "quantity_per_unit": null,
+          "unit": "set",
+          "basis": "APPROVED_SHOP_DRAWING_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Gate width, height, section schedule and fittings need shop drawing.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "cornice_linear",
+      "title": "Cornice per running metre",
+      "work_unit": "m",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Required material identified, not quantitatively admitted without the relevant project design/supplier specification.",
+      "lines": [
+        {
+          "material_id": "cement",
+          "quantity_per_unit": null,
+          "unit": "bag",
+          "basis": "APPROVED_SHOP_DRAWING_REQUIRED",
+          "source_id": null
+        },
+        {
+          "material_id": "sand",
+          "quantity_per_unit": null,
+          "unit": "m³",
+          "basis": "APPROVED_SHOP_DRAWING_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Profile cross-section and mortar design missing. No area-based screed multiplier permitted.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "metal_stair",
+      "title": "Fabricated metal stair by steel mass",
+      "work_unit": "kg",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Required material identified, not quantitatively admitted without the relevant project design/supplier specification.",
+      "lines": [
+        {
+          "material_id": "metal",
+          "quantity_per_unit": null,
+          "unit": "kg",
+          "basis": "APPROVED_SHOP_DRAWING_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "kg only from approved steel fabrication schedule, other consumables excluded.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
     }
   ],
   "work_items": [
@@ -1140,7 +1301,7 @@
       "title": "UPVC windows",
       "unit": "m²",
       "recipe_ids": [
-        "upvc"
+        "upvc_area"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1184,7 +1345,7 @@
       "title": "Skirting works",
       "unit": "m",
       "recipe_ids": [
-        "granite"
+        "skirting_linear"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1217,7 +1378,7 @@
       "title": "Building railing installation",
       "unit": "m",
       "recipe_ids": [
-        "steelworks"
+        "rail_linear"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1228,7 +1389,7 @@
       "title": "Boundary railing installation",
       "unit": "m",
       "recipe_ids": [
-        "steelworks"
+        "rail_linear"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1239,7 +1400,7 @@
       "title": "Rolling shutters",
       "unit": "m²",
       "recipe_ids": [
-        "steelworks"
+        "rolling_area"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1261,7 +1422,7 @@
       "title": "Boundary gate",
       "unit": "each",
       "recipe_ids": [
-        "steelworks"
+        "gate_unit"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1272,7 +1433,7 @@
       "title": "Cornice work measured by running metre",
       "unit": "m",
       "recipe_ids": [
-        "floor_screed"
+        "cornice_linear"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1689,7 +1850,7 @@
       "title": "UPVC windows",
       "unit": "m²",
       "recipe_ids": [
-        "upvc"
+        "upvc_area"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1733,7 +1894,7 @@
       "title": "Skirting works",
       "unit": "m",
       "recipe_ids": [
-        "granite"
+        "skirting_linear"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1766,7 +1927,7 @@
       "title": "Building railings",
       "unit": "m",
       "recipe_ids": [
-        "steelworks"
+        "rail_linear"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1777,7 +1938,7 @@
       "title": "Boundary railings",
       "unit": "m",
       "recipe_ids": [
-        "steelworks"
+        "rail_linear"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1788,7 +1949,7 @@
       "title": "Rolling shutters",
       "unit": "m²",
       "recipe_ids": [
-        "steelworks"
+        "rolling_area"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1810,7 +1971,7 @@
       "title": "Boundary gate",
       "unit": "each",
       "recipe_ids": [
-        "steelworks"
+        "gate_unit"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1821,7 +1982,7 @@
       "title": "Cornice measured in running metres",
       "unit": "m",
       "recipe_ids": [
-        "floor_screed"
+        "cornice_linear"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -2354,7 +2515,7 @@
   "counts": {
     "work_items": 88,
     "project_activities": 45,
-    "recipes": 26,
+    "recipes": 33,
     "numerical_recipes": 16
   }
 }
