@@ -1,0 +1,129 @@
+name: Skyforge · Authorized Sheets Reference Sync and Publish
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/skyforge-reference-sync.yml
+  workflow_dispatch:
+
+# A public/main OIDC identity reads only two explicitly shared reference registers.
+# No spreadsheet IDs, credentials, tokens, or private source rows are committed.
+# Site code remains on the established canonical kernel branch.
+permissions:
+  contents: read
+  id-token: write
+  pages: write
+
+concurrency:
+  group: jp-scheduling-production-pages
+  cancel-in-progress: false
+
+jobs:
+  reference-sync-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Enforce authorized main-branch OIDC context
+        run: test "$GITHUB_REF_NAME" = "main"
+      - uses: actions/checkout@v4
+        with:
+          ref: kernel-v0.2-open-source-engines
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Validate canonical Skyforge kernel
+        run: |
+          npm test
+          npm run verify:calendar
+          npm run machine:build
+          npm run machine:verify
+          npm run wbs:build
+          npm run wbs:verify
+          npm run pilot:build
+          npm run pilot:verify
+          npm run progress:build
+          npm run progress:verify
+          npm run visual:build
+          npm run visual:verify
+          npm run generic:build
+          npm run generic:verify
+          npm run site:build
+      - name: Authenticate existing public-repository Google WIF reader
+        id: skyforge-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: projects/247425973072/locations/global/workloadIdentityPools/jp-pages-github/providers/github
+          service_account: jp-public-pages-reader@just-a-project-5007.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: |
+            https://www.googleapis.com/auth/spreadsheets.readonly
+            https://www.googleapis.com/auth/drive.metadata.readonly
+          create_credentials_file: false
+      - name: Discover exactly the two authorized reference workbooks privately
+        env:
+          GOOGLE_OAUTH_ACCESS_TOKEN: ${{ steps.skyforge-auth.outputs.access_token }}
+        run: |
+          node --input-type=module <<'NODE'
+          import {appendFileSync} from 'node:fs';
+          const token=process.env.GOOGLE_OAUTH_ACCESS_TOKEN;
+          if(!token)throw Error('Google read-only access token unavailable');
+          const books=[
+            ['SKYFORGE_WORK_RATES_SHEET_ID','Skyforge — Work Output Rates — LIVE — V000001'],
+            ['SKYFORGE_MATERIALS_SHEET_ID','Skyforge — Material Consumption Norms — LIVE — V000001']
+          ];
+          for(const [variable,title] of books){
+            const query=new URLSearchParams({
+              q:"name = '"+title+"' and mimeType = 'application/vnd.google-apps.spreadsheet' and trashed = false",
+              fields:"nextPageToken,files(id,name,mimeType)",
+              pageSize:"100"
+            });
+            const response=await fetch('https://www.googleapis.com/drive/v3/files?'+query,
+              {headers:{Authorization:'Bearer '+token},signal:AbortSignal.timeout(30000)});
+            if(!response.ok)throw Error('Read-only Drive metadata lookup failed (HTTP '+response.status+')');
+            const payload=await response.json();
+            const matches=(payload.files||[]).filter(f=>f.name===title);
+            if(matches.length!==1||payload.nextPageToken)throw Error('Expected exactly one authorized reference workbook: '+variable);
+            if(!/^[A-Za-z0-9_-]{20,100}$/.test(matches[0].id))throw Error('Invalid source identifier: '+variable);
+            appendFileSync(process.env.GITHUB_ENV,variable+'='+matches[0].id+'\n');
+          }
+          console.log('Two explicitly shared reference workbook identities validated');
+          NODE
+      - name: Import and validate private Sheets into public-safe normalized snapshots
+        env:
+          GOOGLE_OAUTH_ACCESS_TOKEN: ${{ steps.skyforge-auth.outputs.access_token }}
+        run: node scripts/sync-reference-norms.mjs --pull-sheets
+      - name: Independently verify synchronized output and privacy
+        run: |
+          node --input-type=module <<'NODE'
+          import {readFileSync} from 'node:fs';
+          import {createHash} from 'node:crypto';
+          const r=p=>JSON.parse(readFileSync('dist/work-items/'+p,'utf8'));
+          const status=r('norms-source-status.json');
+          const base=r('productivity-norms.v1.json'),rates=r('productivity-starters.v2.json'),materials=r('material-references.v1.json');
+          const items=[
+            ['productivity-norms.v1.json',base],
+            ['productivity-starters.v2.json',rates],
+            ['material-references.v1.json',materials]
+          ];
+          if(status.status!=='GOOGLE_SHEETS_V000001_IMPORTED'||!status.sync_completed)throw Error('No authenticated Sheet publication status');
+          if(base.items.length!==88||rates.profiles.length!==46||materials.recipes.length!==36||
+             materials.recipes.flatMap(x=>x.lines).length!==65)throw Error('Invalid imported register dimensions');
+          for(const [name,data] of items){
+            const expected=createHash('sha256').update(JSON.stringify(data)).digest('hex');
+            if(expected!==status.source_content_hashes[name])throw Error('Published hash mismatch: '+name);
+          }
+          for(const name of ['norms-source-status.json','productivity-norms.v1.json',
+                             'productivity-starters.v2.json','material-references.v1.json']){
+            const text=readFileSync('dist/work-items/'+name,'utf8');
+            if(/docs\.google\.com\/spreadsheets\/d\/|drive\.google\.com\/file\/d\/|access_token=|ya29\./i.test(text))
+              throw Error('Private source address or token found in public dataset: '+name);
+          }
+          console.log('Validated source status, 88/46/36/65 record counts, hashes, and public-data boundaries');
+          NODE
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - name: Publish validated Sheets-backed Skyforge
+        uses: actions/deploy-pages@v4
