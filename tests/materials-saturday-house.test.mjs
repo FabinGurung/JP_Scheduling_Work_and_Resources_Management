@@ -54,7 +54,7 @@ test("materials library covers 88 source work IDs and all 45 Narayani activities
  const cat=refs();
  assert.equal(validateMaterialCatalog(cat,boq(),seed()),true);
  assert.equal(cat.materials.length,27);
- assert.equal(cat.recipes.length,33);
+ assert.equal(cat.recipes.length,36);
  assert.equal(cat.work_items.length,88);
  assert.equal(cat.project_activities.length,45);
  const byId=new Map(cat.recipes.map(x=>[x.id,x]));
