@@ -9,7 +9,17 @@ const root=resolve(new URL("..",import.meta.url).pathname);
 const file=p=>join(root,p);
 const read=async p=>JSON.parse(await readFile(file(p),"utf8"));
 const sizeError=m=>{throw Error("Reference Sheets reconciliation blocked: "+m);};
-const validUrl=x=>typeof x==="string"&&/^https:\/\//.test(x)&&x.length<1500;
+const validUrl=x=>{
+ if(typeof x!=="string"||x.length>1500||x.length<12)return false;
+ try{
+  const u=new URL(x);
+  const host=u.hostname.toLowerCase();
+  const banned=new Set(["drive.google.com","docs.google.com","script.google.com","sheets.googleapis.com","accounts.google.com"]);
+  return u.protocol==="https:"&&!u.username&&!u.password&&!banned.has(host)&&
+   !host.endsWith(".internal")&&!host.endsWith(".local")&&!u.searchParams.has("key")&&
+   !u.searchParams.has("access_token");
+ }catch{return false;}
+};
 const n=(v,label,{nullable=false,min=0,max=1e6}={})=>{
  if((v===""||v===null||v===undefined)&&nullable)return null;
  if(v===""||v===null||v===undefined||!Number.isFinite(Number(v))||
