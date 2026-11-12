@@ -1,4 +1,4 @@
-name: Site · Validate and Deploy
+name: Skyforge · Validate Kernel Source
 on:
   push:
     branches:
@@ -7,11 +7,10 @@ on:
 
 permissions:
   contents: read
-  pages: write
   id-token: write
 
 concurrency:
-  group: "jp-scheduling-production-pages"
+  group: "jp-scheduling-kernel-validation"
   cancel-in-progress: true
 
 jobs:
@@ -148,9 +147,4 @@ jobs:
           assert pathlib.Path("roadmap.html").exists()
           print("Governance/data validation PASS")
           PY
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: "dist"
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      # Production Pages publication is owned by the main-branch authenticated Sheets publisher.
