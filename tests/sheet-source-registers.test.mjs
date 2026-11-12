@@ -99,7 +99,7 @@ test("rate and material coefficients are genuinely data driven by Sheet rows, wi
 test("unverified BOQ, duplicate source IDs, unknown units and missing coefficients fail closed",()=>{
  const original=initial();
  let x=sheets();x.mats.activity[1][4]=1;
- assert.throws(()=>applySheetReferenceRows(original,x.rates,x.mats),/unadmitted|improperly admitted/);
+ assert.throws(()=>applySheetReferenceRows(original,x.rates,x.mats),/unadmitted|improperly admitted/i);
  x=sheets();x.rates.work[1][0]="BOQ:INVALID";
  assert.throws(()=>applySheetReferenceRows(original,x.rates,x.mats),/source ID/);
  x=sheets();x.mats.lines[1][3]="kg";
