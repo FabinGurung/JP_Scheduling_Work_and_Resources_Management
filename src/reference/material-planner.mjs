@@ -9,12 +9,12 @@ export function validateMaterialCatalog(cat,boq,seed){
  cat.owner_policy?.working_weekdays?.join(",")!=="0,1,2,3,4,5"||
  cat.owner_policy.hours_per_day!==8||cat.owner_policy.skilled_workers!==2||
  cat.owner_policy.unskilled_helpers!==3||cat.materials?.length!==27||
- cat.recipes?.length!==26||cat.work_items?.length!==88||
+ cat.recipes?.length!==33||cat.work_items?.length!==88||
  cat.project_activities?.length!==45||!Array.isArray(cat.sources)||
  cat.sources.length!==3||boq?.items?.length!==88||
  (seed!=null&&seed.tasks?.length!==45))throw Error("Unreviewed material reference catalog");
  const materialIds=new Set(cat.materials.map(x=>x.id)),recipes=new Set(cat.recipes.map(x=>x.id));
- if(materialIds.size!==27||recipes.size!==26||new Set(cat.work_items.map(x=>x.key)).size!==88||
+ if(materialIds.size!==27||recipes.size!==33||new Set(cat.work_items.map(x=>x.key)).size!==88||
  new Set(cat.project_activities.map(x=>x.activity_id)).size!==45)throw Error("Material ID or count mismatch");
  for(let i=0;i<88;i++){
   const item=cat.work_items[i];
