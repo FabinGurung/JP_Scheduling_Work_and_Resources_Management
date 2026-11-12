@@ -1,3 +1,13 @@
+## 12 November 2026 · A9 Google Sheets become the editable norm-register authority (publishing gate pending)
+
+The two reusable reference datasets have been migrated to **native LIVE Google Sheets under A9_Fabin_Gurung → 01_JP → 02 Website Sheets and Registers → 01 Website Source Sheets — Edit Here → Skyforge**. One register holds **88 Work Output codes / 46 rate profiles**; the other holds **27 material types / 36 material assemblies / 65 per-unit coefficients / 88 BOQ mappings / 45 activity mappings / 11 source-graded waste allowances**. Existing operational Materials and Work Catalogue Sheets were not modified.
+
+GitHub continues to own the engineering engine, schemas, tests, GitHub Actions and Pages. The new `scripts/sync-reference-norms.mjs` reads BOTH private Sheets through a **gated, read-only Google WIF credential**, fails closed if IDs, units or source claims disagree, and only outputs privacy-sanitized JSON for the two public planners. A **visible source-status banner** reports whether a deployed snapshot genuinely came from Sheets. **Until `SKYFORGE_REFERENCE_SYNC_ENABLED` and the four private GitHub Actions secrets are configured, the public Pages still uses its earlier Git source-seeded reference values**; the new Sheets are not silently claimed to be online-synced.
+
+**[A9 two-register source architecture, official evidence and exact one-time activation checklist](docs/A9_SHEET_SOURCE_REGISTERS_20261112.md)**. Future LIVE edits must first archive a copy into the new Drive version-history folder and log the reason while preserving the live Sheet IDs. This is independent of the owner-paused private field-signing/approval system.
+
+---
+
 ## 12 November 2026 · Saturday holiday + Materials Planner (public reference only)
 
 **[Materials Planner](https://fabingurung.github.io/jp-scheduling-resources-management/work-items/materials.html)** has been added beside the [Work Output Planner](https://fabingurung.github.io/jp-scheduling-resources-management/work-items/productivity.html) under **Reference**. There are **36 source-graded material assemblies** (27 material names), mapped to **88 original BOQ/WBS IDs** and **45 existing public Narayani task IDs**. A measured quantity in its correct unit yields reference cement, sand, aggregate, brick, steel, plaster or finish materials where a source coefficient exists. Project-specific totals and unknown BBS/material profiles stay explicitly **unverified**, not fabricated. Activity Details → **Resources** lists material names/per-unit reference and links to the calculator; the prior 116-line specialist crew mock is preserved behind a disclosure.
