@@ -1,4 +1,5 @@
 import {validateMaterialCatalog,materialTakeoff,projectMaterialScopes} from "../reference/material-planner.mjs";
+import {renderActivityMaterialTakeoff} from "./activity-material-takeoff.mjs";
 const root=new URL("../../",import.meta.url);
 const source={
  materials:new URL("../../work-items/material-references.v1.json",import.meta.url),
@@ -152,6 +153,7 @@ export function renderMaterialPlanner(data,boq,seed,container){
  if(qs.has("work")){selection.mode="work";selection.key=qs.get("work")||"BOQ:6"}
  if(qs.has("recipe")&&!qs.has("work")&&!qs.has("activity")){selection.mode="assembly";selection.key=qs.get("recipe")}
  chooseMode(selection.mode);
+ renderActivityMaterialTakeoff(data,hero);
 }
 export async function bootMaterialPlanner(doc=document){
  const mount=doc.getElementById("materials-planner");if(!mount)return false;
