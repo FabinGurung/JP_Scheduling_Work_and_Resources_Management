@@ -51,7 +51,27 @@ export function renderMaterialPlanner(data,boq,seed,container){
  add(details,"h2","","3 · Material and source policy");
  const crew=add(details,"div","mt-assumptions");
  add(crew,"strong","","Standard reference house resource policy");
- add(crew,"p","","2 skilled + 3 unskilled helpers; 8 planned working hours per day; Saturday off. The mixer is a draft 2-hour/day equipment reservation and the vibrator/other small machine a draft 3-hour/day reservation (only if used). No machine is assumed to run continuously for eight hours. Material quantities below do NOT imply equipment assignments or activity durations.");
+ const refCrew=data.owner_policy||{};
+ add(crew,"p","",(refCrew.skilled_workers??2)+" skilled + "+(refCrew.unskilled_helpers??3)+
+  " unskilled helpers; "+(refCrew.hours_per_day??8)+" planned working hours per day; Saturday off. "+
+  "Mixer "+(refCrew.machine_hours_per_day_default??2)+" h/day and other small equipment "+
+  (refCrew.other_equipment_hours_per_day_default??3)+" h/day are preliminary allocations, not full-shift running hours. "+
+  "Material quantities do not imply actual equipment assignments or project durations.");
+ const wasteBlock=add(details,"section","mt-waste");
+ add(wasteBlock,"h3","","Material loss/waste allowances · compare sources");
+ if(Array.isArray(data.waste_allowances)&&data.waste_allowances.length){
+  add(wasteBlock,"p","mt-small","Drive Sheet-derived observed Nepal case studies, India contract analogs and proposed planning allowances. These are NOT universal statutory percentages and are NOT applied to formulas unless entered as a scenario.");
+  const scroll=add(wasteBlock,"div","mt-scroll");
+  const table=add(scroll,"table","mt-table");
+  const tr=add(add(table,"thead"),"tr");
+  for(const title of ["Material","Nepal observed %","Draft default %","Foreign contract %","Source grade"])add(tr,"th","",title);
+  const body=add(table,"tbody");
+  for(const w of data.waste_allowances){
+   const tr=add(body,"tr");
+   for(const value of [w.category,w.observed_nepal_pct??"—",w.preliminary_pct??"—",w.foreign_contract_analog_pct??"—",w.grade])
+    add(tr,"td","",value);
+  }
+ }else add(wasteBlock,"p","mt-small","Waste allowances have been seeded into the new A9 Material Consumption Google Sheet. They will appear in the website when the authenticated Sheets publication gate is enabled; this legacy snapshot has not yet been refreshed.");
  add(details,"h3","","Public reference sources");
  for(const source of data.sources){
   const article=add(details,"div","mt-source-row");
