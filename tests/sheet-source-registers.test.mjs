@@ -106,6 +106,10 @@ test("unverified BOQ, duplicate source IDs, unknown units and missing coefficien
  assert.throws(()=>applySheetReferenceRows(original,x.rates,x.mats),/material-unit/);
  x=sheets();x.rates.profiles[1][3]=-1;
  assert.throws(()=>applySheetReferenceRows(original,x.rates,x.mats),/numeric/);
+ x=sheets();x.mats.sources[1][3]="https://docs.google.com/spreadsheets/d/private";
+ assert.throws(()=>applySheetReferenceRows(original,x.rates,x.mats),/Invalid public source URL/);
+ x=sheets();x.rates.sources[1][3]="https://example.com/file?access_token=private";
+ assert.throws(()=>applySheetReferenceRows(original,x.rates,x.mats),/Invalid public source URL/);
 });
 test("GDrive IDs and secrets never ship inside the public source bridge",()=>{
  const script=readFileSync(new URL("../scripts/sync-reference-norms.mjs",import.meta.url),"utf8");
