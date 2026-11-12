@@ -1,4 +1,5 @@
 name: Skyforge · Authorized Sheets Reference Sync and Publish
+# Publication checkpoint: 2026-11-12 activity-wide materials calculator and scoped takeoff QA.
 on:
   push:
     branches: [main]
