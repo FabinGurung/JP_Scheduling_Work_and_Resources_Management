@@ -1044,6 +1044,94 @@
       "note": "kg only from approved steel fabrication schedule, other consumables excluded.",
       "no_approved_quantity": true,
       "no_design_approval": true
+    },
+    {
+      "id": "stone_masonry",
+      "title": "Stone masonry with approved mortar",
+      "work_unit": "m³",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Stone volume, mortar mix, stone grading and thickness must be verified from drawings; this is NOT boulder soling.",
+      "lines": [
+        {
+          "material_id": "stone",
+          "quantity_per_unit": 1,
+          "unit": "m³",
+          "basis": "GEOMETRIC_LOWER_BOUND",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        },
+        {
+          "material_id": "cement",
+          "quantity_per_unit": null,
+          "unit": "bag",
+          "basis": "MORTAR_DESIGN_REQUIRED",
+          "source_id": null
+        },
+        {
+          "material_id": "sand",
+          "quantity_per_unit": null,
+          "unit": "m³",
+          "basis": "MORTAR_DESIGN_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Stone/mortar volume varies with rubble/block type and joint design; do not use the soling mix.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "cement_punning",
+      "title": "3mm cement punning, 1:1",
+      "work_unit": "m²",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "GEOMETRIC_ESTIMATE",
+      "description": "User-declared 3mm and 1:1 cement:sand mortar. 1m² × 0.003m ×1.33 tentative loose dry factor split 1:1.",
+      "lines": [
+        {
+          "material_id": "cement",
+          "quantity_per_unit": 0.05745600000000001,
+          "unit": "bag",
+          "basis": "CALCULATED_APPROX",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        },
+        {
+          "material_id": "sand",
+          "quantity_per_unit": 0.0019950000000000002,
+          "unit": "m³",
+          "basis": "CALCULATED_APPROX",
+          "source_id": "CIVIL-CALC-ESTIMATE"
+        }
+      ],
+      "note": "Curing and surface slurry excluded; approved punning mix and depth still required.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
+    },
+    {
+      "id": "cornice_area",
+      "title": "Decorative cornice measured by surface area",
+      "work_unit": "m²",
+      "source_id": "CIVIL-CALC-ESTIMATE",
+      "grade": "DESIGN_INPUT_REQUIRED",
+      "description": "Decorative profile section and recipe not provided; cannot reuse floor screed consumption.",
+      "lines": [
+        {
+          "material_id": "cement",
+          "quantity_per_unit": null,
+          "unit": "bag",
+          "basis": "PROFILE_AND_MORTAR_REQUIRED",
+          "source_id": null
+        },
+        {
+          "material_id": "sand",
+          "quantity_per_unit": null,
+          "unit": "m³",
+          "basis": "PROFILE_AND_MORTAR_REQUIRED",
+          "source_id": null
+        }
+      ],
+      "note": "Specify depth/shape, corners and material system first.",
+      "no_approved_quantity": true,
+      "no_design_approval": true
     }
   ],
   "work_items": [
@@ -1127,7 +1215,7 @@
       "title": "Stone masonry work",
       "unit": "m³",
       "recipe_ids": [
-        "stone_soling"
+        "stone_masonry"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1226,7 +1314,7 @@
       "title": "3 mm cement floor punning 1:1 plus neat-cement float",
       "unit": "m²",
       "recipe_ids": [
-        "floor_screed"
+        "cement_punning"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1444,7 +1532,7 @@
       "title": "Cornice work measured by area",
       "unit": "m²",
       "recipe_ids": [
-        "floor_screed"
+        "cornice_area"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1808,7 +1896,7 @@
       "title": "Cement punning",
       "unit": "m²",
       "recipe_ids": [
-        "floor_screed"
+        "cement_punning"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -1993,7 +2081,7 @@
       "title": "Cornice measured in square metres",
       "unit": "m²",
       "recipe_ids": [
-        "floor_screed"
+        "cornice_area"
       ],
       "type": "BOQ_WBS_SOURCE_KEY",
       "measured_quantity": null,
@@ -2515,7 +2603,7 @@
   "counts": {
     "work_items": 88,
     "project_activities": 45,
-    "recipes": 33,
-    "numerical_recipes": 16
+    "recipes": 36,
+    "numerical_recipes": 18
   }
 }
