@@ -32,9 +32,10 @@ export function validateProjectCatalog(d){
      typeof p.title!=="string"||!p.title.trim()||p.title.length>130||
      typeof p.source_group!=="string"||p.source_group.length>140||
      p.approval_status!=="NO_REAL_WORK_APPROVAL"||
-     !["EMPTY_NO_VERIFIED_PROJECT_WBS","NARAYANI_PUBLIC_SAFE_DRAFT"].includes(p.schedule_status)||
+     !["EMPTY_NO_VERIFIED_PROJECT_WBS","NARAYANI_PUBLIC_SAFE_DRAFT","HARISHARAN_PUBLIC_SAFE_DRAFT"].includes(p.schedule_status)||
      (p.schedule_status==="NARAYANI_PUBLIC_SAFE_DRAFT"&&(p.id!=="PORT-000001"||p.source_project_id!=="PRJ-000007"))||
-     (p.id!=="PORT-000001"&&p.schedule_status!=="EMPTY_NO_VERIFIED_PROJECT_WBS"))
+     (p.schedule_status==="HARISHARAN_PUBLIC_SAFE_DRAFT"&&p.id!=="PORT-000014")||
+     (p.id!=="PORT-000001"&&p.id!=="PORT-000014"&&p.schedule_status!=="EMPTY_NO_VERIFIED_PROJECT_WBS"))
     throw Error("Project identity/source integrity check failed");
   if(p.source_authority==="DRIVE_PROJECT_FOLDER_NAME"&&
     (typeof p.source_folder_title!=="string"||!p.source_folder_title.trim()))
@@ -74,8 +75,8 @@ function companyCard(enterprise,records){
 function projectCard(p){
  const card=node("article","pj-card");
  card.dataset.catalogSearch=[p.title,p.source_folder_title||"",p.source_group,p.source_project_id||"",p.map_pk_id||""].join(" ").toLowerCase();
- add(card,"span","pj-status "+(p.schedule_status==="NARAYANI_PUBLIC_SAFE_DRAFT"?"pj-live":"pj-hold"),
-  p.schedule_status==="NARAYANI_PUBLIC_SAFE_DRAFT"?"WBS model available":"WBS not imported");
+ add(card,"span","pj-status "+(p.schedule_status!=="EMPTY_NO_VERIFIED_PROJECT_WBS"?"pj-live":"pj-hold"),
+  p.schedule_status==="HARISHARAN_PUBLIC_SAFE_DRAFT"?"Planning WBS available":p.schedule_status==="NARAYANI_PUBLIC_SAFE_DRAFT"?"WBS model available":"WBS not imported");
  add(card,"h3","",p.title);
  add(card,"div","pj-caption",p.source_group);
  if(p.source_project_id)add(card,"div","pj-caption",p.source_project_id);
@@ -145,7 +146,7 @@ function sourceMeta(mount,p,e){
  ["Drive classification",p.source_group],
  ["Existing PRJ ID",p.source_project_id||"No verified PRJ identifier"],
  ["Legacy map ID",p.map_pk_id||"Not present in map snapshot"],
- ["WBS admission",p.schedule_status==="NARAYANI_PUBLIC_SAFE_DRAFT"?"Published safe planning scenario":"Not admitted · no source WBS loaded"],
+ ["WBS admission",p.schedule_status==="HARISHARAN_PUBLIC_SAFE_DRAFT"?"839-task public-safe draft (not approved)":p.schedule_status==="NARAYANI_PUBLIC_SAFE_DRAFT"?"Published safe planning scenario":"Not admitted · no source WBS loaded"],
  ["Site approval","None verified"]
  ];
  const dl=add(box,"dl");
@@ -160,7 +161,8 @@ function emptySurface(mount,heading,body){
  return box;
 }
 function renderProject(mount,registry,p,e){
- const has=p.schedule_status==="NARAYANI_PUBLIC_SAFE_DRAFT";
+ const isHar=p.schedule_status==="HARISHARAN_PUBLIC_SAFE_DRAFT";
+ const has=p.schedule_status==="NARAYANI_PUBLIC_SAFE_DRAFT"||isHar;
  const hero=introduction(mount,p.title,
   "One source-owned project workspace under "+e.title+". Dates, activities and relationships belong to this project only.",
   [["Overview","../"],["Projects","./"],[e.title,companyPath(e.key)],[p.title,null]]);
@@ -168,12 +170,22 @@ function renderProject(mount,registry,p,e){
  buttons.setAttribute("aria-label","Project-level navigation");
  anchor(buttons,"← "+e.title,companyPath(e.key));
  anchor(buttons,"All projects","./");
- if(has)anchor(buttons,"Open the scheduling desk →","narayani/desk.html");
+ if(has&&!isHar)anchor(buttons,"Open the scheduling desk →","narayani/desk.html");
+ if(isHar)anchor(buttons,"Open detailed 839-activity schedule →","fishtail/harisharan-residence/detailed-preview.html");
  const status=add(mount,"div","pj-status "+(has?"pj-live":"pj-hold"),
   has?"PUBLIC-SAFE PLANNING SCENARIO · NOT APPROVED":"EMPTY PROJECT · WBS NOT LOADED");
  status.setAttribute("role","status");
  sourceMeta(mount,p,e);
- if(has){
+ if(isHar){
+  const work=add(mount,"section","pj-source-meta");
+  add(work,"h2","","Harisharan V000001 · Detailed construction planning");
+  add(work,"p","pj-muted","839 proposed activities, 1,321 dependency links; all relative dates, engineering holds and resources remain unapproved. Structural RCC M25; Ø8 mm transverse links require engineer inspection.");
+  const links=add(work,"nav","pj-toolbar");
+  links.setAttribute("aria-label","Harisharan scheduling draft");
+  anchor(links,"Activity table + relative Gantt →","fishtail/harisharan-residence/detailed-preview.html");
+  const note=add(work,"div","pj-note");
+  note.textContent="No site/engineer release, no actual work recorded. Grid, footing geometry, tie detailing and source quantities require review.";
+ }else if(has){
   const work=add(mount,"section","pj-source-meta");
   add(work,"h2","","Scheduling desk · one shared set of source activities");
   add(work,"p","pj-muted","The Gantt activity register and 12-month calendar are synchronized to ONE schedule. Select an activity in the Gantt; its Predecessors, Successors and Resources are in the lower Activity Details pane. The former constellation and 405 reported-only checklist entries remain in Reference history.");
@@ -190,7 +202,8 @@ function renderProject(mount,registry,p,e){
   emptySurface(grid,"Predecessors / successors","No source-authored dependency links to calculate or authorize.");
   emptySurface(grid,"Site observations / work release","No authenticated actual progress, inspections or release evidence. Owner has paused private admission.");
  }
- add(mount,"p","pj-note",has?
+ add(mount,"p","pj-note",isHar?
+  "Harisharan V000001 is a read-only, without-basement construction planning draft, not an approved baseline or site work release.":has?
   "The Narayani 45-activity scenario remains read-only and reported-only. Its dates and original checklist observations do not authorize work on site.":
   "Empty by design. Never copy an unrelated project's dates or assume benchmark production rates are site-approved durations.");
 }
