@@ -7,6 +7,8 @@ on:
       - 'machine/project-mappings/harisharan-detailed-wbs-v000001.json'
       - 'tests/harisharan-schedule-draft.test.mjs'
       - 'tests/enterprise-portfolio.test.mjs'
+      - 'tests/materials-saturday-house.test.mjs'
+      - 'tests/scheduling-desk-productivity.test.mjs'
       - 'scripts/build-public-site.mjs'
       - 'src/presentation/project-catalog.mjs'
       - 'projects/registry.json'
