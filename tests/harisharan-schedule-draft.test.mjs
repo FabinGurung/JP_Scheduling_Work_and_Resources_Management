@@ -12,6 +12,10 @@ test("Harisharan V000001 has consistent scope, owner decisions and no constructi
  assert.equal(data.decisions.structural_concrete_grade,"M25_RPT_MATERIALS_SECTION_OWNER_ADOPTED");
  assert.equal(data.decisions.grid_selected_derived_width_mm,11384);
  assert.equal(data.decisions.grid_staking_authorized,false);
+ assert.equal(data.decisions.column_tie_diameter_mm,8);
+ assert.match(data.decisions.previous_10mm_at100_column_tie_claim,/NOT_VERIFIED/);
+ assert.equal(a.filter(x=>x.title.includes("Ø8 mm transverse links")).length,18);
+ assert.ok(a.every(x=>!x.title.includes("Ø10/100")));
  assert.equal(data.engineering_release,false);
  assert.equal(data.decisions.project_start_date,null);
  assert.equal(data.activities.length,839);
