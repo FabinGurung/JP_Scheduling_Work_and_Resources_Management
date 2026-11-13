@@ -22,9 +22,9 @@ footer{font-size:.82rem;color:var(--muted);margin-top:1rem}.view-note{font-size:
 @media(max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}th:nth-child(4),td:nth-child(4){display:none}}
 </style></head><body>
 <header><div class="meta"><a href="../../../projects/" style="color:#2352a0">Projects</a><span>Fishtail Builders / Harisharan Residence</span></div>
-<h1>Detailed construction schedule · V000001</h1><p>Without basement · M25 structural concrete · preliminary 11,384 mm horizontal grid chain · Saturday non-working</p></header>
+<h1>Detailed construction schedule · V000001</h1><p>Without basement · M25 structural concrete · Ø8 transverse links (pending engineer review) · preliminary 11,384 mm horizontal grid chain · Saturday non-working</p></header>
 <main>
-<div class="warning"><strong>Unapproved planning scenario.</strong> No IFC structural release, measured full BOQ, actual progress or construction baseline. Every duration is a planning seed until quantities, rates, crews and safety holds are validated. This branch-only preview must not be presented as a deployed production website.</div>
+<div class="warning"><strong>Unapproved planning scenario.</strong> No IFC structural release, measured full BOQ, actual progress or construction baseline. Every duration is a planning seed until quantities, rates, crews and safety holds are validated. Ø8 transverse links are a preliminary planning selection, not an approved bar-bending schedule. This branch-only preview must not be presented as a deployed production website.</div>
 <div class="stats" aria-live="polite">
 <div class="stat"><strong id="act">—</strong><small>Proposed activities</small></div>
 <div class="stat"><strong id="dep">—</strong><small>Predecessor links</small></div>
@@ -65,7 +65,7 @@ function csv(){const header=["Activity ID","Phase","Scope","Title","Trade","Dura
 for(const id of ["find","phase","critical","hold"])$(id).addEventListener("input",update);
 $("csv").addEventListener("click",csv);
 try{
- const response=await fetch(new URL("../../../machine/project-mappings/harisharan-detailed-wbs-v000001.json",location.href),{cache:"no-store"});
+ const response=await fetch(new URL("./schedule-v000001.json",location.href),{cache:"no-store"});
  if(!response.ok)throw Error("Data not published in this environment; code-only preview branch.");
  model=await response.json();
  if(model.format!=="HARISHARAN_DETAILED_WBS_DRAFT_V000001"||model.project_id!=="PORT-000014"||model.engineering_release!==false)throw Error("Unexpected source or approval status");
