@@ -68,7 +68,7 @@ jobs:
           npm run site:build
           test -s dist/projects/fishtail/harisharan-residence/detailed-preview.html
           test -s dist/projects/fishtail/harisharan-residence/schedule-v000001.json
-          test -s dist/projects/narayani/schedule-v002.json
+          test -s dist/projects/narayani/desk.html
       - name: Package isolated preview for review (does not deploy Pages)
         uses: actions/upload-artifact@v4
         with:
