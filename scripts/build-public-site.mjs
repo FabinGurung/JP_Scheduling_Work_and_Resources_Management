@@ -170,14 +170,14 @@ for(const f of approved)await cp(f);
 await modules("src");
 // HARISHARAN: publish only source-pinned derivative planning WBS; never raw CAD, Drive IDs, or work releases.
 const harText=await readFile(join(root,"machine/project-mappings/harisharan-detailed-wbs-v000001.json"),"utf8");
-const harBlob=createHash("sha1").update("blob "+Buffer.byteLength(harText)+"\\0").update(harText).digest("hex");
+const harBlob=createHash("sha1").update("blob "+Buffer.byteLength(harText)+"\0").update(harText).digest("hex");
 if(harBlob!=="77a5d87a67aecbd79eaf768252225b5944780f4b")throw Error("Harisharan source pin changed without review");
 const har=JSON.parse(harText);
 if(har.format!=="HARISHARAN_DETAILED_WBS_DRAFT_V000001"||har.project_id!=="PORT-000014"||
  har.scope!=="WITHOUT_BASEMENT"||har.engineering_release!==false||har.activity_count!==839||
  har.dependency_count!==1321||har.decisions.column_tie_diameter_mm!==8||
  har.activities.some(a=>a.actual_start!==null||a.percent_complete!==null||a.approved_work_release!==false)||
- /(?:drive|docs)\\.google\\.com\\/|(?:gmail|outlook)\\.com|BEGIN PRIVATE KEY|GOOGLE_OAUTH_ACCESS_TOKEN/i.test(harText))
+ /(?:drive|docs)\.google\.com\/|(?:gmail|outlook)\.com|BEGIN PRIVATE KEY|GOOGLE_OAUTH_ACCESS_TOKEN/i.test(harText))
  throw Error("Unsafe or changed Harisharan public planning dataset");
 const harOut=join(out,"projects/fishtail/harisharan-residence/schedule-v000001.json");
 await mkdir(dirname(harOut),{recursive:true});
