@@ -89,17 +89,26 @@ jobs:
             record('Live relative calendar','Relative week tab, planning-week selector and Saturday holiday render');
             await page.getByRole('tab',{name:'Activities + Gantt'}).click();
             const sampleRow=page.locator('tr[aria-label^="Select '+sample.id+' "]');
-            if(await sampleRow.count())await sampleRow.first().click();
-            else{
-              const first=page.locator('tr[aria-label^="Select "]').first();
-              await first.click();
-            }
+            assert.ok(await sampleRow.count(),'Source-graded sample activity is present in the Gantt table');
+            await sampleRow.first().click();
             await page.locator('.desk-detail-tabs button').filter({hasText:'Resources'}).first().click();
             assert.ok(await page.locator('.desk-detail-tabs button').filter({hasText:'Resources'}).count());
-            const detailText=await page.locator('.desk-south').allInnerTexts().catch(()=>[]);
-            record('Live resource detail','Resources tab opens; preview activity estimates and citations available in source model');
+            const detailText=await page.locator('.desk-detail-body').innerText();
+            assert.match(detailText,/sample/i,'Resources must show sample work quantities');
+            assert.match(detailText,/workday/i,'Resources must show work-rate output');
+            assert.ok(await page.locator('.desk-detail-body a[href^="https://"]').count()>=1,'Resources must have a reference citation link');
+            record('Live resource detail','F050 details show source-graded sample quantity, output/workday and citation links');
             await page.screenshot({path:join(outputs,'v002-desktop-resources.png')});
             report.screenshots.push('v002-desktop-resources.png');
+            await page.getByRole('tab',{name:'Relative week calendar'}).click();
+            const selectedWeek=Number(await page.locator('select[aria-label="Planning week"]').inputValue());
+            assert.equal(selectedWeek,Math.floor(sample.start/7),'Calendar follows selected Gantt activity');
+            const calendarTarget=page.locator('.desk-relative-days button').filter({hasText:sample.id}).first();
+            assert.ok(await calendarTarget.count(),'Selected activity must be discoverable in corresponding relative week');
+            await calendarTarget.click();
+            assert.equal(await page.getByRole('tab',{name:'Activities + Gantt'}).getAttribute('aria-selected'),'true');
+            assert.equal(await page.locator('tr[aria-label^="Select '+sample.id+' "]').first().getAttribute('aria-selected'),'true','Calendar returns to same Gantt selection');
+            record('Gantt-calendar selection sync','Selecting F050 follows its week, and clicking that week returns to selected F050');
             await page.locator('header.desk-hero .desk-schedule-edition select').selectOption('pilot');
             await page.waitForURL(/\/desk\.html/,{timeout:35000});
             await page.locator('header.desk-hero .desk-schedule-edition select').waitFor();
