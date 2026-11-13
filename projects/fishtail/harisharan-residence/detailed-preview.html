@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Harisharan · Detailed Schedule Draft V000001</title>
+<style>
+:root{color-scheme:light;--ink:#253047;--muted:#617085;--line:#dce2e9;--panel:#f8fafc;--blue:#336abb;--amber:#c88120}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:1.1rem max(1rem,calc((100vw - 1360px)/2));border-bottom:1px solid var(--line);background:var(--panel)}
+header h1{font-size:1.45rem;margin:.35rem 0}p{margin:.4rem 0;color:var(--muted)}main{margin:1.2rem auto;max-width:1360px;padding:0 1rem 3rem}
+.warning{padding:.7rem .9rem;border-left:4px solid var(--amber);background:#fff9e9;color:#543910;font-size:.9rem}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.7rem;margin:1rem 0}
+.stat{border:1px solid var(--line);padding:.9rem;border-radius:.5rem}.stat strong{font-size:1.6rem;display:block}.stat small{color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:1rem 0}
+.controls input,.controls select,.controls button{border:1px solid #b7c0cc;border-radius:.4rem;padding:.55rem .7rem;font:inherit;background:white;color:var(--ink)}
+.controls input{min-width:250px;flex:1}button{cursor:pointer}button:hover{background:#f0f5fa}
+.wrap{max-height:70vh;overflow:auto;border:1px solid var(--line);border-radius:.5rem}
+table{border-collapse:collapse;width:100%;font-size:.82rem}th,td{padding:.5rem .6rem;border-bottom:1px solid var(--line);vertical-align:middle;text-align:left;white-space:nowrap}
+th{position:sticky;top:0;background:#eff3f6;z-index:1}td.title{white-space:normal;min-width:320px;max-width:460px}td.scope{min-width:115px}
+.track{width:300px;min-width:300px;position:relative;height:15px;background:#f0f3f7;border-radius:9px}
+.bar{position:absolute;top:1px;height:13px;min-width:2px;background:var(--blue);border-radius:8px}
+.bar.critical{background:#bd483c}.hold{display:inline-block;font-size:.73rem;background:#fff0df;color:#74400c;padding:.15rem .35rem;border-radius:3px}
+footer{font-size:.82rem;color:var(--muted);margin-top:1rem}.view-note{font-size:.8rem}.meta{display:flex;gap:1rem;flex-wrap:wrap}
+@media(max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}th:nth-child(4),td:nth-child(4){display:none}}
+</style></head><body>
+<header><div class="meta"><a href="../../../projects/" style="color:#2352a0">Projects</a><span>Fishtail Builders / Harisharan Residence</span></div>
+<h1>Detailed construction schedule · V000001</h1><p>Without basement · M25 structural concrete · preliminary 11,384 mm horizontal grid chain · Saturday non-working</p></header>
+<main>
+<div class="warning"><strong>Unapproved planning scenario.</strong> No IFC structural release, measured full BOQ, actual progress or construction baseline. Every duration is a planning seed until quantities, rates, crews and safety holds are validated. This branch-only preview must not be presented as a deployed production website.</div>
+<div class="stats" aria-live="polite">
+<div class="stat"><strong id="act">—</strong><small>Proposed activities</small></div>
+<div class="stat"><strong id="dep">—</strong><small>Predecessor links</small></div>
+<div class="stat"><strong id="span">—</strong><small>Relative workday span</small></div>
+<div class="stat"><strong id="visible">—</strong><small>Displayed activities</small></div>
+</div>
+<div class="controls">
+<label for="find">Find an activity</label><input id="find" type="search" placeholder="ID, stage, scope, trade, description…" aria-label="Find activity">
+<label for="phase">Phase</label><select id="phase"><option value="">All phases</option></select>
+<label><input type="checkbox" id="critical"> Critical only</label><label><input type="checkbox" id="hold"> Holds only</label>
+<button id="csv" type="button" disabled>Export visible CSV</button>
+</div>
+<p class="view-note">Bars use relative working-day offsets, not calendar dates. Red indicates zero calculated float under this illustrative fixed-duration FS network. Grid and structural holds require engineer signoff.</p>
+<div class="wrap"><table><thead><tr><th>Activity ID</th><th>Phase / Scope</th><th>Activity</th><th>Trade</th><th>Draft days</th><th>Start / End</th><th>Predecessors</th><th>Float</th><th>Engineering</th><th>Relative Gantt</th></tr></thead><tbody id="rows"><tr><td colspan="10">Loading branch planning data…</td></tr></tbody></table></div>
+<footer><span id="state">Source provenance and audit live in the Harisharan controlled Drive register. This view is read-only.</span></footer>
+</main>
+<script type="module">
+const $=id=>document.getElementById(id);
+const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let model=null,shown=[];
+function update(){
+ if(!model)return;
+ const q=$("find").value.toLowerCase().trim(),phase=$("phase").value,critical=$("critical").checked,hold=$("hold").checked;
+ shown=model.activities.filter(a=>(!phase||a.phase===phase)&&(!critical||a.critical)&&(!hold||a.engineering_hold)&&
+ (!q||[a.activity_id,a.title,a.phase,a.scope,a.crew_category,a.predecessor_ids.join(" ")].join(" ").toLowerCase().includes(q)));
+ $("visible").textContent=shown.length;
+ const horizon=Math.max(1,model.provisional_total_workdays);
+ $("rows").innerHTML=shown.map(a=>{
+ const left=Math.max(0,a.planned_start_workday/horizon*100),wide=Math.max(.3,a.duration_workdays/horizon*100);
+ return `<tr><td><strong>${esc(a.activity_id)}</strong></td><td class="scope">${esc(a.phase)}<br><small>${esc(a.scope)}</small></td><td class="title">${esc(a.title)}</td><td>${esc(a.crew_category)}</td><td>${a.duration_workdays}</td><td>${a.planned_start_workday}–${a.planned_finish_workday}</td><td title="${esc(a.predecessor_ids.join(', '))}">${esc(a.predecessor_ids.slice(0,2).join(', '))}${a.predecessor_ids.length>2?'…':''}</td><td>${a.total_float_workdays}</td><td>${a.engineering_hold?'<span class="hold">HOLD</span>':'—'}</td><td><div class="track" title="Workday ${a.planned_start_workday} to ${a.planned_finish_workday}"><div class="bar ${a.critical?'critical':''}" style="left:${left}%;width:${wide}%"></div></div></td></tr>`;
+ }).join("")||'<tr><td colspan="10">No matching activities</td></tr>';
+ $("csv").disabled=!shown.length;
+}
+function csv(){const header=["Activity ID","Phase","Scope","Title","Trade","Duration workdays","Earliest Start","Earliest Finish","Float","Critical","HOLD","Predecessors","Status"];
+ const rows=[header,...shown.map(a=>[a.activity_id,a.phase,a.scope,a.title,a.crew_category,a.duration_workdays,a.planned_start_workday,a.planned_finish_workday,a.total_float_workdays,a.critical,a.engineering_hold,a.predecessor_ids.join(";"),a.status])];
+ const contents=rows.map(r=>r.map(v=>'"'+String(v??"").replaceAll('"','""')+'"').join(",")).join("\r\n");
+ const u=URL.createObjectURL(new Blob([contents],{type:"text/csv;charset=utf-8"}));const link=document.createElement("a");link.href=u;link.download="harisharan-draft-wbs-visible.csv";link.click();URL.revokeObjectURL(u);}
+for(const id of ["find","phase","critical","hold"])$(id).addEventListener("input",update);
+$("csv").addEventListener("click",csv);
+try{
+ const response=await fetch(new URL("../../../machine/project-mappings/harisharan-detailed-wbs-v000001.json",location.href),{cache:"no-store"});
+ if(!response.ok)throw Error("Data not published in this environment; code-only preview branch.");
+ model=await response.json();
+ if(model.format!=="HARISHARAN_DETAILED_WBS_DRAFT_V000001"||model.project_id!=="PORT-000014"||model.engineering_release!==false)throw Error("Unexpected source or approval status");
+ $("act").textContent=model.activity_count;$("dep").textContent=model.dependency_count;$("span").textContent=model.provisional_total_workdays;
+ const phases=[...new Set(model.activities.map(a=>a.phase))];
+ $("phase").innerHTML='<option value="">All phases</option>'+phases.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join("");
+ update();$("state").textContent="Read-only planning preview; source is GitHub branch data and matching restricted Google Sheet; no construction release.";
+}catch(e){ $("rows").innerHTML='<tr><td colspan="10">Preview source unavailable: '+esc(e.message)+'</td></tr>'; $("state").textContent="Branch-only. No production Pages deployment or approved project baseline has been claimed.";}
+</script></body></html>
