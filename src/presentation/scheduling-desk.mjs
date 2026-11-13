@@ -9,6 +9,7 @@ import {validateGenericViewModel} from "./generic-views.mjs";
  * A view never changes an original activity or invents a construction release. */
 const allowed=Object.freeze({
  "narayani":{file:"../../projects/narayani/project-model.json",governed:true,project:"PRJ-000007",resource_drafts:"../../work-items/narayani-resource-scenarios.v1.json",materials:"../../work-items/material-references.v1.json",material_boq:"../../work-items/productivity-norms.v1.json"},
+ "narayani-v002":{file:"../../projects/narayani/schedule-v002.json",relative:true,project:"PRJ-000007"},
  "uploaded-wbs":{file:"../../projects/generic/uploaded-wbs.json",project:"UPLOADED_WBS_V1"},
  "community-clinic":{file:"../../projects/generic/community-clinic.json",project:"DEMO_CLINIC"},
  "pedestrian-bridge":{file:"../../projects/generic/pedestrian-bridge.json",project:"DEMO_BRIDGE"}
@@ -27,6 +28,14 @@ const put=(parent,tag,cls,label)=>{const e=el(tag,cls,label);parent.append(e);re
 const link=(parent,title,path)=>{const a=put(parent,"a","",title);a.href=path;return a};
 const td=(tr,cls,value)=>put(tr,"td",cls,value);
 const daysBetween=(a,b)=>Math.round((utc(b)-utc(a))/86400000);
+const relativeLabel=(model,date)=>{
+ if(!model.relative_origin)return nice(date);
+ if(!validISO(date))return "—";
+ const offset=daysBetween(model.relative_origin,date);
+ return `W${Math.floor(offset/7)+1} · D${offset%7+1}`;
+};
+const durationLabel=a=>a.duration==null?"Pending":a.duration+" "+(a.estimate?.kind.startsWith("Elapsed")?"elapsed days":"working days");
+const isElapsed=a=>a.estimate?.kind.startsWith("Elapsed");
 export function inspectDeskModel(model){
  validateGenericViewModel(model);
  const ids=new Set(model.activities.map(a=>a.id));
@@ -66,25 +75,65 @@ export function scheduleWindow(model){
 function labelStatus(){
  return "PLANNING ONLY";
 }
-function createHeader(mount,model){
+function createHeader(mount,model,options){
  const header=put(mount,"header","desk-hero");
  const crumb=put(header,"div","desk-breadcrumb");
- link(crumb,"Projects","../");put(crumb,"span","","/");
+ const projectsRoot=options.projectsRoot??"../";
+ link(crumb,"Projects",projectsRoot);put(crumb,"span","","/");
  if(model.project.id==="PRJ-000007")
-  link(crumb,"Narayani project","../../projects/fishtail/narayani-parajuli-residence/");
+  link(crumb,"Narayani project",projectsRoot+"fishtail/narayani-parajuli-residence/");
  else link(crumb,"Source examples","../../more/#historical");
  put(crumb,"span","","/ Scheduling desk");
  put(header,"h1","",model.project.name+" · Scheduling desk");
+ if(model.project.id==="PRJ-000007"){
+  const edition=put(header,"label","desk-schedule-edition","Schedule version");
+  const picker=put(edition,"select");
+  const routes=options.editionRoutes??{pilot:"desk.html#activities",v002:"schedule-v002.html#activities"};
+  for(const [value,title] of [["pilot","Pilot · 45 activities"],["v002","v002 · Block B planning preview"]]){
+   const item=put(picker,"option","",title);item.value=value;
+  }
+  picker.value=model.relative_origin?"v002":"pilot";
+  picker.addEventListener("change",()=>{
+   if(options.chooseEdition)options.chooseEdition(picker.value);
+   else location.assign(routes[picker.value]);
+  });
+ }
+ if(model.relative_origin){
+  put(header,"p","","Proposed Block B through the roof. Existing Block A is included for access and interfaces. Weeks are relative to the start of this planning scenario.");
+  const timed=model.activities.filter(a=>a.start_date).length;
+  put(header,"div","desk-source",`${model.activities.length} activities · ${model.source_count} source links · ${model.source_rule_count} conditional rules · ${timed} timed activities · ${model.holds.length} open holds. Estimates only. Crew assignments and construction releases require verification.`);
+  const list=put(header,"details","desk-preview-sources");
+  put(list,"summary","","Assumptions, open holds and sources");
+  put(list,"p","","Sunday–Friday, 8-hour work shifts, 2 skilled workers and 3 helpers as the reference crew. Parallel work can require additional crews. Work rates use planner sample quantities or labelled allowances. Concrete age and procurement elapsed days run through Saturday.");
+  put(list,"p","","The permit and engineering gates remain open. A bar downstream of a gate assumes its release for planning. Tank work and the alternate waste route appear without bars.");
+  const holds=put(list,"ul");
+  for(const hold of model.holds)put(holds,"li","",`${hold.title} · ${hold.status} · ${hold.activities.join(", ")}`);
+  const sources=put(list,"ul");
+  for(const source of Object.values(model.citations)){
+   const row=put(sources,"li");link(row,source.title,source.url);
+   if(source.section)row.append(" · "+source.section);
+  }
+  return header;
+ }
  put(header,"p","","Activity IDs, WBS membership, scenario durations and dates are shown alongside the aligned Gantt. This is a read-only planning scenario, not an approved baseline or actual site record.");
  const bar=put(header,"div","desk-source");
  bar.textContent="SOURCE STATUS: "+model.classification+" · "+model.activities.length+
   " activities · "+model.links.length+" dependencies · NO authenticated activity completion or site release.";
  return header;
 }
-function timeAxis(windowInfo,scale){
- const px=scale==="day"?27:scale==="week"?11:3.5;
- const w=Math.max(450,Math.ceil(windowInfo.days*px)+2);
+function timeAxis(windowInfo,scale,relative,availableWidth){
+ const fittedWidth=Math.max(280,Math.min(1100,availableWidth-35));
+ const px=scale==="fit"?fittedWidth/windowInfo.days:scale==="day"?27:scale==="week"?11:3.5;
+ const w=Math.max(scale==="fit"?280:450,Math.ceil(windowInfo.days*px)+2);
  const slices=[];
+ if(relative){
+  const step=scale==="fit"?Math.max(28,7*Math.ceil(windowInfo.days/(7*Math.max(2,Math.floor(fittedWidth/90))))):scale==="month"?28:7;
+  for(let i=0;i<windowInfo.days;i+=step){
+   const week=Math.floor(i/7)+1;
+   slices.push({left:i*px,width:Math.min(step,windowInfo.days-i)*px,label:step===7?`Week ${week}`:`Weeks ${week}–${Math.min(week+step/7-1,Math.ceil(windowInfo.days/7))}`});
+  }
+  return {w,px,slices};
+ }
  if(scale==="day"&&windowInfo.days<=240){
   for(let i=0;i<windowInfo.days;i+=7)
    slices.push({left:i*px,width:Math.min(7,windowInfo.days-i)*px,label:nice(addDays(windowInfo.start,i))});
@@ -115,9 +164,11 @@ function setupActivityTable(container,model,state,showDetails){
  for(const item of model.wbs){const opt=put(wbs,"option","",item.title);opt.value=item.id;}
  const scalelabel=put(controls,"label","","Timescale");
  const scale=put(scalelabel,"select");scale.setAttribute("aria-label","Timeline timescale");
- for(const [v,n] of [["month","Months"],["week","Weeks"],["day","Days"]]){
+ const scales=model.relative_origin?[["fit","Fit"],["month","Four-week blocks"],["week","Weeks"],["day","Days"]]:[["month","Months"],["week","Weeks"],["day","Days"]];
+ for(const [v,n] of scales){
   const opt=put(scale,"option","",n);opt.value=v;
  }
+ if(model.relative_origin)scale.value="week";
  const counter=put(controls,"small","","");
  const arrowsLabel=put(controls,"label","","Relationship arrows");
  const arrows=put(arrowsLabel,"select");arrows.setAttribute("aria-label","Gantt relationship arrows");
@@ -142,7 +193,6 @@ function setupActivityTable(container,model,state,showDetails){
  put(jumping,"span","","Swipe sideways for seven fields and the aligned bar chart.");
  const note=put(container,"div","desk-axis","","");
  note.textContent="Table: seven planning fields before the bar timeline; repetitive Status is in Activity Details only. Finish* is the exclusive scenario finish boundary; actual completion is not verified.";
- const reference=new Map(model.activities.map(a=>[a.id,a]));
  const wbsMap=new Map(model.wbs.map(p=>[p.id,p.title]));
  const win=scheduleWindow(model);
  let filtered=[];
@@ -153,12 +203,12 @@ function setupActivityTable(container,model,state,showDetails){
   const head=put(table,"thead");const tr=put(head,"tr");
   const columns=[
    ["Activity ID","desk-col-id"],["Activity name","desk-col-title"],
-   ["WBS","desk-col-wbs"],["Original duration","desk-col-dur"],
+   ["WBS","desk-col-wbs"],[model.relative_origin?"Estimated duration":"Original duration","desk-col-dur"],
    ["Start","desk-col-date"],["Finish*","desk-col-date"],
    ["Predecessors","desk-col-prev"]
   ];
   for(const [label,cls] of columns)put(tr,"th",cls,label);
-  const axis=win?timeAxis(win,scale.value):null;
+  const axis=win?timeAxis(win,scale.value,model.relative_origin,wrap.clientWidth):null;
   const chartHeader=put(tr,"th","desk-chart-head");
   chartHeader.style.minWidth=(axis?.w||450)+"px";
   chartHeader.setAttribute("scope","col");
@@ -178,11 +228,12 @@ function setupActivityTable(container,model,state,showDetails){
    row.setAttribute("aria-selected",String(state.selected===a.id));
    row.setAttribute("aria-label","Select "+a.id+" "+a.title);
    td(row,"desk-col-id",a.id);
-   td(row,"desk-col-title",a.title);
+   const title=td(row,"desk-col-title",a.title);
+   if(a.hold?.length)put(title,"span","desk-hold-label","Open hold");
    td(row,"desk-col-wbs",wbsMap.get(a.wbs_id)||a.wbs_id);
-   td(row,"desk-col-dur",Number.isFinite(a.duration)?a.duration+" working days":"Not supplied");
-   td(row,"desk-col-date",nice(a.start_date));
-   td(row,"desk-col-date",nice(a.finish_date));
+   td(row,"desk-col-dur",durationLabel(a));
+   td(row,"desk-col-date",relativeLabel(model,a.start_date));
+   td(row,"desk-col-date",relativeLabel(model,a.finish_date));
    const pres=model.links.filter(e=>e.to===a.id).map(e=>e.from);
    td(row,"desk-col-prev",pres.length?pres.join(", "):"—");
    const chart=td(row,"desk-timeline");
@@ -190,10 +241,10 @@ function setupActivityTable(container,model,state,showDetails){
    if(axis&&validISO(a.start_date)&&validISO(a.finish_date)){
     const start=Math.max(0,daysBetween(win.start,a.start_date)),end=Math.max(start,daysBetween(win.start,a.finish_date));
     const bar=put(track,"div","desk-bar"+(a.duration===0?" desk-milestone":"")+
-      (state.selected===a.id?" desk-selected":""));
+      (state.selected===a.id?" desk-selected":"")+(a.hold?.length?" desk-held-bar":""));
     bar.style.left=(start*axis.px)+"px";
     bar.style.width=Math.max(5,(end-start)*axis.px)+"px";
-    bar.title=a.id+" "+a.title+" | "+nice(a.start_date)+" → "+nice(a.finish_date)+" (exclusive)";
+    bar.title=a.id+" "+a.title+" | "+relativeLabel(model,a.start_date)+" → "+relativeLabel(model,a.finish_date)+" (exclusive)";
    }
    const choose=()=>{
     state.selected=a.id;
@@ -369,10 +420,66 @@ function renderYearCalendar(container,model,state,select,openActivities){
  render();
  return {followSelected,render,renderDay};
 }
+function renderRelativeCalendar(container,model,state,select,openActivities){
+ const controls=put(container,"div","desk-calendar-header");
+ put(controls,"h2","","Relative week calendar");
+ const weekSelect=put(controls,"select");weekSelect.setAttribute("aria-label","Planning week");
+ const panel=put(container,"div","desk-relative-days");
+ const end=Math.max(...model.activities.map(a=>a.finish));
+ for(let week=0;week<=Math.floor(end/7);week++){
+  const item=put(weekSelect,"option","",`Week ${week+1}`);item.value=week;
+ }
+ function render(){
+  panel.replaceChildren();
+  const week=Number(weekSelect.value);
+  for(let offset=0;offset<7;offset++){
+   const slot=week*7+offset;
+   const day=put(panel,"section","desk-relative-day");
+   put(day,"h3","",["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][offset]);
+   if(offset===6)put(day,"small","","Work holiday · elapsed waits continue");
+   for(const item of model.activities.filter(a=>a.start_date&&((a.start<=slot&&slot<a.finish&&(offset<6||isElapsed(a)))||a.finish===slot))){
+    const action=put(day,"button",state.selected===item.id?"desk-calendar-selected-mark":"",`${item.id} · ${item.finish===slot?"Finish boundary · ":""}${item.title}`);
+    action.type="button";
+    action.addEventListener("click",()=>{select(item.id);openActivities();});
+   }
+  }
+ }
+ function followSelected(){
+  const selected=model.activities.find(a=>a.id===state.selected);
+  if(selected?.start_date)weekSelect.value=Math.floor(selected.start/7);
+  render();
+ }
+ weekSelect.addEventListener("change",render);
+ followSelected();
+ return {render,followSelected};
+}
+function renderPreviewEstimate(panel,model,activity){
+ const estimate=activity.estimate;
+ put(panel,"p","desk-detail-warning",estimate.kind+" · "+estimate.note);
+ if(estimate.citation)link(panel,model.citations[estimate.citation].title,model.citations[estimate.citation].url);
+ for(const component of estimate.components??[]){
+  put(panel,"h3","",`${component.code} · ${component.quantity} ${component.unit} sample`);
+  put(panel,"p","",`${component.output.toFixed(2)} ${component.unit}/workday · ${component.days.toFixed(2)} workdays before rounding · ${component.grade.replaceAll("_"," ").toLowerCase()}`);
+  if(component.scope)put(panel,"p","",component.scope);
+  if(component.machine_hours_per_day)put(panel,"p","",`One mixer · ${component.machine_hours_per_day} operating hours per day`);
+  link(panel,component.section,model.citations[component.source].url);
+  for(const assembly of component.assemblies){
+   put(panel,"h4","",assembly.name);
+   const list=put(panel,"ul");
+   for(const line of assembly.lines){
+    const amount=line.quantity==null?"Requires specification":`${Number(line.quantity.toFixed(3))} ${line.unit}`;
+    const item=put(list,"li","",`${line.name} · ${amount}`);
+    const source=model.citations[line.source];
+    if(source){item.append(" · ");link(item,line.basis.replaceAll("_"," ").toLowerCase(),source.url);}
+   }
+  }
+ }
+}
 function renderSouth(container,model,state,options={}){
  container.replaceChildren();
  const activity=model.activities.find(a=>a.id===state.selected);
  if(!activity)return;
+ const projectLink=path=>options.publicRoot?options.publicRoot+path:new URL("../../"+path,import.meta.url).href;
  const head=put(container,"div","desk-ribbon desk-south");
  put(head,"span","","SOUTH · Primavera-style Activity Details · "+activity.id+" · "+activity.title);
  const tabs=put(container,"nav","desk-detail-tabs");tabs.setAttribute("role","tablist");
@@ -393,7 +500,10 @@ function renderSouth(container,model,state,options={}){
   for(const edge of rows){
    const card=put(list,"article","desk-relation-detail");
    put(card,"strong","",edge.other.id+" · "+edge.other.title);
-   put(card,"span","", (edge.type||"FS")+" · Lag "+(edge.lag||0)+" nominal workdays");
+   put(card,"span","", (edge.type||"FS")+" · Lag "+(edge.lag||0)+(edge.lag_basis==="elapsed"?" elapsed days":" nominal workdays"));
+   if(edge.scenario_excluded)put(card,"small","","Source relationship outside the timed scenario");
+   if(edge.reason)put(card,"small","",edge.reason);
+   if(edge.source&&model.citations?.[edge.source])link(card,model.citations[edge.source].title,model.citations[edge.source].url);
    put(card,"small","","Actual predecessor/successor completion: NOT VERIFIED");
   }
  }
@@ -406,15 +516,19 @@ function renderSouth(container,model,state,options={}){
   put(panel,"h2","",activity.id+" · "+activity.title);
   if(name==="General"){
    kv(panel,[["Activity ID",activity.id],["Activity name",activity.title],["WBS",activity.wbs_id],
-    ["Original duration",activity.duration+" nominal workday slots"],["Activity type",activity.duration===0?"Milestone":"Planning activity"],
-    ["Scenario start",nice(activity.start_date)],["Scenario finish*",nice(activity.finish_date)],
+    [model.relative_origin?"Estimated duration":"Original duration",durationLabel(activity)],["Activity type",activity.duration===0?"Milestone":"Planning activity"],
+    ["Scenario start",relativeLabel(model,activity.start_date)],["Scenario finish*",relativeLabel(model,activity.finish_date)],
     ["Project",model.project.id],["Schedule basis",model.planning_status||"Source-pinned scenario"]]);
+   if(activity.estimate)put(panel,"p","desk-muted",activity.estimate.note);
+   if(activity.hold?.length)put(panel,"p","desk-detail-warning","Open hold · "+activity.hold.join(" · "));
   }else if(name==="Status"){
    kv(panel,[["Activity status","NOT ACTUALLY VERIFIED"],["Actual start","No verified report"],
     ["Actual finish","No verified report"],["Remaining duration","Not verified"],
     ["Physical % complete","Not admitted"],["Approved baseline","NO"],
     ["Activity completion release","NOT AUTHORIZED"]]);
    put(panel,"p","desk-detail-warning","Do not infer actual progress from an unapproved source-planning bar.");
+  }else if((name==="Resources"||name==="Quantities")&&model.relative_origin){
+   renderPreviewEstimate(panel,model,activity);
   }else if(name==="Resources"){
    const resourceInfo=resourceRowsForSelected(model,options.resourceRoster??null,activity.id);
    put(panel,"p","desk-detail-warning","VERIFIED site assignments and measured BOQ quantities: NONE admitted. The five-person house baseline and source-graded material assemblies below are PLANNING REFERENCES, not issued-for-construction orders.");
@@ -453,7 +567,7 @@ function renderSouth(container,model,state,options={}){
     put(panel,"h3","","Materials · reference items for "+activity.id);
     const intro=put(panel,"p","desk-muted","Work quantities are NOT imported for this activity. Listed numbers are per stated work unit, not quantities ordered for the site.");
     const materialLink=put(panel,"a","desk-material-link","Open Materials Planner and enter measured work quantity →");
-    materialLink.href=new URL("../../work-items/materials.html?activity="+encodeURIComponent(activity.id),import.meta.url).href;
+    materialLink.href=projectLink("work-items/materials.html?activity="+encodeURIComponent(activity.id));
     if(scope.recipes.length){
      const div=put(panel,"div","desk-resources-scroll");
      const table=put(div,"table","desk-resources-table");
@@ -477,7 +591,7 @@ function renderSouth(container,model,state,options={}){
     ["Crew availability calendar","NOT VERIFIED"],["Unit basis","Per illustrative working shift; not total project demand"],
     ["Actual output or resource usage","NOT MEASURED"]]);
    const a=put(panel,"a","","Open shared work-output calculator →");
-   a.href=new URL("../../work-items/productivity.html",import.meta.url).href;
+   a.href=projectLink("work-items/productivity.html");
    put(panel,"p","desk-muted","These names and numbers come from an explicitly separate unapproved reference crew roster. They do not overwrite source WBS activities, schedules, budget quantities or Google Drive records.");
   }else if(name==="Predecessors"){
    listRelations(panel,"Previous work to inspect",context.predecessors);
@@ -500,7 +614,7 @@ function renderSouth(container,model,state,options={}){
     ["Source SHA-256",model.input_sha256],["Work release","NOT AUTHORIZED"]]);
    if(model.project.id==="PRJ-000007"){
     const link=put(panel,"a","","Original Narayani reported-only checklist archive →");
-    link.href=new URL("../../projects/narayani/visual.html#checklist",import.meta.url).href;
+    link.href=projectLink("projects/narayani/visual.html#checklist");
    }
   }
  }
@@ -514,7 +628,7 @@ function renderSouth(container,model,state,options={}){
 export function renderSchedulingDesk(model,mount,options={}){
  inspectDeskModel(model);
  mount.replaceChildren();
- createHeader(mount,model);
+ createHeader(mount,model,options);
  const ribbon=put(mount,"div","desk-ribbon");
  put(ribbon,"span","","NORTH · View controls");
  put(ribbon,"span","","ONE source-pinned schedule · SATURDAY HOLIDAY · 8h reference shift · 2 skilled + 3 helpers (draft) · NO write actions");
@@ -522,7 +636,7 @@ export function renderSchedulingDesk(model,mount,options={}){
  modesNav.setAttribute("role","tablist");
  modesNav.setAttribute("aria-label","Two scheduling desk views");
  const panelMap=new Map(),btnMap=new Map();
- for(const [mode,title] of [["activities","Activities + Gantt"],["calendar","Year calendar"]]){
+ for(const [mode,title] of [["activities","Activities + Gantt"],["calendar",model.relative_origin?"Relative week calendar":"Year calendar"]]){
   const b=put(modesNav,"button","",title);b.type="button";b.setAttribute("role","tab");
   b.addEventListener("click",()=>choose(mode));
   btnMap.set(mode,b);
@@ -543,8 +657,9 @@ export function renderSchedulingDesk(model,mount,options={}){
  const details=put(first,"div");
  const table=setupActivityTable(south,model,state,()=>{renderSouth(details,model,state,options);});
  renderSouth(details,model,state,options);
- const calendar=renderYearCalendar(panelMap.get("calendar"),model,state,
-  id=>select(id),()=>choose("activities"));
+ const calendar=model.relative_origin
+  ?renderRelativeCalendar(panelMap.get("calendar"),model,state,id=>select(id),()=>choose("activities"))
+  :renderYearCalendar(panelMap.get("calendar"),model,state,id=>select(id),()=>choose("activities"));
  function select(id){
   if(!model.activities.some(a=>a.id===id))throw Error("Unknown selected source activity");
   state.selected=id;
@@ -574,7 +689,7 @@ export function renderSchedulingDesk(model,mount,options={}){
  }
  const requestedHash=typeof location!=="undefined"?location.hash.slice(1):"activities";
  choose(requestedHash);
- if(typeof window!=="undefined")window.addEventListener("hashchange",()=>{
+ if(options.updateHash!==false&&typeof window!=="undefined")window.addEventListener("hashchange",()=>{
   const next=location.hash.slice(1);
   choose(next);
  });
@@ -592,7 +707,8 @@ export async function bootSchedulingDesk(doc=document){
   const sourceModel=config.governed?adaptNarayaniPublicModel(raw):raw;
   if(sourceModel.project.id!==config.project)throw Error("Wrong project source");
   inspectDeskModel(sourceModel);
-  const model=applySaturdayHouseScenario(sourceModel,{anchor:config.governed?"2026-10-19":null});
+  if(config.relative&&(raw.revision!=="v002"||!validISO(raw.relative_origin)))throw Error("Wrong schedule revision or relative origin");
+  const model=config.relative?sourceModel:applySaturdayHouseScenario(sourceModel,{anchor:config.governed?"2026-10-19":null});
   inspectDeskModel(model);
   const opts={};
   if(config.resource_drafts){
@@ -621,7 +737,7 @@ export async function bootSchedulingDesk(doc=document){
   return true;
  }catch(e){mount.replaceChildren();put(mount,"div","desk-source","SCHEDULING DESK HELD: "+e.message);return false;}
 }
-if(typeof document!=="undefined"){
+if(typeof document!=="undefined"&&document.body?.dataset.scheduleProject){
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>bootSchedulingDesk(),{once:true});
  else bootSchedulingDesk();
 }

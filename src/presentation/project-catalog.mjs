@@ -181,6 +181,7 @@ function renderProject(mount,registry,p,e){
   links.setAttribute("aria-label","Scheduling desk views");
   anchor(links,"Activity table + Gantt →","narayani/desk.html#activities");
   anchor(links,"Year / month calendar →","narayani/desk.html#calendar");
+  anchor(links,"v002 Block B planning preview →","narayani/schedule-v002.html#activities");
   const note=add(work,"div","pj-note");
   note.textContent="The source scenario is NOT an approved baseline, actual progress or permission to start construction.";
  }else{

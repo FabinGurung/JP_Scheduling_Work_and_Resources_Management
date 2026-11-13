@@ -28,7 +28,7 @@ export function buildGanttLinkGeometry({links,activities,visibleIds,scenarioStar
   const elbow=Math.max(x0+14,x1+14);
   const d=`M ${x0} ${y0} L ${elbow} ${y0} L ${elbow} ${y1} L ${x1} ${y1}`;
   return {from:link.from,to:link.to,type,lag:link.lag||0,d,x0,x1,y0,y1,
-   explanation:`${link.from} ${ep[0]} → ${link.to} ${ep[1]} (${type}; lag ${link.lag||0})`};
+   explanation:`${link.from} ${ep[0]} → ${link.to} ${ep[1]} (${type}; lag ${link.lag||0}${link.lag_basis==="elapsed"?" elapsed days":""})`};
  }).filter(Boolean);
 }
 export function drawGanttConnectors({table,body,axis,win,model,filtered,selected,scope}){

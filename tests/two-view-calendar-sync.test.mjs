@@ -60,7 +60,7 @@ test("primary site viewer has exactly two views; old deep link remains compatibl
  const ui=read("src/presentation/scheduling-desk.mjs");
  const project=read("src/presentation/project-catalog.mjs");
  assert.match(ui,/const modes=\["activities","calendar"\]/);
- assert.match(ui,/\["activities","Activities \+ Gantt"\],\["calendar","Year calendar"\]/);
+ assert.match(ui,/\["activities","Activities \+ Gantt"\],\["calendar",model\.relative_origin\?"Relative week calendar":"Year calendar"\]/);
  assert.doesNotMatch(ui,/\["dependencies","Before \/ Current \/ After"\]/);
  assert.doesNotMatch(ui,/function renderDependencyPanel/);
  assert.match(ui,/const legacy=requested==="dependencies"/);
@@ -73,7 +73,7 @@ test("primary site viewer has exactly two views; old deep link remains compatibl
 test("calendar controls and Gantt selection share state, preserve original model data and navigate to scheduled month",()=>{
  const ui=read("src/presentation/scheduling-desk.mjs");
  const html=read("projects/narayani/desk.html");
- assert.match(ui,/const calendar=renderYearCalendar\(panelMap\.get\("calendar"\),model,state/);
+ assert.match(ui,/:renderYearCalendar\(panelMap\.get\("calendar"\),model,state/);
  assert.match(ui,/if\(state\.activeMode==="calendar"\)calendar\.render\(\)/);
  assert.match(ui,/calendar\.followSelected\(\{scroll:true\}\)/);
  assert.match(ui,/state\.year=Number\(day\.slice\(0,4\)\)/);

@@ -5,6 +5,17 @@
 .desk-hero{border:1px solid var(--desk-line);background:var(--desk-white);border-radius:14px;padding:18px 20px;margin-bottom:12px}
 .desk-hero h1{font-size:clamp(22px,2.8vw,32px);margin:4px 0;letter-spacing:-.03em}
 .desk-hero p{color:var(--desk-muted);max-width:1080px;margin:6px 0}
+.desk-schedule-edition{display:grid;gap:5px;width:min(100%,310px);margin:10px 0 12px;padding:10px 12px;border:1px solid var(--desk-line);border-radius:9px;background:#edf6f3;font-weight:750}
+.desk-schedule-edition select,.desk-calendar-header select{width:100%;max-width:100%;min-height:40px;padding:6px 9px;border:1px solid #bfd7d8;border-radius:7px;background:#fff;color:var(--desk-ink);font:inherit}
+.desk-calendar-header select{width:auto}
+.desk-preview-sources summary{cursor:pointer;font-weight:750;color:#126f78}
+.desk-preview-sources ul{padding-left:20px;overflow-wrap:anywhere}
+.desk-hold-label{display:block;margin-top:3px;color:#845318;font-size:11px;font-weight:750}
+.desk-bar.desk-held-bar{background:#af7025}
+.desk-relative-days{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px;padding:12px}
+.desk-relative-day{min-width:0;padding:8px;border:1px solid var(--desk-line);border-radius:7px;background:#f8fbfb}
+.desk-relative-day h3{margin:0 0 5px;font-size:13px}
+.desk-relative-day button{display:block;width:100%;margin:5px 0;padding:6px;text-align:left;background:white;border:1px solid var(--desk-line);border-radius:5px;color:var(--desk-ink);font:inherit;cursor:pointer;overflow-wrap:anywhere}
 .desk-breadcrumb{display:flex;flex-wrap:wrap;gap:9px;font-size:12px;font-weight:650}
 .desk-main a{color:#067d83;text-decoration:none;font-weight:700}
 .desk-main a:hover{text-decoration:underline}

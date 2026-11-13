@@ -1,6 +1,7 @@
 import {mkdir,copyFile,readdir,readFile,writeFile,rm} from "node:fs/promises";
 import {createHash} from "node:crypto";
 import {join,resolve,dirname} from "node:path";
+import {validateGenericViewModel} from "../src/presentation/generic-views.mjs";
 const root=resolve(new URL("..",import.meta.url).pathname),out=join(root,"dist");
 await rm(out,{recursive:true,force:true});
 async function cp(relative){
@@ -166,6 +167,16 @@ const approved=["index.html","advanced.html","planner.html","kernel-lab.html","r
  "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","assets/skyforge-unified.css","assets/studio-project.css","assets/work-readiness.css","assets/portfolio.css","assets/project-catalog.css","assets/scheduling-desk.css","assets/productivity-norms.css","assets/productivity-starters.css","assets/material-planner.css","more/legacy-home.html","more/index.html",
  "knowledge/index.html","knowledge/task.html","work-items/index.html","work-items/productivity.html","work-items/materials.html","work-items/productivity-norms.v1.json","work-items/productivity-starters.v2.json","work-items/material-references.v1.json","work-items/narayani-resource-scenarios.v1.json","projects/generic/index.html","studio/index.html","projects/index.html","projects/registry.json",...companyPages,...projectPages,"projects/portfolio/index.html","projects/portfolio/registry.json",...portfolioPages,"projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
 for(const f of approved)await cp(f);
+const previewPath="projects/narayani/schedule-v002.json";
+const previewText=await readFile(join(root,previewPath),"utf8");
+const preview=JSON.parse(previewText);
+validateGenericViewModel(preview);
+if(preview.project.id!=="PRJ-000007"||preview.revision!=="v002"||preview.relative_origin!=="2000-01-02"||
+ preview.activities.length!==160||preview.source_count!==194||preview.checklist.length!==0||
+ /drive\.google|docs\.google|file_id|source_passages|email|latitude|longitude|actual_start|actual_finish/i.test(previewText))
+ throw Error("Narayani v002 public preview failed publication checks");
+await cp(previewPath);
+await cp("projects/narayani/schedule-v002.html");
 await modules("src");
 // Separate, reviewed, PUBLIC work-item catalog only. No private project source files.
 // A source change requires explicit Git-blob pin review before it can be published.
@@ -400,7 +411,7 @@ const essential=["index.html","projects/narayani/visual.html","projects/narayani
 "advanced.html","planner.html","kernel-lab.html","roadmap.html","machine/index.html",
 "machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","work-items/index.html","work-items/productivity.html","work-items/materials.html","projects/generic/index.html","studio/index.html","projects/index.html",...companyPages,...projectPages,"more/index.html","projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","more/legacy-home.html"];
 if(essential.some(p=>!skinned.includes(p)))throw Error("Site shell incomplete: "+essential.filter(p=>!skinned.includes(p)));
-if(skinned.length!==62||redirectOnly.length!==15)
+if(skinned.length!==63||redirectOnly.length!==15)
  throw Error("Unexpected Pages HTML inventory: "+skinned.length+" unified; "+redirectOnly.length+" redirects");
 console.log("SKYFORGE HTML INVENTORY PASS:",skinned.length+redirectOnly.length,"HTML outputs =",skinned.length,"unified +",redirectOnly.length,"redirect-only stubs");
 console.log("SKYFORGE SHARED SHELL PASS:",skinned.length,"public pages unified; legacy pages preserved under More.");
