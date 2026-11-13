@@ -43,6 +43,26 @@ jobs:
           print("Harisharan isolated read-only preview contract PASS")
           PY
       # Intentionally NO deployment / Pages promotion / Google sync / Narayani workflow modifications.
+      - name: Validate complete scheduling kernel and Harisharan public allowlist
+        run: |
+          npm test
+          npm run verify:calendar
+          npm run machine:build
+          npm run machine:verify
+          npm run wbs:build
+          npm run wbs:verify
+          npm run pilot:build
+          npm run pilot:verify
+          npm run progress:build
+          npm run progress:verify
+          npm run visual:build
+          npm run visual:verify
+          npm run generic:build
+          npm run generic:verify
+          npm run site:build
+          test -s dist/projects/fishtail/harisharan-residence/detailed-preview.html
+          test -s dist/projects/fishtail/harisharan-residence/schedule-v000001.json
+          test -s dist/projects/narayani/schedule-v002.json
       - name: Package isolated preview for review (does not deploy Pages)
         uses: actions/upload-artifact@v4
         with:
