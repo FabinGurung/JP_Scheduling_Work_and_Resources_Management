@@ -1,4 +1,5 @@
 name: Skyforge · Authorized Sheets Reference Sync and Publish
+# Publish Narayani v002 preview from validated kernel 59f7c10db84374a3aa484b43b8fcfc52ed33426b; preserve pilot default.
 # Publication checkpoint: 2026-11-12 activity-wide materials calculator and scoped takeoff QA.
 on:
   push:
