@@ -6,6 +6,10 @@ on:
     paths:
       - 'machine/project-mappings/harisharan-detailed-wbs-v000001.json'
       - 'tests/harisharan-schedule-draft.test.mjs'
+      - 'tests/enterprise-portfolio.test.mjs'
+      - 'scripts/build-public-site.mjs'
+      - 'src/presentation/project-catalog.mjs'
+      - 'projects/registry.json'
       - 'projects/fishtail/harisharan-residence/detailed-preview.html'
       - '.github/workflows/harisharan-draft-qa.yml'
   pull_request:
@@ -38,7 +42,7 @@ jobs:
           import pathlib
           p=pathlib.Path("projects/fishtail/harisharan-residence/detailed-preview.html").read_text()
           assert "Unapproved planning scenario" in p
-          assert "machine/project-mappings/harisharan-detailed-wbs-v000001.json" in p
+          assert "schedule-v000001.json" in p
           assert "nARAYANI_SYNC_ENABLED" not in p
           print("Harisharan isolated read-only preview contract PASS")
           PY
