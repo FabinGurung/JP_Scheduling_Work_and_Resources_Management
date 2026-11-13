@@ -1,6 +1,6 @@
 {
   "format": "HARISHARAN_DETAILED_WBS_DRAFT_V000001",
-  "published_status": "BRANCH_ONLY_NOT_PAGES_LIVE",
+  "published_status": "PUBLIC_SAFE_PRODUCTION_PLANNING_PREVIEW_NOT_ENGINEERING_APPROVED",
   "authority": "DERIVED_PLANNING_DRAFT_NOT_BASELINE",
   "engineering_release": false,
   "project_id": "PORT-000014",
@@ -31361,5 +31361,6 @@
       "total_float_workdays": 0,
       "critical": true
     }
-  ]
+  ],
+  "release_authority": "OWNER_REQUESTED_PUBLICATION_NOT_APPROVED_FOR_CONSTRUCTION"
 }
