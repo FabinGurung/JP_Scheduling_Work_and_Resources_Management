@@ -1,0 +1,80 @@
+name: Milestone · Skyforge 2026-11-13 engine release
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/release-skyforge-milestone-20261113.yml
+  workflow_dispatch:
+
+# One-shot, immutable release of the pinned validated kernel (NOT the publisher main branch).
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      RELEASE_SHA: deece37b88ccd5a333feb5e8d197201eba13cfb3
+      RELEASE_TAG: v1.15.0-skyforge-sheets-materials.1
+      RELEASE_NOTES: docs/milestones/SKYFORGE_2026-11-13_OWNER_SCHEDULE_HANDOFF.md
+    steps:
+      - name: Check out exact validated kernel source
+        uses: actions/checkout@v4
+        with:
+          ref: deece37b88ccd5a333feb5e8d197201eba13cfb3
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Verify exact immutable source and source preservation policy
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+          test -s "$RELEASE_NOTES"
+          test -s tests/activity-material-takeoff.test.mjs
+          test -s src/presentation/activity-material-takeoff.mjs
+          test -s scripts/sync-reference-norms.mjs
+          grep -Fq "verbatim" "$RELEASE_NOTES"
+          echo "Release content and owner-source governance pinned"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Re-run production engine tests at pinned release SHA
+        run: |
+          npm test
+          npm run verify:calendar
+          npm run machine:build
+          npm run machine:verify
+          npm run wbs:build
+          npm run wbs:verify
+          npm run pilot:build
+          npm run pilot:verify
+          npm run progress:build
+          npm run progress:verify
+          npm run visual:build
+          npm run visual:verify
+          npm run generic:build
+          npm run generic:verify
+          npm run site:build
+      - name: Create verified annotated tag and published GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if git ls-remote --exit-code --tags origin "refs/tags/$RELEASE_TAG" >/dev/null 2>&1; then
+            git fetch --no-tags origin "refs/tags/$RELEASE_TAG:refs/tags/$RELEASE_TAG"
+            test "$(git rev-list -n 1 "$RELEASE_TAG")" = "$RELEASE_SHA"
+          else
+            git tag -a "$RELEASE_TAG" "$RELEASE_SHA" -m 'Skyforge 2026-11-13: authenticated Sheets and per-activity materials milestone; owner schedule baseline freeze'
+            git push origin "refs/tags/$RELEASE_TAG"
+          fi
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Existing published milestone release found; validating"
+          else
+            gh release create "$RELEASE_TAG" --verify-tag --target "$RELEASE_SHA" --title 'Skyforge v1.15 · Sheets-backed Scheduling & Materials Milestone' --notes-file "$RELEASE_NOTES" --latest=false
+          fi
+          test "$(gh release view "$RELEASE_TAG" --json tagName --jq .tagName)" = "$RELEASE_TAG"
+          test "$(gh release view "$RELEASE_TAG" --json isDraft --jq .isDraft)" = 'false'
+          test "$(git rev-list -n 1 "$RELEASE_TAG")" = "$RELEASE_SHA"
+          echo 'Release tag, target SHA and published state verified'
