@@ -43,3 +43,11 @@ jobs:
           print("Harisharan isolated read-only preview contract PASS")
           PY
       # Intentionally NO deployment / Pages promotion / Google sync / Narayani workflow modifications.
+      - name: Package isolated preview for review (does not deploy Pages)
+        uses: actions/upload-artifact@v4
+        with:
+          name: harisharan-schedule-v000001-review-only
+          path: |
+            projects/fishtail/harisharan-residence/detailed-preview.html
+            machine/project-mappings/harisharan-detailed-wbs-v000001.json
+          retention-days: 30
