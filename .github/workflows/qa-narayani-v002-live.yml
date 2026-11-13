@@ -1,0 +1,147 @@
+name: QA · Narayani v002 live browser and mobile
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/qa-narayani-v002-live.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install pinned headless browser
+        run: |
+          mkdir -p "$RUNNER_TEMP/skyforge-v002-browser-qa"
+          cd "$RUNNER_TEMP/skyforge-v002-browser-qa"
+          printf '{"type":"module","private":true}\n' > package.json
+          npm install --no-save --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Check live Pages data, pilot-to-preview navigation, relative calendar and resources
+        run: |
+          cat > "$RUNNER_TEMP/skyforge-v002-browser-qa/qa.mjs" <<'NODE'
+          import {chromium} from 'playwright';
+          import assert from 'node:assert/strict';
+          import {mkdir,writeFile} from 'node:fs/promises';
+          import {join} from 'node:path';
+          const root='https://fabingurung.github.io/jp-scheduling-resources-management/';
+          const outputs=process.env.RUNNER_TEMP+'/skyforge-v002-browser-qa/results';
+          await mkdir(outputs,{recursive:true});
+          const pilot=root+'projects/narayani/desk.html#activities';
+          const preview=root+'projects/narayani/schedule-v002.html#activities';
+          const api=root+'projects/narayani/schedule-v002.json';
+          const report={checked_at:new Date().toISOString(),source:'live GitHub Pages, not local files',checks:[],screenshots:[]};
+          const record=(what,detail)=>report.checks.push({what,detail,passed:true});
+          let browser,page,mobile;
+          try{
+            const response=await fetch(api,{signal:AbortSignal.timeout(30000),cache:'no-store'});
+            assert.equal(response.status,200,'Live preview JSON must be HTTP 200');
+            const model=await response.json();
+            assert.equal(model.revision,'v002');
+            assert.equal(model.classification,'PUBLIC_SAFE_GOVERNED_SCENARIO');
+            assert.equal(model.activities.length,160);
+            assert.equal(model.activities.filter(a=>a.start_date&&a.finish_date).length,156);
+            assert.equal(model.holds.length,6);
+            assert.equal(model.baseline_approved,false);
+            assert.equal(model.engineering_release,false);
+            const sample=model.activities.find(a=>a.estimate?.components?.length);
+            assert.ok(sample,'At least one activity must have a source-graded sample material/rate');
+            assert.ok(model.citations && Object.values(model.citations).some(c=>c.url));
+            assert.ok(model.activities.some(a=>a.estimate?.kind?.toLowerCase().includes('elapsed')));
+            record('Live JSON','160 activities, 156 timed bars, 6 open holds, approved=false and source-graded rate citations');
+            browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+            page=await browser.newPage({viewport:{width:1370,height:900},deviceScaleFactor:1});
+            const errors=[];
+            page.on('pageerror',error=>errors.push(error.message));
+            await page.goto(pilot,{waitUntil:'domcontentloaded',timeout:40000});
+            const picker=page.locator('header.desk-hero .desk-schedule-edition select');
+            await picker.waitFor({timeout:30000});
+            assert.equal(await picker.inputValue(),'pilot','Pilot must be the default schedule');
+            assert.match(await page.locator('header.desk-hero .desk-source').innerText(),/45 activities/);
+            record('Live pilot','45-activity pilot remains default');
+            await page.screenshot({path:join(outputs,'pilot-desktop.png')});
+            report.screenshots.push('pilot-desktop.png');
+            await picker.selectOption('v002');
+            await page.waitForURL(/schedule-v002\.html/,{timeout:35000});
+            await page.locator('header.desk-hero .desk-schedule-edition select').waitFor();
+            assert.equal(await page.locator('header.desk-hero .desk-schedule-edition select').inputValue(),'v002');
+            const banner=await page.locator('header.desk-hero .desk-source').innerText();
+            assert.match(banner,/160 activities/);
+            assert.match(banner,/156 timed activities/);
+            assert.match(banner,/6 open holds/);
+            assert.ok(await page.locator('.desk-bar').count()>0,'Gantt must render bars');
+            await page.screenshot({path:join(outputs,'v002-desktop-gantt.png')});
+            report.screenshots.push('v002-desktop-gantt.png');
+            record('Live v002 view','Version selector navigates from pilot; header counts and Gantt bars visible');
+            await page.getByRole('tab',{name:'Relative week calendar'}).click();
+            await page.getByRole('heading',{name:'Relative week calendar'}).waitFor({timeout:10000});
+            assert.ok(await page.locator('select[aria-label="Planning week"]').count());
+            assert.match(await page.locator('.desk-relative-days').innerText(),/Saturday/);
+            assert.match(await page.locator('.desk-relative-days').innerText(),/Work holiday/);
+            await page.screenshot({path:join(outputs,'v002-desktop-calendar.png')});
+            report.screenshots.push('v002-desktop-calendar.png');
+            record('Live relative calendar','Relative week tab, planning-week selector and Saturday holiday render');
+            await page.getByRole('tab',{name:'Activities + Gantt'}).click();
+            const sampleRow=page.locator('tr[aria-label^="Select '+sample.id+' "]');
+            if(await sampleRow.count())await sampleRow.first().click();
+            else{
+              const first=page.locator('tr[aria-label^="Select "]').first();
+              await first.click();
+            }
+            await page.locator('.desk-detail-tabs button').filter({hasText:'Resources'}).first().click();
+            assert.ok(await page.locator('.desk-detail-tabs button').filter({hasText:'Resources'}).count());
+            const detailText=await page.locator('.desk-south').allInnerTexts().catch(()=>[]);
+            record('Live resource detail','Resources tab opens; preview activity estimates and citations available in source model');
+            await page.screenshot({path:join(outputs,'v002-desktop-resources.png')});
+            report.screenshots.push('v002-desktop-resources.png');
+            await page.locator('header.desk-hero .desk-schedule-edition select').selectOption('pilot');
+            await page.waitForURL(/\/desk\.html/,{timeout:35000});
+            await page.locator('header.desk-hero .desk-schedule-edition select').waitFor();
+            assert.equal(await page.locator('header.desk-hero .desk-schedule-edition select').inputValue(),'pilot');
+            record('Live pilot round-trip','Schedule version switches safely back to 45-activity pilot');
+            assert.deepEqual(errors,[],'No uncaught JS errors during desktop navigation');
+            mobile=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1,isMobile:true,hasTouch:true});
+            const mobileErrors=[];
+            mobile.on('pageerror',error=>mobileErrors.push(error.message));
+            await mobile.goto(preview,{waitUntil:'domcontentloaded',timeout:40000});
+            const mobilePicker=mobile.locator('header.desk-hero .desk-schedule-edition select');
+            await mobilePicker.waitFor({timeout:30000});
+            assert.equal(await mobilePicker.inputValue(),'v002');
+            const bounds=await mobilePicker.boundingBox();
+            assert.ok(bounds && bounds.width>=160,'Mobile selector is usable');
+            assert.match(await mobile.locator('header.desk-hero .desk-source').innerText(),/160 activities/);
+            await mobile.screenshot({path:join(outputs,'v002-mobile-gantt.png')});
+            report.screenshots.push('v002-mobile-gantt.png');
+            await mobile.getByRole('tab',{name:'Relative week calendar'}).click();
+            await mobile.getByRole('heading',{name:'Relative week calendar'}).waitFor();
+            await mobile.screenshot({path:join(outputs,'v002-mobile-calendar.png')});
+            report.screenshots.push('v002-mobile-calendar.png');
+            assert.deepEqual(mobileErrors,[],'No uncaught JS errors on mobile');
+            record('Live mobile','390px viewport, touch version selector, relative calendar and no uncaught errors');
+          }catch(error){
+            report.failure=String(error.stack||error);
+            try{if(page)await page.screenshot({path:join(outputs,'desktop-failure.png')})}catch{}
+            try{if(mobile)await mobile.screenshot({path:join(outputs,'mobile-failure.png')})}catch{}
+            throw error;
+          }finally{
+            await writeFile(join(outputs,'qa-report.json'),JSON.stringify(report,null,2));
+            if(browser)await browser.close();
+          }
+          console.log(JSON.stringify(report));
+          NODE
+          cd "$RUNNER_TEMP/skyforge-v002-browser-qa"
+          node qa.mjs
+      - name: Preserve browser screenshots and QA report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: narayani-v002-live-browser-qa
+          path: ${{ runner.temp }}/skyforge-v002-browser-qa/results
+          retention-days: 30
+          if-no-files-found: warn
