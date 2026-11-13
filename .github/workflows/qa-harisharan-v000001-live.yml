@@ -1,5 +1,8 @@
 name: QA · Harisharan V000001 live Pages
 on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/qa-harisharan-v000001-live.yml]
   workflow_run:
     workflows: ["Skyforge · Authorized Sheets Reference Sync and Publish"]
     types: [completed]
@@ -28,7 +31,7 @@ jobs:
           printf '{"private":true,"type":"module"}\n' > package.json
           npm install --no-save --no-audit --no-fund playwright@1.56.1
           npx playwright install --with-deps chromium
-      - name: Verify LIVE site: Harisharan 839 tasks, Ø8, Narayani v002 preserved, desktop and mobile
+      - name: "Verify LIVE site — Harisharan 839, Ø8, Narayani v002, desktop and mobile"
         run: |
           cat > "$RUNNER_TEMP/harisharan-live-qa/qa.mjs" <<'NODE'
           import assert from 'node:assert/strict';
@@ -79,7 +82,7 @@ jobs:
             await page.screenshot({path:join(output,'harisharan-project-desktop.png')});
             await page.getByText('Activity table + relative Gantt',{exact:false}).click();
             await page.waitForURL(/detailed-preview\.html/,{timeout:30000});
-            await page.locator('#act').getByText('839').waitFor({timeout:30000});
+            await page.waitForFunction(() => document.getElementById('act')?.textContent==='839',{timeout:30000});
             assert.equal(await page.locator('#dep').innerText(),'1321');
             assert.equal(await page.locator('#rows tr').count(),839);
             await page.screenshot({path:join(output,'harisharan-839-activity-gantt.png'),fullPage:false});
@@ -93,7 +96,7 @@ jobs:
             const mobile=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
             const mErrors=[];mobile.on('pageerror',e=>mErrors.push(e.message));
             await mobile.goto(root+h+'detailed-preview.html',{waitUntil:'domcontentloaded',timeout:40000});
-            await mobile.locator('#act').getByText('839').waitFor({timeout:30000});
+            await mobile.waitForFunction(() => document.getElementById('act')?.textContent==='839',{timeout:30000});
             await mobile.screenshot({path:join(output,'harisharan-gantt-mobile.png')});
             assert.equal(await mobile.locator('#rows tr').count(),839);
             assert.deepEqual(mErrors,[]);
