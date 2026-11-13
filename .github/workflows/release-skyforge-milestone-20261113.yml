@@ -33,7 +33,7 @@ jobs:
           test -s tests/activity-material-takeoff.test.mjs
           test -s src/presentation/activity-material-takeoff.mjs
           test -s scripts/sync-reference-norms.mjs
-          grep -Fq "verbatim" "$RELEASE_NOTES"
+          grep -Fq "exact original words" "$RELEASE_NOTES"
           echo "Release content and owner-source governance pinned"
       - uses: actions/setup-node@v4
         with:
