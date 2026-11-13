@@ -171,7 +171,7 @@ await modules("src");
 // HARISHARAN: publish only source-pinned derivative planning WBS; never raw CAD, Drive IDs, or work releases.
 const harText=await readFile(join(root,"machine/project-mappings/harisharan-detailed-wbs-v000001.json"),"utf8");
 const harBlob=createHash("sha1").update("blob "+Buffer.byteLength(harText)+"\0").update(harText).digest("hex");
-if(harBlob!=="77a5d87a67aecbd79eaf768252225b5944780f4b")throw Error("Harisharan source pin changed without review");
+if(harBlob!=="fa8818b0606213099995d2d0c0d340a17e62c73e")throw Error("Harisharan source pin changed without review");
 const har=JSON.parse(harText);
 if(har.format!=="HARISHARAN_DETAILED_WBS_DRAFT_V000001"||har.project_id!=="PORT-000014"||
  har.scope!=="WITHOUT_BASEMENT"||har.engineering_release!==false||har.activity_count!==839||
