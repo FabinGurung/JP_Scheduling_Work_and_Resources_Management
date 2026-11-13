@@ -70,7 +70,7 @@ const expectedRoutes=[
 const projectPages=expectedRoutes.map(route=>"projects/"+route+"/index.html");
 const projectCatalogText=await readFile(join(root,"projects/registry.json"),"utf8");
 const sourceBlob=createHash("sha1").update("blob "+Buffer.byteLength(projectCatalogText)+"\0").update(projectCatalogText).digest("hex");
-if(sourceBlob!=="90e23cfd3611d442b47e1504fb613df1caa44740")
+if(sourceBlob!=="18b3b664c206568d04868b3da40460b7aba81bf3")
  throw Error("Drive-first project catalog changed without reviewed source acceptance");
 const projectCatalog=JSON.parse(projectCatalogText);
 const retired=JSON.parse(await readFile(join(root,"projects/portfolio/registry.json"),"utf8"));
@@ -87,6 +87,7 @@ if(retired.format!=="SKYFORGE_DEPRECATED_REGISTRY_POINTER_V1"||
   p.approval_status!=="NO_REAL_WORK_APPROVAL"||
   (i===0?(p.schedule_status!=="NARAYANI_PUBLIC_SAFE_DRAFT"||
    p.source_project_id!=="PRJ-000007"):
+   i===13?p.schedule_status!=="HARISHARAN_PUBLIC_SAFE_DRAFT":
    p.schedule_status!=="EMPTY_NO_VERIFIED_PROJECT_WBS")||
   !companyKeys.includes(p.company)||
   (p.source_authority==="DRIVE_PROJECT_FOLDER_NAME"&&!p.source_folder_title))||
@@ -165,7 +166,7 @@ if(masterSeed.tasks?.length!==45||
 
 const approved=["index.html","advanced.html","planner.html","kernel-lab.html","roadmap.html","project-controls-demo.json",
  "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","assets/skyforge-unified.css","assets/studio-project.css","assets/work-readiness.css","assets/portfolio.css","assets/project-catalog.css","assets/scheduling-desk.css","assets/productivity-norms.css","assets/productivity-starters.css","assets/material-planner.css","more/legacy-home.html","more/index.html",
- "knowledge/index.html","knowledge/task.html","work-items/index.html","work-items/productivity.html","work-items/materials.html","work-items/productivity-norms.v1.json","work-items/productivity-starters.v2.json","work-items/material-references.v1.json","work-items/narayani-resource-scenarios.v1.json","projects/generic/index.html","studio/index.html","projects/index.html","projects/registry.json",...companyPages,...projectPages,"projects/portfolio/index.html","projects/portfolio/registry.json",...portfolioPages,"projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
+ "knowledge/index.html","knowledge/task.html","work-items/index.html","work-items/productivity.html","work-items/materials.html","work-items/productivity-norms.v1.json","work-items/productivity-starters.v2.json","work-items/material-references.v1.json","work-items/narayani-resource-scenarios.v1.json","projects/generic/index.html","studio/index.html","projects/index.html","projects/registry.json",...companyPages,...projectPages,"projects/fishtail/harisharan-residence/detailed-preview.html","projects/portfolio/index.html","projects/portfolio/registry.json",...portfolioPages,"projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
 for(const f of approved)await cp(f);
 const previewPath="projects/narayani/schedule-v002.json";
 const previewText=await readFile(join(root,previewPath),"utf8");
@@ -178,6 +179,20 @@ if(preview.project.id!=="PRJ-000007"||preview.revision!=="v002"||preview.relativ
 await cp(previewPath);
 await cp("projects/narayani/schedule-v002.html");
 await modules("src");
+// HARISHARAN: publish only source-pinned derivative planning WBS; never raw CAD, Drive IDs, or work releases.
+const harText=await readFile(join(root,"machine/project-mappings/harisharan-detailed-wbs-v000001.json"),"utf8");
+const harBlob=createHash("sha1").update("blob "+Buffer.byteLength(harText)+"\0").update(harText).digest("hex");
+if(harBlob!=="fa8818b0606213099995d2d0c0d340a17e62c73e")throw Error("Harisharan source pin changed without review");
+const har=JSON.parse(harText);
+if(har.format!=="HARISHARAN_DETAILED_WBS_DRAFT_V000001"||har.project_id!=="PORT-000014"||
+ har.scope!=="WITHOUT_BASEMENT"||har.engineering_release!==false||har.activity_count!==839||
+ har.dependency_count!==1321||har.decisions.column_tie_diameter_mm!==8||
+ har.activities.some(a=>a.actual_start!==null||a.percent_complete!==null||a.approved_work_release!==false)||
+ /(?:drive|docs)\.google\.com\/|(?:gmail|outlook)\.com|BEGIN PRIVATE KEY|GOOGLE_OAUTH_ACCESS_TOKEN/i.test(harText))
+ throw Error("Unsafe or changed Harisharan public planning dataset");
+const harOut=join(out,"projects/fishtail/harisharan-residence/schedule-v000001.json");
+await mkdir(dirname(harOut),{recursive:true});
+await writeFile(harOut,harText);
 // Separate, reviewed, PUBLIC work-item catalog only. No private project source files.
 // A source change requires explicit Git-blob pin review before it can be published.
 const catalogText=await readFile(join(root,"machine/work-items/work-item-library-v0.1.json"),"utf8");
@@ -409,7 +424,7 @@ for(const relative of skinned){
 }
 const essential=["index.html","projects/narayani/visual.html","projects/narayani/index.html",
 "advanced.html","planner.html","kernel-lab.html","roadmap.html","machine/index.html",
-"machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","work-items/index.html","work-items/productivity.html","work-items/materials.html","projects/generic/index.html","studio/index.html","projects/index.html",...companyPages,...projectPages,"more/index.html","projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","more/legacy-home.html"];
+"machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","work-items/index.html","work-items/productivity.html","work-items/materials.html","projects/generic/index.html","studio/index.html","projects/index.html",...companyPages,...projectPages,"projects/fishtail/harisharan-residence/detailed-preview.html","more/index.html","projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","more/legacy-home.html"];
 if(essential.some(p=>!skinned.includes(p)))throw Error("Site shell incomplete: "+essential.filter(p=>!skinned.includes(p)));
 if(skinned.length!==63||redirectOnly.length!==15)
  throw Error("Unexpected Pages HTML inventory: "+skinned.length+" unified; "+redirectOnly.length+" redirects");

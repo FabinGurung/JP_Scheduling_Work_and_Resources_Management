@@ -1,0 +1,79 @@
+name: Harisharan · Isolated Draft Schedule QA (no Pages deployment)
+on:
+  push:
+    branches:
+      - feature/harisharan-schedule-v000001-20261113
+    paths:
+      - 'machine/project-mappings/harisharan-detailed-wbs-v000001.json'
+      - 'tests/harisharan-schedule-draft.test.mjs'
+      - 'tests/enterprise-portfolio.test.mjs'
+      - 'tests/materials-saturday-house.test.mjs'
+      - 'tests/scheduling-desk-productivity.test.mjs'
+      - 'scripts/build-public-site.mjs'
+      - 'src/presentation/project-catalog.mjs'
+      - 'projects/registry.json'
+      - 'projects/fishtail/harisharan-residence/detailed-preview.html'
+      - '.github/workflows/harisharan-draft-qa.yml'
+  pull_request:
+    branches:
+      - kernel-v0.2-open-source-engines
+    paths:
+      - 'machine/project-mappings/harisharan-detailed-wbs-v000001.json'
+      - 'tests/harisharan-schedule-draft.test.mjs'
+      - 'projects/fishtail/harisharan-residence/detailed-preview.html'
+      - '.github/workflows/harisharan-draft-qa.yml'
+permissions:
+  contents: read
+concurrency:
+  group: harisharan-wbs-v000001-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  harisharan-static-schedule-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout only this feature ref
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate 839 activities, DAG, provenance, report M25, no Narayani interference
+        run: node --test tests/harisharan-schedule-draft.test.mjs
+      - name: Ensure no production publishing or private input
+        run: |
+          python - <<'PY'
+          import pathlib
+          p=pathlib.Path("projects/fishtail/harisharan-residence/detailed-preview.html").read_text()
+          assert "Unapproved planning scenario" in p
+          assert "schedule-v000001.json" in p
+          assert "nARAYANI_SYNC_ENABLED" not in p
+          print("Harisharan isolated read-only preview contract PASS")
+          PY
+      # Intentionally NO deployment / Pages promotion / Google sync / Narayani workflow modifications.
+      - name: Validate complete scheduling kernel and Harisharan public allowlist
+        run: |
+          npm test
+          npm run verify:calendar
+          npm run machine:build
+          npm run machine:verify
+          npm run wbs:build
+          npm run wbs:verify
+          npm run pilot:build
+          npm run pilot:verify
+          npm run progress:build
+          npm run progress:verify
+          npm run visual:build
+          npm run visual:verify
+          npm run generic:build
+          npm run generic:verify
+          npm run site:build
+          test -s dist/projects/fishtail/harisharan-residence/detailed-preview.html
+          test -s dist/projects/fishtail/harisharan-residence/schedule-v000001.json
+          test -s dist/projects/narayani/desk.html
+      - name: Package isolated preview for review (does not deploy Pages)
+        uses: actions/upload-artifact@v4
+        with:
+          name: harisharan-schedule-v000001-review-only
+          path: |
+            projects/fishtail/harisharan-residence/detailed-preview.html
+            machine/project-mappings/harisharan-detailed-wbs-v000001.json
+          retention-days: 30
