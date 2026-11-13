@@ -1,0 +1,115 @@
+name: QA · Harisharan V000001 live Pages
+on:
+  workflow_run:
+    workflows: ["Skyforge · Authorized Sheets Reference Sync and Publish"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: harisharan-live-pages-qa
+  cancel-in-progress: true
+
+jobs:
+  live-browser-qa:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install verified Playwright Chromium
+        run: |
+          mkdir -p "$RUNNER_TEMP/harisharan-live-qa"
+          cd "$RUNNER_TEMP/harisharan-live-qa"
+          printf '{"private":true,"type":"module"}\n' > package.json
+          npm install --no-save --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify LIVE site: Harisharan 839 tasks, Ø8, Narayani v002 preserved, desktop and mobile
+        run: |
+          cat > "$RUNNER_TEMP/harisharan-live-qa/qa.mjs" <<'NODE'
+          import assert from 'node:assert/strict';
+          import {chromium} from 'playwright';
+          import {mkdir,writeFile} from 'node:fs/promises';
+          import {join} from 'node:path';
+          const root='https://fabingurung.github.io/jp-scheduling-resources-management/';
+          const h='projects/fishtail/harisharan-residence/';
+          const output=join(process.env.RUNNER_TEMP,'harisharan-live-qa','evidence');
+          await mkdir(output,{recursive:true});
+          const checks=[];
+          const record=(name,details)=>{checks.push({name,passed:true,details});console.log('PASS: '+name)};
+          const fetchJson=async path=>{
+            const result=await fetch(root+path,{cache:'no-store',signal:AbortSignal.timeout(30000)});
+            assert.equal(result.status,200,path+' must be live HTTP 200');
+            return result.json();
+          };
+          let browser;
+          try{
+            const a=await fetchJson(h+'schedule-v000001.json');
+            assert.equal(a.format,'HARISHARAN_DETAILED_WBS_DRAFT_V000001');
+            assert.equal(a.project_id,'PORT-000014');
+            assert.equal(a.activity_count,839);
+            assert.equal(a.activities.length,839);
+            assert.equal(a.dependency_count,1321);
+            assert.equal(a.decisions.column_tie_diameter_mm,8);
+            assert.equal(a.decisions.structural_concrete_grade,'M25_RPT_MATERIALS_SECTION_OWNER_ADOPTED');
+            assert.equal(a.scope,'WITHOUT_BASEMENT');
+            assert.equal(a.engineering_release,false);
+            assert.ok(a.activities.every(x=>x.approved_work_release===false));
+            assert.equal(a.activities.filter(x=>x.title.includes('Ø8 mm transverse links')).length,18);
+            assert.ok(a.activities.every(x=>!x.title.includes('Ø10/100')));
+            assert.equal(a.activities.reduce((n,x)=>n+x.predecessor_ids.length,0),1321);
+            record('Live Harisharan JSON','839 / 1,321 / Ø8, non-approved');
+            const n=await fetchJson('projects/narayani/schedule-v002.json');
+            assert.equal(n.revision,'v002');
+            assert.equal(n.activities.length,160);
+            assert.equal(n.baseline_approved,false);
+            record('Narayani v002 retained','160 activity model unchanged by this release');
+            browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+            const errors=[];
+            const page=await browser.newPage({viewport:{width:1440,height:900}});
+            page.on('pageerror',e=>errors.push(e.message));
+            await page.goto(root+h,{waitUntil:'domcontentloaded',timeout:40000});
+            await page.getByText('Harisharan V000001',{exact:false}).first().waitFor({timeout:25000});
+            const cardText=await page.locator('#project-catalog').innerText();
+            assert.match(cardText,/839 proposed activities/);
+            await page.screenshot({path:join(output,'harisharan-project-desktop.png')});
+            await page.getByText('Activity table + relative Gantt',{exact:false}).click();
+            await page.waitForURL(/detailed-preview\.html/,{timeout:30000});
+            await page.locator('#act').getByText('839').waitFor({timeout:30000});
+            assert.equal(await page.locator('#dep').innerText(),'1321');
+            assert.equal(await page.locator('#rows tr').count(),839);
+            await page.screenshot({path:join(output,'harisharan-839-activity-gantt.png'),fullPage:false});
+            await page.locator('#find').fill('Ø8 mm transverse links');
+            assert.equal(await page.locator('#rows tr').count(),18);
+            await page.locator('#find').fill('HAR-0839');
+            assert.equal(await page.locator('#rows tr').count(),1);
+            assert.equal(await page.locator('#csv').isEnabled(),true);
+            record('Desktop page and filters','Project directory -> Gantt, all 839 rows, Ø8 filter 18, export enabled');
+            assert.deepEqual(errors,[]);
+            const mobile=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+            const mErrors=[];mobile.on('pageerror',e=>mErrors.push(e.message));
+            await mobile.goto(root+h+'detailed-preview.html',{waitUntil:'domcontentloaded',timeout:40000});
+            await mobile.locator('#act').getByText('839').waitFor({timeout:30000});
+            await mobile.screenshot({path:join(output,'harisharan-gantt-mobile.png')});
+            assert.equal(await mobile.locator('#rows tr').count(),839);
+            assert.deepEqual(mErrors,[]);
+            record('Mobile page','390px viewport, full activity table and no JavaScript errors');
+          }finally{
+            await writeFile(join(output,'qa-report.json'),JSON.stringify({checked_at:new Date().toISOString(),checks},null,2));
+            if(browser)await browser.close();
+          }
+          NODE
+          cd "$RUNNER_TEMP/harisharan-live-qa"
+          node qa.mjs
+      - name: Upload live verification screenshots and results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: harisharan-v000001-live-qa
+          path: ${{ runner.temp }}/harisharan-live-qa/evidence
+          if-no-files-found: warn
+          retention-days: 30
