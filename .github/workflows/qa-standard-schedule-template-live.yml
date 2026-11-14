@@ -1,0 +1,72 @@
+name: QA · Standard schedule template live Pages readback
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/qa-standard-schedule-template-live.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-readback:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify live Pages JSON contracts and preserved project schedules
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          const root='https://fabingurung.github.io/jp-scheduling-resources-management/';
+          const get=async path=>{
+           let error;
+           for(let i=0;i<4;i++){
+            try{
+             const r=await fetch(root+path+'?qa=20261114-v116',
+              {cache:'no-store',signal:AbortSignal.timeout(25000)});
+             if(r.status!==200)throw Error(path+' returned HTTP '+r.status);
+             return {body:await r.text(),path};
+            }catch(e){error=e;}
+           }
+           throw error;
+          };
+          const targets=[
+           'studio/',
+           'templates/scheduling/standard-schedule-input-v1.example.json',
+           'schemas/standard-schedule-input.schema.json',
+           'templates/scheduling/edition-comparison.json',
+           'projects/narayani/schedule-v002.json',
+           'projects/fishtail/harisharan-residence/schedule-v002.json'
+          ];
+          const out=await Promise.all(targets.map(get));
+          const [studio,input,schema,compare,narayani,harisharan]=out.map(x=>x.body);
+          assert.match(studio,/templates\/scheduling\/standard-schedule-input-v1\.example\.json/);
+          const src=JSON.parse(input),rules=JSON.parse(schema),c=JSON.parse(compare);
+          const n=JSON.parse(narayani),h=JSON.parse(harisharan);
+          assert.equal(src.format,'SKYFORGE_STANDARD_SCHEDULE_INPUT_V1');
+          assert.equal(src.clock.kind,'UNSET');
+          assert.equal(src.authority.engineering_release,false);
+          assert.ok(rules.$schema&&rules.properties?.activities&&rules.properties?.source_manifest);
+          assert.equal(c.format,'SKYFORGE_STANDARD_SCHEDULE_COMPARISON_V1');
+          assert.equal(c.projects.length,2);
+          assert.deepEqual(c.projects.map(x=>x.counts.activities),[160,839]);
+          assert.deepEqual(c.projects.map(x=>x.counts.links),[210,1321]);
+          assert.deepEqual(c.projects.map(x=>x.clock),['RELATIVE_CALENDAR_DAYS','DATED_WORK_SLOTS']);
+          assert.equal(n.activities.length,160);
+          assert.equal(h.activities.length,839);
+          assert.equal(n.baseline_approved,false);
+          assert.equal(h.baseline_approved,false);
+          assert.equal(h.planner_integration.m25_recipe_applied,false);
+          for(const text of [input,compare]){
+           assert.doesNotMatch(text,/docs\.google\.com|drive\.google\.com|BEGIN PRIVATE KEY|access_token=|ya29\./i);
+          }
+          console.log('LIVE SKYFORGE V1.16 QA PASS:',JSON.stringify({
+           valid_pages:targets,activity_counts:[n.activities.length,h.activities.length],
+           links:[n.links.length,h.links.length],clocks:c.projects.map(x=>x.clock),
+           no_source_or_approval_mutation:true
+          }));
+          NODE
