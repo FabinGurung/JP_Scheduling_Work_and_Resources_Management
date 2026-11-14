@@ -32,7 +32,8 @@ export function evaluateHarisharanBOQ(source,starters,materials){
   const unitMatch=!!profile&&record.unit===profile.unit;
   const geometryHold=heldFlags.has(record.quality_flag);
   const unadmitted=profile?.kind==="CALIBRATION_SEED";
-  const sourceErr=source.measurement_errors.some(x=>x.rows.includes(record.boq_row));
+  // Measurement-sheet row numbers are NOT BOQ-sheet row numbers. Only explicit mapped BOQ rows may block this item.
+  const sourceErr=source.measurement_errors.some(x=>x.boq_rows?.includes(record.boq_row));
   const eligible=!!profile&&unitMatch&&!geometryHold&&!unadmitted&&!sourceErr&&finite(record.source_quantity)&&record.source_quantity>0;
   let days=null,output=null,eff=null,machineName=null,machineHours=null;
   if(eligible){
