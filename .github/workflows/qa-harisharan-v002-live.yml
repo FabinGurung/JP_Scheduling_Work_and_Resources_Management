@@ -96,7 +96,8 @@ jobs:
             await desktop.screenshot({path:join(shots,'harisharan-v002-rate-material-detail.png')});
             check('Source graded Resources/Quantities','M20 labour-only analogy clearly labelled, M25 constituents on design hold');
             await desktop.getByRole('tab',{name:'Year calendar'}).click();
-            await desktop.getByText('January–December 2026',{exact:false}).waitFor();
+            const targetYear=v2.activities.find(a=>a.id==='HAR-0068').start_date.slice(0,4);
+            await desktop.getByText('January–December '+targetYear,{exact:false}).waitFor({timeout:30000});
             assert.match(await desktop.locator('.desk-calendar-selected').innerText(),/HAR-0068/);
             const saturdays=desktop.locator('.desk-day[data-holiday="saturday"]');
             assert.ok(await saturdays.count()>=50);
