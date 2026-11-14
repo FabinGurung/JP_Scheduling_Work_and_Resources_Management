@@ -90,6 +90,6 @@ test("Harisharan v001 stays immutable, separate from Narayani v002 source and re
  assert.match(html,/data-schedule-project="harisharan-v002"/);
  assert.match(build,/const harV002=buildHarisharanV002/);
  assert.match(build,/harisharan-residence\/schedule-v002\.json/);
- assert.match(build,/skinned\.length!==65\|\|redirectOnly\.length!==15/);
+ assert.match(build,/skinned\.length!==66\|\|redirectOnly\.length!==15/);
  assert.doesNotMatch(JSON.stringify(model),/drive\.google\.com\/file\/d\/|docs\.google\.com\/spreadsheets\/d\/|BEGIN PRIVATE KEY|@gmail\.com/);
 });
