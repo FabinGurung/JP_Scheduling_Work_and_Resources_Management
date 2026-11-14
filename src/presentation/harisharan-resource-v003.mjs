@@ -8,7 +8,7 @@ const fmt=n=>Number.isFinite(n)?Number(n.toFixed(3)).toLocaleString("en-US",{max
 const label=p=>p?.replaceAll("_"," ").toLowerCase()||"—";
 async function boot(){
  try{
-  const r=await fetch(new URL("../../../projects/fishtail/harisharan-residence/boq-v003.json",import.meta.url),{cache:"no-store"});
+  const r=await fetch(new URL("../../projects/fishtail/harisharan-residence/boq-v003.json",import.meta.url),{cache:"no-store"});
   if(!r.ok)throw Error("Measured BOQ planning reference unavailable: HTTP "+r.status);
   const d=await r.json();
   if(d.format!=="HARISHARAN_MEASURED_RESOURCE_FEASIBILITY_V003"||d.project_id!=="PORT-000014"||
