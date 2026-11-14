@@ -76,7 +76,7 @@ test("work rate used ONLY for 18 source-quantity footing placements, with docume
   assert.ok(a.duration>=a.original_v001_duration);
  }
  assert.ok(model.provisional_span_workdays>orig.provisional_total_workdays);
- assert.ok(model.activities.filter(x=>x.estimate.kind==="Planning allowance").length>700);
+ assert.equal(model.activities.filter(x=>x.estimate.components.length===0).length,821);
 });
 test("Harisharan v001 stays immutable, separate from Narayani v002 source and release controls",()=>{
  const ui=read("src/presentation/scheduling-desk.mjs");
