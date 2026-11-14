@@ -1,0 +1,129 @@
+name: QA · Harisharan v002 live desktop/mobile
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/qa-harisharan-v002-live.yml]
+  workflow_run:
+    workflows: ["Skyforge · Authorized Sheets Reference Sync and Publish"]
+    types: [completed]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: harisharan-v002-live-browser
+  cancel-in-progress: true
+jobs:
+  browser-qa:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install Playwright Chromium
+        run: |
+          mkdir -p "$RUNNER_TEMP/harisharan-v002-browser"
+          cd "$RUNNER_TEMP/harisharan-v002-browser"
+          printf '{"private":true,"type":"module"}\n' > package.json
+          npm install --no-save --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Validate LIVE Harisharan dated desk, work-rate and materials, Narayani retention
+        run: |
+          cat > "$RUNNER_TEMP/harisharan-v002-browser/live.mjs" <<'NODE'
+          import assert from 'node:assert/strict';
+          import {chromium} from 'playwright';
+          import {mkdir,writeFile} from 'node:fs/promises';
+          import {join} from 'node:path';
+          const root='https://fabingurung.github.io/jp-scheduling-resources-management/';
+          const base=root+'projects/fishtail/harisharan-residence/';
+          const shots=join(process.env.RUNNER_TEMP,'harisharan-v002-browser','evidence');
+          await mkdir(shots,{recursive:true});
+          const results={time:new Date().toISOString(),checks:[]};
+          const check=(name,description)=>{results.checks.push({name,description,passed:true});console.log('PASS '+name);};
+          let browser,desktop,mobile;
+          try{
+            const readJson=async url=>{
+             const r=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(40000)});
+             assert.equal(r.status,200,'HTTP 200 expected '+url);
+             return r.json();
+            };
+            const v2=await readJson(base+'schedule-v002.json');
+            assert.equal(v2.revision,'v002');
+            assert.equal(v2.project.id,'PORT-000014');
+            assert.equal(v2.activities.length,839);
+            assert.equal(v2.links.length,1321);
+            assert.equal(v2.planned_start_date,'2026-11-16');
+            assert.equal(v2.planned_finish_exclusive,'2028-09-18');
+            assert.equal(v2.provisional_span_workdays,576);
+            assert.equal(v2.planner_integration.labour_analogy_calculated_activities,18);
+            assert.equal(v2.planner_integration.material_recipes_available,36);
+            assert.equal(v2.planner_integration.m25_recipe_applied,false);
+            assert.equal(v2.engineering_release,false);
+            assert.equal(v2.baseline_approved,false);
+            assert.ok(v2.activities.every(a=>a.actual_start===null));
+            check('Harisharan V002 live JSON','839 activities, 1321 FS links, 576 nominal workdays, 18 labour analogues, no M25 recipe');
+            const nar=await readJson(root+'projects/narayani/schedule-v002.json');
+            assert.equal(nar.revision,'v002');assert.equal(nar.activities.length,160);
+            const old=await readJson(base+'schedule-v000001.json');
+            assert.equal(old.activities.length,839);assert.equal(old.provisional_total_workdays,532);
+            check('Both older versions retained','Narayani v002 160 activities; Harisharan v001 839 activities unchanged');
+            browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+            desktop=await browser.newPage({viewport:{width:1440,height:900}});
+            const errors=[];desktop.on('pageerror',e=>errors.push(e.message));
+            await desktop.goto(base,{waitUntil:'domcontentloaded',timeout:45000});
+            await desktop.getByText('Open Harisharan v002',{exact:false}).waitFor({timeout:25000});
+            await desktop.screenshot({path:join(shots,'harisharan-project-entry-desktop.png')});
+            await desktop.getByText('Open Harisharan v002',{exact:false}).click();
+            await desktop.waitForURL(/schedule-v002\.html/,{timeout:30000});
+            const head=desktop.locator('.desk-hero');
+            await head.getByText('839 activities',{exact:false}).waitFor({timeout:30000});
+            assert.match(await head.innerText(),/16 November 2026/);
+            assert.equal(await desktop.locator('.desk-table tbody tr').count(),839);
+            assert.ok(await desktop.locator('.desk-bar').count()>0);
+            await desktop.screenshot({path:join(shots,'harisharan-v002-desktop-gantt.png')});
+            check('Narayani-style desktop desk','Project navigation, v002 picker, aligned 839-row Gantt, bottom details');
+            const search=desktop.locator('input[aria-label="Filter activities"]');
+            await search.fill('M25 footing pour');
+            assert.equal(await desktop.locator('.desk-table tbody tr').count(),18);
+            await search.fill('HAR-0068');
+            await desktop.locator('tr[aria-label^="Select HAR-0068 "]').click();
+            await desktop.locator('.desk-detail-tabs button').filter({hasText:'Resources'}).click();
+            const detail=await desktop.locator('.desk-detail-body').innerText();
+            assert.match(detail,/m20_footing/);
+            assert.match(detail,/M25/);
+            assert.match(detail,/ingredients|mix/i);
+            await desktop.screenshot({path:join(shots,'harisharan-v002-rate-material-detail.png')});
+            check('Source graded Resources/Quantities','M20 labour-only analogy clearly labelled, M25 constituents on design hold');
+            await desktop.getByRole('tab',{name:'Year calendar'}).click();
+            await desktop.getByText('January–December 2026',{exact:false}).waitFor();
+            assert.match(await desktop.locator('.desk-calendar-selected').innerText(),/HAR-0068/);
+            const saturdays=desktop.locator('.desk-day[data-holiday="saturday"]');
+            assert.ok(await saturdays.count()>=50);
+            await desktop.screenshot({path:join(shots,'harisharan-v002-dated-calendar.png')});
+            check('Dated calendar','Same selected activity as Gantt; Saturdays marked nonworking');
+            assert.deepEqual(errors,[]);
+            mobile=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1,isMobile:true,hasTouch:true});
+            const mobileErrors=[];mobile.on('pageerror',e=>mobileErrors.push(e.message));
+            await mobile.goto(base+'schedule-v002.html#activities',{waitUntil:'domcontentloaded',timeout:45000});
+            await mobile.locator('.desk-modes').waitFor({timeout:30000});
+            assert.ok(await mobile.locator('.desk-table tbody tr').count()===839);
+            await mobile.screenshot({path:join(shots,'harisharan-v002-mobile-gantt.png')});
+            await mobile.getByRole('tab',{name:'Year calendar'}).click();
+            await mobile.locator('.desk-months').waitFor();
+            await mobile.screenshot({path:join(shots,'harisharan-v002-mobile-calendar.png')});
+            assert.deepEqual(mobileErrors,[]);
+            check('Mobile v002','390px Gantt and calendar, preserved search/tabs, no page errors');
+          }catch(e){results.failure=String(e.stack||e);throw e}
+          finally{await writeFile(join(shots,'qa-report.json'),JSON.stringify(results,null,2));if(browser)await browser.close();}
+          NODE
+          cd "$RUNNER_TEMP/harisharan-v002-browser"
+          node live.mjs
+      - name: Save screenshots and QA report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: harisharan-v002-live-desktop-mobile
+          path: ${{ runner.temp }}/harisharan-v002-browser/evidence
+          retention-days: 30
+          if-no-files-found: warn
