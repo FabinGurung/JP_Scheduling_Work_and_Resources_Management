@@ -110,7 +110,7 @@ test("public build pins material JSON and directly links Materials Planner besid
  for(const p of ["work-items/material-references.v1.json","work-items/materials.html","assets/material-planner.css"])
   assert.ok(build.includes('"'+p+'"'),p);
  assert.match(build,/Reviewed material reference changed without source evidence/);
- assert.match(build,/skinned\.length!==64\|\|redirectOnly\.length!==15/);
+ assert.match(build,/skinned\.length!==65\|\|redirectOnly\.length!==15/);
  assert.match(read("more/index.html"),/work-items\/materials\.html/);
  assert.match(read("work-items/index.html"),/href="\.\/materials\.html"/);
  const desk=read("src/presentation/scheduling-desk.mjs");

@@ -171,7 +171,7 @@ function renderProject(mount,registry,p,e){
  anchor(buttons,"← "+e.title,companyPath(e.key));
  anchor(buttons,"All projects","./");
  if(has&&!isHar)anchor(buttons,"Open the scheduling desk →","narayani/desk.html");
- if(isHar)anchor(buttons,"Open detailed 839-activity schedule →","fishtail/harisharan-residence/detailed-preview.html");
+ if(isHar)anchor(buttons,"Open Harisharan v002 · Dated Gantt →","fishtail/harisharan-residence/schedule-v002.html#activities");
  const status=add(mount,"div","pj-status "+(has?"pj-live":"pj-hold"),
   has?"PUBLIC-SAFE PLANNING SCENARIO · NOT APPROVED":"EMPTY PROJECT · WBS NOT LOADED");
  status.setAttribute("role","status");
@@ -179,10 +179,11 @@ function renderProject(mount,registry,p,e){
  if(isHar){
   const work=add(mount,"section","pj-source-meta");
   add(work,"h2","","Harisharan V000001 · Detailed construction planning");
-  add(work,"p","pj-muted","839 proposed activities, 1,321 dependency links; all relative dates, engineering holds and resources remain unapproved. Structural RCC M25; Ø8 mm transverse links require engineer inspection.");
+  add(work,"p","pj-muted","839 proposed activities, 1,321 dependency links; dated v002 planning from 16 November 2026. Baseline, engineering holds and resources remain unapproved. Structural RCC M25; Ø8 mm transverse links require engineer inspection.");
   const links=add(work,"nav","pj-toolbar");
   links.setAttribute("aria-label","Harisharan scheduling draft");
-  anchor(links,"Activity table + relative Gantt →","fishtail/harisharan-residence/detailed-preview.html");
+  anchor(links,"v002 · Dated activity table, Gantt and calendar →","fishtail/harisharan-residence/schedule-v002.html#activities");
+  anchor(links,"v001 · Previous illustrative activity preview →","fishtail/harisharan-residence/detailed-preview.html");
   const note=add(work,"div","pj-note");
   note.textContent="No site/engineer release, no actual work recorded. Grid, footing geometry, tie detailing and source quantities require review.";
  }else if(has){
