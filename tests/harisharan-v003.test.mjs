@@ -30,6 +30,14 @@ test("signed sloped footing geometry not invented and BOQ overage preserved",()=
  const rcc=result.records.find(x=>x.id==="RCC");
  assert.equal(rcc.duration_workdays,null);
  assert.equal(result.records.find(x=>x.id==="REBAR").duration_workdays,null);
+ assert.equal(result.material_takeoff.reference_only,true);
+ assert.equal(result.material_takeoff.not_ordered,true);
+ assert.equal(result.material_takeoff.derived_work_packages,6);
+ assert.equal(result.material_takeoff.lines.length,10);
+ assert.equal(result.material_takeoff.lines.filter(x=>x.recipe_id==="concrete_M20").length,0);
+ const plasterCement=result.material_takeoff.lines.find(x=>x.boq_id==="PLASTER_INT"&&x.material_id==="cement");
+ assert.ok(Math.abs(plasterCement.reference_quantity-3163.151075*.1076)<.000002);
+ assert.ok(result.material_takeoff.lines.every(x=>x.approval==="UNVERIFIED_SOURCE_ESTIMATE_NOT_ORDERED"));
 });
 test("no guessed dates, no arbitrary durations, source-supported BOQ rates only",()=>{
  assert.equal(result.activities_with_approved_resource_loaded_duration,0);
