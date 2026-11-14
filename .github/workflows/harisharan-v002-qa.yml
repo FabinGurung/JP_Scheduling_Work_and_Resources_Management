@@ -1,0 +1,55 @@
+name: Harisharan v002 · Dated desk and planner QA (no deployment)
+on:
+  push:
+    branches:
+      - feature/harisharan-v002-dated-desk-20261114
+  pull_request:
+    branches:
+      - kernel-v0.2-open-source-engines
+permissions:
+  contents: read
+concurrency:
+  group: harisharan-v002-qa-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test-and-site-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Harisharan and shared Narayani reference contract tests
+        run: |
+          node --test tests/harisharan-v002.test.mjs
+          node --test tests/harisharan-schedule-draft.test.mjs
+      - name: Full regression and compiled Pages validation
+        run: |
+          npm test
+          npm run verify:calendar
+          npm run machine:build
+          npm run machine:verify
+          npm run wbs:build
+          npm run wbs:verify
+          npm run pilot:build
+          npm run pilot:verify
+          npm run progress:build
+          npm run progress:verify
+          npm run visual:build
+          npm run visual:verify
+          npm run generic:build
+          npm run generic:verify
+          npm run site:build
+          test -s dist/projects/fishtail/harisharan-residence/schedule-v002.html
+          test -s dist/projects/fishtail/harisharan-residence/schedule-v002.json
+          test -s dist/projects/narayani/schedule-v002.json
+          test -s dist/projects/fishtail/harisharan-residence/detailed-preview.html
+      - name: Artifact — Harisharan v002 compiled preview only
+        uses: actions/upload-artifact@v4
+        with:
+          name: harisharan-v002-reference-preview
+          path: |
+            dist/projects/fishtail/harisharan-residence/schedule-v002.html
+            dist/projects/fishtail/harisharan-residence/schedule-v002.json
+          retention-days: 21
