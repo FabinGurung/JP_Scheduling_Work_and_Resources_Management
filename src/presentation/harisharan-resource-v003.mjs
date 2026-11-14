@@ -71,6 +71,20 @@ async function boot(){
    const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
    const a=document.createElement("a");a.href=url;a.download="Harisharan-V003-BOQ-crew-feasibility.csv";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   });
+  const mat=add(mount,"section","har-section");
+  add(mat,"h2","","Source-measured finishes → shared materials reference");
+  add(mat,"p","har-source","These are coefficient × BOQ-area calculations for selected finishes only. They are NOT approved purchase quantities; actual takeoff, mix, waste, product and packaging need checking. M25 structural concrete is deliberately excluded because the published material library has no approved M25 design-mix recipe.");
+  const matscroll=add(mat,"div","har-scroll"),mattable=add(matscroll,"table","har-table");
+  const mh=add(add(mattable,"thead"),"tr");
+  for(const name of ["BOQ work","Reference recipe","Material","Per work unit","Reference total","Source grade","Approval"])add(mh,"th","",name);
+  const mb=add(mattable,"tbody");
+  for(const m of d.material_takeoff.lines){
+   const tr=add(mb,"tr");
+   for(const txt of [m.boq_id,m.recipe_id,m.material_name,fmt(m.per_unit_coefficient)+" "+m.unit,
+     m.reference_quantity===null?"Requires product specification":fmt(m.reference_quantity)+" "+m.unit,
+     m.recipe_grade,"NOT ORDERED"])
+      add(tr,"td","",txt);
+  }
   const audit=add(mount,"section","har-section");add(audit,"h2","","Measured-input conflicts requiring structural engineer / quantity surveyor review");
   const list=add(audit,"ul","har-list");
   for(const item of d.audit){
