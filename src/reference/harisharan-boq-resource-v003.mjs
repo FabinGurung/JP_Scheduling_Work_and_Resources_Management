@@ -65,6 +65,33 @@ export function evaluateHarisharanBOQ(source,starters,materials){
    date_start:null,date_finish:null
   };
  });
+ const refRecipes=new Map(materials.recipes.map(x=>[x.id,x]));
+ // Material coefficients are reference-only. No procurement order is generated.
+ const recipeByWork={
+  PLASTER_INT:"plaster_12_5",PLASTER_EXT:"plaster_20",PUNNING:"cement_punning",
+  WALL_TILE:"tiles",FLOOR_TILE:"tiles",GRANITE:"granite"
+ };
+ const materialRows=[];
+ for(const record of computed){
+  const recipeId=recipeByWork[record.id];
+  if(!recipeId)continue;
+  const recipe=refRecipes.get(recipeId);
+  if(!recipe||record.unit!==recipe.work_unit)throw Error("Mismatch in material reference assembly "+record.id);
+  if(!(record.source_quantity>0))throw Error("Missing material measurement "+record.id);
+  for(const line of recipe.lines){
+   const material=materials.materials.find(m=>m.id===line.material_id);
+   const amount=line.quantity_per_unit===null?null:+(line.quantity_per_unit*record.source_quantity).toFixed(6);
+   materialRows.push({
+    boq_id:record.id,boq_row:record.boq_row,recipe_id:recipe.id,recipe_grade:recipe.grade,
+    material_id:line.material_id,material_name:material?.name||line.material_id,
+    unit:line.unit,source_work_quantity:record.source_quantity,
+    per_unit_coefficient:line.quantity_per_unit,reference_quantity:amount,
+    approval:"UNVERIFIED_SOURCE_ESTIMATE_NOT_ORDERED",
+    provenance:line.source_id||recipe.source_id,
+    note:recipe.note||"Material catalog per measured BOQ work unit; verify specification, waste, market packaging and field quantity."
+   });
+  }
+ }
  const upper=6*2.55*2.55*.6+12*2.7*2.1*.6;
  const delta=source.original_boq_footing_component_m3-upper;
  if(Math.abs(upper-64.233)>.0001||delta<19||delta>21)throw Error("Footing inconsistency not tracked");
@@ -95,6 +122,7 @@ export function evaluateHarisharanBOQ(source,starters,materials){
    net_sloped_m3:null,
    unresolved:"Top plateau geometry, eccentric slope location and edge thickness missing. Gross prism is maximum, not a purchase quantity."},
   records:computed,
+  material_takeoff:{reference_only:true,not_ordered:true,derived_work_packages:Object.keys(recipeByWork).length,lines:materialRows,source_catalog_version:materials.version},
   audit:source.measurement_errors,
   references:[
   {id:"BOQ",name:"Without-basement itemized BOQ, archived in restricted Drive",uri:null},
