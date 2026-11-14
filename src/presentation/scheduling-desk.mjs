@@ -10,6 +10,7 @@ import {validateGenericViewModel} from "./generic-views.mjs";
 const allowed=Object.freeze({
  "narayani":{file:"../../projects/narayani/project-model.json",governed:true,project:"PRJ-000007",resource_drafts:"../../work-items/narayani-resource-scenarios.v1.json",materials:"../../work-items/material-references.v1.json",material_boq:"../../work-items/productivity-norms.v1.json"},
  "narayani-v002":{file:"../../projects/narayani/schedule-v002.json",relative:true,project:"PRJ-000007"},
+ "harisharan-v002":{file:"../../projects/fishtail/harisharan-residence/schedule-v002.json",harisharan:true,project:"PORT-000014"},
  "uploaded-wbs":{file:"../../projects/generic/uploaded-wbs.json",project:"UPLOADED_WBS_V1"},
  "community-clinic":{file:"../../projects/generic/community-clinic.json",project:"DEMO_CLINIC"},
  "pedestrian-bridge":{file:"../../projects/generic/pedestrian-bridge.json",project:"DEMO_BRIDGE"}
@@ -82,6 +83,8 @@ function createHeader(mount,model,options){
  link(crumb,"Projects",projectsRoot);put(crumb,"span","","/");
  if(model.project.id==="PRJ-000007")
   link(crumb,"Narayani project",projectsRoot+"fishtail/narayani-parajuli-residence/");
+ else if(model.project.id==="PORT-000014")
+  link(crumb,"Harisharan Residence",projectsRoot+"fishtail/harisharan-residence/");
  else link(crumb,"Source examples","../../more/#historical");
  put(crumb,"span","","/ Scheduling desk");
  put(header,"h1","",model.project.name+" · Scheduling desk");
@@ -97,6 +100,28 @@ function createHeader(mount,model,options){
    if(options.chooseEdition)options.chooseEdition(picker.value);
    else location.assign(routes[picker.value]);
   });
+ }
+ if(model.harisharan_v002){
+  const edition=put(header,"label","desk-schedule-edition","Harisharan schedule edition");
+  const picker=put(edition,"select");
+  for(const [value,title] of [["v001","v001 · Archived illustrative WBS"],["v002","v002 · Dated planning desk"]]){
+   const item=put(picker,"option","",title);item.value=value;
+  }
+  picker.value="v002";
+  picker.addEventListener("change",()=>{if(picker.value==="v001")location.assign("detailed-preview.html#activities");});
+  put(header,"p","","Owner-selected schedule start: Monday 16 November 2026 · Sunday–Friday working · Saturday holiday · five modeled levels · no engineering construction release.");
+  const summary=model.planner_integration;
+  put(header,"div","desk-source",model.activities.length+" activities · "+model.links.length+" dependencies · "+model.planned_start_date+" to "+model.planned_finish_exclusive+" (exclusive finish) · "+summary.labour_analogy_calculated_activities+" labour-rate analogies applied; "+summary.unmeasured_or_unrated_activities+" original planning allowances retained. NOT resource-levelled or approved.");
+  const details=put(header,"details","desk-preview-sources");
+  put(details,"summary","","Rate, material and structural sources · planning limitations");
+  put(details,"p","","Work rates use the shared 46-profile reference library. Only 18 gross-volume footing pours have an analogy-based revised duration. The source M20 FOOTING LABOUR RATE is a cautious placement-method analogy, not an M25 design-mix conversion. 821 activities do not yet have validated full-work measured rate joins.");
+  put(details,"p","","The shared 36 material recipes are cross-referenced; there is no approved M25 recipe in the register. M25 cement/aggregate bags and sand quantities are deliberately unresolved pending approved mix design, footing slopes and site quantities.");
+  put(details,"p","","2 skilled + 3 helpers, 8-hour nominal workday, mixer reference 2 operating hours/day. Parallel teams, weather, local holidays, concrete age and supplier leads are NOT resource-leveled or verified. All engineering hold points remain open.");
+  const refs=put(details,"ul");
+  for(const ref of Object.values(model.citations).filter(x=>x.url)){
+   const li=put(refs,"li");link(li,ref.title,ref.url);
+  }
+  return header;
  }
  if(model.relative_origin){
   put(header,"p","","Proposed Block B through the roof. Existing Block A is included for access and interfaces. Weeks are relative to the start of this planning scenario.");
@@ -455,6 +480,21 @@ function renderRelativeCalendar(container,model,state,select,openActivities){
 }
 function renderPreviewEstimate(panel,model,activity){
  const estimate=activity.estimate;
+ if(model.harisharan_v002){
+  put(panel,"p","desk-detail-warning","Harisharan dated V002: M25 design and Ø8 transverse links remain engineering-review assumptions. Original quantities for most trades are not admitted.");
+  const baseline=put(panel,"section","desk-reference-baseline");
+  put(baseline,"h3","","Source-graded planner cross-reference");
+  put(baseline,"p","",activity.reference_profile_candidate?
+   "Work rate candidate: "+activity.reference_profile_candidate+" · "+activity.reference_method_note:
+   "No verified whole-activity work-rate match or complete trade takeoff.");
+  if(activity.material_recipe_candidate)
+   put(baseline,"p","","Material assembly candidate: "+activity.material_recipe_candidate+" · project totals NOT approved.");
+  if(activity.quantity!==null)
+   put(baseline,"p","","Available gross source quantity: "+activity.quantity+" "+activity.quantity_unit+" · "+activity.quantity_basis);
+  else put(baseline,"p","","Whole-activity measured work quantity: NOT VERIFIED.");
+  put(baseline,"p","","Current workday allocation: "+activity.duration+" · "+(activity.original_v001_duration===activity.duration?"Original illustrative allowance":"Labour-only planning analogy; source M20 coefficient not an M25 mix design")+".");
+ }
+
  put(panel,"p","desk-detail-warning",estimate.kind+" · "+estimate.note);
  if(estimate.citation)link(panel,model.citations[estimate.citation].title,model.citations[estimate.citation].url);
  for(const component of estimate.components??[]){
@@ -527,7 +567,7 @@ function renderSouth(container,model,state,options={}){
     ["Physical % complete","Not admitted"],["Approved baseline","NO"],
     ["Activity completion release","NOT AUTHORIZED"]]);
    put(panel,"p","desk-detail-warning","Do not infer actual progress from an unapproved source-planning bar.");
-  }else if((name==="Resources"||name==="Quantities")&&model.relative_origin){
+  }else if((name==="Resources"||name==="Quantities")&&(model.relative_origin||model.harisharan_v002)){
    renderPreviewEstimate(panel,model,activity);
   }else if(name==="Resources"){
    const resourceInfo=resourceRowsForSelected(model,options.resourceRoster??null,activity.id);
@@ -711,6 +751,12 @@ export async function bootSchedulingDesk(doc=document){
   const model=config.relative?sourceModel:applySaturdayHouseScenario(sourceModel,{anchor:config.governed?"2026-10-19":null});
   inspectDeskModel(model);
   const opts={};
+  if(config.harisharan){
+   if(raw.revision!=="v002"||raw.planned_start_date!=="2026-11-16"||raw.activities.length!==839||
+       raw.links.length!==1321||raw.planner_integration.labour_analogy_calculated_activities!==18||
+       raw.planner_integration.m25_recipe_applied!==false)throw Error("Unreviewed Harisharan v002 model");
+   opts.projectsRoot="../../";
+  }
   if(config.resource_drafts){
    try{
     const resourceResult=await fetch(new URL(config.resource_drafts,import.meta.url),{cache:"no-store"});
