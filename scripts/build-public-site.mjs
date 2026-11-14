@@ -204,7 +204,7 @@ if(harV002.activities.length!==839||harV002.links.length!==1321||
  harV002.planner_integration.material_retakeoff_numeric_items_for_M25!==0||
  harV002.working_calendar.weekly_holiday!=="Saturday")throw Error("Invalid Harisharan v002 dated reference/hold contract");
 const harV002Output=join(out,"projects/fishtail/harisharan-residence/schedule-v002.json");
-await writeFile(harV002Output,JSON.stringify(harV002,null,2)+"\\n");
+await writeFile(harV002Output,JSON.stringify(harV002,null,2)+"\n");
 console.log("HARISHARAN V002:",harV002.activities.length,"dated activities,",harV002.links.length,"dependencies, first",harV002.planned_start_date,"end",harV002.planned_finish_exclusive,"(exclusive)");
 // Separate, reviewed, PUBLIC work-item catalog only. No private project source files.
 // A source change requires explicit Git-blob pin review before it can be published.
