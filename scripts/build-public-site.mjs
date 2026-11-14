@@ -4,6 +4,7 @@ import {join,resolve,dirname} from "node:path";
 import {validateGenericViewModel} from "../src/presentation/generic-views.mjs";
 import {buildHarisharanV002} from "../src/reference/harisharan-v002.mjs";
 import {evaluateHarisharanBOQ} from "../src/reference/harisharan-boq-resource-v003.mjs";
+import {normalizePublishedScheduleEdition,compareStandardScheduleEditions} from "../src/kernel/standard-schedule-template.mjs";
 const root=resolve(new URL("..",import.meta.url).pathname),out=join(root,"dist");
 await rm(out,{recursive:true,force:true});
 async function cp(relative){
@@ -168,7 +169,7 @@ if(masterSeed.tasks?.length!==45||
 
 const approved=["index.html","advanced.html","planner.html","kernel-lab.html","roadmap.html","project-controls-demo.json",
  "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","assets/skyforge-unified.css","assets/studio-project.css","assets/work-readiness.css","assets/portfolio.css","assets/project-catalog.css","assets/scheduling-desk.css","assets/productivity-norms.css","assets/productivity-starters.css","assets/material-planner.css","more/legacy-home.html","more/index.html",
- "knowledge/index.html","knowledge/task.html","work-items/index.html","work-items/productivity.html","work-items/materials.html","work-items/productivity-norms.v1.json","work-items/productivity-starters.v2.json","work-items/material-references.v1.json","work-items/narayani-resource-scenarios.v1.json","templates/scheduling/standard-schedule-input-v1.example.json","projects/generic/index.html","studio/index.html","projects/index.html","projects/registry.json",...companyPages,...projectPages,"projects/fishtail/harisharan-residence/detailed-preview.html","projects/fishtail/harisharan-residence/schedule-v002.html","projects/fishtail/harisharan-residence/boq-v003.html","projects/portfolio/index.html","projects/portfolio/registry.json",...portfolioPages,"projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
+ "knowledge/index.html","knowledge/task.html","work-items/index.html","work-items/productivity.html","work-items/materials.html","work-items/productivity-norms.v1.json","work-items/productivity-starters.v2.json","work-items/material-references.v1.json","work-items/narayani-resource-scenarios.v1.json","templates/scheduling/standard-schedule-input-v1.example.json","schemas/standard-schedule-input.schema.json","projects/generic/index.html","studio/index.html","projects/index.html","projects/registry.json",...companyPages,...projectPages,"projects/fishtail/harisharan-residence/detailed-preview.html","projects/fishtail/harisharan-residence/schedule-v002.html","projects/fishtail/harisharan-residence/boq-v003.html","projects/portfolio/index.html","projects/portfolio/registry.json",...portfolioPages,"projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
 for(const f of approved)await cp(f);
 const previewPath="projects/narayani/schedule-v002.json";
 const previewText=await readFile(join(root,previewPath),"utf8");
@@ -206,6 +207,25 @@ if(harV002.activities.length!==839||harV002.links.length!==1321||
  harV002.working_calendar.weekly_holiday!=="Saturday")throw Error("Invalid Harisharan v002 dated reference/hold contract");
 const harV002Output=join(out,"projects/fishtail/harisharan-residence/schedule-v002.json");
 await writeFile(harV002Output,JSON.stringify(harV002,null,2)+"\n");
+// Source-version comparison uses the same validated Gantt edition model for both projects.
+// This manifest contains only public project identities, counts and calendar-axis distinctions.
+const standardizedNarayani=normalizePublishedScheduleEdition(preview);
+const standardizedHarisharan=normalizePublishedScheduleEdition(harV002);
+const crossProjectComparison=compareStandardScheduleEditions(standardizedNarayani,standardizedHarisharan);
+if(standardizedNarayani.counts.activities!==160||standardizedHarisharan.counts.activities!==839||
+ standardizedNarayani.clock.kind!=="RELATIVE_CALENDAR_DAYS"||
+ standardizedHarisharan.clock.kind!=="DATED_WORK_SLOTS"||
+ standardizedNarayani.counts.scheduled!==156||
+ standardizedHarisharan.counts.links!==1321||
+ standardizedHarisharan.authority.engineering_release!==false)
+ throw Error("Standardized Gantt comparison failed project independence checks");
+await mkdir(join(out,"templates/scheduling"),{recursive:true});
+await writeFile(join(out,"templates/scheduling/edition-comparison.json"),
+ JSON.stringify(crossProjectComparison,null,2)+"\n");
+console.log("STANDARD GANTT CONTRACT:",standardizedNarayani.counts.activities,
+ "Narayani relative and",standardizedHarisharan.counts.activities,
+ "Harisharan dated activities; no project source mutation");
+
 console.log("HARISHARAN V002:",harV002.activities.length,"dated activities,",harV002.links.length,"dependencies, first",harV002.planned_start_date,"end",harV002.planned_finish_exclusive,"(exclusive)");
 const harBoqText=await readFile(join(root,"machine/project-mappings/harisharan-boq-quantity-v003.json"),"utf8");
 const harBoqBlob=createHash("sha1").update("blob "+Buffer.byteLength(harBoqText)+"\0").update(harBoqText).digest("hex");
