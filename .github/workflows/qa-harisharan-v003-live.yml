@@ -1,0 +1,119 @@
+name: QA · Harisharan v003 live measured-BOQ resources
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/qa-harisharan-v003-live.yml]
+  workflow_run:
+    workflows: ["Skyforge · Authorized Sheets Reference Sync and Publish"]
+    types: [completed]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: harisharan-v003-live
+  cancel-in-progress: true
+jobs:
+  browser-and-source-qa:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install Chrome browser for QA
+        run: |
+          mkdir -p "$RUNNER_TEMP/har-v003-qa"
+          cd "$RUNNER_TEMP/har-v003-qa"
+          printf '{"private":true,"type":"module"}\n' > package.json
+          npm install --no-save --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify live V003 work rates, materials, holds, and archived schedules on desktop/mobile
+        run: |
+          cat > "$RUNNER_TEMP/har-v003-qa/check.mjs" <<'NODE'
+          import assert from 'node:assert/strict';
+          import {chromium} from 'playwright';
+          import {mkdir,writeFile} from 'node:fs/promises';
+          import {join} from 'node:path';
+          const root='https://fabingurung.github.io/jp-scheduling-resources-management/';
+          const project=root+'projects/fishtail/harisharan-residence/';
+          const out=join(process.env.RUNNER_TEMP,'har-v003-qa','evidence');
+          await mkdir(out,{recursive:true});
+          const report={date:new Date().toISOString(),checks:[]};
+          const ok=(name)=>{report.checks.push({name,passed:true});console.log('PASS '+name)};
+          let browser;
+          try{
+            const read=async(url)=>{const r=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(40000)});assert.equal(r.status,200,url);return r.json()};
+            const m=await read(project+'boq-v003.json');
+            assert.equal(m.format,'HARISHARAN_MEASURED_RESOURCE_FEASIBILITY_V003');
+            assert.equal(m.project_id,'PORT-000014');
+            assert.equal(m.records.length,34);
+            assert.equal(m.resource_estimate_items,11);
+            assert.equal(m.coverage.published_direct,7);
+            assert.equal(m.coverage.published_analogs,4);
+            assert.equal(m.coverage.held_no_duration,23);
+            assert.equal(m.derived_crew_workdays_minimum_for_scoped_items,1650);
+            assert.equal(m.beginning,'2026-11-16');
+            assert.equal(m.project_finish_date,null);
+            assert.equal(m.activities_with_approved_resource_loaded_duration,0);
+            assert.equal(m.structural_report_requires_M25_all_RCC,true);
+            assert.equal(m.stirrup_diameter_mm,8);
+            assert.equal(m.footing_geometry.gross_rectangular_m3,64.233);
+            assert.equal(m.footing_geometry.net_sloped_m3,null);
+            assert.equal(m.material_takeoff.lines.length,10);
+            assert.equal(m.material_takeoff.not_ordered,true);
+            assert.ok(m.material_takeoff.lines.every(x=>x.approval==='UNVERIFIED_SOURCE_ESTIMATE_NOT_ORDERED'));
+            assert.ok(m.records.every(x=>x.date_start===null&&x.date_finish===null));
+            ok('V003 live 34 BOQ items; 11 rate calculations; 23 holds; 1650 crew workdays; M25 safety');
+            const nar=await read(root+'projects/narayani/schedule-v002.json');
+            assert.equal(nar.activities.length,160);
+            const v2=await read(project+'schedule-v002.json');
+            assert.equal(v2.activities.length,839);
+            const v1=await read(project+'schedule-v000001.json');
+            assert.equal(v1.activities.length,839);
+            ok('Narayani v002 and both prior Harisharan editions preserved');
+            browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+            const desk=await browser.newPage({viewport:{width:1400,height:900}});
+            const problems=[];desk.on('pageerror',e=>problems.push(String(e.message)));
+            await desk.goto(project,{waitUntil:'domcontentloaded',timeout:45000});
+            const link=desk.getByText('Open Harisharan v003',{exact:false});
+            await link.waitFor({timeout:20000});
+            await link.click();
+            await desk.waitForURL(/boq-v003\.html/,{timeout:20000});
+            await desk.locator('.har-table').first().locator('tbody tr').first().waitFor({timeout:25000});
+            assert.equal(await desk.locator('.har-table').first().locator('tbody tr').count(),34);
+            assert.equal(await desk.locator('.har-table').nth(1).locator('tbody tr').count(),10);
+            const text=await desk.locator('main').innerText();
+            assert.match(text,/M25/);assert.match(text,/64\.233/);
+            assert.match(text,/NOT SET/);
+            await desk.screenshot({path:join(out,'harisharan-v003-desktop.png')});
+            const status=desk.getByRole('combobox',{name:'Filter feasibility status'});
+            await status.selectOption('mapped');
+            assert.equal(await desk.locator('.har-table').first().locator('tbody tr').count(),11);
+            await status.selectOption('hold');
+            assert.equal(await desk.locator('.har-table').first().locator('tbody tr').count(),23);
+            await status.selectOption('all');
+            await desk.getByRole('searchbox',{name:'Filter BOQ work packages'}).fill('PLASTER_INT');
+            assert.equal(await desk.locator('.har-table').first().locator('tbody tr').count(),1);
+            assert.deepEqual(problems,[]);
+            ok('Desktop V003 project route, table, source material references and both filters');
+            const mob=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+            const mobileErrors=[];mob.on('pageerror',e=>mobileErrors.push(String(e.message)));
+            await mob.goto(project+'boq-v003.html',{waitUntil:'domcontentloaded',timeout:45000});
+            await mob.locator('.har-table').first().locator('tbody tr').first().waitFor({timeout:25000});
+            assert.equal(await mob.locator('.har-table').first().locator('tbody tr').count(),34);
+            await mob.screenshot({path:join(out,'harisharan-v003-mobile.png')});
+            assert.deepEqual(mobileErrors,[]);
+            ok('390 px mobile tables and controls; no JavaScript errors');
+          }catch(e){report.failed=String(e.stack||e);throw e}
+          finally{await writeFile(join(out,'qa-report.json'),JSON.stringify(report,null,2));if(browser)await browser.close()}
+          NODE
+          cd "$RUNNER_TEMP/har-v003-qa"
+          node check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: harisharan-v003-live-verified
+          path: ${{ runner.temp }}/har-v003-qa/evidence
+          retention-days: 30
+          if-no-files-found: warn
