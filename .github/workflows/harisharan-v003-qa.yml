@@ -1,0 +1,51 @@
+name: Harisharan v003 · Structural grade and measured resource gate
+on:
+  push:
+    branches: [feature/harisharan-v003-measured-resource-qa-20261114]
+  pull_request:
+    branches: [kernel-v0.2-open-source-engines]
+permissions:
+  contents: read
+concurrency:
+  group: harisharan-v003-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  compiled-source-gates:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Validate engineering holds, BOQ source and resource totals
+        run: node --test tests/harisharan-v003.test.mjs
+      - name: All project regression tests and site build
+        run: |
+          npm test
+          npm run verify:calendar
+          npm run machine:build
+          npm run machine:verify
+          npm run wbs:build
+          npm run wbs:verify
+          npm run pilot:build
+          npm run pilot:verify
+          npm run progress:build
+          npm run progress:verify
+          npm run visual:build
+          npm run visual:verify
+          npm run generic:build
+          npm run generic:verify
+          npm run site:build
+          node --input-type=module -e "import {readFileSync} from 'node:fs'; const m=JSON.parse(readFileSync('dist/projects/fishtail/harisharan-residence/boq-v003.json')); if(m.project_finish_date!==null||m.records.length!==34||m.footing_geometry.net_sloped_m3!==null||m.structural_report_requires_M25_all_RCC!==true)process.exit(1)"
+          test -s dist/projects/fishtail/harisharan-residence/boq-v003.html
+          test -s dist/projects/fishtail/harisharan-residence/schedule-v002.json
+          test -s dist/projects/narayani/schedule-v002.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: harisharan-v003-compiled-measured-resources
+          path: |
+            dist/projects/fishtail/harisharan-residence/boq-v003.json
+            dist/projects/fishtail/harisharan-residence/boq-v003.html
+          if-no-files-found: warn
