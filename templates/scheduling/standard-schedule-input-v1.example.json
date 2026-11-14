@@ -1,0 +1,75 @@
+{
+  "format": "SKYFORGE_STANDARD_SCHEDULE_INPUT_V1",
+  "project": {
+    "id": "PROJECT-REPLACE",
+    "name": "Replace with verified project name"
+  },
+  "edition": {
+    "id": "v001",
+    "description": "Unapproved source-intake template — replace IDs and source records"
+  },
+  "authority": {
+    "baseline_approved": false,
+    "engineering_release": false,
+    "actual_progress_verified": false
+  },
+  "clock": {
+    "kind": "UNSET",
+    "origin_date": null
+  },
+  "calendar": {
+    "nonworking_weekdays": [
+      6
+    ],
+    "hours_per_day": 8,
+    "authority": "OWNER_REFERENCE_SATURDAY_OFF_NOT_PROJECT_APPROVED"
+  },
+  "crew": {
+    "skilled": null,
+    "helpers": null,
+    "machines": null
+  },
+  "source_manifest": [],
+  "wbs": [
+    {
+      "id": "WBS-001",
+      "title": "Replace with verified work breakdown",
+      "parent_id": null
+    }
+  ],
+  "activities": [
+    {
+      "id": "ACT-001",
+      "title": "Replace with an owner-stated work/activity",
+      "wbs_id": "WBS-001",
+      "duration": {
+        "value": null,
+        "unit": "UNKNOWN",
+        "basis": "UNKNOWN"
+      },
+      "quantity": {
+        "value": null,
+        "unit": null,
+        "basis": "UNKNOWN"
+      },
+      "source_refs": [],
+      "hold_ids": [
+        "HOLD-001"
+      ],
+      "actual_start": null,
+      "actual_finish": null,
+      "actual_percent": null
+    }
+  ],
+  "relationships": [],
+  "holds": [
+    {
+      "id": "HOLD-001",
+      "title": "Scope, design, unit and duration not yet verified",
+      "status": "OPEN",
+      "activity_ids": [
+        "ACT-001"
+      ]
+    }
+  ]
+}
