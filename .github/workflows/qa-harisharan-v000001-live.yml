@@ -80,7 +80,7 @@ jobs:
             const cardText=await page.locator('#project-catalog').innerText();
             assert.match(cardText,/839 proposed activities/);
             await page.screenshot({path:join(output,'harisharan-project-desktop.png')});
-            await page.getByText('Activity table + relative Gantt',{exact:false}).click();
+            await page.getByText('v001 · Previous illustrative activity preview',{exact:false}).click();
             await page.waitForURL(/detailed-preview\.html/,{timeout:30000});
             await page.waitForFunction(() => document.getElementById('act')?.textContent==='839',{timeout:30000});
             assert.equal(await page.locator('#dep').innerText(),'1321');
