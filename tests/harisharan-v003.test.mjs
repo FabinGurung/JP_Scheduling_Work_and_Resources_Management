@@ -33,6 +33,7 @@ test("signed sloped footing geometry not invented and BOQ overage preserved",()=
 });
 test("no guessed dates, no arbitrary durations, source-supported BOQ rates only",()=>{
  assert.equal(result.activities_with_approved_resource_loaded_duration,0);
+ assert.equal(result.derived_crew_workdays_minimum_for_scoped_items,1650);
  assert.equal(result.project_finish_date,null);
  assert.ok(result.coverage.published_direct>0);
  assert.ok(result.coverage.held_no_duration>0);
