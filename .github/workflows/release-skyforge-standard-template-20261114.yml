@@ -1,0 +1,94 @@
+name: Milestone · Skyforge 2026-11-14 Standard Schedule Template
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/release-skyforge-standard-template-20261114.yml
+  workflow_dispatch:
+
+# One-shot, immutable release of the pinned validated kernel (NOT the publisher main branch).
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      RELEASE_SHA: 4fda4ca981b381091d345e60d03a3bd467c4fdf8
+      RELEASE_TAG: v1.16.0-skyforge-standard-schedule-template.1
+      RELEASE_NOTES: docs/milestones/SKYFORGE_V1_16_STANDARD_SCHEDULE_TEMPLATE_20261114.md
+    steps:
+      - name: Check out exact validated kernel source
+        uses: actions/checkout@v4
+        with:
+          ref: 4fda4ca981b381091d345e60d03a3bd467c4fdf8
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Verify exact immutable source and source preservation policy
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+          test -s "$RELEASE_NOTES"
+          test -s tests/standard-schedule-template.test.mjs
+          test -s src/kernel/standard-schedule-template.mjs
+          test -s schemas/standard-schedule-input.schema.json\n          test -s templates/scheduling/standard-schedule-input-v1.example.json
+          grep -Fq "normalization" "$RELEASE_NOTES"
+          echo "Release content and owner-source governance pinned"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Re-run production engine tests at pinned release SHA
+        run: |
+          npm test
+          npm run verify:calendar
+          npm run machine:build
+          npm run machine:verify
+          npm run wbs:build
+          npm run wbs:verify
+          npm run pilot:build
+          npm run pilot:verify
+          npm run progress:build
+          npm run progress:verify
+          npm run visual:build
+          npm run visual:verify
+          npm run generic:build
+          npm run generic:verify
+          npm run site:build
+          node --input-type=module <<'NODE'
+          import {readFileSync} from 'node:fs';
+          const root='dist/';
+          const example=JSON.parse(readFileSync(root+'templates/scheduling/standard-schedule-input-v1.example.json'));
+          const schema=JSON.parse(readFileSync(root+'schemas/standard-schedule-input.schema.json'));
+          const comparison=JSON.parse(readFileSync(root+'templates/scheduling/edition-comparison.json'));
+          if(example.format!=='SKYFORGE_STANDARD_SCHEDULE_INPUT_V1')throw Error('Input template not published');
+          if(!schema.$schema||!schema.properties?.activities)throw Error('JSON Schema missing');
+          if(comparison.format!=='SKYFORGE_STANDARD_SCHEDULE_COMPARISON_V1'||comparison.projects?.length!==2)
+            throw Error('Both project views not normalized');
+          if(comparison.projects[0].counts.activities!==160||comparison.projects[1].counts.activities!==839)
+            throw Error('Unexpected project normalization');
+          console.log('Release package verified: editable source template, schema, 160/839 comparison');
+          NODE
+      - name: Create verified annotated tag and published GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if git ls-remote --exit-code --tags origin "refs/tags/$RELEASE_TAG" >/dev/null 2>&1; then
+            git fetch --no-tags origin "refs/tags/$RELEASE_TAG:refs/tags/$RELEASE_TAG"
+            test "$(git rev-list -n 1 "$RELEASE_TAG")" = "$RELEASE_SHA"
+          else
+            git tag -a "$RELEASE_TAG" "$RELEASE_SHA" -m 'Skyforge 2026-11-14: unified normalized source template and project-independent Gantt edition; no construction approval'
+            git push origin "refs/tags/$RELEASE_TAG"
+          fi
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Existing published milestone release found; validating"
+          else
+            gh release create "$RELEASE_TAG" --verify-tag --target "$RELEASE_SHA" --title 'Skyforge v1.16 · Standard Project Schedule & Gantt Template' --notes-file "$RELEASE_NOTES" --latest=false
+          fi
+          test "$(gh release view "$RELEASE_TAG" --json tagName --jq .tagName)" = "$RELEASE_TAG"
+          test "$(gh release view "$RELEASE_TAG" --json isDraft --jq .isDraft)" = 'false'
+          test "$(git rev-list -n 1 "$RELEASE_TAG")" = "$RELEASE_SHA"
+          echo 'Release tag, target SHA and published state verified'
