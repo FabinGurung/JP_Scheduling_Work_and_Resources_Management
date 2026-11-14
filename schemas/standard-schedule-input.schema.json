@@ -1,0 +1,456 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fabingurung.github.io/jp-scheduling-resources-management/schemas/standard-schedule-input.schema.json",
+  "title": "Skyforge Standard Project Schedule Intake V1",
+  "description": "Source evidence contract only. Never a published, approved or computed construction schedule.",
+  "type": "object",
+  "required": [
+    "format",
+    "project",
+    "edition",
+    "authority",
+    "clock",
+    "calendar",
+    "crew",
+    "source_manifest",
+    "wbs",
+    "activities",
+    "relationships",
+    "holds"
+  ],
+  "properties": {
+    "format": {
+      "const": "SKYFORGE_STANDARD_SCHEDULE_INPUT_V1"
+    },
+    "project": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_:.-]{0,79}$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      }
+    },
+    "edition": {
+      "type": "object",
+      "required": [
+        "id",
+        "description"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_:.-]{0,79}$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "required": [
+        "baseline_approved",
+        "engineering_release",
+        "actual_progress_verified"
+      ],
+      "properties": {
+        "baseline_approved": {
+          "const": false
+        },
+        "engineering_release": {
+          "const": false
+        },
+        "actual_progress_verified": {
+          "const": false
+        }
+      }
+    },
+    "clock": {
+      "type": "object",
+      "required": [
+        "kind",
+        "origin_date"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "UNSET",
+            "RELATIVE_CALENDAR_DAYS",
+            "DATED_WORK_SLOTS"
+          ]
+        },
+        "origin_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        }
+      }
+    },
+    "calendar": {
+      "type": "object",
+      "required": [
+        "nonworking_weekdays",
+        "hours_per_day"
+      ],
+      "properties": {
+        "nonworking_weekdays": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 6
+          }
+        },
+        "hours_per_day": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0,
+          "maximum": 24
+        },
+        "authority": {
+          "type": "string"
+        }
+      }
+    },
+    "crew": {
+      "type": "object",
+      "required": [
+        "skilled",
+        "helpers",
+        "machines"
+      ],
+      "properties": {
+        "skilled": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "helpers": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "machines": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "source_manifest": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "original_language",
+          "original_text_file_id",
+          "english_text_file_id",
+          "authority"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_:.-]{0,79}$"
+          },
+          "original_language": {
+            "enum": [
+              "ne",
+              "en",
+              "mixed",
+              "other"
+            ]
+          },
+          "original_text_file_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_:.-]{0,79}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "english_text_file_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_:.-]{0,79}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "authority": {
+            "enum": [
+              "UNVERIFIED",
+              "OWNER_VERBATIM",
+              "REVIEWED",
+              "APPROVED_RECORD"
+            ]
+          }
+        }
+      }
+    },
+    "wbs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "parent_id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_:.-]{0,79}$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_:.-]{0,79}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "activities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "wbs_id",
+          "duration",
+          "quantity",
+          "source_refs",
+          "hold_ids",
+          "actual_start",
+          "actual_finish",
+          "actual_percent"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_:.-]{0,79}$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "wbs_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_:.-]{0,79}$"
+          },
+          "duration": {
+            "type": "object",
+            "required": [
+              "value",
+              "unit",
+              "basis"
+            ],
+            "properties": {
+              "value": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "unit": {
+                "enum": [
+                  "WORKDAYS",
+                  "ELAPSED_DAYS",
+                  "UNKNOWN"
+                ]
+              },
+              "basis": {
+                "enum": [
+                  "SOURCE_REVIEWED",
+                  "OWNER_STATED",
+                  "PLANNING_ALLOWANCE",
+                  "UNKNOWN"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "quantity": {
+            "type": "object",
+            "required": [
+              "value",
+              "unit",
+              "basis"
+            ],
+            "properties": {
+              "value": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "exclusiveMinimum": 0
+              },
+              "unit": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 32
+              },
+              "basis": {
+                "enum": [
+                  "SOURCE_REVIEWED",
+                  "CALCULATED",
+                  "SCENARIO",
+                  "UNKNOWN"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "source_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_:.-]{0,79}$"
+            }
+          },
+          "hold_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_:.-]{0,79}$"
+            }
+          },
+          "actual_start": {
+            "const": null
+          },
+          "actual_finish": {
+            "const": null
+          },
+          "actual_percent": {
+            "const": null
+          }
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "from",
+          "to",
+          "type",
+          "lag",
+          "lag_unit"
+        ],
+        "properties": {
+          "from": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_:.-]{0,79}$"
+          },
+          "to": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_:.-]{0,79}$"
+          },
+          "type": {
+            "enum": [
+              "FS",
+              "SS",
+              "FF",
+              "SF"
+            ]
+          },
+          "lag": {
+            "type": "integer",
+            "minimum": -3650,
+            "maximum": 3650
+          },
+          "lag_unit": {
+            "enum": [
+              "WORKDAYS",
+              "ELAPSED_DAYS"
+            ]
+          }
+        }
+      }
+    },
+    "holds": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "status",
+          "activity_ids"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_:.-]{0,79}$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "status": {
+            "enum": [
+              "OPEN",
+              "HELD",
+              "RESOLVED_UNVERIFIED"
+            ]
+          },
+          "activity_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_:.-]{0,79}$"
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}
