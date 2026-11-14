@@ -2,6 +2,7 @@ import {mkdir,copyFile,readdir,readFile,writeFile,rm} from "node:fs/promises";
 import {createHash} from "node:crypto";
 import {join,resolve,dirname} from "node:path";
 import {validateGenericViewModel} from "../src/presentation/generic-views.mjs";
+import {buildHarisharanV002} from "../src/reference/harisharan-v002.mjs";
 const root=resolve(new URL("..",import.meta.url).pathname),out=join(root,"dist");
 await rm(out,{recursive:true,force:true});
 async function cp(relative){
@@ -166,7 +167,7 @@ if(masterSeed.tasks?.length!==45||
 
 const approved=["index.html","advanced.html","planner.html","kernel-lab.html","roadmap.html","project-controls-demo.json",
  "construction-knowledge.json","THIRD_PARTY_NOTICES.md","assets/sky-theme.css","assets/sky-dragon.mjs","assets/site-shell.css","assets/site-shell.mjs","assets/skyforge-unified.css","assets/studio-project.css","assets/work-readiness.css","assets/portfolio.css","assets/project-catalog.css","assets/scheduling-desk.css","assets/productivity-norms.css","assets/productivity-starters.css","assets/material-planner.css","more/legacy-home.html","more/index.html",
- "knowledge/index.html","knowledge/task.html","work-items/index.html","work-items/productivity.html","work-items/materials.html","work-items/productivity-norms.v1.json","work-items/productivity-starters.v2.json","work-items/material-references.v1.json","work-items/narayani-resource-scenarios.v1.json","projects/generic/index.html","studio/index.html","projects/index.html","projects/registry.json",...companyPages,...projectPages,"projects/fishtail/harisharan-residence/detailed-preview.html","projects/portfolio/index.html","projects/portfolio/registry.json",...portfolioPages,"projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
+ "knowledge/index.html","knowledge/task.html","work-items/index.html","work-items/productivity.html","work-items/materials.html","work-items/productivity-norms.v1.json","work-items/productivity-starters.v2.json","work-items/material-references.v1.json","work-items/narayani-resource-scenarios.v1.json","projects/generic/index.html","studio/index.html","projects/index.html","projects/registry.json",...companyPages,...projectPages,"projects/fishtail/harisharan-residence/detailed-preview.html","projects/fishtail/harisharan-residence/schedule-v002.html","projects/portfolio/index.html","projects/portfolio/registry.json",...portfolioPages,"projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","knowledge/shuttering.html","knowledge/waterproofing.html","knowledge/soak-pit.html","how/index.html","how/skyforge-anki.csv"];
 for(const f of approved)await cp(f);
 const previewPath="projects/narayani/schedule-v002.json";
 const previewText=await readFile(join(root,previewPath),"utf8");
@@ -193,6 +194,18 @@ if(har.format!=="HARISHARAN_DETAILED_WBS_DRAFT_V000001"||har.project_id!=="PORT-
 const harOut=join(out,"projects/fishtail/harisharan-residence/schedule-v000001.json");
 await mkdir(dirname(harOut),{recursive:true});
 await writeFile(harOut,harText);
+const harRates=JSON.parse(await readFile(join(root,"work-items/productivity-starters.v2.json"),"utf8"));
+const harMaterials=JSON.parse(await readFile(join(root,"work-items/material-references.v1.json"),"utf8"));
+const harV002=buildHarisharanV002(har,harRates,harMaterials);
+validateGenericViewModel(harV002);
+if(harV002.activities.length!==839||harV002.links.length!==1321||
+ harV002.planned_start_date!=="2026-11-16"||
+ harV002.planner_integration.labour_analogy_calculated_activities!==18||
+ harV002.planner_integration.material_retakeoff_numeric_items_for_M25!==0||
+ harV002.working_calendar.weekly_holiday!=="Saturday")throw Error("Invalid Harisharan v002 dated reference/hold contract");
+const harV002Output=join(out,"projects/fishtail/harisharan-residence/schedule-v002.json");
+await writeFile(harV002Output,JSON.stringify(harV002,null,2)+"\\n");
+console.log("HARISHARAN V002:",harV002.activities.length,"dated activities,",harV002.links.length,"dependencies, first",harV002.planned_start_date,"end",harV002.planned_finish_exclusive,"(exclusive)");
 // Separate, reviewed, PUBLIC work-item catalog only. No private project source files.
 // A source change requires explicit Git-blob pin review before it can be published.
 const catalogText=await readFile(join(root,"machine/work-items/work-item-library-v0.1.json"),"utf8");
@@ -424,9 +437,9 @@ for(const relative of skinned){
 }
 const essential=["index.html","projects/narayani/visual.html","projects/narayani/index.html",
 "advanced.html","planner.html","kernel-lab.html","roadmap.html","machine/index.html",
-"machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","work-items/index.html","work-items/productivity.html","work-items/materials.html","projects/generic/index.html","studio/index.html","projects/index.html",...companyPages,...projectPages,"projects/fishtail/harisharan-residence/detailed-preview.html","more/index.html","projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","more/legacy-home.html"];
+"machine/wbs-sample/index.html","knowledge/index.html","knowledge/task.html","how/index.html","work-items/index.html","work-items/productivity.html","work-items/materials.html","projects/generic/index.html","studio/index.html","projects/index.html",...companyPages,...projectPages,"projects/fishtail/harisharan-residence/detailed-preview.html","projects/fishtail/harisharan-residence/schedule-v002.html","more/index.html","projects/community-clinic/index.html","projects/community-clinic/readiness.html","projects/pedestrian-bridge/index.html","projects/pedestrian-bridge/readiness.html","projects/uploaded-wbs/index.html","projects/uploaded-wbs/readiness.html","projects/narayani/beta.html","projects/narayani/desk.html","projects/generic/desk-clinic.html","projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html","projects/narayani/readiness.html","studio/projects/narayani/index.html","studio/projects/community-clinic/index.html","studio/projects/pedestrian-bridge/index.html","more/legacy-home.html"];
 if(essential.some(p=>!skinned.includes(p)))throw Error("Site shell incomplete: "+essential.filter(p=>!skinned.includes(p)));
-if(skinned.length!==64||redirectOnly.length!==15)
+if(skinned.length!==65||redirectOnly.length!==15)
  throw Error("Unexpected Pages HTML inventory: "+skinned.length+" unified; "+redirectOnly.length+" redirects");
 console.log("SKYFORGE HTML INVENTORY PASS:",skinned.length+redirectOnly.length,"HTML outputs =",skinned.length,"unified +",redirectOnly.length,"redirect-only stubs");
 console.log("SKYFORGE SHARED SHELL PASS:",skinned.length,"public pages unified; legacy pages preserved under More.");
