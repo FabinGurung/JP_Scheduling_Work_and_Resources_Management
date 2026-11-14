@@ -71,4 +71,6 @@ test("V002 and Narayani immutable, public inventory gated",()=>{
  assert.match(build,/const harBoq=evaluateHarisharanBOQ/);
  const page=readFileSync(new URL("../projects/fishtail/harisharan-residence/boq-v003.html",import.meta.url),"utf8");
  assert.match(page,/harisharan-resource-v003.mjs/);
+ const browser=readFileSync(new URL("../src/presentation/harisharan-resource-v003.mjs",import.meta.url),"utf8");
+ assert.match(browser,/new URL\("\.\.\/\.\.\/projects\/fishtail\/harisharan-residence\/boq-v003\.json"/);
 });
