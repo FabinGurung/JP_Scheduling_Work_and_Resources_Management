@@ -72,9 +72,9 @@ jobs:
             desktop=await browser.newPage({viewport:{width:1440,height:900}});
             const errors=[];desktop.on('pageerror',e=>errors.push(e.message));
             await desktop.goto(base,{waitUntil:'domcontentloaded',timeout:45000});
-            await desktop.getByText('Open Harisharan v002',{exact:false}).waitFor({timeout:25000});
+            await desktop.getByText('v002 · Archived provisional Gantt',{exact:false}).waitFor({timeout:25000});
             await desktop.screenshot({path:join(shots,'harisharan-project-entry-desktop.png')});
-            await desktop.getByText('Open Harisharan v002',{exact:false}).click();
+            await desktop.getByText('v002 · Archived provisional Gantt',{exact:false}).click();
             await desktop.waitForURL(/schedule-v002\.html/,{timeout:30000});
             const head=desktop.locator('.desk-hero');
             await head.getByText('839 activities',{exact:false}).waitFor({timeout:30000});
