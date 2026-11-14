@@ -81,7 +81,7 @@ test("four published desk entrypoints and pinned productivity memory wall are al
   assert.ok(build.includes('"'+path+'"'),path);
  }
  assert.match(build,/Source-backed productivity rates changed without explicit review/);
- assert.match(build,/skinned\.length!==65\|\|redirectOnly\.length!==15/);
+ assert.match(build,/skinned\.length!==66\|\|redirectOnly\.length!==15/);
  for(const file of ["projects/narayani/desk.html","projects/generic/desk-clinic.html",
   "projects/generic/desk-bridge.html","projects/generic/desk-uploaded-wbs.html"])
   assert.match(read(file),/src\/presentation\/scheduling-desk\.mjs/);
