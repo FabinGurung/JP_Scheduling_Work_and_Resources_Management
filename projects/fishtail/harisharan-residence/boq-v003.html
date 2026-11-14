@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Harisharan V003 BOQ-driven resource feasibility: 2 skilled + 3 unskilled workers, 8 mm stirrups, engineering holds and source-traced durations">
+<title>Harisharan v003 · Measured Resource Feasibility</title>
+<link rel="stylesheet" href="../../../assets/scheduling-desk.css">
+<style>
+#har-v003{max-width:1600px;margin:auto;padding:18px;font:14px/1.5 system-ui,-apple-system,sans-serif;color:#213e4a}
+#har-v003 *{box-sizing:border-box}
+.har-nav{display:flex;gap:13px;flex-wrap:wrap;margin:6px 0 16px}
+.har-nav a{color:#106d78;font-weight:700}
+.har-title{font-size:clamp(24px,3vw,36px);margin:8px 0}
+.har-intro{max-width:1000px;color:#526b75}
+.har-panels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}
+.har-stat{border:1px solid #cadfdf;background:#f4f9f8;border-radius:11px;padding:12px}
+.har-stat strong{display:block;font-size:27px;font-variant-numeric:tabular-nums;color:#174c57}
+.har-stat small{color:#57717c}
+.har-warning{padding:13px 14px;background:#fff6e3;border-left:4px solid #b77c29;border-radius:8px;margin:12px 0}
+.har-section{border:1px solid #d5e5e6;border-radius:12px;margin:13px 0;overflow:hidden;background:#fff}
+.har-section h2{font-size:17px;margin:0;padding:12px 14px;background:#edf5f5}
+.har-section p{padding:0 14px}
+.har-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:13px}
+.har-f{border:1px solid #cfdede;border-radius:8px;padding:12px}
+.har-f strong{display:block;font-size:16px}
+.har-f span{display:block;color:#5b7379;font-size:12px}
+.har-toolbar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;padding:13px}
+.har-toolbar input,.har-toolbar select{font:inherit;padding:10px;min-height:44px;border:1px solid #b8d0d2;border-radius:8px}
+.har-toolbar input{min-width:230px;max-width:420px;flex:1}
+.har-toolbar button{font:inherit;padding:10px;background:#126f78;color:white;border:0;border-radius:8px;cursor:pointer}
+.har-scroll{overflow:auto;max-height:68vh}
+.har-table{border-collapse:collapse;width:100%;min-width:920px;font-size:12px}
+.har-table thead th{position:sticky;top:0;background:#e8f1f2;z-index:2;text-align:left}
+.har-table th,.har-table td{padding:10px;border-bottom:1px solid #e0e9e8;vertical-align:top}
+.har-table tbody tr:nth-child(even){background:#f7fbfa}
+.har-table td:nth-child(4),.har-table td:nth-child(5){font-variant-numeric:tabular-nums;white-space:nowrap}
+.har-table tr[data-hold="true"] td:nth-child(5){color:#9f6a23;font-weight:750}
+.har-source{font-size:12px;color:#526c76;overflow-wrap:anywhere}
+.har-list{padding:10px 26px}
+.har-list li{padding:6px 0}
+@media(max-width:750px){#har-v003{padding:9px}.har-panels{grid-template-columns:1fr 1fr}.har-grid{grid-template-columns:1fr}.har-toolbar input{min-width:130px}.har-stat strong{font-size:22px}}
+</style>
+</head>
+<body><main id="har-v003" data-harisharan-version="v003">
+<p role="status">Loading source-graded Harisharan BOQ resource assessment…</p>
+</main>
+<script type="module" src="../../../src/presentation/harisharan-resource-v003.mjs"></script>
+</body></html>
