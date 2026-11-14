@@ -32,7 +32,8 @@ jobs:
           test -s "$RELEASE_NOTES"
           test -s tests/standard-schedule-template.test.mjs
           test -s src/kernel/standard-schedule-template.mjs
-          test -s schemas/standard-schedule-input.schema.json\n          test -s templates/scheduling/standard-schedule-input-v1.example.json
+          test -s schemas/standard-schedule-input.schema.json
+          test -s templates/scheduling/standard-schedule-input-v1.example.json
           grep -Fq "normalization" "$RELEASE_NOTES"
           echo "Release content and owner-source governance pinned"
       - uses: actions/setup-node@v4
